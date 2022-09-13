@@ -1,0 +1,70 @@
+Text description of what a Property Module is and how it's created
+
+This is the meat of the link between a source concept, e.g. entityType, and target concept, e.g. rating
+
+User Step 1: user creates an enumeration from a source concept, which requires:
+- choosing a source concept
+- choosing a source set within that source concept; this is the most important choice
+- also choosing a single uniqueField plus any number of additionalFields
+- this sets up the relationship:
+- source set -- enumerates -- the induced enumeration;
+uniqueField and additionalFields are stored in the enumeration node (perhaps could do: enumerates, field: uniqueField ?? )
+So this step creates a new node (enumeration) plus a new relationship
+Example: enumerationFrom_entityTypes_thatCanRate_0bi7qq; cource concept: entityType; source set: entityTypes_thatCanRate
+
+
+User Step 2: user creates the relationship:
+(1) enumeration (created above) -- inducesPartitioningOf, field: propertyModuleKey -- targetSet within a target concept (usually but not always superset of target concept)
+This requires choice of enumeration (can be sourced by any concept), choice of targetSet (in any concept except the source concept), and propertyModuleKey (can be anything .. ?)
+Example: enumerationFrom_entityTypes_thatCanRate_0bi7qq -- inducesPartitioningOf, field: raterData -- ratings (superset of target concept: rating )
+This also establishes an entry in conceptData.propertyModuleData
+(( Question: which is primary, conceptData.propertyModuleData or the relationship ? ))
+
+
+FUTURE: condense User Step 1 and User Step 2 into one single step on one page!!!!!!!!!!
+
+
+These steps now become automated:
+Auto Step 1:
+PATTERN 1: relationship (1) (above)
+look for and require to move ahead: conceptData.propertyModuleData
+create: relationship (2) (below)
+Create a subset of targetSet, e.g. ratings_organizedBy_raterData == (targetSet)_organizedBy_(propertyModuleKey)
+create relationship in main schema of targetConcept:
+(2) enumerationSlug -- inducesOrganizationOf, field: propertyModuleKey -- induced subsetOfTargetSet
+(get propertyModuleKey from conceptData.propertyModuleData)
+
+PATTERN 2: relationship (2) (above); also require conceptData.propertyModuleData
+
+Auto Step 2:
+Look for Pattern 2
+Make the induced propertyModule, eg. property_module_raterData == "property_module_"+propertyModuleKey
+which will be stored within propertySchema of target concept (although this could be mirrored or cloned elsewhere?)
+
+Auto Step 3:
+Look for Pattern 2
+For each option, create schema (nextOptionPropertySchema_slug) which will be an overlay with propertySchemaFor(parent concept), types: propertySchema; also: propertyModule or subset (?)
+It will be schemaImport of propertySchemaFor(parent concept) .. ?
+nextOptionPropertySchema_slug will be recorded in conceptData.propertyModuleData[propertyModuleKey]
+Populate with these relationships
+// 3. newPropertyModule_forNextSubset_slug -- addToConceptGraphProperties, field: () -- newPrimaryProperty_forNextSubset_slug
+// * field needs to match the one it is replacing!!
+// 4. newEnumeration_forNextSubset_slug -- addToConceptGraphProperties, field: () -- newPropertyModule_forNextSubset_slug
+// (5). propertyModule(the one that already exists) -- restrictionOfOptionProduces, field: (?) -- newPropertyModule_forNextSubset_slug
+// (6). enumeration (the one that already exists) -- restrictionOfOptionProduces, field: (?) -- newEnumeration_forNextSubset_slug
+// (7). primaryPropertyFor(the one that already exists) -- restrictionOfOptionProduces, field: (?) -- newPrimaryProperty_forNextSubset_slug
+// 8. newPrimaryProperty_forNextSubset_slug -- isASpecificInstanceOf -- propertiesFor(main concept)_primaryProperty
+// 9. newPropertyModule_forNextSubset_slug -- isASpecificInstanceOf -- propertiesFor(main concept)_object_dependencies
+// 2. newPrimaryProperty_forNextSubset_slug -- isThePrimaryPropertyFor -- newJSONSchema_forNextSubset_slug
+// * note that for a fully formed concept, isThePrimaryPropertyFor points toward wordType, not JSONSchema
+
+Auto Step 4:
+Look for Pattern 2
+// Group 3: add to the main schema for target concept
+// 1. newJSONSchema_forNextSubset_slug -- isTheJSONSchemaFor -- nextSubsetSlug
+
+Auto Step 5:
+Look for Pattern 2
+Add to the source concept:
+// (11) (the specificInstance ) -- isTheSelectedOptionFor -- newEnumeration_forNextSubset_slug
+// (10). enumerationFrom(parent enumeration) -- restrictionOfOptionProduces, field: (?) -- newEnumeration_forNextSubset_slug

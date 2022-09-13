@@ -1,0 +1,873 @@
+.leftNavBarBackBox {
+    padding-bottom:20px;
+}
+.leftNavBarConceptGraphTitle {
+    margin-bottom:10px;
+    border-top:3px solid green;
+    border-bottom:3px solid green;
+    background-color:white;
+}
+.leftNavBarConceptTitle {
+    margin-bottom:10px;
+    border-top:3px solid purple;
+    border-bottom:3px solid purple;
+    background-color:white;
+    font-size:12px;
+}
+.step2_panel1 {
+    display:inline-block;
+    background-color:#DFDFDF;
+    width:150px;
+}
+.step2_panel2 {
+    display:inline-block;
+    background-color:white;
+    width:200px;
+}
+.step2_panel3 {
+    display:inline-block;
+    background-color:#DFDFDF;
+    width:150px;
+}
+.step2_panel4 {
+    display:inline-block;
+    background-color:white;
+    width:100px;
+}
+.specialWordInitializationTextarea {
+    width:400px;
+    height:50px;
+    display:none;
+    margin-left:20px;
+    margin-bottom:10px;
+}
+.rowContainerStyleE {
+    margin-bottom:5px;
+}
+.divStyleF {
+    display:inline-block;
+    width:400px;
+    height:30px;
+    padding-left:5px;
+    border:1px solid black;
+}
+.textareaStyleF {
+    display:inline-block;
+    width:400px;
+    height:30px;
+    padding-left:5px;
+}
+.styleFContainer {
+    margin-bottom:5px;
+}
+.leftColStyleF {
+    display:inline-block;
+    width:150px;
+    text-align:right;
+}
+.rightColStyleF {
+    display:inline-block;
+    width:250px;
+    margin-left:10px;
+    background-color:#BFBFBF;
+    text-align:left;
+}
+.rightColStyleG {
+    display:inline-block;
+    width:250px;
+    margin-left:10px;
+    text-align:left;
+}
+.leftColStyleE {
+    display:inline-block;
+    width:300px;
+    text-align:right;
+}
+.rightColStyleE {
+    display:inline-block;
+    width:400px;
+    margin-left:10px;
+    background-color:#BFBFBF;
+}
+.singleItemContainer {
+    margin-bottom:2px;
+}
+.standardDoubleColumn {
+    display:inline-block;
+    width:49%;
+    height:800px;
+    margin-left:5px;
+    overflow:scroll;
+}
+.specialWordsDoubleColumn {
+    display:inline-block;
+    width:49%;
+    height:800px;
+    margin-left:5px;
+    border:1px dashed grey;
+}
+.leftColumnLeftPanelB {
+    display:inline-block;
+    text-align:right;
+    width:100px;
+    margin-left:10px;
+}
+.leftColumnLeftPanel {
+    display:inline-block;
+    text-align:right;
+    width:200px;
+    margin-left:10px;
+}
+.leftColumnRightPanel {
+    display:inline-block;
+    text-align:left;
+    width:300px;
+    margin-left:20px;
+    margin-right:5px;
+    padding-left:5px;
+    background-color:#DFDFDF;
+}
+.leftColumnRightPanelTextarea {
+    display:inline-block;
+    text-align:left;
+    width:300px;
+    margin-left:20px;
+    margin-right:5px;
+    padding-left:5px;
+    height:20px;
+}
+.makeNewPanelContainer {
+    font-size:20px;
+}
+.makeNewLeftPanel {
+    display:inline-block;
+    text-align:right;
+    width:300px;
+    font-size:20px;
+}
+.makeNewLeftPanelB {
+    display:inline-block;
+    text-align:right;
+    width:150px;
+    font-size:18px;
+}
+.makeNewRightPanel {
+    display:inline-block;
+    text-align:left;
+    width:600px;
+    height:30px;
+    margin-left:20px;
+    margin-right:5px;
+    background-color:white;
+    padding-left:5px;
+    font-size:20px;
+}
+
+.linkifyObjectButton {
+    display:inline-block;
+}
+
+.linkifyObjectButton:hover {
+    background-color:yellow;
+}
+.neuroCoreMonitoringPanel {
+    background-color:white;
+    padding:0px;
+    height:0%;
+    border:0px solid black;
+    overflow:scroll;
+    width:100%;
+}
+.neuroCoreReportPanel {
+    background-color:#EFEFEF;
+    padding:10px;
+    height:700px;
+    border:1px solid black;
+    overflow:scroll;
+    margin-bottom:5px;
+}
+.neuroCoreStatePanelElement {
+    width:350px;
+    display:inline-block;
+    height:100%;
+    overflow:scroll;
+    border:1px solid grey;
+    font-size:12px;
+}
+.neuroCoreStatePanel {
+    background-color:white;
+    padding:0px;
+    height:0px;
+    border:0px solid black;
+    overflow:scroll;
+    margin-bottom:5px;
+}
+.neuroCorePatternsPanel {
+    background-color:white;
+    padding:0px;
+    height:0px;
+    border:0px solid black;
+    overflow:scroll;
+    margin-bottom:5px;
+}
+.neuroCoreActionsPanel {
+    background-color:white;
+    padding:0px;
+    height:0px;
+    border:0px solid black;
+    overflow:scroll;
+    margin-bottom:5px;
+}
+.singleAddEditElem {
+    width:250px;
+}
+.simpleElementBlock {
+    padding:0px;
+    display:block;
+    border:0px solid grey;
+    margin:5px;
+    overflow:scroll;
+    height:0px;
+}
+.simpleAddEditContainer {
+    padding:5px;
+    display:inline-block;
+    width:400px;
+    border:1px solid grey;
+    margin:5px;
+}
+.simpleElementInlineBlock200 {
+    padding:5px;
+    display:inline-block;
+    width:200px;
+    border:1px solid grey;
+    margin:5px;
+}
+.simpleElementInlineBlock400 {
+    padding:5px;
+    display:inline-block;
+    width:400px;
+    border:1px solid grey;
+    margin:5px;
+}
+.simpleElementInlineBlock500 {
+    padding:5px;
+    display:inline-block;
+    width:500px;
+    border:1px solid grey;
+    margin:5px;
+}
+.simpleElementInlineBlock600 {
+    padding:5px;
+    display:inline-block;
+    width:600px;
+    border:1px solid grey;
+    margin:5px;
+}
+.ncmpBlock {
+    padding:5px;
+    display:block;
+    border:1px solid grey;
+    margin:5px;
+}
+.ncmpInlineA {
+    padding:5px;
+    display:inline-block;
+    width:200px;
+    border:1px solid grey;
+    margin:5px;
+}
+.ncmp-radio-checkbox-label {
+    margin-left:5px;
+}
+.leftNav1Panel_ConceptGraph {
+    padding-top:50px;
+    display:inline-block;
+    background-color: #929F80;
+    width:100px;
+    height:100%;
+    vertical-align:top;
+    text-align:center;
+    white-space: normal;
+}
+
+.leftNav2Panel_NeuroCore {
+    padding-top:10px;
+    display:inline-block;
+    background-color: #C2D3A9;
+    width:200px;
+    height:100%;
+    vertical-align:top;
+    text-align:center;
+    white-space: normal;
+}
+.leftNav1Button_old {
+    width:90px;
+    display:inline-block;
+    color:black;
+    background-color:#EFEFEF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav1Button {
+    width:90px;
+    height:90px;
+    display:inline-block;
+    color:black;
+    background-color:#EFEFEF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav1Button:active {
+    width:90px;
+    height:90px;
+    display:inline-block;
+    color:black;
+    background-color:blue;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav2Button {
+    width:180px;
+    display:inline-block;
+    color:black;
+    background-color:#EFEFEF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav2BackButton {
+    width:150px;
+    display:inline-block;
+    color:black;
+    background-color:#EFEFEF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav2ButtonGreyed {
+    width:180px;
+    display:inline-block;
+    color:black;
+    background-color:#CFCFCF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.mastheadBarNavButton:hover {
+    background-color:yellow;
+}
+.mastheadNavButton {
+    width:70px;
+    height:70px;
+    text-align:center;
+    display:inline-block;
+    color:black;
+    border:1px solid black;
+    background-color:#EFEFEF;
+    margin:5px 5px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+    vertical-align:middle;
+}
+.leftNav1Panel_Grapevine {
+    padding-top:50px;
+    display:inline-block;
+    background-color:purple;
+    width:100px;
+    height:100%;
+    vertical-align:top;
+    text-align:center;
+    white-space: normal;
+}
+.plexAppSquareButton {
+    width:200px;
+    height:200px;
+    border:1px solid grey;
+    display:inline-block;
+    border-radius:5px;
+    margin:5px;
+    padding:2px;
+    vertical-align:bottom;
+}
+.mainSchemaForConceptGraph_singleConceptContainer {
+    height:30px;
+    border:1px solid black;
+    font-size:10px;
+    position:relative;
+    display:inline-block;
+}
+.mainSchemaForConceptGraph_conceptID {
+    display:inline-block;
+    width:220px;
+    height:100%;
+    border:1px solid grey;
+    text-align:center;
+    font-size:14px;
+}
+.mainSchemaForConceptGraph_dataCell {
+    display:inline-block;
+    width:100px;
+    border:1px solid grey;
+    height:100%;
+    text-align:center;
+    overflow:scroll;
+}
+.mainSchemaForConceptGraph_dataCell:hover {
+    background-color:yellow;
+}
+.singleWordContainer {
+
+}
+
+#cellContentContainer .singleWordContainer:hover {
+    background-color:yellow;
+}
+.neuroCore2SinglePatternContainer {
+    border: 1px solid grey;
+}
+.neuroCore2SinglePatternContainer:hover {
+    background-color:yellow;
+}
+.singleSetContainer:hover {
+    background-color:yellow;
+}
+.singleSpecificInstanceContainer:hover {
+    background-color:yellow;
+}
+.actionUpdatingWord:hover {
+    background-color:yellow;
+}
+.newUniqueIdentifier:hover {
+    background-color:yellow;
+}
+
+.exportTextarea {
+    width:100%;
+    height:400px;
+}
+.exportPageElem1 {
+    background-color:#101010;
+    color:#EFEFEF;
+    padding-left:5px;
+}
+.exportPageButton1 {
+    float:right;
+    margin-right:5px;
+    width:50px;
+    text-align:center;
+}
+.filetypeContainer {
+    border:1px dashed grey;
+    display:none;
+}
+.parentJSONSchemaStatusIndicatorBox {
+    display:inline-block;
+    width:20px;
+    border:1px dashed grey;
+    margin-right:1px;
+    background-color:grey;
+    color:white;
+    text-align:center;
+}
+.compactFilesExplorerPanel {
+    border:1px dashed grey;
+    width:100%;
+    height:800px;
+    padding:5px;
+    margin-top:20px;
+    display:none;
+}
+.compactFilesExplorerPageSingleConceptPanel {
+    border:1px solid blue;
+    height:700px;
+    padding:5px;
+    margin-top:2px;
+}
+.compactFilesExplorerPageSingleEnumerationPanel {
+    border:1px solid blue;
+    height:700px;
+    padding:5px;
+    margin-top:2px;
+}
+.singleConceptInfoBlock {
+    border:1px solid red;
+    height:600px;
+    padding:5px;
+    margin-top:2px;
+    display:none;
+    overflow:scroll;
+}
+.singlePropertyInfoBlock {
+    border:1px solid blue;
+    padding:5px;
+    margin-top:2px;
+}
+.compactFilesExplorerPage_leftField {
+   display:inline-block;
+   width:150px;
+   text-align:right;
+   margin-right:10px;
+}
+.compactFilesExplorerPage_rightField {
+   display:inline-block;
+   width:450px;
+}
+.compactFilesEnumerationPage_rightField {
+   display:inline-block;
+}
+.propertyToggleStatusBox {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    background-color:green;
+    font-size:18px;
+    text-align:center;
+    width:30px;
+    color:white;
+}
+.propertyAddChildBox {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    background-color:orange;
+    font-size:16px;
+    text-align:center;
+    width:25px;
+    color:white;
+    margin-left:10px;
+}
+.makeNewSetButton {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:2px;
+    background-color:white;
+    font-size:14px;
+    text-align:center;
+    width:20px;
+    color:black;
+    margin-left:10px;
+}
+.propertyNumberBox {
+    display:inline-block;
+    width:23px;
+    color:blue;
+}
+.enumerationPanelConceptSelector {
+    display:inline-block;
+    width:200px;
+}
+.enumerationPanelSetSelector {
+    display:inline-block;
+    width:200px;
+}
+.enumerationPanelConceptSelectorContainer {
+    display:inline-block;
+}
+.cgOverviewLeft {
+    display:inline-block;
+    width:200px;
+    text-align:right;
+    margin-right:10px;
+    font-size:18px;
+}
+.cgOverviewRight {
+    display:inline-block;
+    width:400px;
+    height:28px;
+    font-size:18px;
+    padding-left:3px;
+    margin-left:5px;
+}
+.addSomethingButton {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    font-size:18px;
+    text-align:center;
+    width:30px;
+    height:30px;
+    background-color:white;
+}
+.toggleDeleteSomethingButton {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    font-size:16px;
+    text-align:center;
+    width:25px;
+    height:25px;
+    background-color:green;
+}
+.singleConceptContainer {
+  border:2px solid purple;
+  border-radius:3px;
+  font-size:18px;
+  padding:3px;
+  margin:5px;
+  background-color:white;
+}
+.setsContainer {
+}
+.setsContainerWrapper {
+    border:0px solid grey;
+    overflow:scroll;
+    height:0px;
+    background-color:#f2f2f2;
+}
+.propertiesContainer {
+}
+.propertiesContainerWrapper {
+    border:0px solid orange;
+    overflow:scroll;
+    height:0px;
+    background-color:#ffe0b3;
+}
+.specificInstancesContainer {
+}
+.specificInstancesContainerWrapper {
+    border:0px solid orange;
+    overflow:scroll;
+    height:0px;
+    background-color:#adebad;
+}
+.templatingContainerWrapper {
+    border:0px solid purple;
+    overflow:scroll;
+    height:0px;
+    background-color:#adebad;
+}
+.singleSetBox {
+    border:1px solid purple;
+    padding:3px;
+    margin-bottom:2px;
+}
+.singlePropertyBox {
+    border:1px solid orange;
+    padding:3px;
+    margin-bottom:2px;
+}
+.singleChildSubsetBox {
+    border:1px solid grey;
+    margin-left:35px;
+    padding:3px;
+    margin-bottom:2px;
+    background-color:#f2f2f2;
+}
+.singleChildSpecificInstanceBox {
+    border:1px solid grey;
+    margin-left:35px;
+    padding:3px;
+    margin-bottom:2px;
+    background-color:#adebad;
+}
+.singleSpecificInstanceBox {
+    border:1px solid green;
+    padding:3px;
+    margin-bottom:2px;
+}
+.objectNumberContainer {
+    display:inline-block;
+    width:30px;
+    color:blue;
+    text-align:center;
+}
+.conceptNumberContainer {
+    display:inline-block;
+    width:30px;
+    color:purple;
+    text-align:center;
+}
+.propertyNumberContainer {
+    display:inline-block;
+    width:30px;
+    color:orange;
+    text-align:center;
+}
+.setNumberContainer {
+    display:inline-block;
+    width:30px;
+    color:grey;
+    text-align:center;
+}
+.specificInstanceNumberContainer {
+    display:inline-block;
+    width:30px;
+    color:green;
+    text-align:center;
+}
+.subsetNumberContainer {
+    display:inline-block;
+    width:30px;
+    color:grey;
+    text-align:center;
+}
+.childPropertiesContainer {
+    padding-left:25px;
+}
+.childSetsContainer {
+    padding-left:25px;
+}
+.conceptGraphOverviewSelectors {
+    font-size:14px;
+    margin-left:10px;
+    vertical-align:top;
+    margin-top:3px;
+}
+.cgOverviewCheckbox {
+    margin-left:10px;
+    width:25px;
+    height:25px;
+}
+.enumerationsSelectorContainer {
+    display:inline-block;
+}
+.toggleConnectSetToSupersetButton {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    font-size:18px;
+    text-align:center;
+    height:30px;
+    width:30px;
+    margin-left:10px;
+    background-color:green;
+    color:white;
+}
+.toggleConnectSpecificInstanceToSupersetButton {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    font-size:18px;
+    text-align:center;
+    height:30px;
+    width:30px;
+    margin-left:10px;
+    background-color:green;
+    color:white;
+}
+.toggleButtonNumberContainer {
+    display:inline-block;
+    width:35px;
+    text-align:center;
+    color:purple;
+    font-size:18px;
+}
+.eBooksMainPanel {
+    padding:0px 5px 0px 5px;
+    margin:0px;
+    display:inline-block;
+    width: calc(100% - 150px);
+    height:100%;
+    white-space: normal;
+    overflow-x:scroll;
+    background-color:white;
+}
+.eBookMainContainer {
+    background-color:white;
+    width:900px;
+    height:900px;
+    overflow:scroll;
+}
+.eBookSectionContainer {
+    text-align:left;
+    margin-bottom:20px;
+}
+.eBookSectionTitleContainer {
+    margin-bottom:20px;
+}
+.eBookSectionChaptersContainer {
+    border:1px solid #BFBFBF;
+    border-radius:10px;
+    padding:20px;
+}
+.eBookChapterTitleContainer {
+    border-bottom:1px solid #BFBFBF;
+    padding:5px;
+}
+.eBookParagraphContainer {
+    text-align:left;
+}
+.eBookHoverableElements:hover {
+    color:purple;
+}
+.eBookObservationContainer {
+    padding:5px;
+    background-color:#EFEFEF;
+    border:1px solid purple;
+    border-radius:5px;
+    margin-top:10px;
+}
+.eBookDefinitionContainer {
+    padding:5px;
+    background-color:#EFEFEF;
+    border:1px solid blue;
+    border-radius:5px;
+    margin-top:10px;
+}
+.eBookParagraphContainer {
+    padding:5px;
+    margin-top:10px;
+}
+.eBookHypothesisContainer {
+    padding:5px;
+    border:2px solid purple;
+    background-color:#0F0F0F;
+    color:#DFDFDF;
+    margin-top:10px;
+    font-size:18px;
+    border-radius:5px;
+}
+.eBookBoldSentence {
+    font-weight:bold;
+}
+.eBookBold2Sentence {
+    font-weight:bold;
+    color:blue;
+}
+.independentPropertyForTemplatingButton {
+    border:2px solid purple;
+    border-radius:3px;
+    text-align:center;
+    display:inline-block;
+    background-color:#EFEFEF;
+    width:30px;
+}
+.dependentPropertyForTemplatingButton {
+    border:2px dashed purple;
+    border-radius:3px;
+    text-align:center;
+    display:inline-block;
+    background-color:#EFEFEF;
+    width:30px;
+}
+.toggleChildrenOfTypesButton {
+    border:1px solid orange;
+    margin-right:5px;
+    text-align:center;
+    width:25px;
+    height:25px;
+    display:inline-block;
+}
+.toggleChildrenOfTypesButton:hover {
+    background-color:yellow;
+}
+.typeNameContainer {
+    display:inline-block;
+}
+.typeNameContainer:hover {
+    background-color:yellow;
+}
+.childrenNodesContainer {
+    margin-left:30px;
+}

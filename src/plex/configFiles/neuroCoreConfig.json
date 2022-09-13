@@ -1,0 +1,8 @@
+{
+    "defaultConceptGraph": "myConceptGraph_test",
+    "basicNeuroCoreOperations": {
+        "status": "off",
+        "patterns": "all",
+        "actions": "firstActionOnly"
+    }
+}

@@ -1,0 +1,47 @@
+{
+
+    "keywords": {
+        "any": [
+           "type", "enum", "const"
+        ],
+        "numeric":[
+            "minimum",
+            "maximum",
+            "exclusiveMinimum",
+            "exclusiveMaximum",
+            "multipleOf"
+        ],
+        "string":[
+            "maxLength",
+            "minLength",
+            "pattern"
+        ],
+        "array":[
+            "items",
+            "maxItems",
+            "minItems",
+            "uniqueItems",
+            "maxContains",
+            "minContains"
+        ],
+        "object":[
+            "properties",
+            "required",
+            "dependentRequired",
+            "dependencies",
+            "maxProperties",
+            "minProperties"
+        ],
+        "conceptGraph":[
+            "slug",
+            "name",
+            "title",
+            "description"
+        ]
+    },
+    "values":{
+        "type": [
+            "string", "object", "integer", "number", "array", "boolean", "null"
+        ],
+    }
+}

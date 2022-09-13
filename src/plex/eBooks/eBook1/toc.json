@@ -1,0 +1,220 @@
+{
+    "sections": [
+        {
+            "title": "tl/dr",
+            "chapters": [
+                {
+                    "title": "A Brief Glossary",
+                    "chapterReference": "cap1"
+                },
+                {
+                    "title": "The Brain in One Paragraph",
+                    "chapterReference": "cap2"
+                },
+                {
+                    "title": "The Brain in One Page",
+                    "chapterReference": "cap3"
+                },
+                {
+                    "title": "The Brain in One Short Essay",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "Introduction",
+            "chapters": [
+                {
+                    "title": "Covid-19, Social Media, and Observations Providing Motivation for this Work",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Observations of Human Behaviour",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Conventional Wisdom",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "The Proposed Model",
+            "chapters": [
+                {
+                    "title": "The Human Condition",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Garden of Eden",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "A State of Grace / the Fall from Grace",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Is Everyone batshit crazy? ... what about ME???",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Hypothesis",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Proof of Work",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Narrative",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Cognitive Blind Spot",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Evolution of the Cognitive Blind Spot",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Narrative Fiction",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Narrative Fiction as seen from the Outside",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Narrative Fiction as seen from the Inside",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Anatomy of the Virtue Signal",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Calibration of toxicity",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Equivocation: the Foundation of All Logical Fallacies",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Unpalatability",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Putting it All Together",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Postmodernism",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Is all of this really necessary?",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Micro narratives",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "Neuroscience",
+            "chapters": [
+                {
+                    "title": "The Thousand Brains Hypothesis",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Two Types of Truth",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Two Cognitive Modes",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Objective / Scientific Cognitive Mode",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Social / Tribal Cognitive Mode",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "The Concept Graph",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Psychiatric Illness",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "Biblical Interpretation",
+            "chapters": [
+                {
+                    "title": "Mankind's Search for Meaning",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "Politics",
+            "chapters": [
+                {
+                    "title": "Left Wing vs Right Wing: Two Flavors of Unpalatability?",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Genocide, Extremism, and the Narrative Fiction",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "How to Prevent Global Tragedy",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "What To Do and What Not To Do?",
+            "chapters": [
+                {
+                    "title": "Why study this in the first place?",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Confrontations",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Narratives: a better alternative?",
+                    "chapterReference": "cap0"
+                }
+            ]
+        },
+        {
+            "title": "Appendix",
+            "chapters": [
+                {
+                    "title": "Glossary",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Acknowledgements",
+                    "chapterReference": "cap0"
+                },
+                {
+                    "title": "Footnotes",
+                    "chapterReference": "cap0"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,94 @@
+{
+	"type": "object",
+	"required": [
+		"userData"
+	],
+	"properties": {
+		"userData": {
+			"type": "object",
+      "title": "User Data",
+			"required": ["username"],
+			"properties": {
+				"username": {
+					"type": "string",
+					"title": "Username",
+					"enum": [
+						"Alice",
+						"Bob",
+            "Charlie"
+					]
+				},
+        "address": {
+          "type": "string",
+          "title": "Address"
+        },
+        "email": {
+          "type": "string",
+          "title": "Email"
+        }
+			},
+			"dependencies": {
+				"username": {
+					"oneOf": [{
+							"properties": {
+  								"username": {
+  									"enum": [
+  										"Alice"
+                    ]
+  								},
+                  "address": {
+                    "type": "string",
+                    "default": "123 Acme Street",
+                    "enum": [ "123 Acme Street" ]
+                  },
+                  "email": {
+                    "default": "Alice@mydomain.com",
+                    "enum": ["Alice@mydomain.com"]
+                  }
+							},
+              "required": ["address"]
+						},
+						{
+							"properties": {
+								"username": {
+									"enum": [
+										"Bob"
+									]
+								},
+								"address": {
+                  "type": "string",
+                  "default": "456 Market Street",
+                  "enum": ["456 Market Street"]
+								},
+                "email": {
+                  "default": "Bob@mydomain.com",
+                  "enum": ["Bob@mydomain.com"]
+                }
+							},
+              "required": ["address"]
+						},
+            {
+              "properties": {
+                "username": {
+                  "enum": [
+                    "Charlie"
+                  ]
+                },
+                "address": {
+                  "type": "string",
+                  "default": "789 Center Street",
+                  "enum": ["789 Center Street"]
+                },
+                "email": {
+                  "default": "Charlie@mydomain.com",
+                  "enum": ["Charlie@mydomain.com"]
+                }
+              },
+              "required": ["address"]
+            }
+					]
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,320 @@
+{
+    "hasKey": {
+        "description": "proto-properties with a single key and nothing else; good for storing JSON schema reserved keywords",
+        "mainPropertySet": "properties_hasKey",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "x-pos": -8,
+        "y-pos": 1
+    },
+    "hasKey_standardStarter": {
+        "description": "proto-properties, basic starter; default of common keys to be used by most concepts",
+        "mainPropertySet": "properties_hasKey",
+        "subsetOf": "hasKey",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": false
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "x-pos": -7,
+        "y-pos": 2
+    },
+    "singleProp_type": {
+        "description": "single prop, with key=type, value=string,integer,object,number,array, etc",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": 1,
+        "properties": 0,
+        "x-pos": -5,
+        "y-pos": 2
+    },
+    "singleProp_misc": {
+        "description": "single prop (a single key and a single value); key not equal to type; good for storing JSON schema reserved values",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": 1,
+        "properties": 0,
+        "x-pos": -4,
+        "y-pos": 2
+    },
+    "string": {
+        "description": "type: string ",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "JSONSchema": "JSONSchemaForProperty_string",
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_string"
+        },
+        "props": 1,
+        "type": "string",
+        "properties": 1,
+        "x-pos": -3,
+        "y-pos": 1
+    },
+    "integer": {
+        "description": "type: integer",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_integer"
+        },
+        "props": "multiple",
+        "type": "integer",
+        "properties": 0,
+        "x-pos": -2,
+        "y-pos": 1
+    },
+    "number": {
+        "description": "type: number",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_number"
+        },
+        "props": "multiple",
+        "type": "number",
+        "properties": 0,
+        "x-pos": -1,
+        "y-pos": 1
+    },
+    "boolean": {
+        "description": "type: boolean",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_boolean"
+        },
+        "props": "multiple",
+        "type": "integer",
+        "properties": 0,
+        "x-pos": 0,
+        "y-pos": 1
+    },
+    "null": {
+        "description": "type: null",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_null"
+        },
+        "props": "multiple",
+        "type": "integer",
+        "properties": 0,
+        "x-pos": 1,
+        "y-pos": 1
+    },
+    "array": {
+        "description": "type: object; multiple props; multiple properties; able to be primaryProperty for a JSONSchema",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_array"
+        },
+        "props": "multiple",
+        "type": "array",
+        "properties": "multiple",
+        "x-pos": 2,
+        "y-pos": 1
+    },
+    "object": {
+        "description": "superset of type object",
+        "mainPropertySet": "properties_",
+        "subsetOf": "mainPropertiesSet",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "JSONSchema": "JSONSchemaForProperty_object",
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": "singleProp_type_object"
+        },
+        "props": "multiple",
+        "type": "object",
+        "properties": "any",
+        "x-pos": 5,
+        "y-pos": 1
+    },
+    "string_extraProps": {
+        "description": "type: string plus at least one other prop; usually made as part of process of creation of object",
+        "mainPropertySet": "properties_",
+        "subsetOf": "string",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": "multiple",
+        "type": "string",
+        "properties": 0,
+        "x-pos": -3,
+        "y-pos": 2
+    },
+    "object_0ExtraProps": {
+        "description": "type: object; one or more properties, each of which is type1",
+        "mainPropertySet": "properties_",
+        "subsetOf": "object",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": 0,
+        "type": "object",
+        "properties": "one or more",
+        "x-pos": 3,
+        "y-pos": 2
+    },
+    "object_extraProps": {
+        "description": "type: object; one or more properties, each of which is type1",
+        "mainPropertySet": "properties_",
+        "subsetOf": "object",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": 0,
+        "type": "object",
+        "properties": "one or more",
+        "x-pos": 4,
+        "y-pos": 2
+    },
+    "object_1property": {
+        "description": "type: object; single property ",
+        "mainPropertySet": "properties_",
+        "subsetOf": "object",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": "multiple",
+        "type": "object",
+        "properties": 1,
+        "x-pos": 5,
+        "y-pos": 2
+    },
+    "object_multiProperties": {
+        "description": "type: object; single property ",
+        "mainPropertySet": "properties_",
+        "subsetOf": "object",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": "multiple",
+        "type": "object",
+        "properties": 1,
+        "x-pos": 6,
+        "y-pos": 2
+    },
+    "object_dependencies": {
+        "description": "type: object; has dependencies, which means it takes input from enumeration",
+        "mainPropertySet": "properties_",
+        "subsetOf": "object",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": "multiple",
+        "type": "object",
+        "properties": 1,
+        "x-pos": 7,
+        "y-pos": 2
+    },
+    "primaryProperty": {
+        "description": "type: object; multiple props; multiple properties; able to be primaryProperty for a JSONSchema",
+        "mainPropertySet": "properties_",
+        "subsetOf": "object",
+        "applyTo": {
+            "schemaForProperty": true,
+            "propertySchemas": true
+        },
+        "propagateProperty": {
+            "fromPropertyTreeSchema": true,
+            "local": null
+        },
+        "props": "multiple",
+        "type": "object",
+        "properties": "multiple",
+        "x-pos": 8,
+        "y-pos": 2
+    }
+} 

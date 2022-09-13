@@ -1,0 +1,340 @@
+{
+    "wordData": {
+        "slug": "JSONSchemaFor_animal",
+        "title": "JSONSchema for animal",
+        "name": "JSONSchema for animal",
+        "description": "",
+        "wordType": "JSONSchema",
+        "wordTypes": [
+            "word",
+            "JSONSchema"
+        ],
+        "governingConcepts": [
+            "conceptFor_animal"
+        ]
+    },
+    "JSONSchemaData": {
+        "metaData": {
+            "governingConcept": {
+                "slug": ""
+            },
+            "primaryProperty": ""
+        },
+        "requiredDefinitions": [],
+        "primaryProperty": "primaryPropertyFor_animal"
+    },
+    "$id": "http://ipfs.ontheblockchain.com/ipns/tobedetermined",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "definitions": {
+        "dogData": {
+            "type": "object",
+            "name": "dog data",
+            "title": "dog Data",
+            "description": "data about this dog",
+            "types": [
+                "primaryProperty"
+            ],
+            "require": true,
+            "required": [],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "name": "name",
+                    "title": "Name",
+                    "description": "The name for this dog"
+                },
+                "title": {
+                    "type": "string",
+                    "name": "title",
+                    "title": "Title",
+                    "description": "The title for this dog"
+                },
+                "slug": {
+                    "type": "string",
+                    "name": "slug",
+                    "title": "Slug",
+                    "description": "The slug for this dog"
+                },
+                "description": {
+                    "type": "string",
+                    "name": "description",
+                    "title": "Description",
+                    "description": "The description for this dog"
+                }
+            }
+        },
+        "catData": {
+            "type": "object",
+            "name": "cat data",
+            "title": "cat Data",
+            "description": "data about this cat",
+            "types": [
+                "primaryProperty"
+            ],
+            "require": true,
+            "required": [],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "name": "name",
+                    "title": "Name",
+                    "description": "The name for this cat"
+                },
+                "title": {
+                    "type": "string",
+                    "name": "title",
+                    "title": "Title",
+                    "description": "The title for this cat"
+                },
+                "slug": {
+                    "type": "string",
+                    "name": "slug",
+                    "title": "Slug",
+                    "description": "The slug for this cat"
+                },
+                "description": {
+                    "type": "string",
+                    "name": "description",
+                    "title": "Description",
+                    "description": "The description for this cat"
+                }
+            }
+        },
+        "cowData": {
+            "type": "object",
+            "name": "cow data",
+            "title": "cow Data",
+            "description": "data about this cow",
+            "types": [
+                "primaryProperty"
+            ],
+            "require": true,
+            "required": [],
+            "unique": [],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "name": "name",
+                    "title": "Name",
+                    "description": "The name for this cow"
+                },
+                "title": {
+                    "type": "string",
+                    "name": "title",
+                    "title": "Title",
+                    "description": "The title for this cow"
+                },
+                "slug": {
+                    "type": "string",
+                    "name": "slug",
+                    "title": "Slug",
+                    "description": "The slug for this cow"
+                },
+                "description": {
+                    "type": "string",
+                    "name": "description",
+                    "title": "Description",
+                    "description": "The description for this cow"
+                }
+            }
+        },
+        "pigData": {
+            "type": "object",
+            "name": "pig data",
+            "title": "pig Data",
+            "description": "data about this pig",
+            "types": [
+                "primaryProperty"
+            ],
+            "require": true,
+            "required": [],
+            "unique": [],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "name": "name",
+                    "title": "Name",
+                    "description": "The name for this pig"
+                },
+                "title": {
+                    "type": "string",
+                    "name": "title",
+                    "title": "Title",
+                    "description": "The title for this pig"
+                },
+                "slug": {
+                    "type": "string",
+                    "name": "slug",
+                    "title": "Slug",
+                    "description": "The slug for this pig"
+                },
+                "description": {
+                    "type": "string",
+                    "name": "description",
+                    "title": "Description",
+                    "description": "The description for this pig"
+                }
+            }
+        }
+    },
+    "type": "object",
+    "required": [
+        "animalData"
+    ], 
+    "dependencies": {
+        "animalData": {
+            "oneOf": [
+                {
+                    "required": ["dogData"],
+                    "properties": {
+                        "dogData": {
+                            "$ref": "#/definitions/dogData"
+                        },
+                        "animalData": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "Dog"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "required": ["catData"],
+                    "properties": {
+                        "catData": {
+                            "$ref": "#/definitions/catData"
+                        },
+                        "animalData": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "Cat"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "required": ["cowData"],
+                    "properties": {
+                        "cowData": {
+                            "$ref": "#/definitions/cowData"
+                        },
+                        "animalData": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "Cow"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "required": ["pigData"],
+                    "properties": {
+                        "pigData": {
+                            "$ref": "#/definitions/pigData"
+                        },
+                        "animalData": {
+                            "properties": {
+                                "type": {
+                                    "enum": [
+                                        "Pig"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "properties": {
+        "animalData": {
+            "type": "object",
+            "name": "animal data",
+            "title": "animal Data",
+            "description": "Data about this Animal",
+            "types": [
+                "primaryProperty"
+            ],
+            "require": true,
+            "required": ["name","title","description"],
+            "hidden": ["slug"],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "name": "name",
+                    "title": "Name",
+                    "description": "The name for this animal"
+                },
+                "title": {
+                    "type": "string",
+                    "name": "title",
+                    "title": "Title",
+                    "description": "The title for this animal"
+                },
+                "slug": {
+                    "type": "string",
+                    "name": "slug",
+                    "title": "Slug",
+                    "description": "The slug for this animal",
+                    "hidden": true
+                },
+                "description": {
+                    "type": "string",
+                    "name": "description",
+                    "title": "Description",
+                    "description": "The description for this animal"
+                },
+                "type": {
+                    "type": "string",
+                    "name": "type",
+                    "title": "Type",
+                    "description": "What type (species) of animal is this?",
+                    "enum": [
+                        "Dog",
+                        "Cat",
+                        "Cow",
+                        "Pig"
+                    ]
+                },
+                "tricks": {
+                    "type": "array",
+                    "name": "tricks",
+                    "title": "Tricks",
+                    "description": "What tricks (if any) can this animal perform?",
+                    "items": {
+                      "enum": [
+                          "roll over",
+                          "play dead",
+                          "shake",
+                          "sit"
+                      ]
+                    }
+                }
+            }
+        }
+    },
+    "globalDynamicData": {
+        "myDictionaries": [],
+        "myConceptGraphs": [
+            "myConceptGraph_plex"
+        ],
+        "specificInstanceOf": [],
+        "valenceData": {
+            "valenceL1": [],
+            "parentJSONSchemaSequence": []
+        }
+    },
+    "metaData": {
+        "ipns": "k2k4r8pf14zf4458bphty4hl8zm6lcbe4vgwbbzxe8yb3axyfjq6jrxc",
+        "keyname": "plexWord_JSONSchema_1652601435706_662"
+    }
+}

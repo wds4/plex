@@ -1,0 +1,259 @@
+
+.simpleBoxContainer {
+    border:1px solid black;
+    border-radius:3px;
+    display:inline-block;
+    margin:2px;
+    padding:2px;
+    vertical-align:top;
+}
+.basicContainer_small {
+    border:1px solid black;
+    border-radius:3px;
+    margin:2px;
+    padding:2px;
+    font-size:12px;
+}
+.basicContainer2_small {
+    border:1px solid black;
+    border-radius:3px;
+    margin:2px;
+    padding:2px;
+    font-size:12px;
+    background-color:white;
+}
+.leftCol_enum {
+    display:inline-block;
+    width:150px;
+}
+.rightCol_enum {
+    display:inline-block;
+}
+.leftCol_cpd {
+    display:inline-block;
+    width:150px;
+    font-size:12px;
+    padding:2px;
+}
+.midCol_cpd {
+    display:none;
+    width:50px;
+    font-size:12px;
+    padding:2px;
+}
+.rightCol_cpd {
+    display:inline-block;
+    font-size:12px;
+    padding:2px;
+}
+.leftCol_mini_cpd {
+    display:inline-block;
+    width:75px;
+    padding:2px;
+}
+.rightCol_mini_cpd {
+    display:inline-block;
+    padding:2px;
+}
+.leftCol_ppt1is {
+    display:inline-block;
+    width:100px;
+}
+.rightCol_ppt1is {
+    display:inline-block;
+}
+.type1PropContainer_ppt1is {
+    border:5px solid white;
+    border-radius:5px;
+    background-color:white;
+    margin:1px;
+    padding:2px;
+}
+.type1PropContainer_ppt1is:hover {
+    border:5px solid red;
+    background-color:yellow;
+}
+.keynameField {
+    width:300px;
+}
+.tabButtonSelected {
+    font-size:12px;
+    display:inline-block;
+    border:1px solid black;
+    border-radius:5px 5px 0px 0px;
+    padding:4px;
+    margin:2px 2px 0px 0px;
+    background-color:white;
+    color:black;
+}
+.tabButtonDeselected {
+    font-size:12px;
+    display:inline-block;
+    border:1px solid grey;
+    border-radius:5px 5px 0px 0px;
+    padding:4px;
+    margin:2px 2px 0px 0px;
+    background-color:#DFDFDF;
+    color:black;
+}
+.toggleButtonOff {
+    font-size:12px;
+    display:inline-block;
+    border:2px solid grey;
+    border-radius:3px;
+    padding:4px;
+    margin:4px;
+    background-color:#EFEFEF;
+    color:grey;
+}
+.toggleButtonOff:hover {
+    background-color:yellow;
+}
+.singleSetWrapper {
+    background-color:yellow;
+    border:1px solid blue;
+    padding:5px;
+    margin-bottom:5px;
+    position:relative;
+    display:inline-block;
+}
+.singleSpecificInstanceWrapper {
+    background-color:green;
+    border:1px solid blue;
+    padding:5px;
+    margin-bottom:5px;
+    position:relative;
+    display:inline-block;
+}
+.addSomethingContainer {
+    border:1px solid blue;
+    padding:5px;
+}
+.transferControlsContainer {
+    border:1px solid black;
+    border-radius:5px;
+    padding:5px;
+    margin:10px 0px 10px 0px;
+    display:inline-block;
+    vertical-align:top;
+}
+.newWordContainer {
+    border:1px solid black;
+    border-radius:5px;
+    padding:5px;
+    margin:5px;
+    display:inline-block;
+    background-color:orange;
+    position:relative;
+}
+.newWordTextarea {
+    width:700px;
+    height:200px;
+}
+.floatRightBox {
+    position:absolute;
+    right:8px;
+    top:2px;
+}
+.newItemContainer {
+    border:1px solid blue;
+    padding:5px;
+    position:relative;
+    width:80%;
+}
+.smallLeftCol_ipfsInfoBox {
+    display:inline-block;
+    width:200px;
+    padding-right:10px;
+    text-align:right;
+    color:purple;
+}
+.smallFontLeftCol {
+    display:inline-block;
+    font-size:10px;
+    width:170px;
+    padding-right:10px;
+    text-align:right;
+}
+.smallFontSecondCol {
+    display:inline-block;
+    font-size:10px;
+}
+.singleConceptContainer {
+    position:relative;
+    border:1px solid black;
+    border-radius:5px;
+    padding:5px;
+    margin:0px 5px 5px 5px;
+}
+.standardContainer {
+   width:100%;
+   height:150px;
+}
+.addNewConceptContainer {
+   width:100%;
+   height:600px;
+   overflow:scroll;
+}
+.tableInfoContainer {
+   width:90%;
+   padding:5px;
+   border:1px solid black;
+   border-radius:5px;
+   margin:5px;
+}
+#network_buildConceptPage {
+    width:95%;
+    height:750px;
+    border:1px solid black;
+    display:inline-block;
+}
+.basicContainer_bcf {
+    border:1px solid black;
+    padding:5px;
+    margin-bottom:5px;
+}
+.activeConceptContainer_bcf {
+    border:1px solid black;
+    padding:5px;
+    margin-bottom:5px;
+}
+.textField_bfc {
+    width:500px;
+    height:20px;
+}
+.leftCol_bfc {
+    display:inline-block;
+    width:200px;
+}
+.leftCol_activeTables {
+    display:inline-block;
+    width:300px;
+}
+#network_singleConcept {
+    width:600px;
+    height:600px;
+    border:1px solid black;
+    display:inline-block;
+}
+.JSONSchemaContainer {
+    background-color:"#FFGGFF";
+}
+.fileInnerContainer {
+    display:inline-block;
+    height:300px;
+    width:300px;
+    padding:5px;
+    background-color:white;
+}
+.fileOuterContainer {
+    display:inline-block;
+    width:320px;
+    padding:5px;
+    background-color:orange;
+}
+.addPropertyContainer {
+    display:inline-block;
+    width:400px;
+    padding:5px;
+}

@@ -1,0 +1,82 @@
+{
+    "type": "object",
+    "title": "top level",
+    "required": [
+        "organismData",
+        "name"
+    ],
+    "definitions": {
+        "postData": {
+            "title": "Post Data",
+            "type": "string"
+        },
+        "userData": {
+            "title": "User Data",
+            "type": "string"
+        }
+    },
+    "properties": {
+        "name": {
+            "type": "string",
+            "title": "name"
+        },
+        "organismData": {
+            "type": "object",
+            "title": "organismData",
+            "required": [
+                "entityType",
+                "name"
+            ],
+            "properties": {
+                "entityType": {
+                    "type": "string",
+                    "enum": [
+                        "user",
+                        "post"
+                    ],
+"default": "user"
+                },
+                "name": {
+                    "type": "string",
+                    "title": "name"
+                }
+            },
+            "dependencies": {
+                "entityType": {
+                    "oneOf": [
+                        {
+                            "properties": {
+                                "entityType": {
+                                    "enum": [
+                                        "user"
+                                    ]
+                                },
+                                "userData": {
+                    "$ref": "#/definitions/userData"
+                                }
+                            },
+                            "required": [
+                                "userData"
+                            ]
+                        },
+                        {
+                            "properties": {
+                                "entityType": {
+                                    "enum": [
+                                        "post"
+                                    ]
+                                },
+                                "postData": {
+                    "$ref": "#/definitions/postData"
+                                }
+                            },
+                            "required": [
+                                "postData"
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
