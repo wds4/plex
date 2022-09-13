@@ -1,0 +1,84 @@
+{
+  "name": "plex",
+  "version": "0.1.0",
+  "description": "Plex, Pretty Good Apps (React): Concent Graph and Grapevine",
+  "private": true,
+  "author": "wds4",
+  "license": "GNU AGPLv3",
+  "repository": "https://github.com/wds4/plex",
+  "keywords": [
+    "Electron",
+    "PrettyGoodApps",
+    "Grapevine",
+    "ConceptGraph",
+    "demo"
+  ],
+  "main": "public/electron.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
+    "electron": "wait-on tcp:3000 && electron .",
+    "ebuild": "npm run build && node_modules/.bin/build",
+    "prepare": "husky install"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@rjsf/core": "^5.0.0-beta.2",
+    "@rjsf/utils": "^5.0.0-beta.2",
+    "@rjsf/validator-ajv6": "^5.0.0-beta.2",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "datatables.net-bs": "^1.10.19",
+    "datatables.net-dt": "^1.10.19",
+    "electron-builder": "^22.6.0",
+    "react": "^17.0.2",
+    "react-data-table-component": "^7.0.0-rc2",
+    "react-dom": "^17.0.2",
+    "react-jsonschema-form": "^1.8.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^5.0.1",
+    "vis-data": "^7.1.2",
+    "vis-network": "^9.0.4"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "datatables.net": "^1.10.19",
+    "datatables.net-buttons": "^1.5.4",
+    "datatables.net-dt": "^1.10.19",
+    "electron": "^20.1.1",
+    "electron-is-dev": "^2.0.0",
+    "fs-extra": "^10.0.0",
+    "go-ipfs": "^0.8.0",
+    "ipfs": "^0.55.1",
+    "ipfs-core": "^0.6.1",
+    "ipfs-http-client": "^49.0.4",
+    "ipfs-pubsub-room": "^2.0.1",
+    "ipfs-utils": "8.0.0",
+    "ipfsd-ctl": "^8.0.2",
+    "is-ipfs": "^5.0.0",
+    "jquery": "^3.6.0",
+    "sqlite3": "^5.0.11",
+    "wait-on": "^6.0.0"
+  }
+}
