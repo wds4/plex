@@ -1,0 +1,169 @@
+
+html, body, body>div, #app, #app>div {
+    color:black;
+    box-sizing: border-box;
+    height:100%;
+    width:100%;
+}
+
+.standardContainer {
+    display:inline-block;
+    border:1px solid black;
+    padding:5px;
+}
+.standardTextarea {
+    width:300px;
+    height:300px;
+}
+
+html {
+    color:black;
+    box-sizing: border-box;
+    height:100%;
+    width:100%;
+}
+div {
+    box-sizing: border-box;
+    vertical-align:top;
+}
+div.h1 {
+    font-size:36px;
+    text-align:center;
+}
+div.h2 {
+    font-size:28px;
+    text-align:center;
+}
+div.h3 {
+    font-size:22px;
+    text-align:center;
+}
+div.h4 {
+    font-size:18px;
+    text-align:center;
+}
+.mainBody_wrapper {
+    padding:0px;
+    margin:0px;
+    height:100%;
+    width:100%;
+}
+.mainBody {
+    padding:0px;
+    margin:0px;
+    height:100%;
+    width:100%;
+    white-space: nowrap;
+}
+.navButtonPanel {
+    padding-top:50px;
+    display:inline-block;
+    background-color:purple;
+    width:200px;
+    height:100%;
+    vertical-align:top;
+    text-align:center;
+    white-space: normal;
+}
+.mainPanel {
+    padding:0px 5px 0px 5px;
+    margin:0px;
+    display:inline-block;
+    width: calc(100% - 150px);
+    height:100%;
+    background-color:#EFEFEF;
+    white-space: normal;
+    overflow-x:scroll;
+}
+.navButton {
+    width:180px;
+    display:inline-block;
+    color:black;
+    background-color:#EFEFEF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.active {
+    background-color: green;
+}
+.navButton:hover {
+    background-color: yellow;
+}
+.smallLeftCol {
+    display:inline-block;
+    width:150px;
+}
+.doSomethingButton {
+    font-size:12px;
+    display:inline-block;
+    border:1px solid black;
+    border-radius:3px;
+    padding:4px;
+    margin:4px;
+    background-color:#DFDFDF;
+    color:black;
+}
+.doSomethingButton:hover {
+    background-color:yellow;
+}
+.smallDoSomethingButton {
+    display:inline-block;
+    border:1px solid black;
+    border-radius:2px;
+    padding:2px;
+    margin:2px;
+    background-color:#DFDFDF;
+    color:black;
+}
+.swarmPeerVerification {
+    display:inline-block;
+    width:40px;
+}
+.pubsubLog {
+    padding:5px;
+    border:1px solid brown;
+    background-color:white;
+    border-radius:3px;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+}
+.landingPageSubBanner {
+    border-top:2px solid purple;
+    border-bottom:2px solid purple;
+    font-size:12px;
+    text-align:center;
+    color:grey;
+}
+.landingPageTopLinks {
+    display:inline-block;
+    margin:0px 30px 0px 30px;
+}
+.singlePageMutableElem {
+    overflow-x:scroll;
+    border:1px solid black;
+    width: calc(100% - 150px);
+    height: calc(100% - 300px);
+    padding:5px;
+}
+.techPageDisplay {
+    border:1px solid black;
+    border-radius:5px;
+    background-color:white;
+    padding:5px;
+    width:90%;
+    height:400px;
+    overflow-x:scroll;
+    text-align:left;
+}
+.wrapForPre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+}
