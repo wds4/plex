@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/static/css/main.26b5f7b4.chunk.css",
+    "main.js": "/static/js/main.b14cb32a.chunk.js",
+    "main.js.map": "/static/js/main.b14cb32a.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.993c5441.js",
+    "runtime-main.js.map": "/static/js/runtime-main.993c5441.js.map",
+    "static/js/2.27412f35.chunk.js": "/static/js/2.27412f35.chunk.js",
+    "static/js/2.27412f35.chunk.js.map": "/static/js/2.27412f35.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.26b5f7b4.chunk.css.map": "/static/css/main.26b5f7b4.chunk.css.map",
+    "static/js/2.27412f35.chunk.js.LICENSE.txt": "/static/js/2.27412f35.chunk.js.LICENSE.txt",
+    "static/media/customDataTables.css": "/static/media/plus.89d3b46c.png",
+    "static/media/neuroCoreConfigReadme.af2a8fc0.txt": "/static/media/neuroCoreConfigReadme.af2a8fc0.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.993c5441.js",
+    "static/js/2.27412f35.chunk.js",
+    "static/css/main.26b5f7b4.chunk.css",
+    "static/js/main.b14cb32a.chunk.js"
+  ]
+}
