@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from "react-router-dom";
-import ConceptGraphMasthead from '../../mastheads/conceptGraphMasthead.js';
+import Masthead from '../../mastheads/eBooksMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/eBooks_leftNav1';
 import oTableOfContents from './toc';
 import { cap0 } from './chapters/cap0';

@@ -9,6 +9,13 @@ export default class LeftNavbar1_Grapevine extends React.PureComponent {
             <NavLink className="leftNav1Button" exact activeClassName="active" to='/PlexHome'>Plex Home</NavLink>
             <br/><br/>
             <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineHome'>Grapevine Home</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineContactsMainPage'>Contacts</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineVisualizationMainPage'>Grapevine: Visualization</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineChatroomMainPage'>chatroom</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineRatingsMainPage'>Ratings</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineScoresMainPage'>Composite Scores</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineContextMainPage'>Context tree</NavLink>
+            <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineInfluenceAndTrustScoresMainPage'>Influence & Trust Scores</NavLink>
         </div>
 
       </>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Link } from "react-router-dom";
-import ConceptGraphMasthead from '../mastheads/conceptGraphMasthead.js';
+import Masthead from '../mastheads/eBooksMasthead.js';
 import LeftNavbar1 from '../navbars/leftNavbar1/eBooks_leftNav1';
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
@@ -21,7 +21,7 @@ export default class EBooksHome extends React.Component {
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">eBooks Home</div>
 
                     </div>

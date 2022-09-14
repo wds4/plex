@@ -295,7 +295,7 @@
     color:grey;
 }
 .leftNav1Panel_Plex {
-    padding-top:50px;
+    padding-top:5px;
     display:inline-block;
     background-color: #616A6B;
     width:100px;
@@ -305,7 +305,7 @@
     white-space: normal;
 }
 .leftNav1Panel_ConceptGraph {
-    padding-top:50px;
+    padding-top:5px;
     display:inline-block;
     background-color: #929F80;
     width:100px;
@@ -437,7 +437,7 @@
     vertical-align:middle;
 }
 .leftNav1Panel_Grapevine {
-    padding-top:50px;
+    padding-top:5px;
     display:inline-block;
     background-color:purple;
     width:100px;

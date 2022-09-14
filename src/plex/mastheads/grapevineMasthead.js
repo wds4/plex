@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 
 const jQuery = require("jquery");
 
-export default class ConceptGraphMasthead extends React.Component {
+export default class GrapevineMasthead extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

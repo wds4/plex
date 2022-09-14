@@ -32,8 +32,8 @@ export default class PlexAppsNavPage extends React.Component {
                                     <center>Concept Graph</center>
                                 </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedProofOfPersonhoodHome'>
-                                    <center>decentralized Proof of Personhood</center>
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedOntologiesHome'>
+                                    <center>Ontologies</center>
                                 </NavLink>
 
                                 <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/GrapevineHome' >
@@ -41,6 +41,14 @@ export default class PlexAppsNavPage extends React.Component {
                                 </NavLink>
 
                                 <br/>
+
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedProofOfPersonhoodHome'>
+                                    <center>decentralized Proof of Personhood</center>
+                                </NavLink>
+
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedQuestionsAndAnswersHome'>
+                                    <center>Ask Plex: decentralized Questions & Answers</center>
+                                </NavLink>
 
                                 <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedSearchHome'>
                                     <center>decentralized Search</center>

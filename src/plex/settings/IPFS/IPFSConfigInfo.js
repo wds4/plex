@@ -14,9 +14,9 @@ export default class IPFSGeneralInfo extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-
-        var ipfsStatusDataHTML = await IpfsFunctions.ipfsShowStatusData();
-        jQuery("#ipfsStatusDataContainer").html(ipfsStatusDataHTML)
+        
+        var ipfsShowConfigHTML = await IpfsFunctions.ipfsShowConfig_main();
+        jQuery("#ipfsShowConfigContainer").html(ipfsShowConfigHTML)
     }
     render() {
         return (
@@ -26,9 +26,8 @@ export default class IPFSGeneralInfo extends React.Component {
                     <LeftNavbar2 />
                     <div className="mainPanel" >
                         <Masthead />
-                        <div className="h2">IPFS General Info</div>
-                        General status:<br/>
-                        <div id="ipfsStatusDataContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsStatusDataContainer</div>
+                        <div className="h2">IPFS Config File</div>
+                        <pre id="ipfsShowConfigContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsShowConfigContainer</pre>
                     </div>
                 </fieldset>
             </>

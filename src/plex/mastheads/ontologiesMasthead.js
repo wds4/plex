@@ -5,7 +5,7 @@ import * as MiscFunctions from '../functions/miscFunctions.js';
 
 const jQuery = require("jquery");
 
-export default class PlexMasthead extends React.Component {
+export default class OntologiesMasthead extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,7 +20,7 @@ export default class PlexMasthead extends React.Component {
           <>
               <div>
                   <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"#1B2631",marginRight:"30px"}}>
-                  PLEX
+                  Ontologies
                   </div>
 
                   <div style={{float:"right",display:"inline-block",marginRight:"50px",height:"100%"}}>
@@ -34,7 +34,7 @@ export default class PlexMasthead extends React.Component {
                   </div>
               </div>
               <div className="landingPage_plex_SubBanner" >
-                  <div >Plex motto</div>
+                  <div >Ontologies motto</div>
               </div>
           </>
         );

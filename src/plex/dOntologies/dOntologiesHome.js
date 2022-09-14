@@ -1,18 +1,18 @@
 import React from 'react';
-import Masthead from '../mastheads/plexMasthead.js';
+import Masthead from '../mastheads/ontologiesMasthead.js';
 import LeftNavbar1 from '../navbars/leftNavbar1/plex_leftNav1';
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
 const jQuery = require("jquery");
 
-export default class DecentralizedSearchHome extends React.Component {
+export default class DecentralizedOntologiesHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {}
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
-        console.log("decentralized Search Home")
+        console.log("decentralized Reddit Home")
     }
     render() {
         return (
@@ -21,7 +21,7 @@ export default class DecentralizedSearchHome extends React.Component {
                     <LeftNavbar1 />
                     <div className="mainPanel" >
                         <Masthead />
-                        <div class="h2">decentralized Search Home</div>
+                        <div class="h2">decentralized Ontologies Home</div>
                     </div>
                 </fieldset>
             </>

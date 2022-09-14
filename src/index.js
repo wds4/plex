@@ -76,10 +76,20 @@ import PlexSettingsMainPage from './plex/settings/generalPlexSettings.js';
 
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
-import GrapevineHome from './plex/grapevine/grapevineHome.js';
 import DecentralizedRedditHome from './plex/dReddit/dRedditHome.js';
+import DecentralizedOntologiesHome from './plex/dOntologies/dOntologiesHome.js';
+import DecentralizedQuestionsAndAnswersHome from './plex/askPlex/dQuestionsAndAnswersHome.js';
 import DecentralizedTwitterHome from './plex/dTwitter/dTwitterHome.js';
 import DecentralizedSearchHome from './plex/dSearch/dSearchHome.js';
+
+import GrapevineHome from './plex/grapevine/grapevineHome.js';
+import GrapevineContactsMainPage from './plex/grapevine/contacts/contactsMainPage.js';
+import GrapevineChatroomMainPage from './plex/grapevine/chatroom/chatroomMainPage.js';
+import GrapevineVisualizationMainPage from './plex/grapevine/visualization/grapevineVisualizationMainPage.js';
+import GrapevineInfluenceAndTrustScoresMainPage from './plex/grapevine/influenceAndTrustScores/influenceAndTrustScoresMainPage.js';
+import GrapevineRatingsMainPage from './plex/grapevine/ratings/ratingsMainPage.js';
+import GrapevineScoresMainPage from './plex/grapevine/scores/scoresMainPage.js';
+import GrapevineContextMainPage from './plex/grapevine/context/contextMainPage.js';
 
 import EBooksHome from './plex/eBooks/eBooksHome.js';
 import EBook1Home from './plex/eBooks/eBook1/eBook1Home.js';
@@ -289,7 +299,10 @@ import SQLTablesPage from './plex/settings/sql/sqlTables.js';
 import SQLMakeANewTablePage from './plex/settings/sql/sqlMakeANewTable.js';
 import SQLViewSingleTablePage from './plex/settings/sql/sqlViewSingleTable.js';
 
+import IPFSConfigInfoPage from './plex/settings/IPFS/IPFSConfigInfo.js';
 import IPFSGeneralInfoPage from './plex/settings/IPFS/IPFSGeneralInfo.js';
+import IPFSPeersInfoPage from './plex/settings/IPFS/IPFSPeersInfo.js';
+import IPFSPubsubInfoPage from './plex/settings/IPFS/IPFSPubsubInfo.js';
 
 import NeuroCoreTopPanel from './plex/neuroCore/neuroCoreTopPanel.js'
 import NeuroCore2TopPanel from './plex/neuroCore2/neuroCoreTopPanel.js'
@@ -307,7 +320,7 @@ ReactDOM.render(
         <NeuroCore2TopPanel />
         <div className="App" style={{height:"100%"}} >
 
-          <Route path="/" exact component={ConceptGraphHome} />
+          <Route path="/" exact component={PlexHome} />
           <Route path="/PlexHome" exact component={PlexHome} />
           <Route path="/OldPGAHome" exact component={App} />
           <Route path="/ConceptGraphHome" exact component={ConceptGraphHome} />
@@ -315,10 +328,22 @@ ReactDOM.render(
           <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 
           <Route path="/DecentralizedProofOfPersonhoodHome" exact component={DecentralizedProofOfPersonhoodHome} />
+
           <Route path="/GrapevineHome" exact component={GrapevineHome} />
+          <Route path="/GrapevineContactsMainPage" exact component={GrapevineContactsMainPage} />
+          <Route path="/GrapevineChatroomMainPage" exact component={GrapevineChatroomMainPage} />
+          <Route path="/GrapevineVisualizationMainPage" exact component={GrapevineVisualizationMainPage} />
+          <Route path="/GrapevineInfluenceAndTrustScoresMainPage" exact component={GrapevineInfluenceAndTrustScoresMainPage} />
+          <Route path="/GrapevineRatingsMainPage" exact component={GrapevineRatingsMainPage} />
+          <Route path="/GrapevineScoresMainPage" exact component={GrapevineScoresMainPage} />
+          <Route path="/GrapevineContextMainPage" exact component={GrapevineContextMainPage} />
+
+          <Route path="/DecentralizedOntologiesHome" exact component={DecentralizedOntologiesHome} />
           <Route path="/DecentralizedRedditHome" exact component={DecentralizedRedditHome} />
           <Route path="/DecentralizedTwitterHome" exact component={DecentralizedTwitterHome} />
           <Route path="/DecentralizedSearchHome" exact component={DecentralizedSearchHome} />
+          <Route path="/DecentralizedQuestionsAndAnswersHome" exact component={DecentralizedQuestionsAndAnswersHome} />
+
 
           <Route path="/EBooksHome" exact component={EBooksHome} />
           <Route path="/EBook1Home" exact component={EBook1Home} />
@@ -399,11 +424,6 @@ ReactDOM.render(
           <Route path="/SingleConceptGraphDMContextContextsTable/:conceptgraphsqlid" exact component={SingleConceptGraphDMContextContextsTable} />
           <Route path="/SingleConceptGraphDMContextMakeNewContext/:conceptgraphsqlid" exact component={SingleConceptGraphDMContextMakeNewContext} />
           <Route path="/SingleConceptGraphDMContextSingleContextExplorer/:conceptgraphsqlid" exact component={SingleConceptGraphDMContextSingleContextExplorer} />
-
-
-
-
-
 
           <Route path="/SingleConceptGraphDataModelingMakeNew/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingMakeNew} />
           <Route path="/SingleConceptGraphDataModelingJSONLD/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingJSONLD} />
@@ -524,7 +544,10 @@ ReactDOM.render(
           <Route path="/SQLMakeANewTablePage" exact component={SQLMakeANewTablePage} />
           <Route path="/SQLViewSingleTablePage/:tablename" exact component={SQLViewSingleTablePage} />
 
+          <Route path="/IPFSConfigInfoPage" exact component={IPFSConfigInfoPage} />
           <Route path="/IPFSGeneralInfoPage" exact component={IPFSGeneralInfoPage} />
+          <Route path="/IPFSPeersInfoPage" exact component={IPFSPeersInfoPage} />
+          <Route path="/IPFSPubsubInfoPage" exact component={IPFSPubsubInfoPage} />
 
           <Route path="/ReactJSONSchemaForm" exact component={ReactJSONSchemaForm} />
           <Route path="/ReactJSONSchemaForm2" exact component={ReactJSONSchemaForm2} />

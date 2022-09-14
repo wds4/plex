@@ -86,6 +86,10 @@ div.h4 {
     display:inline-block;
     width:150px;
 }
+.smallIpfsDataLeftCol {
+    display:inline-block;
+    width:250px;
+}
 .doSomethingButton {
     font-size:12px;
     display:inline-block;

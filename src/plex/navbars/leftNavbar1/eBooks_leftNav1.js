@@ -6,7 +6,7 @@ export default class LeftNavbar1_eBooks extends React.PureComponent {
     return (
       <>
         <div className="leftNav1Panel_ConceptGraph" >
-            <NavLink className="leftNav1Button" exact activeClassName="active" to='/ConceptGraphHome' >Concept Graph Home (CG)</NavLink>
+            <NavLink className="leftNav1Button" exact activeClassName="active" to='/PlexHome'>Plex Home</NavLink>
 
             <br/><br/>
 

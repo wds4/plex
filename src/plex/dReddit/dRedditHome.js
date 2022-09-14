@@ -1,6 +1,6 @@
 import React from 'react';
-import ConceptGraphMasthead from '../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../navbars/leftNavbar1/conceptGraph_leftNav1';
+import Masthead from '../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../navbars/leftNavbar1/plex_leftNav1';
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
 const jQuery = require("jquery");
@@ -20,7 +20,7 @@ export default class DecentralizedRedditHome extends React.Component {
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">decentralized Reddit Home</div>
                     </div>
                 </fieldset>

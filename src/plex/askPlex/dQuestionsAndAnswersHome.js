@@ -5,14 +5,14 @@ import LeftNavbar1 from '../navbars/leftNavbar1/plex_leftNav1';
 
 const jQuery = require("jquery");
 
-export default class DecentralizedSearchHome extends React.Component {
+export default class DecentralizedQuestionsAndAnswersHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {}
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
-        console.log("decentralized Search Home")
+        console.log("decentralized Reddit Home")
     }
     render() {
         return (
@@ -21,7 +21,7 @@ export default class DecentralizedSearchHome extends React.Component {
                     <LeftNavbar1 />
                     <div className="mainPanel" >
                         <Masthead />
-                        <div class="h2">decentralized Search Home</div>
+                        <div class="h2">Ask Plex: decentralized Questions and Answers</div>
                     </div>
                 </fieldset>
             </>
