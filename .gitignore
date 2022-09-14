@@ -20,6 +20,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+package-lock.json # not sure if I should gitignore this or not
 
 npm-debug.log*
 yarn-debug.log*
