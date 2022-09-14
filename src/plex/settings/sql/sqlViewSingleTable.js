@@ -1,8 +1,8 @@
 import React from "react";
-import ConceptGraphMasthead from '../../../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraph_leftNav1';
-import LeftNavbar2 from '../../../navbars/leftNavbar2/sqlSingleTable_leftNav2';
-import sendAsync from '../../../renderer.js';
+import Masthead from '../../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
+import LeftNavbar2 from '../../navbars/leftNavbar2/sqlSingleTable_leftNav2';
+import sendAsync from '../../renderer.js';
 // import send from '../../../conceptGraph/settings/sql/sqlFunctions.js'
 
 const jQuery = require("jquery");
@@ -176,7 +176,7 @@ export default class SQLViewSingleTable extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">{this.state.tableName}</div>
 
                         <div id="tableInfoContainer">table info </div>

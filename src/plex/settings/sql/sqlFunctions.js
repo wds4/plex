@@ -1,4 +1,4 @@
-import sendAsync from '../../../renderer.js';
+import sendAsync from '../../renderer.js';
 
 export const send = (sql) => {
     console.log("send; sql: "+sql)

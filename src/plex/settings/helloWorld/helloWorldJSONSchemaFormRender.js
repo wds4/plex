@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ConceptGraphMasthead from '../../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraph_leftNav1';
+import Masthead from '../../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/helloWorld_leftNav2.js';
 import JSONSchemaForm from 'react-jsonschema-form'; // eslint-disable-line import/no-unresolved
 import schema from '../../lib/json/JSONSchema/schemaTest.json';
@@ -29,7 +29,7 @@ export default class HelloWorldJSONSchemaFormRender extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">Hello World: JSON Schema Form via React's Render</div>
                         <div style={{width:"500px"}} >
                             <div id="renderedFormElem" ></div>

@@ -72,6 +72,8 @@ import LeftNavbar2_SQL from './plex/navbars/leftNavbar2/sql_leftNav2.js';
 import LeftNavbar2_SQLSingleTable from './plex/navbars/leftNavbar2/sqlSingleTable_leftNav2.js';
 
 import PlexHome from './plex/plexHome.js';
+import PlexSettingsMainPage from './plex/settings/generalPlexSettings.js';
+
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
 import GrapevineHome from './plex/grapevine/grapevineHome.js';
@@ -83,19 +85,19 @@ import EBooksHome from './plex/eBooks/eBooksHome.js';
 import EBook1Home from './plex/eBooks/eBook1/eBook1Home.js';
 
 import SettingsMainPage from './plex/conceptGraph/settings/generalSettings.js';
-import ProfileMainPage from './plex/conceptGraph/profile/profileMainPage.js';
+import ProfileMainPage from './plex/grapevine/profile/profileMainPage.js';
 import PlexAppsNavPage from './plex/conceptGraph/plexAppsNavPage.js';
-import HelloWorldMainPage from './plex/conceptGraph/helloWorld/helloWorldMain.js';
+import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
 
-import HelloWorldVisJS from './plex/conceptGraph/helloWorld/helloWorldVisJS.js';
-import HelloWorldAsyncChain from './plex/conceptGraph/helloWorld/helloWorldAsyncChain.js';
-import HelloWorldChildToParent from './plex/conceptGraph/helloWorld/helloWorldChildToParent.js';
-import HelloWorldDataTables from './plex/conceptGraph/helloWorld/helloWorldDataTables.js';
-import HelloWorldJSONSchemaForm from './plex/conceptGraph/helloWorld/helloWorldJSONSchemaForm.js';
-import HelloWorldJSONSchemaFormTester from './plex/conceptGraph/helloWorld/helloWorldJSONSchemaFormTester.js';
-import HelloWorldJSONSchemaFormRender from './plex/conceptGraph/helloWorld/helloWorldJSONSchemaFormRender.js';
-import HelloWorldJSONSchemaFormV5 from './plex/conceptGraph/helloWorld/helloWorldJSONSchemaFormV5.js';
-import HelloWorldWriteFile from './plex/conceptGraph/helloWorld/helloWorldWriteFile.js';
+import HelloWorldVisJS from './plex/settings/helloWorld/helloWorldVisJS.js';
+import HelloWorldAsyncChain from './plex/settings/helloWorld/helloWorldAsyncChain.js';
+import HelloWorldChildToParent from './plex/settings/helloWorld/helloWorldChildToParent.js';
+import HelloWorldDataTables from './plex/settings/helloWorld/helloWorldDataTables.js';
+import HelloWorldJSONSchemaForm from './plex/settings/helloWorld/helloWorldJSONSchemaForm.js';
+import HelloWorldJSONSchemaFormTester from './plex/settings/helloWorld/helloWorldJSONSchemaFormTester.js';
+import HelloWorldJSONSchemaFormRender from './plex/settings/helloWorld/helloWorldJSONSchemaFormRender.js';
+import HelloWorldJSONSchemaFormV5 from './plex/settings/helloWorld/helloWorldJSONSchemaFormV5.js';
+import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.js';
 
 import ConceptGraphsMainPage from './plex/conceptGraph/conceptGraphs/conceptGraphsMainPage.js';
 import MakeNewConceptGraphPage from './plex/conceptGraph/conceptGraphs/makeNewConceptGraphPage.js';
@@ -282,12 +284,12 @@ import NeuroCore2ViewEditPatternSingleRelationship from './plex/conceptGraph/set
 import NeuroCore2ViewEditPatternDoubleRelationship from './plex/conceptGraph/settings/neuroCore2/tableManagement/pattern_s2r/viewEdit.js';
 import NeuroCore2ViewEditActionAll from './plex/conceptGraph/settings/neuroCore2/tableManagement/action_all/viewEdit.js';
 
-import SQLGeneralSettingsPage from './plex/conceptGraph/settings/sql/sqlGeneralSettings.js';
-import SQLTablesPage from './plex/conceptGraph/settings/sql/sqlTables.js';
-import SQLMakeANewTablePage from './plex/conceptGraph/settings/sql/sqlMakeANewTable.js';
-import SQLViewSingleTablePage from './plex/conceptGraph/settings/sql/sqlViewSingleTable.js';
+import SQLGeneralSettingsPage from './plex/settings/sql/sqlGeneralSettings.js';
+import SQLTablesPage from './plex/settings/sql/sqlTables.js';
+import SQLMakeANewTablePage from './plex/settings/sql/sqlMakeANewTable.js';
+import SQLViewSingleTablePage from './plex/settings/sql/sqlViewSingleTable.js';
 
-import IPFSGeneralInfoPage from './plex/conceptGraph/settings/IPFS/IPFSGeneralInfo.js';
+import IPFSGeneralInfoPage from './plex/settings/IPFS/IPFSGeneralInfo.js';
 
 import NeuroCoreTopPanel from './plex/neuroCore/neuroCoreTopPanel.js'
 import NeuroCore2TopPanel from './plex/neuroCore2/neuroCoreTopPanel.js'
@@ -309,6 +311,8 @@ ReactDOM.render(
           <Route path="/PlexHome" exact component={PlexHome} />
           <Route path="/OldPGAHome" exact component={App} />
           <Route path="/ConceptGraphHome" exact component={ConceptGraphHome} />
+
+          <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 
           <Route path="/DecentralizedProofOfPersonhoodHome" exact component={DecentralizedProofOfPersonhoodHome} />
           <Route path="/GrapevineHome" exact component={GrapevineHome} />

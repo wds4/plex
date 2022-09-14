@@ -159,8 +159,10 @@ export default class ConceptGraphMasthead extends React.Component {
                   </div>
                   <div style={{float:"right",display:"inline-block",marginRight:"50px",height:"100%"}}>
                       <div style={{display:"inline-block",marginTop:"30px",marginRight:"10px"}} >Hi Alice!</div>
-                      <NavLink className="mastheadNavButton" exact activeClassName="active" to='/PlexAppsNavPage' >apps</NavLink>
-                      <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >Settings</NavLink>
+                      <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >
+                          Settings
+                          <div style={{fontSize:"8px"}}>(Concept Graph)</div>
+                      </NavLink>
                       <NavLink className="mastheadNavButton" exact activeClassName="active" to='/ProfileMainPage' >Profile</NavLink>
                   </div>
               </div>

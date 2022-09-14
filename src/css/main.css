@@ -136,13 +136,7 @@ div.h4 {
     white-space: -o-pre-wrap;
     word-wrap: break-word;
 }
-.landingPageSubBanner {
-    border-top:2px solid purple;
-    border-bottom:2px solid purple;
-    font-size:12px;
-    text-align:center;
-    color:grey;
-}
+
 .landingPageTopLinks {
     display:inline-block;
     margin:0px 30px 0px 30px;

@@ -1,6 +1,6 @@
 import React from 'react';
-import ConceptGraphMasthead from '../../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraph_leftNav1';
+import Masthead from '../../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/helloWorld_leftNav2.js';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import sendAsync from '../../renderer.js'
@@ -10,7 +10,7 @@ const jQuery = require("jquery");
 const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
- 
+
 const sqlFxn1 = async (e) => {
     jQuery("#sqlFxn1Container").css("backgroundColor","yellow")
     var sql = " SELECT * FROM wordTypes WHERE id='1' ";
@@ -146,7 +146,7 @@ export default class HelloWorldMainPage extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">Hello World: Async Chain</div>
 
                         sqlFxn1Container: <div id="sqlFxn1Container" >sqlFxn1Container</div>

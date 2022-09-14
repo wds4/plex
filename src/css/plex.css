@@ -280,6 +280,30 @@
 .ncmp-radio-checkbox-label {
     margin-left:5px;
 }
+.landingPageSubBanner {
+    border-top:2px solid purple;
+    border-bottom:2px solid purple;
+    font-size:12px;
+    text-align:center;
+    color:grey;
+}
+.landingPage_plex_SubBanner {
+    border-top:2px solid #1B2631;
+    border-bottom:2px solid #1B2631;
+    font-size:12px;
+    text-align:center;
+    color:grey;
+}
+.leftNav1Panel_Plex {
+    padding-top:50px;
+    display:inline-block;
+    background-color: #616A6B;
+    width:100px;
+    height:100%;
+    vertical-align:top;
+    text-align:center;
+    white-space: normal;
+}
 .leftNav1Panel_ConceptGraph {
     padding-top:50px;
     display:inline-block;
@@ -291,6 +315,16 @@
     white-space: normal;
 }
 
+.leftNav2Panel_Plex {
+    padding-top:10px;
+    display:inline-block;
+    background-color: #BDC3C7;
+    width:200px;
+    height:100%;
+    vertical-align:top;
+    text-align:center;
+    white-space: normal;
+}
 .leftNav2Panel_NeuroCore {
     padding-top:10px;
     display:inline-block;
@@ -328,6 +362,28 @@
     display:inline-block;
     color:black;
     background-color:blue;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav1PlexButton {
+    width:90px;
+    height:90px;
+    display:inline-block;
+    color:black;
+    background-color:#EFEFEF;
+    margin:0px 0px 5px 0px;
+    border-radius:3px;
+    padding:5px;
+    font-size:12px;
+}
+.leftNav1PlexButton:active {
+    width:90px;
+    height:90px;
+    display:inline-block;
+    color:white;
+    background-color:#1B2631;
     margin:0px 0px 5px 0px;
     border-radius:3px;
     padding:5px;

@@ -5,11 +5,13 @@ export default class LeftNavbar2_IPFS extends React.Component {
   render() {
     return (
       <>
-        <div className="leftNav2Panel_NeuroCore" >
+        <div className="leftNav2Panel_Plex" >
 
-            <center>back</center>
+            <center>Plex Settings</center>
 
-            <NavLink className="leftNav2BackButton" activeClassName="active" to='/SettingsMainPage'>Settings</NavLink>
+            <br/>
+
+            <NavLink className="leftNav2BackButton" activeClassName="active" to='/PlexSettingsMainPage'>Plex General Settings</NavLink>
 
             <br/><br/>
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavLink, Link, Route, Router, useHistory } from "react-router-dom";
-import ConceptGraphMasthead from '../../../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraph_leftNav1';
-import LeftNavbar2 from '../../../navbars/leftNavbar2/sql_leftNav2';
-import sendAsync from '../../../renderer.js';
+import Masthead from '../../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
+import LeftNavbar2 from '../../navbars/leftNavbar2/sql_leftNav2';
+import sendAsync from '../../renderer.js';
 
-const jQuery = require("jquery"); 
+const jQuery = require("jquery");
 
 function send(sql) {
     console.log("send; sql: "+sql)
@@ -57,7 +57,7 @@ export default class SQLTables extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">SQL Tables</div>
 
                         <div>

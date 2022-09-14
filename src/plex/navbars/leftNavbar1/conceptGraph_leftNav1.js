@@ -18,6 +18,8 @@ export default class LeftNavbar1_conceptGraph extends React.PureComponent {
     return (
       <>
         <div className="leftNav1Panel_ConceptGraph" >
+            <NavLink className="leftNav1Button" exact activeClassName="active" to='/PlexHome'>Plex Home</NavLink>
+            <br/><br/>
             <NavLink className="leftNav1Button" exact activeClassName="active" to='/ConceptGraphHome' >Concept Graph Home (CG)</NavLink>
             <NavLink className="leftNav1Button" exact activeClassName="active" to='/ConceptGraphsMainPage' >Concept Graphs</NavLink>
             <NavLink className="leftNav1Button" exact activeClassName="active" to='/DictionariesMainPage' >Dictionaries</NavLink>

@@ -6,12 +6,9 @@ export default class LeftNavbar1_Grapevine extends React.PureComponent {
     return (
       <>
         <div className="leftNav1Panel_Grapevine" >
-            <NavLink className="leftNav1Button" exact activeClassName="active" to='/ConceptGraphHome' >Concept Graph Home (CG)</NavLink>
-
+            <NavLink className="leftNav1Button" exact activeClassName="active" to='/PlexHome'>Plex Home</NavLink>
             <br/><br/>
-
             <NavLink className="leftNav1Button" activeClassName="active" to='/GrapevineHome'>Grapevine Home</NavLink>
-
         </div>
 
       </>

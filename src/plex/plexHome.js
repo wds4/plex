@@ -1,9 +1,9 @@
 
 import React from 'react';
-import ConceptGraphMasthead from './mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from './navbars/leftNavbar1/conceptGraph_leftNav1';
+import PlexMasthead from './mastheads/plexMasthead.js';
+import LeftNavbar1 from './navbars/leftNavbar1/plex_leftNav1';
 
-const jQuery = require("jquery"); 
+const jQuery = require("jquery");
 
 export default class PlexHome extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export default class PlexHome extends React.Component {
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <PlexMasthead />
                         <div class="h2">Plex Home</div>
                     </div>
                 </fieldset>

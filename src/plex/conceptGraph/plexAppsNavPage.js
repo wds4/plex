@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Link } from "react-router-dom";
-import ConceptGraphMasthead from '../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../navbars/leftNavbar1/conceptGraph_leftNav1';
+import Masthead from '../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../navbars/leftNavbar1/plex_leftNav1';
 
 const jQuery = require("jquery");
 
@@ -19,7 +19,7 @@ export default class PlexAppsNavPage extends React.Component {
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">Plex Apps Nav Page</div>
 
                         <center>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ConceptGraphMasthead from '../../../mastheads/conceptGraphMasthead.js';
-import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraph_leftNav1';
-import LeftNavbar2 from '../../../navbars/leftNavbar2/sql_leftNav2';
-import sendAsync from '../../../renderer.js';
+import Masthead from '../../mastheads/plexMasthead.js';
+import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
+import LeftNavbar2 from '../../navbars/leftNavbar2/sql_leftNav2';
+import sendAsync from '../../renderer.js';
 
 const jQuery = require("jquery");
 
@@ -37,7 +37,7 @@ export default class SQLGeneralSettings extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">SQL General Settings</div>
                         SQLite Version: <div id="sqLiteVersion" style={{display:"inline-block"}}>result</div>
                         <br/>
