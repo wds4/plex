@@ -77,7 +77,7 @@
     "ipfs-utils": "^9.0.7",
     "ipfsd-ctl": "^12.0.2",
     "is-ipfs": "^6.0.2",
-    "jquery": "^3.6.0",
+    "jquery": "^3.6.1",
     "sqlite3": "^5.0.11",
     "wait-on": "^6.0.0"
   }

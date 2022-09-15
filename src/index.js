@@ -130,6 +130,10 @@ import SingleConceptGraphDataModelingSchemaOrgExtensions from './plex/conceptGra
 import SingleConceptGraphDataModelingSchemaOrgGraphNav from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/schemaOrg/graphicalNavigation.js';
 import SingleConceptGraphDataModelingSchemaOrgTextNav from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/schemaOrg/hierarchicalTextNavigation.js';
 
+import SingleConceptGraphDataModelingConceptGraph from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/conceptGraph/conceptGraphs.js';
+import SingleConceptGraphDataModelingConceptGraphGraphNav from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/conceptGraph/graphicalNavigation.js';
+import SingleConceptGraphDataModelingConceptGraphTextNav from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/conceptGraph/hierarchicalTextNavigation.js';
+
 import SingleConceptGraphDMSchemaOrgAllRelationshipsTable from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/schemaOrg/typeRelationships/allRelationshipsTable.js';
 import SingleConceptGraphDMSchemaOrgMakeNewRelationship from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/schemaOrg/typeRelationships/makeNewRelationship.js';
 import SingleConceptGraphDMSchemaOrgSingleRelationshipExplorer from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/schemaOrg/typeRelationships/viewSingleRelationship.js';
@@ -386,6 +390,10 @@ ReactDOM.render(
           <Route path="/SingleConceptGraphDataModelingSchemaOrgExtensions/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingSchemaOrgExtensions} />
           <Route path="/SingleConceptGraphDataModelingSchemaOrgGraphNav/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingSchemaOrgGraphNav} />
           <Route path="/SingleConceptGraphDataModelingSchemaOrgTextNav/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingSchemaOrgTextNav} />
+
+          <Route path="/SingleConceptGraphDataModelingConceptGraph/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingConceptGraph} />
+          <Route path="/SingleConceptGraphDataModelingConceptGraphGraphNav/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingConceptGraphGraphNav} />
+          <Route path="/SingleConceptGraphDataModelingConceptGraphTextNav/:conceptgraphsqlid" exact component={SingleConceptGraphDataModelingConceptGraphTextNav} />
 
           <Route path="/SingleConceptGraphDMSchemaOrgAllRelationshipsTable/:conceptgraphsqlid" exact component={SingleConceptGraphDMSchemaOrgAllRelationshipsTable} />
           <Route path="/SingleConceptGraphDMSchemaOrgMakeNewRelationship/:conceptgraphsqlid" exact component={SingleConceptGraphDMSchemaOrgMakeNewRelationship} />
