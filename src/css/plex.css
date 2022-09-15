@@ -334,6 +334,7 @@
     vertical-align:top;
     text-align:center;
     white-space: normal;
+    overflow:scroll;
 }
 .leftNav1Button_old {
     width:90px;

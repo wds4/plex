@@ -183,7 +183,7 @@ export const ipfsShowConfig_main = async () => {
     return outputHTML;
 }
 
-// ipfs-show-config
+// deprecating this function for now 
 export const ipfsShowFiles = async () => {
     for await (const file of ipfs.files.ls('/grapevineData/publishedRatingsData')) {
         console.log("file name: "+file.name)
@@ -195,5 +195,4 @@ export const ipfsShowFiles = async () => {
         var sFile = JSON.stringify(file.cid,null,4)
         return sFile;
     }
-
 }

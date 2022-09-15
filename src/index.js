@@ -123,6 +123,8 @@ import SingleConceptGraphImport from './plex/conceptGraph/conceptGraphs/singleCo
 
 import SingleConceptGraphTemplating from './plex/conceptGraph/conceptGraphs/singleConceptGraph/templating/makeNewTemplate.js';
 
+import SingleConceptGraphPinToIPFS from './plex/conceptGraph/conceptGraphs/singleConceptGraph/pin/pinToIPFS.js';
+
 import SingleConceptGraphDataModeling from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/dataModeling.js';
 
 import SingleConceptGraphDataModelingSchemaOrg from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/schemaOrg/schema_org.js';
@@ -383,6 +385,7 @@ ReactDOM.render(
           <Route path="/ConceptGraphsImportsExportsPage" exact component={ConceptGraphsImportsExportsPage} />
           <Route path="/ConceptGraphsCompactFilesTable" exact component={ConceptGraphsCompactFilesTable} />
           <Route path="/ConceptGraphOverviewMainPage" exact component={ConceptGraphOverviewMainPage} />
+          <Route path="/SingleConceptGraphPinToIPFS" exact component={SingleConceptGraphPinToIPFS} />
 
           <Route path="/SingleConceptGraphDataModeling/:conceptgraphsqlid" exact component={SingleConceptGraphDataModeling} />
 
