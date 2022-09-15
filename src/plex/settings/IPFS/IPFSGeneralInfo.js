@@ -1,6 +1,6 @@
 import React from "react";
 import * as MiscFunctions from '../../functions/miscFunctions.js';
-import * as IpfsFunctions from '../../functions/ipfsFunctions.js'
+import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import Masthead from '../../mastheads/plexMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/ipfs_leftNav2';
@@ -15,8 +15,17 @@ export default class IPFSGeneralInfo extends React.Component {
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
-        var ipfsStatusDataHTML = await IpfsFunctions.ipfsShowStatusData();
+        var ipfsStatusDataHTML = await MiscIpfsFunctions.ipfsShowStatusData();
         jQuery("#ipfsStatusDataContainer").html(ipfsStatusDataHTML)
+
+        var ipfsVersionDataHTML = await MiscIpfsFunctions.ipfsShowVersion();
+        jQuery("#ipfsVersionDataContainer").html(ipfsVersionDataHTML)
+
+        var ipfsDnsDataHTML = await MiscIpfsFunctions.ipfsShowDNS();
+        jQuery("#ipfsDnsDataContainer").html(ipfsDnsDataHTML)
+
+        var ipfsStatsDataHTML = await MiscIpfsFunctions.ipfsShowStats();
+        jQuery("#ipfsStatsDataContainer").html(ipfsStatsDataHTML)
     }
     render() {
         return (
@@ -27,8 +36,17 @@ export default class IPFSGeneralInfo extends React.Component {
                     <div className="mainPanel" >
                         <Masthead />
                         <div className="h2">IPFS General Info</div>
-                        General status:<br/>
+                        id:<br/>
                         <div id="ipfsStatusDataContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsStatusDataContainer</div>
+                        <br/><br/>
+                        version:<br/>
+                        <div id="ipfsVersionDataContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsVersionDataContainer</div>
+                        <br/><br/>
+                        dns:<br/>
+                        <div id="ipfsDnsDataContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsDnsDataContainer</div>
+                        <br/><br/>
+                        stats (IPFS bandwith information):<br/>
+                        <div id="ipfsStatsDataContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsStatsDataContainer</div>
                     </div>
                 </fieldset>
             </>

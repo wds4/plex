@@ -303,6 +303,8 @@ import IPFSConfigInfoPage from './plex/settings/IPFS/IPFSConfigInfo.js';
 import IPFSGeneralInfoPage from './plex/settings/IPFS/IPFSGeneralInfo.js';
 import IPFSPeersInfoPage from './plex/settings/IPFS/IPFSPeersInfo.js';
 import IPFSPubsubInfoPage from './plex/settings/IPFS/IPFSPubsubInfo.js';
+import IPFSPinsInfoPage from './plex/settings/IPFS/IPFSPinsInfo.js';
+import IPFSKeysInfoPage from './plex/settings/IPFS/IPFSKeysInfo.js';
 
 import NeuroCoreTopPanel from './plex/neuroCore/neuroCoreTopPanel.js'
 import NeuroCore2TopPanel from './plex/neuroCore2/neuroCoreTopPanel.js'
@@ -548,6 +550,8 @@ ReactDOM.render(
           <Route path="/IPFSGeneralInfoPage" exact component={IPFSGeneralInfoPage} />
           <Route path="/IPFSPeersInfoPage" exact component={IPFSPeersInfoPage} />
           <Route path="/IPFSPubsubInfoPage" exact component={IPFSPubsubInfoPage} />
+          <Route path="/IPFSPinsInfoPage" exact component={IPFSPinsInfoPage} />
+          <Route path="/IPFSKeysInfoPage" exact component={IPFSKeysInfoPage} />
 
           <Route path="/ReactJSONSchemaForm" exact component={ReactJSONSchemaForm} />
           <Route path="/ReactJSONSchemaForm2" exact component={ReactJSONSchemaForm2} />

@@ -7,7 +7,7 @@ import LeftNavbar2 from '../../navbars/leftNavbar2/ipfs_leftNav2';
 
 const jQuery = require("jquery");
 
-export default class IPFSGeneralInfo extends React.Component {
+export default class IPFSKeysInfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {}
@@ -15,8 +15,9 @@ export default class IPFSGeneralInfo extends React.Component {
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
-        var ipfsShowConfigHTML = await MiscIpfsFunctions.ipfsShowConfig_main();
-        jQuery("#ipfsShowConfigContainer").html(ipfsShowConfigHTML)
+        var ipfsDataHTML = await MiscIpfsFunctions.ipfsShowKeys();
+        jQuery("#ipfsDataContainer").html(ipfsDataHTML)
+
     }
     render() {
         return (
@@ -26,8 +27,10 @@ export default class IPFSGeneralInfo extends React.Component {
                     <LeftNavbar2 />
                     <div className="mainPanel" >
                         <Masthead />
-                        <div className="h2">IPFS Config File</div>
-                        <pre id="ipfsShowConfigContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsShowConfigContainer</pre>
+                        <div className="h2">IPFS Keys Info</div>
+
+                        <div id="ipfsDataContainer" style={{backgroundColor:"yellow",marginBottom:"5px"}} >ipfsDataContainer</div>
+
                     </div>
                 </fieldset>
             </>

@@ -1,6 +1,5 @@
-import sendAsync from '../renderer.js';
+// import sendAsync from '../../renderer.js';
 import IpfsHttpClient from 'ipfs-http-client';
-import * as NeuroCore2 from '../neuroCore2/neuroCoreTopPanel.js'
 const jQuery = require("jquery");
 
 export const ipfs = IpfsHttpClient({
@@ -8,6 +7,76 @@ export const ipfs = IpfsHttpClient({
     port: "5001",
     protocol: "http"
 });
+
+////////////////////////////////////////////////////////////////////////////
+//
+//         https://github.com/ipfs/js-ipfs/tree/master/docs/core-api
+//
+////////////////////////////////////////////////////////////////////////////
+
+export const ipfsShowKeys = async () => {
+    var outputHTML = "";
+    const aKeys = await ipfs.key.list()
+    outputHTML += "Number of keys: "+aKeys.length+"<br>";
+    for (var k=0;k<aKeys.length;k++) {
+        var oNextKey = aKeys[k];
+        outputHTML += "id: "+oNextKey.id+"<br>";
+        outputHTML += "name: "+oNextKey.name+"<br><br>";
+    }
+    return outputHTML;
+}
+export const ipfsShowPins = async () => {
+    var output1HTML = "";
+    var numPins = 0;
+    var numDirect = 0;
+    var numIndirect = 0;
+    var numRecursive = 0;
+    for await (const { cid, type } of ipfs.pin.ls()) {
+        // console.log({ cid, type })
+        output1HTML += cid + " " + type + "<br>";
+        numPins++;
+        if (type=="recursive") {
+            numRecursive++;
+        }
+        if (type=="indirect") {
+            numIndirect++;
+        }
+        if (type=="direct") {
+            numDirect++;
+        }
+    }
+    var output2HTML = "";
+    output2HTML += "total: "+numPins;
+    output2HTML += "; recursive: "+numRecursive;
+    output2HTML += "; indirect: "+numIndirect;
+    output2HTML += "; direct: "+numDirect;
+    output2HTML += "<br>";
+    var outputFinalHTML = "";
+    outputFinalHTML += output2HTML;
+    outputFinalHTML += output1HTML;
+    return outputFinalHTML;
+}
+
+export const ipfsShowStats = async () => {
+    for await (const stats of ipfs.stats.bw()) {
+        console.log("stats: "+JSON.stringify(stats,null,4))
+        return JSON.stringify(stats,null,4);
+    }
+
+}
+
+export const ipfsShowDNS = async () => {
+    const path = await ipfs.dns('ipfs.io')
+    console.log(path)
+    return path;
+}
+
+export const ipfsShowVersion = async () => {
+    const oVersion = await ipfs.version()
+    console.log("version: "+oVersion)
+    var sVersion = JSON.stringify(oVersion,null,4)
+    return sVersion;
+}
 
 // ipfs-show-id
 export const ipfsShowStatusData = async () => {

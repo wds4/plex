@@ -1,6 +1,6 @@
 import React from "react";
 import * as MiscFunctions from '../../functions/miscFunctions.js';
-import * as IpfsFunctions from '../../functions/ipfsFunctions.js'
+import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import Masthead from '../../mastheads/plexMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/ipfs_leftNav2';
@@ -15,7 +15,7 @@ export default class IPFSPeersInfo extends React.Component {
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
-        IpfsFunctions.ipfsSwarmPeers_main();
+        MiscIpfsFunctions.ipfsSwarmPeers_main();
 
     }
     render() {

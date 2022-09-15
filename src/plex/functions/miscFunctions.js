@@ -1,7 +1,7 @@
 import sendAsync from '../renderer.js';
 import IpfsHttpClient from 'ipfs-http-client';
 import * as NeuroCore2 from '../neuroCore2/neuroCoreTopPanel.js'
-import * as IpfsFunctions from './ipfsFunctions.js'
+import * as MiscIpfsFunctions from '../lib/ipfs/miscIpfsFunctions.js'
 const jQuery = require("jquery");
 
 export const timeout = (ms) => {
@@ -1046,7 +1046,7 @@ export const createNewWordByTemplate = async (newWordType) => {
     var randomNonce = Math.floor(Math.random() * 1000);
     var currentTime = Date.now();
     var newKeyname = "plexWord_"+newWordType+"_"+currentTime+"_"+randomNonce;
-    var generatedKey_obj = await IpfsFunctions.ipfs.key.gen(newKeyname, {
+    var generatedKey_obj = await MiscIpfsFunctions.ipfs.key.gen(newKeyname, {
         type: 'rsa',
         size: 2048
     })
