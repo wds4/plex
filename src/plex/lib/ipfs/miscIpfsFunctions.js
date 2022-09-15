@@ -182,3 +182,18 @@ export const ipfsShowConfig_main = async () => {
     // document.getElementById("showConfig").innerHTML = outputHTML;
     return outputHTML;
 }
+
+// ipfs-show-config
+export const ipfsShowFiles = async () => {
+    for await (const file of ipfs.files.ls('/grapevineData/publishedRatingsData')) {
+        console.log("file name: "+file.name)
+        var cidHash = file.cid.hash;
+        var decoded = new TextDecoder().decode(file.cid.hash);
+        console.log("file cidHash: "+JSON.stringify(cidHash,null,4))
+        console.log("file decoded: "+decoded)
+        console.log("typeof cidHash: "+ typeof cidHash)
+        var sFile = JSON.stringify(file.cid,null,4)
+        return sFile;
+    }
+
+}

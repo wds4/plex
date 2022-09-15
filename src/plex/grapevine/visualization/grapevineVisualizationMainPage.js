@@ -20,6 +20,49 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                     <div className="mainPanel" >
                         <Masthead />
                         <div class="h2">Grapevine Visualization Main Page</div>
+
+                        <center>
+                            <div>
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
+                                    <center>viewing</center>
+                                    <select>
+                                        <option>user</option>
+                                        <option>Proven Person</option>
+                                    </select>
+                                </div>
+
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
+                                    <center>select influence type</center>
+                                    <select>
+                                        <option>attention</option>
+                                        <option>belief</option>
+                                        <option>ontology</option>
+                                        <option>advice</option>
+                                    </select>
+                                </div>
+
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
+                                    <center>select context</center>
+                                    <select>
+                                        <option>everything</option>
+                                        <option>open standards</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </center>
+
+                        <center>
+                            <div>
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"1000px",height:"700px"}}>
+                                    <center>graph</center>
+                                </div>
+
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"500px",height:"700px"}}>
+                                    <center>Control Panel</center>
+                                </div>
+                            </div>
+                        </center>
+
                     </div>
                 </fieldset>
             </>

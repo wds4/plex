@@ -167,11 +167,6 @@ import SingleConceptGraphDMContextContextsTable from './plex/conceptGraph/concep
 import SingleConceptGraphDMContextMakeNewContext from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/context/contexts/makeNewContext.js';
 import SingleConceptGraphDMContextSingleContextExplorer from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/context/contexts/singleContextExplorer.js';
 
-
-
-
-
-
 import SingleConceptGraphDataModelingMakeNew from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/makeNewDataModel.js';
 import SingleConceptGraphDataModelingJSONLD from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/JSON_LD/jsonLD.js';
 import SingleConceptGraphDataModelingJWT from './plex/conceptGraph/conceptGraphs/singleConceptGraph/dataModeling/JWT/jsonWebTokens.js';
@@ -305,6 +300,7 @@ import IPFSPeersInfoPage from './plex/settings/IPFS/IPFSPeersInfo.js';
 import IPFSPubsubInfoPage from './plex/settings/IPFS/IPFSPubsubInfo.js';
 import IPFSPinsInfoPage from './plex/settings/IPFS/IPFSPinsInfo.js';
 import IPFSKeysInfoPage from './plex/settings/IPFS/IPFSKeysInfo.js';
+import IPFSFilesInfoPage from './plex/settings/IPFS/IPFSFilesInfo.js';
 
 import NeuroCoreTopPanel from './plex/neuroCore/neuroCoreTopPanel.js'
 import NeuroCore2TopPanel from './plex/neuroCore2/neuroCoreTopPanel.js'
@@ -552,6 +548,7 @@ ReactDOM.render(
           <Route path="/IPFSPubsubInfoPage" exact component={IPFSPubsubInfoPage} />
           <Route path="/IPFSPinsInfoPage" exact component={IPFSPinsInfoPage} />
           <Route path="/IPFSKeysInfoPage" exact component={IPFSKeysInfoPage} />
+          <Route path="/IPFSFilesInfoPage" exact component={IPFSFilesInfoPage} />
 
           <Route path="/ReactJSONSchemaForm" exact component={ReactJSONSchemaForm} />
           <Route path="/ReactJSONSchemaForm2" exact component={ReactJSONSchemaForm2} />
