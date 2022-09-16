@@ -27,6 +27,7 @@ export default class LeftNavbar2_HelloWorld extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormV5'>JSONSchemaForm Version 5</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldDataTables'>DataTables</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldWriteFile'>Write File (fs)</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldUploadImageToIPFS'>Upload Image to IPFS</NavLink>
         </div>
 
       </>

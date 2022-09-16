@@ -26,6 +26,7 @@ const reportMutableFilesTree = async (path) => {
                 jQuery("#hasPlexCgFileBeenEstablishedContainer").html("YES");
                 jQuery("#establishPlexCgMutableFileButtonContainer").css("display","none")
             }
+            jQuery("#ipfsMutableFilesListContainer").append(reportHTML)
         }
         if (file.type=="file") {
             reportHTML += "<div class=ipfsMutableFilesFileContainer style='margin-left:50px;background-color:orange;' ";
@@ -56,7 +57,7 @@ const reportMutableFilesTree = async (path) => {
             }
             */
         }
-        jQuery("#ipfsMutableFilesListContainer").append(reportHTML)
+        // jQuery("#ipfsMutableFilesListContainer").append(reportHTML)
         if (file.type=="directory") {
             var newPath=path+file.name+"/";
             await reportMutableFilesTree(newPath)
@@ -148,6 +149,9 @@ export default class IPFSFilesInfo extends React.Component {
             await MiscIpfsFunctions.ipfs.files.mkdir('/plex/conceptGraphs');
             alert("/plex/conceptGraphs has been created within the ipfs mutable file system")
         })
+        try {
+            await MiscIpfsFunctions.ipfs.files.mkdir('/plex/images');
+        } catch (e) {}
         // one-time only to remove unwanted directories:
         try {
             await MiscIpfsFunctions.ipfs.files.rm('/plex/productionConceptGraphs', { recursive: true });

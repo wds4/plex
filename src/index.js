@@ -108,6 +108,7 @@ import HelloWorldJSONSchemaFormTester from './plex/settings/helloWorld/helloWorl
 import HelloWorldJSONSchemaFormRender from './plex/settings/helloWorld/helloWorldJSONSchemaFormRender.js';
 import HelloWorldJSONSchemaFormV5 from './plex/settings/helloWorld/helloWorldJSONSchemaFormV5.js';
 import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.js';
+import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUploadImageToIPFS.js';
 
 import ConceptGraphsMainPage from './plex/conceptGraph/conceptGraphs/conceptGraphsMainPage.js';
 import MakeNewConceptGraphPage from './plex/conceptGraph/conceptGraphs/makeNewConceptGraphPage.js';
@@ -373,6 +374,7 @@ ReactDOM.render(
           <Route path="/HelloWorldJSONSchemaFormRender" exact component={HelloWorldJSONSchemaFormRender} />
           <Route path="/HelloWorldJSONSchemaFormV5" exact component={HelloWorldJSONSchemaFormV5} />
           <Route path="/HelloWorldWriteFile" exact component={HelloWorldWriteFile} />
+          <Route path="/HelloWorldUploadImageToIPFS" exact component={HelloWorldUploadImageToIPFS} />
 
           <Route path="/ConceptGraphsMainPage" exact component={ConceptGraphsMainPage} />
           <Route path="/EditExistingConceptGraphPage/:conceptgraphsqlid" exact component={EditExistingConceptGraphPage} />

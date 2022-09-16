@@ -3,11 +3,19 @@ const path = require('path');
 // const fs = require('fs');
 // elsewhere, do this:
 // const fs = window.require('fs');
+// const { app, BrowserWindow, desktopCapturer, contextBridge, ipcRenderer, ipcMain, nativeImage, NativeImage } = require('electron');
 
-const { app, BrowserWindow } = require('electron');
+// const https = require('https')
+
+// const {desktopCapturer} = require('electron');
+const { app, BrowserWindow, desktopCapturer } = require('electron');
 const isDev = require('electron-is-dev');
 
+
+
 require('../src/main');
+
+
 
 /*
 // this works (assume also have: const fs = require('fs'); above )

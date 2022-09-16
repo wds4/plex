@@ -24,6 +24,8 @@ export default class HelloWorldMainPage extends React.Component {
                     <div className="mainPanel" >
                         <Masthead />
                         <div class="h2">Hello World: Main Page</div>
+
+                        <a target='_blank' href='https://openprocessing.org/sketch/418494/embed/' >rorschach image generator</a>
                     </div>
                 </fieldset>
             </>

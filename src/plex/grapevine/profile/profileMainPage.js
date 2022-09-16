@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useCallback, useState } from 'react';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
+import { Button } from "reactstrap";
+import { useDropzone } from "react-dropzone";
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
+import { create, urlSource } from 'ipfs'
+// import UploadProfileImage from './uploadProfileImage.js'
+// const fs = window.require('fs');
+// const {desktopCapturer} = require('electron');
+
+// const fs = window.require('fs');
+
+// var Jimp = require('jimp');
 
 const jQuery = require("jquery");
+
+const fetchImgFromIPFS = async (cid) => {
+    if (!cid) {
+        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
+    }
+	try {
+    	let bufs = []
+    	for await (const buf of MiscIpfsFunctions.ipfs.cat(cid)) {
+    	    bufs.push(buf)
+    	}
+    	const data = Buffer.concat(bufs)
+    	var blob = new Blob([data], {type:"image/png"})
+    	var img = document.getElementById("avatarBox") // the img tag you want it in
+    	img.src = window.URL.createObjectURL(blob)
+    } catch (e) {}
+}
 
 const populateFieldsWithoutEditing = async () => {
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
@@ -22,9 +48,16 @@ const populateFieldsWithoutEditing = async () => {
                 var lastUpdated = oMyUserData.lastUpdated;
                 var imageCid = oMyUserData.imageCid;
 
+                jQuery("#myIpfsPeerID").html(peerID)
+
                 jQuery("#usernameContainer").html(myUsername)
                 jQuery("#locationContainer").html(loc)
                 jQuery("#aboutContainer").html(about)
+
+                // var cid1 = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
+                // var cid2 = '/ipfs/QmWQmayHks3Gf5oV3RRVbEV37gm9j3aCxYcgx4SZfdHiRY' // darth vader
+                // var cid2 = null;
+                fetchImgFromIPFS(imageCid);
 
             } else {
             }
@@ -51,23 +84,28 @@ const populateFieldsWithEditing = async () => {
                 var imageCid = oMyUserData.imageCid;
 
                 var myUsernameHTML = "";
-                myUsernameHTML += "<textarea id='myUsernameEditBox' style='width:90%;font-size:22px;' >";
+                myUsernameHTML += "<textarea class='profileDataEntryField' id='myUsernameEditBox' style='width:90%;font-size:22px;' >";
                 myUsernameHTML += myUsername;
                 myUsernameHTML += "</textarea>";
 
                 var locationHTML = "";
-                locationHTML += "<textarea id='myLocationEditBox' style='width:90%;font-size:22px;height:80%;' >";
+                locationHTML += "<textarea class='profileDataEntryField' id='myLocationEditBox' style='width:90%;font-size:22px;height:80%;' >";
                 locationHTML += loc;
                 locationHTML += "</textarea>";
 
                 var aboutHTML = "";
-                aboutHTML += "<textarea id='myAboutEditBox' style='width:90%;font-size:22px;height:80%;' >";
+                aboutHTML += "<textarea class='profileDataEntryField' id='myAboutEditBox' style='width:90%;font-size:22px;height:80%;' >";
                 aboutHTML += about;
                 aboutHTML += "</textarea>";
 
                 jQuery("#usernameContainer").html(myUsernameHTML)
                 jQuery("#locationContainer").html(locationHTML)
                 jQuery("#aboutContainer").html(aboutHTML)
+
+                jQuery(".profileDataEntryField").change(function(){
+                    console.log("profileDataEntryField change")
+                    jQuery("#toggleEditProfileButton").html("discard changes");
+                })
             } else {
             }
         } catch (e) {
@@ -75,6 +113,74 @@ const populateFieldsWithEditing = async () => {
         }
     }
 }
+
+
+export const addDataToIPFS = async (metadata) => {
+    const ipfsHash = await MiscIpfsFunctions.ipfs.add(metadata);
+    return ipfsHash.cid.toString();
+};
+
+const UploadProfileImage = ({ onImageUploaded }) => {
+    const [image, setImage] = useState();
+
+    const convertToBuffer = async (reader) => {
+        //file is converted to a buffer for upload to IPFS
+        //set this buffer -using es6 syntax
+        const buffer = await Buffer.from(reader.result);
+        return buffer;
+    };
+
+    const onDrop = useCallback(
+        (acceptedFiles) => {
+            const uploadedImage = acceptedFiles[0];
+            if (!uploadedImage) return;
+
+            uploadedImage["preview"] = URL.createObjectURL(uploadedImage);
+            setImage(uploadedImage);
+
+            let reader = new window.FileReader();
+            reader.readAsArrayBuffer(uploadedImage);
+            reader.onloadend = async () => {
+                const bufferImage = await convertToBuffer(reader);
+                const ipfsHash = await addDataToIPFS(bufferImage);
+                // console.log("ipfsHash", ipfsHash);
+                jQuery("#newImageIpfsHashContainer").html(ipfsHash)
+                fetchImgFromIPFS(ipfsHash)
+                jQuery("#avatarBox").css("display","inline-block");
+            };
+        },
+        [onImageUploaded]
+    );
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+        multiple: false,
+        accept: "image/jpeg, image/png",
+    });
+
+    const thumbs = image && (
+        <img className="square-cirle" src={image.preview} alt={image.name} style={{width:"100px"}} />
+    );
+
+    return (
+        <div {...getRootProps()} className="mb-3" style={{width:"100%",height:"100%"}} >
+            <input {...getInputProps()} />
+                {isDragActive ? (
+                <div style={{width:"100%",height:"100%"}} >
+                    <Button block color="warning" type="button" style={{width:"100%",height:"100%"}} >
+                        Drop
+                    </Button>
+                </div>
+            ) : (
+                <div style={{width:"100%",height:"100%"}} >
+                    <Button block color="default" type="button" style={{width:"100%",height:"100%"}} >
+                        Drag and drop profile pic
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default class ProfileMainPage extends React.Component {
     constructor(props) {
@@ -88,13 +194,40 @@ export default class ProfileMainPage extends React.Component {
             var editStatus = jQuery(this).data("editstatus")
             if (editStatus=="off") {
                 jQuery(this).data("editstatus","on")
+                // jQuery("#avatarBox").css("display","none");
+                // jQuery("#uploadProfileImageButtonContainer").css("display","inline-block");
                 populateFieldsWithEditing();
                 jQuery("#saveProfileChangesButton").css("display","inline-block")
+                jQuery("#toggleEditProfileButton").html("done editing")
             }
             if (editStatus=="on") {
                 jQuery(this).data("editstatus","off")
+                // jQuery("#avatarBox").css("display","inline-block");
+                // fetchImgFromIPFS(cid2);
+                // jQuery("#uploadProfileImageButtonContainer").css("display","none");
                 populateFieldsWithoutEditing();
                 jQuery("#saveProfileChangesButton").css("display","none")
+                jQuery("#toggleEditProfileButton").html("edit profile")
+            }
+        })
+        jQuery("#toggleEditProfilePicButton").click(function(){
+            var editStatus = jQuery(this).data("editstatus")
+            if (editStatus=="off") {
+                jQuery(this).data("editstatus","on")
+                jQuery("#avatarBox").css("display","none");
+                jQuery("#uploadProfileImageButtonContainer").css("display","inline-block");
+                // populateFieldsWithEditing();
+                jQuery("#saveProfilePicChangesButton").css("display","inline-block")
+                jQuery("#toggleEditProfilePicButton").html("keep old pic")
+            }
+            if (editStatus=="on") {
+                jQuery(this).data("editstatus","off")
+                jQuery("#avatarBox").css("display","inline-block");
+                // fetchImgFromIPFS(cid2);
+                jQuery("#uploadProfileImageButtonContainer").css("display","none");
+                populateFieldsWithoutEditing();
+                jQuery("#saveProfilePicChangesButton").css("display","none")
+                jQuery("#toggleEditProfilePicButton").html("update profile pic")
             }
         })
         jQuery("#saveProfileChangesButton").click(async function(){
@@ -116,13 +249,41 @@ export default class ProfileMainPage extends React.Component {
                         oMyUserData.imageCid = null;
                         var sMyUserData = JSON.stringify(oMyUserData,null,4);
                         console.log("sMyUserData B: "+sMyUserData)
-
+                        MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
+                        jQuery("#toggleEditProfileButton").html("done editing");
                     } else {
                     }
                 } catch (e) {
                     console.log("error: "+e)
                 }
             }
+        })
+        jQuery("#saveProfilePicChangesButton").click(async function(){
+            var newPicIpfsHash = jQuery("#newImageIpfsHashContainer").html()
+            var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
+            for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
+                var myUserData = new TextDecoder("utf-8").decode(chunk);
+                try {
+                    var oMyUserData = JSON.parse(myUserData);
+                    if (typeof oMyUserData == "object") {
+                        var sMyUserData = JSON.stringify(oMyUserData,null,4);
+                        console.log("sMyUserData A: "+sMyUserData)
+                        oMyUserData.lastUpdated = Date.now();
+                        oMyUserData.imageCid = newPicIpfsHash;
+                        var sMyUserData = JSON.stringify(oMyUserData,null,4);
+                        console.log("sMyUserData B: "+sMyUserData)
+                        MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
+                        jQuery("#toggleEditProfilePicButton").html("done choosing new pic");
+                    } else {
+                    }
+                } catch (e) {
+                    console.log("error: "+e)
+                }
+            }
+        })
+
+        jQuery("#createScreenshotButton").click(async function(){
+            // createScreenshot();
         })
     }
     render() {
@@ -134,25 +295,57 @@ export default class ProfileMainPage extends React.Component {
                         <Masthead />
                         <center>
                             <div style={{border:"1px dashed grey",width:"1210px",textAlign:"left"}}>
-                                <div style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"400px"}}>
+                                <div id="avatarContainer" style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"400px"}}>
+                                    <div id="uploadProfileImageButtonContainer" style={{display:"none",width:"100%",height:"100%"}} >
+                                        <UploadProfileImage />
+                                    </div>
+                                    <img id="avatarBox" />
 
                                 </div>
 
-                                <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"400px"}}>
+                                <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"400px",position:"relative"}}>
                                     <div id="usernameContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"70px",padding:"10px",fontSize:"28px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
+
                                     <div id="locationContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"70px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll",color:"grey"}}>
                                     </div>
-                                    <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"200px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
+
+                                    <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"150px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
-                                    <div data-editstatus="off" id="toggleEditProfileButton" className="doSomethingButton">toggle edit profile</div>
+
+                                    <div data-editstatus="off" id="toggleEditProfileButton" className="doSomethingButton">edit profile</div>
                                     <div id="saveProfileChangesButton" className="doSomethingButton" style={{display:"none"}} >save changes</div>
+                                    <br/>
+                                    <div data-editstatus="off" id="toggleEditProfilePicButton" className="doSomethingButton">update profile pic</div>
+                                    <div id="saveProfilePicChangesButton" className="doSomethingButton" style={{display:"none"}} >save new pic</div>
+                                    <div>
+                                    <div style={{display:"none"}} id="newImageIpfsHashContainer">newImageIpfsHashContainer</div>
+                                    </div>
+                                    <div style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",position:"absolute",bottom:"5px"}}>
+                                        <div style={{display:"inline-block",fontSize:"14px"}}>my ipfs cid: </div>
+                                        <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",color:"grey"}}></div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div style={{border:"1px dashed grey",width:"1210px",height:"400px",textAlign:"left",overflow:"scroll"}}>
-                                <center>more data</center>
-                                <a target='_blank' href='https://openprocessing.org/sketch/418494/embed/' >rorschach image generator</a>
+                            <div style={{border:"1px dashed grey",width:"1210px",height:"400px",textAlign:"left"}}>
+                                <div style={{border:"1px dashed grey",width:"1210px",height:"50px",textAlign:"left"}}>
+                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"300px",height:"50px",textAlign:"left"}}>
+                                        <center>About</center>
+                                    </div>
+                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"300px",height:"50px",textAlign:"left"}}>
+                                        <center>Posts</center>
+                                    </div>
+                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"75px",height:"50px",textAlign:"left"}}>
+                                        <center>Grapevine</center>
+                                    </div>
+                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"300px",height:"50px",textAlign:"left"}}>
+                                        <center>Scores</center>
+                                    </div>
+                                </div>
+                                <div style={{border:"1px dashed grey",width:"1210px",height:"350px",textAlign:"left",overflow:"scroll"}}>
+                                    <center>Content</center>
+                                </div>
                             </div>
 
                         </center>

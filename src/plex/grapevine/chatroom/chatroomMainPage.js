@@ -89,11 +89,17 @@ export default class GrapevineChatroomMainPage extends React.Component {
                         <div class="h2">Chatroom Main Page</div>
 
                         <textarea id="postContainer" style={{border:"1px solid purple",borderRadius:"5px",padding:"10px",width:"800px",height:"100px"}} ></textarea>
-                        <div id="publishMessageButton" className="doSomethingButton">send message to chat</div>
+                        <div id="publishMessageButton" className="doSomethingButton">post a message</div>
 
-                        <div style={{width:"1200px"}}>
-                            <center>Troolbox</center>
-                            <div id="pubsub_log" style={{border:"1px solid purple",borderRadius:"5px",padding:"10px",width:"100%",height:"700px",overflow:"scroll"}} >
+                        <div style={{width:"1400px"}}>
+                            <center>Trollbox</center>
+                            <div>
+                                <div id="pubsub_log" style={{display:"inline-block",border:"1px solid purple",borderRadius:"5px",padding:"10px",width:"1000px",height:"700px",overflow:"scroll"}} >
+                                </div>
+
+                                <div id="onlineMembersContainer" style={{display:"inline-block",border:"1px solid purple",borderRadius:"5px",padding:"10px",width:"350px",height:"700px",overflow:"scroll"}} >
+                                    <center>Who's online</center>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 
 // import { ipcRenderer, contextBridge } from 'electron';
 
+
 var preloadVar = 5;
 
 window.oTestVariable = {};
