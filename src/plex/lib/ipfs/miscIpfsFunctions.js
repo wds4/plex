@@ -59,7 +59,7 @@ export const ipfsShowPins = async () => {
 
 export const ipfsShowStats = async () => {
     for await (const stats of ipfs.stats.bw()) {
-        console.log("stats: "+JSON.stringify(stats,null,4))
+        // console.log("stats: "+JSON.stringify(stats,null,4))
         return JSON.stringify(stats,null,4);
     }
 
@@ -67,21 +67,30 @@ export const ipfsShowStats = async () => {
 
 export const ipfsShowDNS = async () => {
     const path = await ipfs.dns('ipfs.io')
-    console.log(path)
+    // console.log(path)
     return path;
 }
 
 export const ipfsShowVersion = async () => {
     const oVersion = await ipfs.version()
-    console.log("version: "+oVersion)
+    // console.log("version: "+oVersion)
     var sVersion = JSON.stringify(oVersion,null,4)
     return sVersion;
+}
+
+export const returnIpfsID = async () => {
+    const ipfs_info_obj = await ipfs.id();
+    // console.log(ipfs_info_obj)
+
+    var ipfs_id = ipfs_info_obj.id;
+
+    return ipfs_id
 }
 
 // ipfs-show-id
 export const ipfsShowStatusData = async () => {
     const ipfs_info_obj = await ipfs.id();
-    console.log(ipfs_info_obj)
+    // console.log(ipfs_info_obj)
 
     var ipfs_id = ipfs_info_obj.id;
     var my_ipfs_id = ipfs_info_obj.id;
@@ -183,7 +192,7 @@ export const ipfsShowConfig_main = async () => {
     return outputHTML;
 }
 
-// deprecating this function for now 
+// deprecating this function for now
 export const ipfsShowFiles = async () => {
     for await (const file of ipfs.files.ls('/grapevineData/publishedRatingsData')) {
         console.log("file name: "+file.name)
