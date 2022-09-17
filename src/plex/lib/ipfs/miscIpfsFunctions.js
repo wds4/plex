@@ -14,6 +14,37 @@ export const ipfs = IpfsHttpClient({
 //
 ////////////////////////////////////////////////////////////////////////////
 
+export const fetchImgFromIPFS_b = async (cid) => {
+    if (!cid) {
+        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
+    }
+	try {
+    	let bufs = []
+    	for await (const buf of ipfs.cat(cid)) {
+    	    bufs.push(buf)
+    	}
+    	const data = Buffer.concat(bufs)
+    	var blob = new Blob([data], {type:"image/png"})
+        return blob;
+    } catch (e) {}
+}
+
+export const fetchImgFromIPFS = async (cid) => {
+    if (!cid) {
+        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
+    }
+	try {
+    	let bufs = []
+    	for await (const buf of ipfs.cat(cid)) {
+    	    bufs.push(buf)
+    	}
+    	const data = Buffer.concat(bufs)
+    	var blob = new Blob([data], {type:"image/png"})
+    	var img = document.getElementById("avatarBox") // the img tag you want it in
+    	img.src = window.URL.createObjectURL(blob)
+    } catch (e) {}
+}
+
 export const ipfsShowKeys = async () => {
     var outputHTML = "";
     const aKeys = await ipfs.key.list()

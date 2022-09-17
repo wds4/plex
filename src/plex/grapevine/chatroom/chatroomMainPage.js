@@ -72,7 +72,7 @@ export default class GrapevineChatroomMainPage extends React.Component {
         var msg = new TextEncoder().encode('I hereby subscribe my peerID to the Pretty Good Grapevine Community');
         await MiscIpfsFunctions.ipfs.pubsub.publish(topic,msg);
 
-        jQuery("#publishMessageButton").unbind();
+        jQuery("#publishMessageButton").unbind("click");
         jQuery("#publishMessageButton").on("click", async function(){
             var post = jQuery("#postContainer").val()
             var msg = new TextEncoder().encode(post);

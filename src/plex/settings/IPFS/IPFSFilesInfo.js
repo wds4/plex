@@ -15,7 +15,7 @@ const reportMutableFilesTree = async (path) => {
         console.log("path: "+path+"; file type: "+file.type)
         var reportHTML = "";
         reportHTML += "<div>"+path+"</div>";
-        reportHTML += "<div style='margin-left:50px;' >cid for this file: "+file.cid+"</div>";
+        reportHTML += "<div style='margin-left:50px;' >cid: "+file.cid+"</div>";
         if (file.type=="directory") {
             reportHTML += "<div style='margin-left:50px;background-color:yellow;' >" + file.name + "</div>";
             if (file.name=="plex") {
@@ -26,7 +26,10 @@ const reportMutableFilesTree = async (path) => {
                 jQuery("#hasPlexCgFileBeenEstablishedContainer").html("YES");
                 jQuery("#establishPlexCgMutableFileButtonContainer").css("display","none")
             }
-            jQuery("#ipfsMutableFilesListContainer").append(reportHTML)
+            if ( (path=="/grapevineData/") && (file.name=="users")) {
+                jQuery("#hasGrapevineDataUsersFileBeenEstablishedContainer").html("YES");
+                jQuery("#establishGrapevineDataUsersMutableFileButtonContainer").css("display","none")
+            }
         }
         if (file.type=="file") {
             reportHTML += "<div class=ipfsMutableFilesFileContainer style='margin-left:50px;background-color:orange;' ";
@@ -57,7 +60,7 @@ const reportMutableFilesTree = async (path) => {
             }
             */
         }
-        // jQuery("#ipfsMutableFilesListContainer").append(reportHTML)
+        jQuery("#ipfsMutableFilesListContainer").append(reportHTML)
         if (file.type=="directory") {
             var newPath=path+file.name+"/";
             await reportMutableFilesTree(newPath)
@@ -75,6 +78,7 @@ export default class IPFSFilesInfo extends React.Component {
 
         jQuery("#hasPlexFileBeenEstablishedContainer").html("NO");
         jQuery("#hasPlexCgFileBeenEstablishedContainer").html("NO");
+        jQuery("#hasGrapevineDataUsersFileBeenEstablishedContainer").html("NO");
         await reportMutableFilesTree('/');
         var ipfsID = await MiscIpfsFunctions.returnIpfsID();
         // console.log("ipfsID: "+ipfsID)
@@ -149,6 +153,11 @@ export default class IPFSFilesInfo extends React.Component {
             await MiscIpfsFunctions.ipfs.files.mkdir('/plex/conceptGraphs');
             alert("/plex/conceptGraphs has been created within the ipfs mutable file system")
         })
+
+        jQuery("#establishGrapevineDataUsersMutableFileButton").click(async function(){
+            await MiscIpfsFunctions.ipfs.files.mkdir('/grapevineData/users');
+            alert("/grapevineData/users has been created within the ipfs mutable file system")
+        })
         try {
             await MiscIpfsFunctions.ipfs.files.mkdir('/plex/images');
         } catch (e) {}
@@ -189,6 +198,10 @@ export default class IPFSFilesInfo extends React.Component {
                         /grapevineData/userProfileData/myProfile.txt<br/>
                         /grapevineData/publishedRatingsData/myRatings.txt<br/>
                         <br/>
+                        new path (grapevineData):<br/>
+                        /grapevineData/users/, with file contents: cid (peerID) for each user, which is same style as myProfile.txt<br/>
+                        Eventually /grapevineData/users/ will be replaced by the functionality of /plex/conceptGraphs<br/>
+                        <br/>
                         new path (plex):<br/>
                         /plex/conceptGraphs/ipns to mainSchemaForConceptGraph for the concept graph (directory)/slug (wordSlug) for word (file)<br/>
                         <br/>
@@ -224,6 +237,20 @@ export default class IPFSFilesInfo extends React.Component {
 
                                 <div id="establishPlexCgMutableFileButtonContainer"  >
                                     <div id="establishPlexCgMutableFileButton" className="doSomethingButton" >establish mutable file: /plex/conceptGraphs</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{display:"inline-block"}} >
+                                Has /grapevineData/users mutable file directory been established?
+                                </div>
+
+                                <div id="hasGrapevineDataUsersFileBeenEstablishedContainer" style={{display:"inline-block",marginLeft:"50px"}} >
+                                ?
+                                </div>
+
+                                <div id="establishGrapevineDataUsersMutableFileButtonContainer"  >
+                                    <div id="establishGrapevineDataUsersMutableFileButton" className="doSomethingButton" >establish mutable file: /grapevineData/users</div>
                                 </div>
                             </div>
                         </div>

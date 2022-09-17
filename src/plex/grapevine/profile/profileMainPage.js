@@ -16,31 +16,17 @@ import { create, urlSource } from 'ipfs'
 
 const jQuery = require("jquery");
 
-const fetchImgFromIPFS = async (cid) => {
-    if (!cid) {
-        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
-    }
-	try {
-    	let bufs = []
-    	for await (const buf of MiscIpfsFunctions.ipfs.cat(cid)) {
-    	    bufs.push(buf)
-    	}
-    	const data = Buffer.concat(bufs)
-    	var blob = new Blob([data], {type:"image/png"})
-    	var img = document.getElementById("avatarBox") // the img tag you want it in
-    	img.src = window.URL.createObjectURL(blob)
-    } catch (e) {}
-}
-
 const populateFieldsWithoutEditing = async () => {
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
+    var ipfsPathToFlush = "/grapevineData/userProfileData";
+    MiscIpfsFunctions.ipfs.files.flush(ipfsPathToFlush)
     for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
         var myUserData = new TextDecoder("utf-8").decode(chunk);
         try {
             var oMyUserData = JSON.parse(myUserData);
             if (typeof oMyUserData == "object") {
-                // var sMyUserData = JSON.stringify(oMyUserData,null,4);
-                // console.log("sMyUserData: "+sMyUserData)
+                var sMyUserData = JSON.stringify(oMyUserData,null,4);
+                console.log("populateFieldsWithoutEditing; sMyUserData: "+sMyUserData)
                 var myUsername = oMyUserData.username;
                 var peerID = oMyUserData.peerID;
                 var loc = oMyUserData.loc;
@@ -57,7 +43,7 @@ const populateFieldsWithoutEditing = async () => {
                 // var cid1 = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
                 // var cid2 = '/ipfs/QmWQmayHks3Gf5oV3RRVbEV37gm9j3aCxYcgx4SZfdHiRY' // darth vader
                 // var cid2 = null;
-                fetchImgFromIPFS(imageCid);
+                MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
 
             } else {
             }
@@ -145,7 +131,7 @@ const UploadProfileImage = ({ onImageUploaded }) => {
                 const ipfsHash = await addDataToIPFS(bufferImage);
                 // console.log("ipfsHash", ipfsHash);
                 jQuery("#newImageIpfsHashContainer").html(ipfsHash)
-                fetchImgFromIPFS(ipfsHash)
+                MiscIpfsFunctions.fetchImgFromIPFS(ipfsHash)
                 jQuery("#avatarBox").css("display","inline-block");
             };
         },
@@ -203,7 +189,7 @@ export default class ProfileMainPage extends React.Component {
             if (editStatus=="on") {
                 jQuery(this).data("editstatus","off")
                 // jQuery("#avatarBox").css("display","inline-block");
-                // fetchImgFromIPFS(cid2);
+                // MiscIpfsFunctions.fetchImgFromIPFS(cid2);
                 // jQuery("#uploadProfileImageButtonContainer").css("display","none");
                 populateFieldsWithoutEditing();
                 jQuery("#saveProfileChangesButton").css("display","none")
@@ -223,7 +209,7 @@ export default class ProfileMainPage extends React.Component {
             if (editStatus=="on") {
                 jQuery(this).data("editstatus","off")
                 jQuery("#avatarBox").css("display","inline-block");
-                // fetchImgFromIPFS(cid2);
+                // MiscIpfsFunctions.fetchImgFromIPFS(cid2);
                 jQuery("#uploadProfileImageButtonContainer").css("display","none");
                 populateFieldsWithoutEditing();
                 jQuery("#saveProfilePicChangesButton").css("display","none")
@@ -246,11 +232,24 @@ export default class ProfileMainPage extends React.Component {
                         oMyUserData.loc = myUpdatedLocation;
                         oMyUserData.about = myUpdatedAbout;
                         oMyUserData.lastUpdated = Date.now();
-                        oMyUserData.imageCid = null;
+                        // oMyUserData.imageCid = null;
                         var sMyUserData = JSON.stringify(oMyUserData,null,4);
                         console.log("sMyUserData B: "+sMyUserData)
-                        MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
+                        var options_write = {
+                            create:true,
+                            truncate:true,
+                            parents:true
+                        }
+                        MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData,options_write)
                         jQuery("#toggleEditProfileButton").html("done editing");
+                        // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID
+                        var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+                        var stats_str = JSON.stringify(stats);
+                        var thisPeerData_cid = stats.cid.string;
+                        console.log("thisPeerData_cid: " + thisPeerData_cid)
+                        var options_publish = { key: 'self' }
+                        var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+
                     } else {
                     }
                 } catch (e) {
@@ -274,6 +273,13 @@ export default class ProfileMainPage extends React.Component {
                         console.log("sMyUserData B: "+sMyUserData)
                         MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
                         jQuery("#toggleEditProfilePicButton").html("done choosing new pic");
+                        // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID
+                        var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+                        var stats_str = JSON.stringify(stats);
+                        var thisPeerData_cid = stats.cid.string;
+                        console.log("thisPeerData_cid: " + thisPeerData_cid)
+                        var options_publish = { key: 'self' }
+                        var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
                     } else {
                     }
                 } catch (e) {
