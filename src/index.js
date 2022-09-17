@@ -206,6 +206,7 @@ import AllConceptsTable_fast from './plex/conceptGraph/conceptGraphs/singleConce
 import AllConceptsTable_sql from './plex/conceptGraph/conceptGraphs/singleConceptGraph/allConceptsTable_sql.js';
 import SingleConceptGeneralInfo from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptGeneralInfo.js';
 import SingleConceptDetailedInfo from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptDetailedInfo.js';
+import SingleConceptHierarchicalOverview from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptHierarchicalOverview.js';
 import SingleConceptAllWords from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptAllWords.js';
 import SingleConceptSpecialWords from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptSpecialWords.js';
 import SingleConceptAllWordsValidation from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptAllWordsValidation.js';
@@ -463,6 +464,7 @@ ReactDOM.render(
           <Route path="/AllConceptsTable_sql" exact component={AllConceptsTable_sql} />
           <Route path="/SingleConceptGeneralInfo/:conceptsqlid" exact component={SingleConceptGeneralInfo} />
           <Route path="/SingleConceptDetailedInfo/:conceptsqlid" exact component={SingleConceptDetailedInfo} />
+          <Route path="/SingleConceptHierarchicalOverview/:conceptsqlid" exact component={SingleConceptHierarchicalOverview} />
           <Route path="/SingleConceptAllWords/:conceptsqlid" exact component={SingleConceptAllWords} />
           <Route path="/SingleConceptSpecialWords/:conceptsqlid" exact component={SingleConceptSpecialWords} />
           <Route path="/SingleConceptAllWordsValidation/:conceptsqlid" exact component={SingleConceptAllWordsValidation} />
