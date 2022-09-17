@@ -35,7 +35,7 @@ export default class AllConceptsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            conceptLinks: []
+            conceptLinks: [] 
         }
     }
     componentDidMount() {

@@ -91,6 +91,8 @@ import GrapevineRatingsMainPage from './plex/grapevine/ratings/ratingsMainPage.j
 import GrapevineScoresMainPage from './plex/grapevine/scores/scoresMainPage.js';
 import GrapevineContextMainPage from './plex/grapevine/context/contextMainPage.js';
 
+import SingleUserProfilePage from './plex/grapevine/contacts/singleUser/singleUserProfilePage.js';
+
 import EBooksHome from './plex/eBooks/eBooksHome.js';
 import EBook1Home from './plex/eBooks/eBook1/eBook1Home.js';
 
@@ -342,6 +344,8 @@ ReactDOM.render(
           <Route path="/GrapevineRatingsMainPage" exact component={GrapevineRatingsMainPage} />
           <Route path="/GrapevineScoresMainPage" exact component={GrapevineScoresMainPage} />
           <Route path="/GrapevineContextMainPage" exact component={GrapevineContextMainPage} />
+
+          <Route path="/SingleUserProfilePage/:cid" exact component={SingleUserProfilePage} />
 
           <Route path="/DecentralizedOntologiesHome" exact component={DecentralizedOntologiesHome} />
           <Route path="/DecentralizedRedditHome" exact component={DecentralizedRedditHome} />

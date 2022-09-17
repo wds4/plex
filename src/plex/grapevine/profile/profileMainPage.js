@@ -19,7 +19,7 @@ const jQuery = require("jquery");
 const populateFieldsWithoutEditing = async () => {
     console.log("populateFieldsWithoutEditing")
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
-    var ipfsPathToFlush = "/grapevineData/userProfileData";
+    // var ipfsPathToFlush = "/grapevineData/userProfileData";
     for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
         var myUserData = new TextDecoder("utf-8").decode(chunk);
         console.log("populateFieldsWithoutEditing; myUserData: "+myUserData)
@@ -296,10 +296,6 @@ export default class ProfileMainPage extends React.Component {
                     console.log("error: "+e)
                 }
             }
-        })
-
-        jQuery("#createScreenshotButton").click(async function(){
-            // createScreenshot();
         })
     }
     render() {

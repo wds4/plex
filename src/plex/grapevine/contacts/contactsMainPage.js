@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
@@ -13,7 +14,7 @@ const addPeerToUserList = async (cid) => {
     // console.log("ipfsPath: "+ipfsPath)
 
     var userHTML = "";
-    userHTML += "<div class='contactPageSingleContactContainer' >";
+    userHTML += "<div class='contactPageSingleContactContainer' data-cid='"+cid+"' >";
         // userHTML += cid;
         userHTML += "<div class='contactsPageAvatarContainer' >";
         userHTML += "<img id='contactsPageAvatarThumb_"+cid+"' class='contactsPageAvatarThumb' />";
@@ -58,11 +59,9 @@ const addPeerToUserList = async (cid) => {
             }
         }
     } catch (e) {}
-
-
-
 }
 const fetchUsersList = async () => {
+    var aUsers = [];
     const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
     var numPeers = peerInfos.length;
     console.log("numPeers: "+numPeers);
@@ -71,17 +70,36 @@ const fetchUsersList = async () => {
     jQuery("#swarmPeersData").append(outputHTML);
     peerInfos.forEach(info => {
         var nextPeerID = info.id;
+        aUsers.push(nextPeerID)
         addPeerToUserList(nextPeerID)
     })
+    return aUsers;
 }
 export default class GrapevineContactsMainPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            contactLinks: []
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
-        await fetchUsersList()
+        var aUsers = await fetchUsersList()
+        jQuery(".contactPageSingleContactContainer").click(function(){
+            var cid = jQuery(this).data("cid")
+            console.log("contactPageSingleContactContainer; cid: "+cid)
+            jQuery("#linkFrom_"+cid).get(0).click();
+        })
+        console.log("aUsers: "+JSON.stringify(aUsers,null,4))
+        for (var u=0;u<aUsers.length;u++) {
+            var nextCid = aUsers[u];
+            var oUserData = {};
+            oUserData.pathname = "/SingleUserProfilePage/"+nextCid;
+            oUserData.linkfromcid = 'linkFrom_'+nextCid;
+            oUserData.cid = nextCid;
+            this.state.contactLinks.push(oUserData)
+            this.forceUpdate();
+        }
     }
     render() {
         return (
@@ -91,6 +109,17 @@ export default class GrapevineContactsMainPage extends React.Component {
                     <div className="mainPanel" >
                         <Masthead />
                         <div class="h2">Contacts Main Page</div>
+
+                        <div style={{display:"none"}} >
+                        {this.state.contactLinks.map(link => (
+                            <div >
+                                <Link id={link.linkfromcid} class='navButton'
+                                  to={link.pathname}
+                                >{link.cid}
+                                </Link>
+                            </div>
+                        ))}
+                        </div>
 
                         <div id="usersListContainer" ></div>
 
