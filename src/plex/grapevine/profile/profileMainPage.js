@@ -17,13 +17,16 @@ import { create, urlSource } from 'ipfs'
 const jQuery = require("jquery");
 
 const populateFieldsWithoutEditing = async () => {
+    console.log("populateFieldsWithoutEditing")
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
     var ipfsPathToFlush = "/grapevineData/userProfileData";
-    MiscIpfsFunctions.ipfs.files.flush(ipfsPathToFlush)
     for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
         var myUserData = new TextDecoder("utf-8").decode(chunk);
+        console.log("populateFieldsWithoutEditing; myUserData: "+myUserData)
         try {
+            console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
             var oMyUserData = JSON.parse(myUserData);
+
             if (typeof oMyUserData == "object") {
                 var sMyUserData = JSON.stringify(oMyUserData,null,4);
                 console.log("populateFieldsWithoutEditing; sMyUserData: "+sMyUserData)
@@ -55,6 +58,7 @@ const populateFieldsWithoutEditing = async () => {
 
 const populateFieldsWithEditing = async () => {
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
+
     for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
         var myUserData = new TextDecoder("utf-8").decode(chunk);
         try {
@@ -98,8 +102,11 @@ const populateFieldsWithEditing = async () => {
             console.log("error: "+e)
         }
     }
+    jQuery(".profileDataEntryField").change(function(){
+        console.log("profileDataEntryField change")
+        jQuery("#toggleEditProfileButton").html("discard changes");
+    })
 }
-
 
 export const addDataToIPFS = async (metadata) => {
     const ipfsHash = await MiscIpfsFunctions.ipfs.add(metadata);
@@ -225,6 +232,7 @@ export default class ProfileMainPage extends React.Component {
                 var myUserData = new TextDecoder("utf-8").decode(chunk);
                 try {
                     var oMyUserData = JSON.parse(myUserData);
+
                     if (typeof oMyUserData == "object") {
                         var sMyUserData = JSON.stringify(oMyUserData,null,4);
                         console.log("sMyUserData A: "+sMyUserData)
@@ -240,8 +248,9 @@ export default class ProfileMainPage extends React.Component {
                             truncate:true,
                             parents:true
                         }
-                        MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData,options_write)
+                        await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData,options_write)
                         jQuery("#toggleEditProfileButton").html("done editing");
+                        await MiscFunctions.timeout(100)
                         // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID
                         var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
                         var stats_str = JSON.stringify(stats);
@@ -271,8 +280,9 @@ export default class ProfileMainPage extends React.Component {
                         oMyUserData.imageCid = newPicIpfsHash;
                         var sMyUserData = JSON.stringify(oMyUserData,null,4);
                         console.log("sMyUserData B: "+sMyUserData)
-                        MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
+                        await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
                         jQuery("#toggleEditProfilePicButton").html("done choosing new pic");
+                        await MiscFunctions.timeout(100)
                         // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID
                         var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
                         var stats_str = JSON.stringify(stats);
