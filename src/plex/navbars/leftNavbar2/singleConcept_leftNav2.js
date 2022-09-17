@@ -25,6 +25,7 @@ export default class LeftNavbar2_SingleConcept extends React.Component {
             <center>Single Concept</center>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptGeneralInfo/current'>General Info</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptDetailedInfo/current'>Detailed Info</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptHierarchicalOverview/current'>Hierarchical Overview</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptSpecialWords/current'>Special Words</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptAllWords/current'>all Words (Table)</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptAllWordsValidation/current'>all Words: Validation</NavLink>
