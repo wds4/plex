@@ -48,11 +48,11 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
             await MiscIpfsFunctions.ipfs.files.mkdir(expectedPathB);
             alert("created directory: "+expectedPathB)
         })
-        jQuery("#deleteAllNodesButton").click(async function(){
-            console.log("deleteAllNodesButton clicked")
+        jQuery("#deleteAllDataButton").click(async function(){
+            console.log("deleteAllDataButton clicked")
         })
-        jQuery("#populateAllNodesButton").click(async function(){
-            console.log("populateAllNodesButton clicked")
+        jQuery("#populateAllDataButton").click(async function(){
+            console.log("populateAllDataButton clicked")
             // await MiscIpfsFunctions.ipfs.files.write('/hello-world', new TextEncoder().encode('Hello, world!'), {create: true, flush: true})
             // var oAllNodes = MiscFunctions.cloneObj(window.lookupWordBySlug)
             var aAllNodes = Object.keys(window.lookupWordBySlug)
@@ -81,16 +81,6 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                     <div className="mainPanel" >
                         <ConceptGraphMasthead />
                         <div class="h2">Push this Concept Graph to the IPFS Mutable File System</div>
-
-                        <pre>
-                        expected result:<br/>
-                        /plex/conceptGraphs/ipns to mainSchemaForConceptGraph for the concept graph (directory)/slug (wordSlug) for word (file)<br/>
-                        <br/>
-                        e.g.:<br/>
-                        /plex/conceptGraphs/k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y/conceptFor_relationshipsTypes<br/>
-                        k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y is a directory and is the IPNS for k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y<br/>
-                        Every node in this concept graph (including the mainSchemaForConceptGraph) will be represented as a file in this directory
-                        </pre>
 
                         <div style={{border:"1px dashed grey",padding:"5px"}} >
                             <div>
@@ -135,9 +125,61 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                             </div>
                         </div>
 
-                        <div id="populateAllNodesButton" className="doSomethingButton" >populate all nodes for this concept graph</div>
-                        <div id="deleteAllNodesButton" className="doSomethingButton" >delete all nodes in this concept graph directory</div>
-                        <div id="removeDirectoryButton" className="doSomethingButton" >remove the directory for this concept graph</div>
+                        <div id="populateAllDataButton" className="doSomethingButton" >build entire MFS for this concept graph from scratch</div>
+                        <div id="deleteAllDataButton" className="doSomethingButton" >delete this contents of this concept graph from the MFS</div>
+                        <div id="removeDirectoryButton" className="doSomethingButton" >remove the directory for this concept graph from the MFS</div>
+
+                        <div style={{fontSize:"12px",border:"1px dashed grey",padding:"10px",marginBottom:"10px"}}>
+                            <p>Pushing the production concept graph to the MFS provides a convenient and efficient way for apps to look up data from the concept graph
+                            without the necessity of looking up individual words to extract things like subsets from globalDynamicData. Each of the files stored
+                            in the concept graph MFS is a node (a word) in the concept graph. These may be stored either as .txt or as .json files. Although for now all nodes
+                            are json files, this may not always be the case.</p>
+                            <br/>
+                            <p>There will in general be multiple paths to any given node.</p>
+                            <br/>
+                            <p>Future: duplicate tree but use IPNS hash in place of word-slug for each node.</p>
+                            <br/>
+                            <p>Consider: duplicate trees using one (or all) of the *guaranteed unique* fields (slug, name, etc) e.g. influence can be used in place of conceptFor_influence</p>
+                            <br/>
+                            <p>To do: write functions to look up info on the concept graph MFS, with backup paths in case the primary desired path cannot be found.
+                            <li>Example 1: function to look for list of verified users via verification method A, but if that is not found, fall back to verification method B, or simply no verification at all.</li>
+                            <li>Example 2: function to look for data point using wordSlug (e.g. influenceType_objectiveReality_abc123), but if that cannot be found,
+                            try alternative human-readable names or slugs, e.g. objectiveReality or objective reality or truth. the first option is more likely to find
+                            the precise desired version of the data point; but if that is not available, may pull a less desired but nevertheless acceptable variation.</li>
+                            </p>
+                        </div>
+
+                        <pre style={{height:"400px",overflow:"scroll",border:"1px dashed grey",padding:"10px"}}>
+                        expected result:<br/>
+                        pCG0 = /plex/conceptGraphs/ipns to mainSchemaForConceptGraph for the concept graph (directory)/slug (wordSlug) for word (file)/node.txt<br/>
+                        Then for every node in the concept graph:<br/>
+                        pCG0/words/slug (wordSlug) for word (file)/node.txt<br/>
+                        <br/>
+                        In addition, each major word type gives rise to the following structures:<br/>
+                        pCG0/concepts/conceptFor_foo/node.txt<br/>
+                        pCG0/wordTypes/wordTypeFor_foo/node.txt<br/>
+                        pCG0/supersets/supersetFor_foo/node.txt<br/>
+                        pCG0/JSONSchemas/JSONSchemaFor_foo/node.txt<br/>
+                        pCG0/schemas/schemaFor_foo/node.txt<br/>
+                        <br/>
+                        Each concept gives rise to the following structures:<br/>
+                        pCG0/concepts/conceptFor_foo/wordType/wordTypeFor_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/superset/supersetFor_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/sets/setOf_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/specificInstances/---_foo/node.txt<br/>
+                        <br/>
+                        Each set and superset gives rise to the following structures (essentially recreating data from globalDynamicData):<br/>
+                        pCG0/concepts/conceptFor_foo/superset/allSpecificInstances/---_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/superset/directSpecificInstances/---_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/superset/allSubsets/setOf_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/superset/directSubsets/setOf_foo/node.txt<br/>
+                        pCG0/concepts/conceptFor_foo/superset/directSubsets/setOf_foo/directSubsets/...<br/>
+                        <br/>
+                        e.g.:<br/>
+                        /plex/conceptGraphs/k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y/conceptFor_relationshipsTypes/node.txt<br/>
+                        k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y is a directory and is the IPNS for k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y<br/>
+                        Every node in this concept graph (including the mainSchemaForConceptGraph) will be represented as a file in this directory
+                        </pre>
 
                     </div>
                 </fieldset>

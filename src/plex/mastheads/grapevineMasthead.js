@@ -16,7 +16,7 @@ export default class GrapevineMasthead extends React.Component {
         var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var cid = oIpfsID.id;
-        jQuery("#myCidMastheadContainer").html(cid)
+        // jQuery("#myCidMastheadContainer").html(cid)
         for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
             var myUserData = new TextDecoder("utf-8").decode(chunk);
             try {
@@ -48,10 +48,6 @@ export default class GrapevineMasthead extends React.Component {
                                 <div style={{verticalAlign:"bottom",fontSize:"20px",display:"inline-block"}} >Hi</div>
                                 <div id="myUsernameMastheadContainer" style={{display:"inline-block",marginLeft:"5px",fontSize:"20px",color:"purple"}}>my username</div>
                                 <div style={{verticalAlign:"bottom",display:"inline-block",fontSize:"20px"}} >!</div>
-                              </div>
-                              <div style={{fontSize:"8px"}}>
-                                my cid:
-                                <div id="myCidMastheadContainer" style={{display:"inline-block",marginLeft:"5px",color:"grey"}}>peerID</div>
                               </div>
                           </div>
                           <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >Settings</NavLink>
