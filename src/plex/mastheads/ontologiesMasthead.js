@@ -22,7 +22,7 @@ export default class OntologiesMasthead extends React.Component {
         for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
             var myUserData = new TextDecoder("utf-8").decode(chunk);
             try {
-                console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
+                // console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
                 var oMyUserData = JSON.parse(myUserData);
                 if (typeof oMyUserData == "object") {
                     var myUsername = oMyUserData.username;

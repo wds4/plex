@@ -10,6 +10,184 @@ import sendAsync from '../../../../renderer.js';
 
 const jQuery = require("jquery");
 
+const populateSuperset = async (path,oConcept) => {
+    var conceptSlug = oConcept.conceptData.slug;
+    var conceptPropertyPath = oConcept.conceptData.propertyPath;
+    var superset_slug = oConcept.conceptData.nodes.superset.slug;
+    var oSuperset = window.lookupWordBySlug[superset_slug];
+    var aAllSubsets = oSuperset.globalDynamicData.subsets;
+    var aDirectSubsets = oSuperset.globalDynamicData.directSubsets;
+    var aAllSpecificInstances = oSuperset.globalDynamicData.specificInstances;
+    var aDirectSpecificInstances = oSuperset.globalDynamicData.directSpecificInstances;
+
+    var nextPath = path + "superset/";
+    try {
+        await MiscIpfsFunctions.ipfs.files.mkdir(nextPath)
+    } catch (e) {}
+
+    try {
+        var pathToFile = path + "superset/" + "node.txt";
+        var fileToWrite = JSON.stringify(oSuperset,null,4)
+        await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true})
+    } catch (e) {}
+
+    var nextPath = path + "superset/allSpecificInstances/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    var nextPath = path + "superset/directSpecificInstances/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    var nextPath = path + "superset/allSets/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    var nextPath = path + "superset/directSubsets/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    for (var z=0;z<aAllSpecificInstances.length;z++) {
+        var nextSI_wordSlug = aAllSpecificInstances[z];
+        var oNextNode = window.lookupWordBySlug[nextSI_wordSlug];
+        var nextSI_ipns = oNextNode.metaData.ipns;
+        var nextNode_nodeSpecificSlug = oNextNode[conceptPropertyPath].slug;
+
+        var nextPath = path + "superset/allSpecificInstances/" +nextSI_wordSlug + "/";
+        try {
+            var pathToFile = nextPath + "node.txt";
+            var fileToWrite = JSON.stringify(oNextNode,null,4)
+            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
+            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
+        } catch (e) {}
+
+        var nextPath = path + "superset/allSpecificInstances/slug/" +nextSI_wordSlug + "/";
+        try {
+            var pathToFile = nextPath + "node.txt";
+            var fileToWrite = JSON.stringify(oNextNode,null,4)
+            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
+            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
+        } catch (e) {}
+
+        var nextPath = path + "superset/allSpecificInstances/ipns/" +nextSI_ipns + "/";
+        try {
+            var pathToFile = nextPath + "node.txt";
+            var fileToWrite = JSON.stringify(oNextNode,null,4)
+            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
+            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
+        } catch (e) {}
+
+        var nextPath = path + "superset/allSpecificInstances/"+conceptSlug+"/" +nextNode_nodeSpecificSlug + "/";
+        try {
+            var pathToFile = nextPath + "node.txt";
+            var fileToWrite = JSON.stringify(oNextNode,null,4)
+            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
+            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
+        } catch (e) {}
+
+
+
+    }
+}
+
+const populateSets = async (path,superset_slug) => {
+
+    var nextPath = path + "sets/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    var oSuperset = window.lookupWordBySlug[superset_slug];
+    var aAllSubsets = oSuperset.globalDynamicData.subsets;
+
+}
+
+const populateWordType = async (path,wordType_slug) => {
+    var oWordType = window.lookupWordBySlug[wordType_slug];
+
+    var nextPath = path + "wordType/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    try {
+        var pathToFile = nextPath + "node.txt";
+        var fileToWrite = JSON.stringify(oWordType,null,4)
+        await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true})
+    } catch (e) {}
+}
+
+const populateSingleConceptB = async (path,concept_wordSlug) => {
+    var oConcept = window.lookupWordBySlug[concept_wordSlug];
+    var superset_slug = oConcept.conceptData.nodes.superset.slug;
+
+    var wordType_slug = oConcept.conceptData.nodes.wordType.slug;
+
+
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+
+    var pathToFile = path + "node.txt";
+    var fileToWrite = JSON.stringify(oConcept,null,4)
+    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+
+    // wordType
+    await populateWordType(path,wordType_slug)
+
+    var nextPath = path + "properties/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
+
+    // superset
+    await populateSuperset(path,oConcept)
+
+    // sets
+    await populateSets(path,superset_slug)
+}
+
+const populateSingleConcept = async (path,concept_wordSlug) => {
+    console.log("populateSingleConcept; concept_wordSlug: "+concept_wordSlug+"; path: "+path)
+
+    // all the various unique (unique in this context) identifiers to find this concept
+    var oConcept = window.lookupWordBySlug[concept_wordSlug];
+    var conceptSlug = oConcept.conceptData.slug;
+    var conceptIPNS = oConcept.metaData.ipns;
+
+    var nextUniqueIdentifier = concept_wordSlug;
+    var pathNext = path + nextUniqueIdentifier + "/";
+    populateSingleConceptB(pathNext,concept_wordSlug)
+
+    var nextUniqueIdentifier = conceptSlug;
+    var pathNext = path + nextUniqueIdentifier + "/";
+    populateSingleConceptB(pathNext,concept_wordSlug)
+
+    var nextUniqueIdentifier = conceptIPNS;
+    var pathNext = path + nextUniqueIdentifier + "/";
+    populateSingleConceptB(pathNext,concept_wordSlug)
+}
+
+const reportMutableFilesTree = async (pCG0,path) => {
+    var pathMinusPrefix = path.replace(pCG0,"./")
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        var fileCid = file.cid;
+        console.log("path: "+path+"; file name: "+fileName)
+        console.log("path: "+path+"; file type: "+fileType)
+        var reportHTML = "";
+        reportHTML += "<div>";
+        reportHTML += "<div style='display:inline-block;' >"+pathMinusPrefix+"</div>";
+        if (fileType=="directory") {
+            reportHTML += "<div style='display:inline-block;background-color:yellow;' >" + fileName + "</div>";
+        }
+        if (fileType=="file") {
+            reportHTML += "<div class=ipfsMutableFilesFileContainer style='display:inline-block;background-color:orange;' ";
+            reportHTML += " data-filename='"+fileName+"' ";
+            reportHTML += " data-path='"+path+"' ";
+            reportHTML += " data-cid='"+fileCid+"' ";
+            reportHTML += " >";
+            reportHTML += fileName;
+            reportHTML += "</div>";
+        }
+        reportHTML += "</div>";
+        jQuery("#listOfAllPathsContainer").append(reportHTML)
+        if (file.type=="directory") {
+            var newPath=path+file.name+"/";
+            await reportMutableFilesTree(pCG0,newPath)
+        }
+    }
+}
+
 export default class SingleConceptGraphPinToIPFS extends React.Component {
     constructor(props) {
         super(props);
@@ -24,53 +202,106 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
         var mainSchema_ipns = oMainSchema.metaData.ipns;
         jQuery("#mainSchemaIpnsContainer").html(mainSchema_ipns);
         jQuery("#establishPlexMutableFileButton").html("establish directory: /plex/conceptGraphs/"+mainSchema_ipns)
-        var expectedPathA = "/plex/conceptGraphs/";
+        var pCG = "/plex/conceptGraphs/";
         var numConceptGraphs = 0;
         var isThisConceptGraphPresent = false;
-        for await (const file of MiscIpfsFunctions.ipfs.files.ls(expectedPathA)) {
-            console.log("expectedPathA: "+expectedPathA+"; file name: "+file.name)
-            console.log("expectedPathA: "+expectedPathA+"; file type: "+file.type)
+        for await (const file of MiscIpfsFunctions.ipfs.files.ls(pCG)) {
+            console.log("pCG: "+pCG+"; file name: "+file.name)
+            console.log("pCG: "+pCG+"; file type: "+file.type)
             numConceptGraphs++;
             if (file.name==mainSchema_ipns) {
                 isThisConceptGraphPresent = true;
             }
         }
-        var expectedPathB = expectedPathA + mainSchema_ipns + "/";
+        var pCG0 = pCG + mainSchema_ipns + "/";
         console.log("numConceptGraphs: "+numConceptGraphs+"; isThisConceptGraphPresent: "+isThisConceptGraphPresent)
         if (isThisConceptGraphPresent) {
             jQuery("#hasPlexFileBeenEstablishedContainer").html("YES")
             jQuery("#establishPlexMutableFileButtonContainer").css("display","none");
+            jQuery("#pathToThisConceptGraphContainer").html(pCG0)
+            jQuery("#listOfAllPathsContainer").html("")
+            await reportMutableFilesTree(pCG0,pCG0)
+            jQuery(".ipfsMutableFilesFileContainer").click(async function(){
+                var fileName = jQuery(this).data("filename")
+                var path = jQuery(this).data("path")
+                var cid = jQuery(this).data("cid")
+                console.log("ipfsMutableFilesFileContainer clicked; fileName: "+fileName+"; path: "+path+"; cid: "+cid)
+                for await (const chunk2 of MiscIpfsFunctions.ipfs.cat(cid)) {
+                    var chunk3 = new TextDecoder("utf-8").decode(chunk2);
+                    try {
+                        var chunk4 = JSON.parse(chunk3);
+                        if (typeof chunk4 == "object") {
+                            var chunk5 = JSON.stringify(chunk4,null,4);
+                            jQuery("#clickedNodeRawFileContainer").html(chunk5)
+                        } else {
+                            jQuery("#clickedNodeRawFileContainer").html(chunk3)
+                        }
+                    } catch (e) {
+                        console.log("error: "+e)
+                        jQuery("#clickedNodeRawFileContainer").html(chunk3)
+                    }
+                }
+            })
         }
         jQuery("#numberOfConceptGraphsContainer").html(numConceptGraphs)
         jQuery("#establishPlexMutableFileButton").click(async function(){
             console.log("establishPlexMutableFileButton clicked")
-
-            await MiscIpfsFunctions.ipfs.files.mkdir(expectedPathB);
-            alert("created directory: "+expectedPathB)
+            await MiscIpfsFunctions.ipfs.files.mkdir(pCG0);
+            alert("created directory: "+pCG0)
         })
         jQuery("#deleteAllDataButton").click(async function(){
             console.log("deleteAllDataButton clicked")
         })
         jQuery("#populateAllDataButton").click(async function(){
             console.log("populateAllDataButton clicked")
-            // await MiscIpfsFunctions.ipfs.files.write('/hello-world', new TextEncoder().encode('Hello, world!'), {create: true, flush: true})
-            // var oAllNodes = MiscFunctions.cloneObj(window.lookupWordBySlug)
+            // words: the central concept graph wordType; any node can be looked up here
+
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"words/") } catch (e) {}
+
+            // each of the other core wordTypes for concept graphs
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"concepts/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"wordTypes/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"schemas/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"JSONSchemas/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"supersets/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"sets/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"properties/") } catch (e) {}
+
+            // each core wordType for ratings, reputation, etc
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"users/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"ratings/") } catch (e) {}
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"ratingTemplates/") } catch (e) {}
+
+            try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"influenceTypes/") } catch (e) {}
+
+            var concept_wordSlug = "conceptFor_influenceType";
+            // var path = pCG0+"concepts/"+concept_wordSlug+"/";
+            var path = pCG0+"concepts/";
+            await populateSingleConcept(path,concept_wordSlug);
+            /*
+            // iterate through each concept
+
+            // iterate through each word
             var aAllNodes = Object.keys(window.lookupWordBySlug)
             for (var z=0;z < aAllNodes.length;z++) {
                 var nextNode_slug = aAllNodes[z];
                 var oNextNode = MiscFunctions.cloneObj(window.lookupWordBySlug[nextNode_slug]);
                 var sNextNode = JSON.stringify(oNextNode,null,4)
-                var nextNodePath = expectedPathB + nextNode_slug;
-                // var nextNodePath = "/grapevineData/" + nextNode_slug + ".txt";
+                var nextNodePath = pCG0 + nextNode_slug;
                 console.log("adding file nextNodePath: "+nextNodePath)
                 await MiscIpfsFunctions.ipfs.files.write(nextNodePath, new TextEncoder().encode(sNextNode), {create: true, flush: true})
             }
+            */
+            // redraw tree
+            jQuery("#listOfAllPathsContainer").html("")
+            await reportMutableFilesTree(pCG0,pCG0)
         })
         jQuery("#removeDirectoryButton").click(async function(){
             console.log("removeDirectoryButton clicked")
-            await MiscIpfsFunctions.ipfs.files.rm(expectedPathB, { recursive: true });
-            alert("removed this directory and its contents: "+expectedPathB)
+            await MiscIpfsFunctions.ipfs.files.rm(pCG0, { recursive: true });
+            alert("removed this directory and its contents: "+pCG0)
         })
+
     }
     render() {
         return (
@@ -128,6 +359,19 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                         <div id="populateAllDataButton" className="doSomethingButton" >build entire MFS for this concept graph from scratch</div>
                         <div id="deleteAllDataButton" className="doSomethingButton" >delete this contents of this concept graph from the MFS</div>
                         <div id="removeDirectoryButton" className="doSomethingButton" >remove the directory for this concept graph from the MFS</div>
+
+                        <div style={{fontSize:"12px",border:"1px dashed grey",padding:"10px",marginBottom:"10px",height:"430px"}}>
+                            <center>current MFS file structure for this concept graph</center>
+
+                            <div style={{marginBottom:"5px"}}>
+                            pGC0 = <div style={{display:"inline-block"}} id="pathToThisConceptGraphContainer" >pathToThisConceptGraphContainer</div>
+                            </div>
+
+                            <div style={{height:"400px",overflow:"scroll"}}>
+                                <div id="listOfAllPathsContainer" style={{display:"inline-block",width:"900px",border:"1px dashed purple",height:"380px",overflow:"scroll"}} ></div>
+                                <textarea id="clickedNodeRawFileContainer" style={{display:"inline-block",width:"500px",height:"95%",border:"1px dashed grey",overflow:"scroll"}} ></textarea>
+                            </div>
+                        </div>
 
                         <div style={{fontSize:"12px",border:"1px dashed grey",padding:"10px",marginBottom:"10px"}}>
                             <p>Pushing the production concept graph to the MFS provides a convenient and efficient way for apps to look up data from the concept graph
