@@ -53,6 +53,7 @@ const generateTypeHTML = (nextNode_slug,lookupChildTypes,isTopLevel) => {
     return nextNodeHTML;
 }
 const generateFullHierarchy = (oDataModelSchema) => {
+    jQuery("#fullHierarchyContainer").html("")
     var aNodes = oDataModelSchema.schemaData.nodes;
     var aRels = oDataModelSchema.schemaData.relationships;
     var lookupChildTypes = {};
@@ -123,6 +124,59 @@ const processClickedToggleButton = (node_slug) => {
         closeChildrenContainer(node_slug)
     }
 }
+
+const populateContextGraphRawFile = () => {
+    var dataModelSchema_wordSlug = jQuery("#contextGraphSelector option:selected").data("slug")
+    var oDataModelSchema = window.lookupWordBySlug[dataModelSchema_wordSlug];
+
+    /*
+    // var dataModel_wordSlug = "dataModel_context_6x1dee";
+    var dataModel_wordSlug = "wordTypeFor_contextGraph";
+    var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
+    var dataModelRuleset = oDataModel.dataModelData.ruleset;
+
+    var dataModelSchema_wordSlug = oDataModel.dataModelData.dataModelSchema.slug;
+
+
+    console.log("dataModelSchema_wordSlug: "+dataModelSchema_wordSlug)
+    var oDataModelSchema = window.lookupWordBySlug[dataModelSchema_wordSlug];
+    */
+    jQuery("#dataModelSchemaRawFileContainer").val(JSON.stringify(oDataModelSchema,null,4))
+    var contextGraph_wordSlug = "conceptFor_contextGraph_svvy7z";
+    var oCgConcept = window.lookupWordBySlug[contextGraph_wordSlug];
+    var cgWordType_slug = oCgConcept.conceptData.nodes.wordType.slug;
+    var oDataModel = window.lookupWordBySlug[cgWordType_slug];
+    var oPrincipleDataTypes = oDataModel.dataModelData.principleDataTypes;
+    var concept_types_wordSlug = oPrincipleDataTypes.context.concept_wordSlug;
+    var oConcept_types = window.lookupWordBySlug[concept_types_wordSlug];
+    var propertyPath = oConcept_types.conceptData.propertyPath;
+    jQuery("#propertyPathContainer").html(propertyPath)
+    generateFullHierarchy(oDataModelSchema)
+}
+
+const makeContextGraphSelector = (oCgSuperset) => {
+    var aSpecificInstances = oCgSuperset.globalDynamicData.specificInstances;
+    var selectorHTML = "";
+    selectorHTML += "<select id='contextGraphSelector' >";
+    for (var z=0;z<aSpecificInstances.length;z++) {
+        var nextSi_slug = aSpecificInstances[z];
+        var oNextSi = window.lookupWordBySlug[nextSi_slug];
+        var nextSi_contextGraphName = oNextSi.contextGraphData.name;
+        selectorHTML += "<option ";
+        selectorHTML += " data-slug='"+nextSi_slug+"' ";
+        selectorHTML += " >";
+        selectorHTML += nextSi_contextGraphName;
+        selectorHTML += "</option>";
+    }
+    selectorHTML += "</select>";
+
+    jQuery("#contextGraphSelectorContainer").html(selectorHTML)
+    populateContextGraphRawFile()
+    jQuery("#contextGraphSelector").change(function(){
+        populateContextGraphRawFile()
+    })
+}
+
 export default class SchemaOrgTextNav extends React.Component {
     constructor(props) {
         super(props);
@@ -132,22 +186,15 @@ export default class SchemaOrgTextNav extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        // var dataModel_wordSlug = "dataModel_context_6x1dee";
-        var dataModel_wordSlug = "wordTypeFor_contextGraph";
-        var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
-        var dataModelRuleset = oDataModel.dataModelData.ruleset;
-        if (dataModelRuleset=="grapevine context 1.0") {
-            var dataModelSchema_wordSlug = oDataModel.dataModelData.dataModelSchema.slug;
-            console.log("dataModelSchema_wordSlug: "+dataModelSchema_wordSlug)
-            var oDataModelSchema = window.lookupWordBySlug[dataModelSchema_wordSlug];
-            jQuery("#dataModelSchemaRawFileContainer").val(JSON.stringify(oDataModelSchema,null,4))
-            var oPrincipleDataTypes = oDataModel.dataModelData.principleDataTypes;
-            var concept_types_wordSlug = oPrincipleDataTypes.context.concept_wordSlug;
-            var oConcept_types = window.lookupWordBySlug[concept_types_wordSlug];
-            var propertyPath = oConcept_types.conceptData.propertyPath;
-            jQuery("#propertyPathContainer").html(propertyPath)
-            generateFullHierarchy(oDataModelSchema)
-        }
+        var contextGraph_wordSlug = "conceptFor_contextGraph_svvy7z";
+        var oCgConcept = window.lookupWordBySlug[contextGraph_wordSlug];
+        var cgWordType_slug = oCgConcept.conceptData.nodes.wordType.slug;
+        var cgSuperset_slug = oCgConcept.conceptData.nodes.superset.slug;
+        var oCgSuperset = window.lookupWordBySlug[cgSuperset_slug];
+        makeContextGraphSelector(oCgSuperset);
+
+
+
     }
     render() {
         return (
@@ -158,6 +205,11 @@ export default class SchemaOrgTextNav extends React.Component {
                     <div className="mainPanel" >
                         <ConceptGraphMasthead />
                         <div class="h2">Context Tree: Hierarchical Text Navigation</div>
+
+                        <div>
+                            <div style={{display:"inline-block"}}>select context graph to view: </div>
+                            <div id="contextGraphSelectorContainer" style={{display:"inline-block"}}>contextGraphSelectorContainer</div>
+                        </div>
 
                         <div id="propertyPathContainer">propertyPathContainer</div>
 

@@ -21,9 +21,26 @@ export default class DataModelingContext extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        var dataModel_wordSlug = "wordTypeFor_contextGraph";
-        var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
-        jQuery("#dataModelRawFileContainer").val(JSON.stringify(oDataModel,null,4))
+        var dataModel_concept_wordSlug = "conceptFor_contextGraph_svvy7z";
+        var oDataModelConcept = window.lookupWordBySlug[dataModel_concept_wordSlug];
+        // var dataModel_wordSlug = "wordTypeFor_contextGraph";
+        var dataModel_wordSlug = oDataModelConcept.conceptData.nodes.wordType.slug;
+        var oDataModelWordType = window.lookupWordBySlug[dataModel_wordSlug];
+        jQuery("#dataModelRawFileContainer").val(JSON.stringify(oDataModelWordType,null,4))
+        var dataModel_superset = oDataModelConcept.conceptData.nodes.superset.slug;
+        var oDataModelSuperset = window.lookupWordBySlug[dataModel_superset];
+        var aContextGraphs = oDataModelSuperset.globalDynamicData.specificInstances;
+        for (var z=0;z<aContextGraphs.length;z++) {
+            var nextContextGraph_slug = aContextGraphs[z];
+            var oNextContextGraph = window.lookupWordBySlug[nextContextGraph_slug];
+            var nextContextGraph_cgName = oNextContextGraph.contextGraphData.name;
+            var cgHTML = "";
+            cgHTML += "<div ";
+            cgHTML += " >";
+            cgHTML += nextContextGraph_cgName;
+            cgHTML += "</div>";
+            jQuery("#contextGraphsContainer").append(cgHTML)
+        }
     }
     render() {
         return (
@@ -35,9 +52,13 @@ export default class DataModelingContext extends React.Component {
                         <ConceptGraphMasthead />
                         <div class="h2">Context Structured Data</div>
 
-                        <div style={{display:"inline-block",width:"600px",height:"800px",border:"1px dashed grey"}} >
+                        <div style={{display:"inline-block",height:"800px",border:"1px dashed grey"}} >
                             <center>The Context Data Model for the Grapevine (Trust) Rating System</center>
-                            <textarea id="dataModelRawFileContainer" style={{display:"inline-block",width:"95%",height:"700px"}} >dataModelRawFileContainer</textarea>
+                            <div style={{display:"inline-block",width:"600px",height:"700px",border:"1px dashed grey",padding:"10px"}} >
+                                <center>Context Graphs</center>
+                                <div id="contextGraphsContainer" ></div>
+                            </div>
+                            <textarea id="dataModelRawFileContainer" style={{display:"inline-block",width:"600px",height:"700px"}} >dataModelRawFileContainer</textarea>
                         </div>
 
                     </div>

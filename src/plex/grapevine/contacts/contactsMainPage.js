@@ -36,7 +36,7 @@ const addPeerToUserList = async (cid) => {
                 var oUserData = JSON.parse(userData);
                 if (typeof oUserData == "object") {
                     var sUserData = JSON.stringify(oUserData,null,4);
-                    console.log("sUserData: "+sUserData)
+                    // console.log("sUserData: "+sUserData)
 
                     var username = oUserData.username;
                     var peerID = oUserData.peerID;

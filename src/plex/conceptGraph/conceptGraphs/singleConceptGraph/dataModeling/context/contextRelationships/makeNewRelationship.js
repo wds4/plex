@@ -86,6 +86,36 @@ const updateDataModelSchema = () => {
     MiscFunctions.createOrUpdateWordInAllTables(oDataModelSchema);
 }
 
+const makeContextGraphSelector = (oCgSuperset) => {
+    var aSpecificInstances = oCgSuperset.globalDynamicData.specificInstances;
+    var selectorHTML = "";
+    selectorHTML += "<select id='contextGraphSelector' >";
+    for (var z=0;z<aSpecificInstances.length;z++) {
+        var nextSi_slug = aSpecificInstances[z];
+        var oNextSi = window.lookupWordBySlug[nextSi_slug];
+        var nextSi_contextGraphName = oNextSi.contextGraphData.name;
+        selectorHTML += "<option ";
+        selectorHTML += " data-slug='"+nextSi_slug+"' ";
+        selectorHTML += " >";
+        selectorHTML += nextSi_contextGraphName;
+        selectorHTML += "</option>";
+    }
+    selectorHTML += "</select>";
+
+    jQuery("#contextGraphSelectorContainer").html(selectorHTML)
+    populateContextGraphRawFile()
+    jQuery("#contextGraphSelector").change(function(){
+        populateContextGraphRawFile()
+    })
+}
+
+const populateContextGraphRawFile = () => {
+    var dataModelSchema_wordSlug = jQuery("#contextGraphSelector option:selected").data("slug")
+    var oDataModelSchema = window.lookupWordBySlug[dataModelSchema_wordSlug];
+    jQuery("#dataModelSchemaRawFileContainer_unedited").val(JSON.stringify(oDataModelSchema,null,4))
+    jQuery("#dataModelSchemaRawFileContainer_edited").val(JSON.stringify(oDataModelSchema,null,4))
+}
+
 export default class MakeNewSchemaOrgRelationship extends React.Component {
     constructor(props) {
         super(props);
@@ -95,20 +125,21 @@ export default class MakeNewSchemaOrgRelationship extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        var dataModel_wordSlug = "dataModel_context_6x1dee";
-        var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
+        var contextGraph_wordSlug = "conceptFor_contextGraph_svvy7z";
+        var oCgConcept = window.lookupWordBySlug[contextGraph_wordSlug];
+        var cgWordType_slug = oCgConcept.conceptData.nodes.wordType.slug;
+        var cgSuperset_slug = oCgConcept.conceptData.nodes.superset.slug;
+        var oCgSuperset = window.lookupWordBySlug[cgSuperset_slug];
+        // var dataModel_wordSlug = "dataModel_context_6x1dee";
+        // var dataModel_wordSlug = "wordTypeFor_contextGraph";
+        var oDataModel = window.lookupWordBySlug[cgWordType_slug];
         jQuery("#dataModelRawFileContainer_unedited").val(JSON.stringify(oDataModel,null,4))
         var dataModelRuleset = oDataModel.dataModelData.ruleset;
         var specializedRelType = "foo";
+        makeContextGraphSelector(oCgSuperset);
         if (dataModelRuleset=="grapevine context 1.0") {
-            var dataModelSchema_wordSlug = oDataModel.dataModelData.dataModelSchema.slug;
-            var oDataModelSchema = window.lookupWordBySlug[dataModelSchema_wordSlug];
-            jQuery("#dataModelSchemaRawFileContainer_unedited").val(JSON.stringify(oDataModelSchema,null,4))
-            jQuery("#dataModelSchemaRawFileContainer_edited").val(JSON.stringify(oDataModelSchema,null,4))
             var oPrincipleDataTypes = oDataModel.dataModelData.principleDataTypes;
-            // console.log("oPrincipleDataTypes: "+JSON.stringify(oPrincipleDataTypes,null,4))
             var concept_contexts_wordSlug = oPrincipleDataTypes.context.concept_wordSlug;
-            // console.log("concept_types_wordSlug: "+concept_types_wordSlug)
             var oConcept_contexts = window.lookupWordBySlug[concept_contexts_wordSlug];
             var aSpecializedRelType = oDataModel.dataModelData.specializedRelationshipTypes;
             var specializedRelType = aSpecializedRelType[0];
@@ -136,8 +167,12 @@ export default class MakeNewSchemaOrgRelationship extends React.Component {
                         <div>
                             <div id="propertyPathContainer">propertyPathContainer</div>
                             <div style={{display:"inline-block",width:"600px",height:"500px"}} >
-                                parent: <div id="parentContextSelectorContainer" >parentContextSelectorContainer</div>
-                                child: <div id="childContextSelectorContainer" >childContextSelectorContainer</div>
+                                <div>
+                                    <div style={{display:"inline-block"}}>select context graph to edit: </div>
+                                    <div id="contextGraphSelectorContainer" style={{display:"inline-block"}}>contextGraphSelectorContainer</div>
+                                </div>
+                                parent context: <div id="parentContextSelectorContainer" >parentContextSelectorContainer</div>
+                                child context: <div id="childContextSelectorContainer" >childContextSelectorContainer</div>
                                 <div className="doSomethingButton" id="addRelationshipButton" >add relationship</div>
                                 <div id="newRelationshipsContainer" >
                                     <div>

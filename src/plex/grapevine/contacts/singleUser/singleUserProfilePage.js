@@ -54,6 +54,104 @@ export const addDataToIPFS = async (metadata) => {
     return ipfsHash.cid.toString();
 };
 
+const fetchInfluenceTypes = async (pCG0) => {
+
+    var aResult = [];
+
+    var pathToInfluenceTypes = pCG0 + "concepts/influenceType/superset/allSpecificInstances/slug/"
+    // console.log("fetchInfluenceTypes; pathToInfluenceTypes: "+pathToInfluenceTypes)
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(pathToInfluenceTypes)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        // console.log("fetchInfluenceTypes; file name: "+file.name)
+        // console.log("fetchInfluenceTypes; file type: "+file.type)
+        if (fileType=="directory") {
+            var pathToSpecificInstance = pathToInfluenceTypes + fileName + "/node.txt";
+            for await (const siFile of MiscIpfsFunctions.ipfs.files.read(pathToSpecificInstance)) {
+                var sNextSpecificInstanceRawFile = new TextDecoder("utf-8").decode(siFile);
+                var oNextSpecificInstanceRawFile = JSON.parse(sNextSpecificInstanceRawFile);
+                var nextInfluenceType_name = oNextSpecificInstanceRawFile.influenceTypeData.name;
+                // console.log("fetchInfluenceTypes; nextInfluenceType_name: "+nextInfluenceType_name)
+                aResult.push(oNextSpecificInstanceRawFile)
+            }
+        }
+    }
+    return aResult;
+}
+
+const makeInfluenceTypeSelector = async () => {
+    var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
+    var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+    var mainSchema_ipns = oMainSchema.metaData.ipns;
+    var pCG = "/plex/conceptGraphs/";
+    var pCG0 = pCG + mainSchema_ipns + "/";
+
+    var aInfluenceTypes = await fetchInfluenceTypes(pCG0);
+    // console.log("aInfluenceTypes: "+JSON.stringify(aInfluenceTypes,null,4))
+
+    var selectorHTML = "";
+    selectorHTML += "<select id='influenceTypeSelector' >";
+    for (var z=0;z<aInfluenceTypes.length;z++) {
+        var oNextInfluenceType = aInfluenceTypes[z];
+        var nextInfluenceType_name = oNextInfluenceType.influenceTypeData.name;
+        var nextInfluenceType_title = oNextInfluenceType.influenceTypeData.title;
+        var nextInfluenceType_slug = oNextInfluenceType.influenceTypeData.slug;
+        // console.log("oNextInfluenceType: "+JSON.stringify(oNextInfluenceType,null,4))
+        var nextInfluenceType_associatedContextGraph_slug = oNextInfluenceType.influenceTypeData.contextGraph.slug;
+        selectorHTML += "<option ";
+        selectorHTML += " data-contextgraphslug='"+nextInfluenceType_associatedContextGraph_slug+"' ";
+        selectorHTML += " value='"+nextInfluenceType_associatedContextGraph_slug+"' ";
+        selectorHTML += " >";
+        selectorHTML += nextInfluenceType_name;
+        selectorHTML += "</option>";
+    }
+    selectorHTML += "</select>";
+    jQuery("#influenceTypeSelectorContainer").html(selectorHTML)
+    document.getElementById("influenceTypeSelector").value = "contextGraph_attention_8xr5k8";
+    //
+    makeContextSelector()
+    document.getElementById("contextSelector").value = "everything";
+    jQuery("#influenceTypeSelector").change(function(){
+        makeContextSelector()
+    })
+    // var foo = await MiscFunctions.timeout(500);
+    // document.getElementById("influenceTypeSelector").value = "influenceType_attention_8teh9x";
+
+    // jQuery("#influenceTypeSelector").get[0].change()
+}
+
+// set selector defaults:
+// influenceType_attention_8teh9x, contextGraph_attention_8xr5k8
+// contextStructuredData_context_everything_sei24k
+// document.getElementById("influenceTypeSelector").value = "influenceType_attention_8teh9x";
+// document.getElementById("contextSelector").value = "contextStructuredData_context_everything_sei24k";
+
+const makeContextSelector = () => {
+    var selectorHTML = "";
+    selectorHTML += "<select id='contextSelector' >";
+
+    var contextGraph_slug = jQuery("#influenceTypeSelector option:selected").data("contextgraphslug")
+    var oContextGraph = window.lookupWordBySlug[contextGraph_slug]
+    var aContexts = oContextGraph.schemaData.nodes;
+    for (var z=0;z<aContexts.length;z++) {
+        var oNC = aContexts[z];
+        var nextContext_slug = oNC.slug;
+        var oNextContext = window.lookupWordBySlug[nextContext_slug]
+        var nextContext_contextName = oNextContext.contextStructuredData_contextData.name;
+        var nextContext_contextSlug = oNextContext.contextStructuredData_contextData.slug;
+        selectorHTML += "<option ";
+        selectorHTML += " data-contextwordslug='"+nextContext_slug+"' ";
+        selectorHTML += " data-contextslug='"+nextContext_contextSlug+"' ";
+        selectorHTML += " value='"+nextContext_contextSlug+"' ";
+        selectorHTML += " >";
+        selectorHTML += nextContext_contextName;
+        selectorHTML += "</option>";
+    }
+    selectorHTML += "</select>";
+    jQuery("#contextSelectorContainer").html(selectorHTML)
+
+}
+
 export default class SingleUserProfile extends React.Component {
     constructor(props) {
         super(props);
@@ -64,6 +162,11 @@ export default class SingleUserProfile extends React.Component {
         console.log("cid: "+cid)
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
         populateFields(cid);
+        await makeInfluenceTypeSelector();
+        jQuery("#leaveRatingButton").click(function(){
+            console.log("leaveRatingButton clicked")
+        })
+
     }
     render() {
         return (
@@ -112,7 +215,16 @@ export default class SingleUserProfile extends React.Component {
                                     </div>
                                 </div>
                                 <div style={{border:"1px dashed grey",width:"1210px",height:"350px",textAlign:"left",overflow:"scroll"}}>
-                                    <center>Content</center>
+                                    <div id="leaveRatingButton" className="doSomethingButton" >FOLLOW</div>
+                                    <div id="toggleRatingsOptionsButton" className="doSomethingButton_small" >more options</div>
+                                    <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
+                                        <center>select trust / influence type</center>
+                                        <div id="influenceTypeSelectorContainer" ></div>
+                                    </div>
+                                    <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
+                                        <center>select context</center>
+                                        <div id="contextSelectorContainer" ></div>
+                                    </div>
                                 </div>
                             </div>
 

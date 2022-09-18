@@ -42,17 +42,48 @@ const makeInfluenceTypeSelector = async () => {
     // console.log("aInfluenceTypes: "+JSON.stringify(aInfluenceTypes,null,4))
 
     var selectorHTML = "";
-    selectorHTML += "<select>";
+    selectorHTML += "<select id='influenceTypeSelector' >";
     for (var z=0;z<aInfluenceTypes.length;z++) {
         var oNextInfluenceType = aInfluenceTypes[z];
         var nextInfluenceType_name = oNextInfluenceType.influenceTypeData.name;
+        var nextInfluenceType_title = oNextInfluenceType.influenceTypeData.title;
+        var nextInfluenceType_slug = oNextInfluenceType.influenceTypeData.slug;
+        // console.log("oNextInfluenceType: "+JSON.stringify(oNextInfluenceType,null,4))
+        var nextInfluenceType_associatedContextGraph_slug = oNextInfluenceType.influenceTypeData.contextGraph.slug;
         selectorHTML += "<option ";
+        selectorHTML += " data-contextgraphslug='"+nextInfluenceType_associatedContextGraph_slug+"' ";
         selectorHTML += " >";
         selectorHTML += nextInfluenceType_name;
         selectorHTML += "</option>";
     }
     selectorHTML += "</select>";
     jQuery("#influenceTypeSelectorContainer").html(selectorHTML)
+    makeContextSelector()
+    jQuery("#influenceTypeSelector").change(function(){
+        makeContextSelector()
+    })
+}
+
+const makeContextSelector = () => {
+    var selectorHTML = "";
+    selectorHTML += "<select id='contextSelector' >";
+
+    var contextGraph_slug = jQuery("#influenceTypeSelector option:selected").data("contextgraphslug")
+    var oContextGraph = window.lookupWordBySlug[contextGraph_slug]
+    var aContexts = oContextGraph.schemaData.nodes;
+    for (var z=0;z<aContexts.length;z++) {
+        var oNC = aContexts[z];
+        var nextContext_slug = oNC.slug;
+        var oNextContext = window.lookupWordBySlug[nextContext_slug]
+        var nextContext_contextName = oNextContext.contextStructuredData_contextData.name;
+        selectorHTML += "<option ";
+        selectorHTML += " data-contextslug='"+nextContext_slug+"' ";
+        selectorHTML += " >";
+        selectorHTML += nextContext_contextName;
+        selectorHTML += "</option>";
+    }
+    selectorHTML += "</select>";
+    jQuery("#contextSelectorContainer").html(selectorHTML)
 }
 
 export default class GrapevineVisualizationMainPage extends React.Component {
@@ -90,10 +121,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
                                     <center>select context</center>
-                                    <select>
-                                        <option>everything</option>
-                                        <option>open standards</option>
-                                    </select>
+                                    <div id="contextSelectorContainer" ></div>
                                 </div>
                             </div>
                         </center>
