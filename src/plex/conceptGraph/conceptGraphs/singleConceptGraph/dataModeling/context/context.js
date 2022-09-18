@@ -21,7 +21,7 @@ export default class DataModelingContext extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        var dataModel_wordSlug = "dataModel_context_6x1dee";
+        var dataModel_wordSlug = "wordTypeFor_contextGraph";
         var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
         jQuery("#dataModelRawFileContainer").val(JSON.stringify(oDataModel,null,4))
     }

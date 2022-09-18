@@ -3261,14 +3261,12 @@ if (allAlreadyMade) {
                             oNewRel.nodeFrom.slug = role6_next_govConcept_slug;
                             oNewRel.relationshipType.slug = "isARealizationOf";
                             oNewRel.nodeTo.slug = role4_govConcept_slug;
-                            console.log("doingc2cstuff; oNewRel: "+JSON.stringify(oNewRel,null,4))
+                            // console.log("doingc2cstuff; oNewRel: "+JSON.stringify(oNewRel,null,4))
 
                             oNewRel.nodeFrom.slug = role6_next_govConcept_slug;
                             oNewRel.relationshipType.slug = "isASubsetOf";
                             oNewRel.nodeTo.slug = role1_govConcept_slug;
-                            console.log("doingc2cstuff; oNewRel: "+JSON.stringify(oNewRel,null,4))
-
-
+                            // console.log("doingc2cstuff; oNewRel: "+JSON.stringify(oNewRel,null,4))
                         }
                     }
                 }
@@ -3284,7 +3282,7 @@ if (allAlreadyMade) {
             if (verboseConsole) { console.log("case a-e-ma-enumeration_manageRole5") }
             try {
 // edited 31 July 2022
-console.log("A a-e-ma-enumeration_manageRole5; node_slug: "+node_slug)
+// console.log("A a-e-ma-enumeration_manageRole5; node_slug: "+node_slug)
 var oNRM = oNode.enumerationData.nodeRolesManagement;
 var uniqueID = oNRM.uniqueID;
 var aRole0 = oNRM.role0_slugs;

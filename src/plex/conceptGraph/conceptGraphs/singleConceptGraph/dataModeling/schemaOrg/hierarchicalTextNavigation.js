@@ -132,7 +132,8 @@ export default class SchemaOrgTextNav extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        var dataModel_wordSlug = "dataModel_schema.org_fu88nw";
+        // var dataModel_wordSlug = "dataModel_schema.org_fu88nw";
+        var dataModel_wordSlug = "wordTypeFor_typesGraph";
         var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
         var dataModelRuleset = oDataModel.dataModelData.ruleset;
         if (dataModelRuleset=="schema.org") {

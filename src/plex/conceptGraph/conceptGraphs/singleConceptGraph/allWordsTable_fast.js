@@ -80,10 +80,10 @@ function makeThisPageTable(tableName,wordDataSet) {
             var expansionHTML = "";
             expansionHTML += "<div>";
             expansionHTML += "<div data-status='pre' data-slug='"+slug+"' id='toggleTextareaButton_"+sqlID+"' data-sqlid='"+sqlID+"' class=doSomethingButton  >toggle edit box</div>";
-            expansionHTML += "<div id='update_"+slug+"' data-slug='"+slug+"' class=doSomethingButton style=display:none; >UPDATE</div>";
+            expansionHTML += "<div id='update_"+sqlID+"' data-slug='"+slug+"' class=doSomethingButton style=display:none; >UPDATE</div>";
             expansionHTML += "<div id='deleteBySqlID_"+sqlID+"' data-slug='"+slug+"' data-sqlid='"+sqlID+"' class=doSomethingButton style=display:none; >DELETE based on SQL ID: "+sqlID+"</div>";
 
-            expansionHTML += "<textarea id='textarea_"+slug+"' style=width:700px;height:800px;display:none; >";
+            expansionHTML += "<textarea id='textarea_"+sqlID+"' style=width:700px;height:800px;display:none; >";
             expansionHTML += sWord;
             expansionHTML += "</textarea>";
 
@@ -102,23 +102,23 @@ function makeThisPageTable(tableName,wordDataSet) {
                 // alert("clicked; slug: "+slug+"; status: "+status)
                 if (status=="pre") {
                     jQuery(this).data("status","textarea");
-                    jQuery("#textarea_"+slug).css("display","block")
-                    jQuery("#update_"+slug).css("display","inline-block")
+                    jQuery("#textarea_"+sqlID).css("display","block")
+                    jQuery("#update_"+sqlID).css("display","inline-block")
                     jQuery("#deleteBySqlID_"+sqlID).css("display","inline-block")
 
                     jQuery("#pre_"+slug).css("display","none")
                 }
                 if (status=="textarea") {
                     jQuery(this).data("status","pre");
-                    jQuery("#textarea_"+slug).css("display","none")
-                    jQuery("#update_"+slug).css("display","none")
+                    jQuery("#textarea_"+sqlID).css("display","none")
+                    jQuery("#update_"+sqlID).css("display","none")
                     jQuery("#deleteBySqlID_"+sqlID).css("display","none")
                     jQuery("#pre_"+slug).css("display","block")
                 }
             })
-            jQuery("#update_"+slug).click(function(){
+            jQuery("#update_"+sqlID).click(function(){
                 var slug = jQuery(this).data("slug");
-                var sWord = jQuery("#textarea_"+slug).val();
+                var sWord = jQuery("#textarea_"+sqlID).val();
                 var oWord = JSON.parse(sWord);
                 MiscFunctions.createOrUpdateWordInAllTables(oWord);
                 // alert("clicked; slug: "+slug+"; sWord: "+sWord)

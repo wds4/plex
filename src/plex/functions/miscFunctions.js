@@ -366,11 +366,13 @@ export const updateNodeLookup4 = async (res2, conceptGraphTableName) => {
                 window.lookupSlugBySqlID[nextWord_id] = nextWord_slug;
             }
             if (oNextWord.hasOwnProperty("schemaData")) {
-                var aNextSchemaRels = oNextWord.schemaData.relationships;
-                for (var z=0;z < aNextSchemaRels.length;z++ ) {
-                    var oNextRel = aNextSchemaRels[z];
-                    window.allConceptGraphRelationships.push(oNextRel)
-                    window.neuroCore.subject.allConceptGraphRelationships.push(oNextRel)
+                if (oNextWord.schemaData.hasOwnProperty("relationships")) {
+                    var aNextSchemaRels = oNextWord.schemaData.relationships;
+                    for (var z=0;z < aNextSchemaRels.length;z++ ) {
+                        var oNextRel = aNextSchemaRels[z];
+                        window.allConceptGraphRelationships.push(oNextRel)
+                        window.neuroCore.subject.allConceptGraphRelationships.push(oNextRel)
+                    }
                 }
             }
             if (oNextWord.hasOwnProperty("conceptGraphData")) {

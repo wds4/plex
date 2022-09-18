@@ -21,7 +21,8 @@ export default class DataModelingConceptGraphs extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        var dataModel_wordSlug = "dataModel_conceptGraph_1jp4lj";
+        // var dataModel_wordSlug = "dataModel_conceptGraph_1jp4lj";
+        var dataModel_wordSlug = "wordTypeFor_conceptGraph";
         var oDataModel = window.lookupWordBySlug[dataModel_wordSlug];
         jQuery("#dataModelRawFileContainer").val(JSON.stringify(oDataModel,null,4))
     }

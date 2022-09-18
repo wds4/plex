@@ -74,6 +74,8 @@ import LeftNavbar2_SQLSingleTable from './plex/navbars/leftNavbar2/sqlSingleTabl
 import PlexHome from './plex/plexHome.js';
 import PlexSettingsMainPage from './plex/settings/generalPlexSettings.js';
 
+import ConceptGraphFrontEndHome from './plex/conceptGraphFrontEnd/conceptGraphHome.js';
+
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
 import DecentralizedRedditHome from './plex/dReddit/dRedditHome.js';
@@ -332,6 +334,8 @@ ReactDOM.render(
           <Route path="/PlexHome" exact component={PlexHome} />
           <Route path="/OldPGAHome" exact component={App} />
           <Route path="/ConceptGraphHome" exact component={ConceptGraphHome} />
+
+          <Route path="/ConceptGraphFrontEndHome" exact component={ConceptGraphFrontEndHome} />
 
           <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 
