@@ -3,10 +3,12 @@ import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
+import P5Demo from './p5demo.js';
 
 const jQuery = require("jquery");
 
 let c2 = require("c2.js");
+let p5 = require("p5");
 
 
 let rect = new c2.Rect(0, 0, 480, 480);
@@ -235,6 +237,7 @@ const drawPoint = () => {
 
 
 
+
 export default class GrapevineVisualizationMainPage extends React.Component {
     constructor(props) {
         super(props);
@@ -269,7 +272,6 @@ export default class GrapevineVisualizationMainPage extends React.Component {
             }
         });
         */
-
 
 
     }
@@ -308,12 +310,17 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                         <center>
                             <div>
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"1000px",height:"700px"}}>
-                                    <canvas id='c2'/>
-                                    <div id='p5Sketch'></div>
+                                <P5Demo />
+                                <div id = "p5sketch">
+
+                                </div>
+
+
                                 </div>
 
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"500px",height:"700px"}}>
                                     <center>Control Panel</center>
+                                    <canvas id='c2'/>
                                 </div>
                             </div>
                         </center>
