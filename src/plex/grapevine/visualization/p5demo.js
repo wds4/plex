@@ -8,7 +8,6 @@ export default class P5Demo extends React.Component {
   }
 
   Sketch = (p) => {
-
      let x = 100;
      let y = 100;
 
