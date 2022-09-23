@@ -11,26 +11,26 @@ const jQuery = require("jquery");
 
 const populateFields = async (cid) => {
     console.log("populateFields")
+    jQuery("#myIpfsPeerID").html(cid)
     var ipfsPath = "/ipns/"+cid+"/grapevineData/userProfileData/myProfile.txt";
 
-    for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
-        var myUserData = new TextDecoder("utf-8").decode(chunk);
-        console.log("populateFieldsWithoutEditing; myUserData: "+myUserData)
-        try {
-            console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
-            var oMyUserData = JSON.parse(myUserData);
+    try {
+        for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
+            var userData = new TextDecoder("utf-8").decode(chunk);
+            console.log("populateFieldsWithoutEditing; userData: "+userData)
+            console.log("populateFieldsWithoutEditing; try; userData: "+userData)
+            var oUserData = JSON.parse(userData);
 
-            if (typeof oMyUserData == "object") {
-                var sMyUserData = JSON.stringify(oMyUserData,null,4);
-                console.log("populateFieldsWithoutEditing; sMyUserData: "+sMyUserData)
-                var myUsername = oMyUserData.username;
-                var peerID = oMyUserData.peerID;
-                var loc = oMyUserData.loc;
-                var about = oMyUserData.about;
-                var lastUpdated = oMyUserData.lastUpdated;
-                var imageCid = oMyUserData.imageCid;
-
-                jQuery("#myIpfsPeerID").html(peerID)
+            if (typeof oUserData == "object") {
+                var sUserData = JSON.stringify(oUserData,null,4);
+                console.log("populateFieldsWithoutEditing; --- sUserData: "+sUserData)
+                var myUsername = oUserData.username;
+                var peerID = oUserData.peerID;
+                var loc = oUserData.loc;
+                var about = oUserData.about;
+                var lastUpdated = oUserData.lastUpdated;
+                var imageCid = oUserData.imageCid;
+                console.log("imageCid: "+imageCid)
 
                 jQuery("#usernameContainer").html(myUsername)
                 jQuery("#locationContainer").html(loc)
@@ -42,10 +42,16 @@ const populateFields = async (cid) => {
                 MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
 
             } else {
+                var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+                MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
             }
-        } catch (e) {
-            console.log("error: "+e)
         }
+    } catch (e) {
+        console.log("error: "+e)
+        console.log("populateFields: user profile not found")
+        var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+        console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
+        MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
     }
 }
 
@@ -159,7 +165,8 @@ export default class SingleUserProfile extends React.Component {
     }
     async componentDidMount() {
         var cid = this.props.match.params.cid
-        console.log("cid: "+cid)
+        var defaultAvatarNumber = parseInt(cid,10);
+        console.log("cid: "+cid+"; defaultAvatarNumber: "+defaultAvatarNumber)
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
         populateFields(cid);
         await makeInfluenceTypeSelector();
