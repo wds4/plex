@@ -104,6 +104,8 @@ import PlexAppsNavPage from './plex/conceptGraph/plexAppsNavPage.js';
 import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
 
 import HelloWorldVisJS from './plex/settings/helloWorld/helloWorldVisJS.js';
+import HelloWorldP5 from './plex/settings/helloWorld/helloWorldP5.js';
+import HelloWorldC2 from './plex/settings/helloWorld/helloWorldC2.js';
 import HelloWorldAsyncChain from './plex/settings/helloWorld/helloWorldAsyncChain.js';
 import HelloWorldChildToParent from './plex/settings/helloWorld/helloWorldChildToParent.js';
 import HelloWorldDataTables from './plex/settings/helloWorld/helloWorldDataTables.js';
@@ -375,6 +377,8 @@ ReactDOM.render(
           <Route path="/HelloWorldMainPage" exact component={HelloWorldMainPage} />
 
           <Route path="/HelloWorldVisJS" exact component={HelloWorldVisJS} />
+          <Route path="/HelloWorldP5" exact component={HelloWorldP5} />
+          <Route path="/HelloWorldC2" exact component={HelloWorldC2} />
           <Route path="/HelloWorldAsyncChain" exact component={HelloWorldAsyncChain} />
           <Route path="/HelloWorldChildToParent" exact component={HelloWorldChildToParent} />
           <Route path="/HelloWorldDataTables" exact component={HelloWorldDataTables} />

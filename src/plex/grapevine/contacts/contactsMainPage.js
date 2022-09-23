@@ -32,33 +32,38 @@ const addPeerToUserList = async (cid) => {
 
         for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
             var userData = new TextDecoder("utf-8").decode(chunk);
-            try {
-                var oUserData = JSON.parse(userData);
-                if (typeof oUserData == "object") {
-                    var sUserData = JSON.stringify(oUserData,null,4);
-                    // console.log("sUserData: "+sUserData)
 
-                    var username = oUserData.username;
-                    var peerID = oUserData.peerID;
-                    var loc = oUserData.loc;
-                    var about = oUserData.about;
-                    var lastUpdated = oUserData.lastUpdated;
-                    var imageCid = oUserData.imageCid;
+            var oUserData = JSON.parse(userData);
+            if (typeof oUserData == "object") {
+                var sUserData = JSON.stringify(oUserData,null,4);
+                // console.log("sUserData: "+sUserData)
 
-                    var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
-                    var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
-                	img.src = window.URL.createObjectURL(blob)
+                var username = oUserData.username;
+                var peerID = oUserData.peerID;
+                var loc = oUserData.loc;
+                var about = oUserData.about;
+                var lastUpdated = oUserData.lastUpdated;
+                var imageCid = oUserData.imageCid;
 
-                    jQuery("#contactsPageUsernameContainer_"+cid).html(username)
-                    jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
+                var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
+                var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
+            	img.src = window.URL.createObjectURL(blob)
 
-                } else {
-                }
-            } catch (e) {
-                console.log("error: "+e)
+                jQuery("#contactsPageUsernameContainer_"+cid).html(username)
+                jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
+
+            } else {
             }
         }
-    } catch (e) {}
+    } catch (e) {
+        console.log("error: "+e)
+        console.log("populateFields: user profile not found")
+        var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+        console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
+        var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(stockAvatarCid)
+        var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
+        img.src = window.URL.createObjectURL(blob)
+    }
 }
 const fetchUsersList = async () => {
     var aUsers = [];

@@ -2,6 +2,8 @@
 import IpfsHttpClient from 'ipfs-http-client';
 const jQuery = require("jquery");
 
+// import * as IPFS from 'ipfs-core'
+
 export const ipfs = IpfsHttpClient({
     host: "localhost",
     port: "5001",
@@ -235,4 +237,62 @@ export const ipfsShowFiles = async () => {
         var sFile = JSON.stringify(file.cid,null,4)
         return sFile;
     }
+}
+
+/*
+stockAvatar_00: QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS // the one that looks like a baseball
+stockAvatar_01: QmaYjy2JC1VAfiP2wViNfrnkSvHUZBJa9Fo87CjhR1Lcbh
+stockAvatar_02: QmRKj1ZytaVkVf2e9YTezeRCfTLaZUMCVTNQYz7RwfysXX
+stockAvatar_03: QmcmwFTQSnxFb8iMob4R5ojYNyf48KRcysN9axhoq9AX7p
+stockAvatar_04: Qmd2eQr2PHN7AySH9rv7BvwdnkyJh7X5eoweq3thcChy7y
+stockAvatar_05: QmT6XFrVgxpGn6aQa26UnaEtFYVhSpQkJYbTm4EyPTPuRD
+stockAvatar_06: QmZ6AZe7xxd6raYsSbiV8bUXq9zMm8gAZQyvVJdneWWkCG
+stockAvatar_07: QmWjDLLnPbJExTb5P7oDmFW4Kcnw2ey8ttdhF1qnhchGWt
+stockAvatar_08: QmVkgT6PMyJ9F9EkthtsES4NAJQ5mpP6C27agfLTGxTtpy
+stockAvatar_09: QmXRFh16ctss9Be9YvTjpcPJGG8vQsn9oDZWppugD2LdQW
+stockAvatar_10: QmfYNMx5eq9rpaZXroqVdDrw3UxUsVG2eDikYAue34s3Bz
+stockAvatar_11: QmdMcyKRKPisGTstwFqbMixMWbxRSZBvkXdY4z7SMGHy5r
+*/
+export const addDefaultImage = (cid) => {
+    var stockAvatarCid = "QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS";
+    var num = cid.charCodeAt(6);
+    var defaultAvatarNumber = num % 10;
+    console.log("addDefaultImage; cid: "+cid+"; num: "+num+"; defaultAvatarNumber: "+defaultAvatarNumber)
+    if (defaultAvatarNumber==0) {
+        stockAvatarCid = "QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS";
+    }
+    if (defaultAvatarNumber==1) {
+        stockAvatarCid = "QmaYjy2JC1VAfiP2wViNfrnkSvHUZBJa9Fo87CjhR1Lcbh";
+    }
+    if (defaultAvatarNumber==2) {
+        stockAvatarCid = "QmRKj1ZytaVkVf2e9YTezeRCfTLaZUMCVTNQYz7RwfysXX";
+    }
+    if (defaultAvatarNumber==3) {
+        stockAvatarCid = "QmcmwFTQSnxFb8iMob4R5ojYNyf48KRcysN9axhoq9AX7p";
+    }
+    if (defaultAvatarNumber==4) {
+        stockAvatarCid = "Qmd2eQr2PHN7AySH9rv7BvwdnkyJh7X5eoweq3thcChy7y";
+    }
+    if (defaultAvatarNumber==5) {
+        stockAvatarCid = "QmT6XFrVgxpGn6aQa26UnaEtFYVhSpQkJYbTm4EyPTPuRD";
+    }
+    if (defaultAvatarNumber==6) {
+        stockAvatarCid = "QmZ6AZe7xxd6raYsSbiV8bUXq9zMm8gAZQyvVJdneWWkCG";
+    }
+    if (defaultAvatarNumber==7) {
+        stockAvatarCid = "QmWjDLLnPbJExTb5P7oDmFW4Kcnw2ey8ttdhF1qnhchGWt";
+    }
+    if (defaultAvatarNumber==8) {
+        stockAvatarCid = "QmVkgT6PMyJ9F9EkthtsES4NAJQ5mpP6C27agfLTGxTtpy";
+    }
+    if (defaultAvatarNumber==9) {
+        stockAvatarCid = "QmXRFh16ctss9Be9YvTjpcPJGG8vQsn9oDZWppugD2LdQW";
+    }
+    if (defaultAvatarNumber==10) {
+        stockAvatarCid = "QmfYNMx5eq9rpaZXroqVdDrw3UxUsVG2eDikYAue34s3Bz";
+    }
+    if (defaultAvatarNumber==11) {
+        stockAvatarCid = "QmdMcyKRKPisGTstwFqbMixMWbxRSZBvkXdY4z7SMGHy5r";
+    }
+    return stockAvatarCid;
 }

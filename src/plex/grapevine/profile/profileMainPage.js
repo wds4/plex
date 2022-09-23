@@ -43,7 +43,7 @@ const populateFieldsWithoutEditing = async () => {
                 jQuery("#locationContainer").html(loc)
                 jQuery("#aboutContainer").html(about)
 
-                // var cid1 = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
+                // var cid1 = 'QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
                 // var cid2 = '/ipfs/QmWQmayHks3Gf5oV3RRVbEV37gm9j3aCxYcgx4SZfdHiRY' // darth vader
                 // var cid2 = null;
                 MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
@@ -87,6 +87,7 @@ const populateFieldsWithEditing = async () => {
                 aboutHTML += "<textarea class='profileDataEntryField' id='myAboutEditBox' style='width:90%;font-size:22px;height:80%;' >";
                 aboutHTML += about;
                 aboutHTML += "</textarea>";
+                aboutHTML += "imageCid: "+imageCid + "<br>";
 
                 jQuery("#usernameContainer").html(myUsernameHTML)
                 jQuery("#locationContainer").html(locationHTML)

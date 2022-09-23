@@ -17,8 +17,6 @@ export default class LeftNavbar2_HelloWorld extends React.Component {
             <center>Hello World</center>
             <br/>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldMainPage'>Hello World Home</NavLink>
-            <br/>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldVisJS'>Vis.js</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldChildToParent'>React: Child to Parent</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldAsyncChain'>Chain Async Fxns</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaForm'>JSONSchemaForm</NavLink>
@@ -28,6 +26,12 @@ export default class LeftNavbar2_HelloWorld extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldDataTables'>DataTables</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldWriteFile'>Write File (fs)</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldUploadImageToIPFS'>Upload Image to IPFS</NavLink>
+            <br/><br/>
+            <center>Imaging</center>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldVisJS'>Vis.js</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldP5'>p5.js</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldC2'>c2.js</NavLink>
+            <br/><br/>
         </div>
 
       </>
