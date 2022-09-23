@@ -5,7 +5,7 @@ import Masthead from '../../mastheads/plexMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/ipfs_leftNav2';
 
-const jQuery = require("jquery"); 
+const jQuery = require("jquery");
 
 const reportMutableFilesTree = async (path) => {
     const stats = await MiscIpfsFunctions.ipfs.files.stat(path)
@@ -30,6 +30,10 @@ const reportMutableFilesTree = async (path) => {
                 jQuery("#hasGrapevineDataUsersFileBeenEstablishedContainer").html("YES");
                 jQuery("#establishGrapevineDataUsersMutableFileButtonContainer").css("display","none")
             }
+            if ( (path=="/grapevineData/") && (file.name=="userProfileData")) {
+                jQuery("#hasGrapevineDataUserProfileDataFileBeenEstablishedContainer").html("YES");
+                jQuery("#establishGrapevineDataUserProfileDataMutableFileButtonContainer").css("display","none")
+            }
         }
         if (file.type=="file") {
             reportHTML += "<div class=ipfsMutableFilesFileContainer style='margin-left:50px;background-color:orange;' ";
@@ -38,6 +42,10 @@ const reportMutableFilesTree = async (path) => {
             reportHTML += " >";
             reportHTML += file.name ;
             reportHTML += "</div>";
+            if ( (path=="/grapevineData/userProfileData/") && (file.name=="myProfile.txt")) {
+                jQuery("#hasGrapevineDataUsersMyProfileTxtBeenEstablishedContainer").html("YES");
+                jQuery("#establishGrapevineDataUsersMyProfileMutableFileButton").css("display","none")
+            }
             /*
             var ipfsPath = "/ipns/QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ/" + path + file.name;
             console.log("ipfsPath: "+ipfsPath)
@@ -155,8 +163,27 @@ export default class IPFSFilesInfo extends React.Component {
         })
 
         jQuery("#establishGrapevineDataUsersMutableFileButton").click(async function(){
-            await MiscIpfsFunctions.ipfs.files.mkdir('/grapevineData/users');
+            await MiscIpfsFunctions.ipfs.files.mkdir('/grapevineData/users',{"parents":true});
             alert("/grapevineData/users has been created within the ipfs mutable file system")
+        })
+
+        jQuery("#establishGrapevineDataUserProfileDataMutableFileButton").click(async function(){
+            await MiscIpfsFunctions.ipfs.files.mkdir('/grapevineData/userProfileData',{"parents":true});
+            alert("/grapevineData/userProfileData has been created within the ipfs mutable file system")
+        })
+
+        jQuery("#establishGrapevineDataUsersMyProfileMutableFileButton").click(async function(){
+            var oBlankMyProfile = {
+                "username": null,
+                "peerID": null,
+                "loc": null,
+                "about": null,
+                "lastUpdated": null,
+                "imageCid": null
+            }
+            var sBlankMyProfile = JSON.stringify(oBlankMyProfile,null,4)
+            await MiscIpfsFunctions.ipfs.files.write('/grapevineData/userProfileData/myProfile.txt',new TextEncoder().encode(sBlankMyProfile), {create: true, flush: true});
+            alert("/grapevineData/userProfileData/myProfile.txt} has been created within the ipfs mutable file system")
         })
         try {
             await MiscIpfsFunctions.ipfs.files.mkdir('/plex/images');
@@ -179,6 +206,9 @@ export default class IPFSFilesInfo extends React.Component {
         } catch (e) {}
         try {
             await MiscIpfsFunctions.ipfs.files.rm('/grapevineData/schemaFor_relationshipType.txt', { recursive: true });
+        } catch (e) {}
+        try {
+            await MiscIpfsFunctions.ipfs.files.rm('/grapevineData/users/myProfile.txt', { recursive: false });
         } catch (e) {}
     }
     render() {
@@ -251,6 +281,34 @@ export default class IPFSFilesInfo extends React.Component {
 
                                 <div id="establishGrapevineDataUsersMutableFileButtonContainer"  >
                                     <div id="establishGrapevineDataUsersMutableFileButton" className="doSomethingButton" >establish mutable file: /grapevineData/users</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{display:"inline-block"}} >
+                                Has /grapevineData/userProfileData mutable file directory been established?
+                                </div>
+
+                                <div id="hasGrapevineDataUserProfileDataFileBeenEstablishedContainer" style={{display:"inline-block",marginLeft:"50px"}} >
+                                ?
+                                </div>
+
+                                <div id="establishGrapevineDataUserProfileDataMutableFileButtonContainer"  >
+                                    <div id="establishGrapevineDataUserProfileDataMutableFileButton" className="doSomethingButton" >establish mutable file: /grapevineData/userProfileData</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{display:"inline-block"}} >
+                                Has /grapevineData/userProfileData/myProfile.txt mutable file been established?
+                                </div>
+
+                                <div id="hasGrapevineDataUsersMyProfileTxtBeenEstablishedContainer" style={{display:"inline-block",marginLeft:"50px"}} >
+                                ?
+                                </div>
+
+                                <div id="establishGrapevineDataUsersMyProfileMutableFileButtonContainer"  >
+                                    <div id="establishGrapevineDataUsersMyProfileMutableFileButton" className="doSomethingButton" >establish mutable file: /grapevineData/userProfileData/myProfile.txt</div>
                                 </div>
                             </div>
                         </div>
