@@ -260,18 +260,22 @@ export default class ProfileMainPage extends React.Component {
                         var sMyUserData = JSON.stringify(oMyUserData,null,4);
                         console.log("sMyUserData A: "+sMyUserData)
                         oMyUserData.username = myUpdatedUsername;
+                        oMyUserData.peerID = cid;
                         oMyUserData.loc = myUpdatedLocation;
                         oMyUserData.about = myUpdatedAbout;
                         oMyUserData.lastUpdated = Date.now();
                         // oMyUserData.imageCid = null;
                         var sMyUserData = JSON.stringify(oMyUserData,null,4);
                         console.log("sMyUserData B: "+sMyUserData)
+                        /*
                         var options_write = {
                             create:true,
                             truncate:true,
                             parents:true
                         }
-                        await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData,options_write)
+                        */
+                        // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData,options_write)
+                        await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sMyUserData)
                         jQuery("#toggleEditProfileButton").html("done editing");
                         await MiscFunctions.timeout(100)
                         // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID

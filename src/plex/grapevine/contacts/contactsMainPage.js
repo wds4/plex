@@ -77,10 +77,11 @@ const addPeerToUserList = async (myPeerID,cid) => {
 }
 const fetchUsersList = async (myPeerID) => {
     var aUsers = [];
+
+    /*
     const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
     var numPeers = peerInfos.length;
     console.log("numPeers: "+numPeers);
-
     var outputHTML = "number of peers: "+numPeers+"<br>";
     jQuery("#swarmPeersData").append(outputHTML);
     peerInfos.forEach(info => {
@@ -88,6 +89,19 @@ const fetchUsersList = async (myPeerID) => {
         aUsers.push(nextPeerID)
         addPeerToUserList(myPeerID,nextPeerID)
     })
+    */
+
+    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.peers();
+    console.log("peerInfos: "+JSON.stringify(peerInfos,null,4));
+    var numPeers = peerInfos.length;
+    var outputHTML = "number of peers: "+numPeers+"<br>";
+    jQuery("#swarmPeersData").append(outputHTML);
+    peerInfos.forEach(info => {
+        var nextPeerID = info.peer;
+        aUsers.push(nextPeerID)
+        addPeerToUserList(myPeerID,nextPeerID)
+    })
+
     return aUsers;
 }
 export default class GrapevineContactsMainPage extends React.Component {
