@@ -14,6 +14,51 @@ const updateUserContactInfo = async (cid,sUserData) => {
     await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
 }
 
+const fetchUsersFromGrapevineMFS = async (myPeerID) => {
+    var aUsers = [];
+    var path = "/grapevineData/users/";
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        console.log("path: "+path+"; file name: "+file.name)
+        console.log("path: "+path+"; file type: "+file.type)
+    }
+
+    return aUsers;
+}
+
+const fetchUsersListViaSwarmAddrs = async (myPeerID) => {
+    var aUsers = [];
+
+    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
+    var numPeers = peerInfos.length;
+    console.log("numPeers: "+numPeers);
+    var outputHTML = "number of peers: "+numPeers+"<br>";
+    jQuery("#swarmPeersData").append(outputHTML);
+    peerInfos.forEach(info => {
+        var nextPeerID = info.id;
+        aUsers.push(nextPeerID)
+        // addPeerToUserList(myPeerID,nextPeerID)
+    })
+
+    return aUsers;
+}
+
+const fetchUsersListViaSwarmPeers = async (myPeerID) => {
+    var aUsers = [];
+
+    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.peers();
+    console.log("peerInfos: "+JSON.stringify(peerInfos,null,4));
+    var numPeers = peerInfos.length;
+    var outputHTML = "number of peers: "+numPeers+"<br>";
+    jQuery("#swarmPeersData").append(outputHTML);
+    peerInfos.forEach(info => {
+        var nextPeerID = info.peer;
+        aUsers.push(nextPeerID)
+        // addPeerToUserList(myPeerID,nextPeerID)
+    })
+
+    return aUsers;
+}
+
 const addPeerToUserList = async (myPeerID,cid) => {
 
     var ipfsPath = "/ipns/"+cid+"/grapevineData/userProfileData/myProfile.txt";
@@ -75,35 +120,7 @@ const addPeerToUserList = async (myPeerID,cid) => {
         img.src = window.URL.createObjectURL(blob)
     }
 }
-const fetchUsersList = async (myPeerID) => {
-    var aUsers = [];
 
-    /*
-    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
-    var numPeers = peerInfos.length;
-    console.log("numPeers: "+numPeers);
-    var outputHTML = "number of peers: "+numPeers+"<br>";
-    jQuery("#swarmPeersData").append(outputHTML);
-    peerInfos.forEach(info => {
-        var nextPeerID = info.id;
-        aUsers.push(nextPeerID)
-        addPeerToUserList(myPeerID,nextPeerID)
-    })
-    */
-
-    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.peers();
-    console.log("peerInfos: "+JSON.stringify(peerInfos,null,4));
-    var numPeers = peerInfos.length;
-    var outputHTML = "number of peers: "+numPeers+"<br>";
-    jQuery("#swarmPeersData").append(outputHTML);
-    peerInfos.forEach(info => {
-        var nextPeerID = info.peer;
-        aUsers.push(nextPeerID)
-        addPeerToUserList(myPeerID,nextPeerID)
-    })
-
-    return aUsers;
-}
 export default class GrapevineContactsMainPage extends React.Component {
     constructor(props) {
         super(props);
@@ -115,22 +132,27 @@ export default class GrapevineContactsMainPage extends React.Component {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
-        var aUsers = await fetchUsersList(myPeerID)
+        var aUsers = await fetchUsersListViaSwarmPeers(myPeerID)
+        // var aUsers = await fetchUsersListViaSwarmAddrs(myPeerID)
+
+        console.log("aUsers: "+JSON.stringify(aUsers,null,4))
+        for (var u=0;u<aUsers.length;u++) {
+            var nextPeerID = aUsers[u];
+            addPeerToUserList(myPeerID,nextPeerID)
+            var oUserData = {};
+            oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+            oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+            oUserData.cid = nextPeerID;
+            this.state.contactLinks.push(oUserData)
+            this.forceUpdate();
+        }
+        var aUsers = await fetchUsersFromGrapevineMFS(myPeerID)
+
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")
             console.log("contactPageSingleContactContainer; cid: "+cid)
             jQuery("#linkFrom_"+cid).get(0).click();
         })
-        console.log("aUsers: "+JSON.stringify(aUsers,null,4))
-        for (var u=0;u<aUsers.length;u++) {
-            var nextCid = aUsers[u];
-            var oUserData = {};
-            oUserData.pathname = "/SingleUserProfilePage/"+nextCid;
-            oUserData.linkfromcid = 'linkFrom_'+nextCid;
-            oUserData.cid = nextCid;
-            this.state.contactLinks.push(oUserData)
-            this.forceUpdate();
-        }
     }
     render() {
         return (
