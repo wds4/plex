@@ -314,3 +314,27 @@ export const addDefaultImage = (cid) => {
     }
     return stockAvatarCid;
 }
+
+export const initializeMyProfile = async (peerID) => {
+    var oBlankMyProfile = {
+        "username": null,
+        "peerID": peerID,
+        "loc": null,
+        "about": null,
+        "lastUpdated": null,
+        "imageCid": null
+    }
+    var sBlankMyProfile = JSON.stringify(oBlankMyProfile,null,4)
+    await ipfs.files.write('/grapevineData/userProfileData/myProfile.txt',new TextEncoder().encode(sBlankMyProfile), {create: true, flush: true});
+
+}
+
+export const initializeIpfsMutableFileSystem = async () => {
+    await ipfs.files.mkdir('/grapevineData/userProfileData',{"parents":true});
+    await ipfs.files.mkdir('/grapevineData/users',{"parents":true});
+
+    await ipfs.files.mkdir('/plex/conceptGraphs');
+    await ipfs.files.mkdir('/plex/images');
+
+    return true;
+}

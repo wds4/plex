@@ -17,6 +17,7 @@ import { create, urlSource } from 'ipfs'
 const jQuery = require("jquery");
 
 const populateFieldsWithoutEditing = async (cid) => {
+    jQuery("#myIpfsPeerID").html(cid)
     console.log("populateFieldsWithoutEditing")
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
     // var ipfsPathToFlush = "/grapevineData/userProfileData";
@@ -36,8 +37,6 @@ const populateFieldsWithoutEditing = async (cid) => {
                 var about = oMyUserData.about;
                 var lastUpdated = oMyUserData.lastUpdated;
                 var imageCid = oMyUserData.imageCid;
-
-                jQuery("#myIpfsPeerID").html(peerID)
 
                 jQuery("#usernameContainer").html(myUsername)
                 jQuery("#locationContainer").html(loc)
@@ -65,6 +64,7 @@ const populateFieldsWithoutEditing = async (cid) => {
     }
     catch (e) {
         console.log("error: "+e)
+        MiscIpfsFunctions.initializeMyProfile(cid)
         console.log("populateFieldsWithoutEditing: user profile not found")
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
         console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
