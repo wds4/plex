@@ -11,6 +11,7 @@ const updateMasterUsersList = async (sMasterUsersList) => {
     var path = '/grapevineData/users/masterUsersList.txt';
     await MiscIpfsFunctions.ipfs.files.write(path,new TextEncoder().encode(sMasterUsersList), {create: true, flush: true});
 }
+
 const updateUserContactInfo = async (cid,sUserData) => {
     var pathA = '/grapevineData/users/'+cid;
     var pathB = pathA + "/userProfile.txt"
@@ -19,19 +20,19 @@ const updateUserContactInfo = async (cid,sUserData) => {
 }
 
 const fetchUsersFromExternalMFS = async (nextPeerID) => {
-    var aUsers = [];
-
-    var path = "/ipns/"+nextPeerID+"/grapevineData/users/";
+    var path = "/ipns/"+nextPeerID+"/grapevineData/users/masterUsersList.txt";
     try {
-        for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
-            console.log("fetchUsersFromExternalMFS path: "+path+"; file name: "+file.name)
-            console.log("fetchUsersFromExternalMFS path: "+path+"; file type: "+file.type)
-            if (file.type=="directory") {
-                aUsers.push(file.name)
-            }
+        for await (const chunk of MiscIpfsFunctions.ipfs.cat(path)) {
+            var masterUsersListData = new TextDecoder("utf-8").decode(chunk);
+
+            var aUsers = JSON.parse(masterUsersListData);
+            console.log("fetchUsersFromExternalMFS "+nextPeerID+" SUCCESS! aUsers: "+JSON.stringify(aUsers,null,4))
+            return aUsers;
         }
     } catch (e) {
-        console.log("fetchUsersFromExternalMFS error: "+e)
+        console.log("fetchUsersFromExternalMFS "+nextPeerID+" error: "+e)
+        var aUsers = [];
+        return aUsers;
     }
 
     return aUsers;
