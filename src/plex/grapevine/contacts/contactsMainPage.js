@@ -20,6 +20,7 @@ const updateUserContactInfo = async (cid,sUserData) => {
 }
 
 const fetchUsersFromExternalMFS = async (nextPeerID) => {
+    // var path = "/ipns/"+nextPeerID+"/grapevineData/userProfileData/myProfile.txt"; // works to pull the file 
     var path = "/ipns/"+nextPeerID+"/grapevineData/users/masterUsersList.txt";
     try {
         for await (const chunk of MiscIpfsFunctions.ipfs.cat(path)) {
