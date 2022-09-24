@@ -239,6 +239,21 @@ export default class GrapevineContactsMainPage extends React.Component {
             var nextPeerID = a1Users[u];
             console.log("try fetchUsersFromExternalMFS from nextPeerID: "+nextPeerID)
             var a4Users = await fetchUsersFromExternalMFS(nextPeerID)
+            console.log("a4Users: "+JSON.stringify(a4Users,null,4))
+            var grouping = "scraped";
+            for (var u=0;u<a4Users.length;u++) {
+                var nextPeerID = a4Users[u];
+                if (!masterUserList.includes(nextPeerID)) {
+                    masterUserList.push(nextPeerID)
+                    addPeerToUserList(myPeerID,nextPeerID,grouping)
+                    var oUserData = {};
+                    oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+                    oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+                    oUserData.cid = nextPeerID;
+                    this.state.contactLinks.push(oUserData)
+                    this.forceUpdate();
+                }
+            }
         }
 
 
