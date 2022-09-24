@@ -8,8 +8,18 @@ import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 const jQuery = require("jquery");
 
 const updateMasterUsersList = async (sMasterUsersList) => {
-    var path = '/grapevineData/users/masterUsersList.txt';
-    await MiscIpfsFunctions.ipfs.files.write(path,new TextEncoder().encode(sMasterUsersList), {create: true, flush: true});
+    // var path = '/grapevineData/users/masterUsersList.txt';
+    var ipfsPath = "/grapevineData/users/masterUsersList.txt";
+    // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sMasterUsersList));
+    await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sMasterUsersList), {create: true, flush: true});
+    await MiscFunctions.timeout(100)
+    // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: 'self' }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
 }
 
 const updateUserContactInfo = async (cid,sUserData) => {
@@ -20,7 +30,7 @@ const updateUserContactInfo = async (cid,sUserData) => {
 }
 
 const fetchUsersFromExternalMFS = async (nextPeerID) => {
-    // var path = "/ipns/"+nextPeerID+"/grapevineData/userProfileData/myProfile.txt"; // works to pull the file 
+    // var path = "/ipns/"+nextPeerID+"/grapevineData/userProfileData/myProfile.txt"; // works to pull the file
     var path = "/ipns/"+nextPeerID+"/grapevineData/users/masterUsersList.txt";
     try {
         for await (const chunk of MiscIpfsFunctions.ipfs.cat(path)) {
