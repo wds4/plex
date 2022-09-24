@@ -4,6 +4,8 @@
 
 var preloadVar = 5;
 
+window.hasIpfsMfsBeenInitialized = false;
+
 window.oTestVariable = {};
 window.oTestVariable.foo = "bar";
 console.log("PRELOAD HERE; window.oTestVariable.foo = "+window.oTestVariable.foo);

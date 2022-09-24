@@ -7,6 +7,10 @@ import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 
 const jQuery = require("jquery");
 
+const updateMasterUsersList = async (sMasterUsersList) => {
+    var path = '/grapevineData/users/masterUsersList.txt';
+    await MiscIpfsFunctions.ipfs.files.write(path,new TextEncoder().encode(sMasterUsersList), {create: true, flush: true});
+}
 const updateUserContactInfo = async (cid,sUserData) => {
     var pathA = '/grapevineData/users/'+cid;
     var pathB = pathA + "/userProfile.txt"
@@ -14,18 +18,40 @@ const updateUserContactInfo = async (cid,sUserData) => {
     await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
 }
 
-const fetchUsersFromGrapevineMFS = async (myPeerID) => {
+const fetchUsersFromExternalMFS = async (nextPeerID) => {
     var aUsers = [];
-    var path = "/grapevineData/users/";
-    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
-        console.log("path: "+path+"; file name: "+file.name)
-        console.log("path: "+path+"; file type: "+file.type)
+
+    var path = "/ipns/"+nextPeerID+"/grapevineData/users/";
+    try {
+        for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+            console.log("fetchUsersFromExternalMFS path: "+path+"; file name: "+file.name)
+            console.log("fetchUsersFromExternalMFS path: "+path+"; file type: "+file.type)
+            if (file.type=="directory") {
+                aUsers.push(file.name)
+            }
+        }
+    } catch (e) {
+        console.log("fetchUsersFromExternalMFS error: "+e)
     }
 
     return aUsers;
 }
 
-const fetchUsersListViaSwarmAddrs = async (myPeerID) => {
+const fetchUsersFromMyGrapevineMFS = async () => {
+    var aUsers = [];
+    var path = "/grapevineData/users/";
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        console.log("path: "+path+"; file name: "+file.name)
+        console.log("path: "+path+"; file type: "+file.type)
+        if (file.type=="directory") {
+            aUsers.push(file.name)
+        }
+    }
+
+    return aUsers;
+}
+
+const fetchUsersListViaSwarmAddrs = async () => {
     var aUsers = [];
 
     const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
@@ -59,14 +85,17 @@ const fetchUsersListViaSwarmPeers = async (myPeerID) => {
     return aUsers;
 }
 
-const addPeerToUserList = async (myPeerID,cid) => {
+const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
     var ipfsPath = "/ipns/"+cid+"/grapevineData/userProfileData/myProfile.txt";
+    // var ipfsPathB = "/ipns/"+cid+"/grapevineData/userProfileData";
 
     var userHTML = "";
-    userHTML += "<div class='contactPageSingleContactContainer' data-cid='"+cid+"' ";
-    if (myPeerID==cid) { userHTML += " style='background-color:#7FB3D5;' "; }
-    userHTML += " >";
+    userHTML += "<div data-cid='"+cid+"' class='contactPageSingleContactContainer";
+    if (grouping=="swarmPeers") { userHTML += " contactPageSingleContactContainer_green"; }
+    if (grouping=="previouslySeen") { userHTML += " contactPageSingleContactContainer_grey"; }
+    if (myPeerID==cid) { userHTML += " contactPageSingleContactContainer_blue"; }
+    userHTML += "' >";
         userHTML += "<div class='contactsPageAvatarContainer' >";
         userHTML += "<img id='contactsPageAvatarThumb_"+cid+"' class='contactsPageAvatarThumb' />";
         userHTML += "</div>";
@@ -80,8 +109,6 @@ const addPeerToUserList = async (myPeerID,cid) => {
 
     // modify DOM element with image and username (or just cid if username not available)
     try {
-        var ipfsPathB = "/ipns/"+cid+"/grapevineData/userProfileData";
-
         for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
             var userData = new TextDecoder("utf-8").decode(chunk);
 
@@ -104,7 +131,7 @@ const addPeerToUserList = async (myPeerID,cid) => {
                 jQuery("#contactsPageUsernameContainer_"+cid).html(username)
                 jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
 
-                // if contact info is discovered (from the other users' own node), save it to my local mutable files
+                // if contact info is discovered from an active node (from the other users' own node), save it to my local mutable files
                 await updateUserContactInfo(cid,sUserData)
 
             } else {
@@ -132,13 +159,17 @@ export default class GrapevineContactsMainPage extends React.Component {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
-        var aUsers = await fetchUsersListViaSwarmPeers(myPeerID)
-        // var aUsers = await fetchUsersListViaSwarmAddrs(myPeerID)
 
-        console.log("aUsers: "+JSON.stringify(aUsers,null,4))
-        for (var u=0;u<aUsers.length;u++) {
-            var nextPeerID = aUsers[u];
-            addPeerToUserList(myPeerID,nextPeerID)
+        var masterUserList = [];
+        ////////////////////////////////////////////////////////////////
+        /////////////////////// swarm peers ////////////////////////////
+        var a1Users = await fetchUsersListViaSwarmPeers(myPeerID)
+        console.log("a1Users: "+JSON.stringify(a1Users,null,4))
+        var grouping = "swarmPeers";
+        for (var u=0;u<a1Users.length;u++) {
+            var nextPeerID = a1Users[u];
+            masterUserList.push(nextPeerID)
+            addPeerToUserList(myPeerID,nextPeerID,grouping)
             var oUserData = {};
             oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
             oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
@@ -146,7 +177,58 @@ export default class GrapevineContactsMainPage extends React.Component {
             this.state.contactLinks.push(oUserData)
             this.forceUpdate();
         }
-        var aUsers = await fetchUsersFromGrapevineMFS(myPeerID)
+
+        ////////////////////////////////////////////////////////////////
+        /////////////////////// swarm addrs ////////////////////////////
+        var a2Users = await fetchUsersListViaSwarmAddrs()
+        console.log("a2Users: "+JSON.stringify(a2Users,null,4))
+        var grouping = "swarmAddrs";
+        for (var u=0;u<a2Users.length;u++) {
+            var nextPeerID = a2Users[u];
+            if (!masterUserList.includes(nextPeerID)) {
+                masterUserList.push(nextPeerID)
+                addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var oUserData = {};
+                oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+                oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+                oUserData.cid = nextPeerID;
+                this.state.contactLinks.push(oUserData)
+                this.forceUpdate();
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////
+        /////////////////////// previously seen ////////////////////////////
+        var a3Users = await fetchUsersFromMyGrapevineMFS()
+        console.log("a3Users: "+JSON.stringify(a3Users,null,4))
+        var grouping = "previouslySeen";
+        for (var u=0;u<a3Users.length;u++) {
+            var nextPeerID = a3Users[u];
+            if (!masterUserList.includes(nextPeerID)) {
+                masterUserList.push(nextPeerID)
+                addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var oUserData = {};
+                oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+                oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+                oUserData.cid = nextPeerID;
+                this.state.contactLinks.push(oUserData)
+                this.forceUpdate();
+            }
+        }
+
+        // add list of all known peerIDs in MFS for others to find
+        var sMasterUserList = JSON.stringify(masterUserList,null,4)
+        console.log("sMasterUserList: "+sMasterUserList)
+        await updateMasterUsersList(sMasterUserList)
+
+        ////////////////////////////////////////////////////////////////////
+        /////////////////// scrape data from other users ///////////////////
+        for (var u=0;u<a1Users.length;u++) {
+            var nextPeerID = a1Users[u];
+            console.log("try fetchUsersFromExternalMFS from nextPeerID: "+nextPeerID)
+            var a4Users = await fetchUsersFromExternalMFS(nextPeerID)
+        }
+
 
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")

@@ -991,6 +991,15 @@
     padding:5px;
     margin-bottom:5px;
 }
+.contactPageSingleContactContainer_green {
+    background-color:#00CC00;
+}
+.contactPageSingleContactContainer_grey {
+    background-color:#CFCFCF
+}
+.contactPageSingleContactContainer_blue {
+    background-color:#7FB3D5
+}
 .contactPageSingleContactContainer:hover {
     background-color: yellow;
 }
