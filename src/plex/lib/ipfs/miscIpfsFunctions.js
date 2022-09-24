@@ -239,6 +239,24 @@ export const ipfsShowFiles = async () => {
     }
 }
 
+export const returnUserImageCid = async (peerID) => {
+    var imageCid = "";
+    var ipfsPath = "/ipns/"+peerID+"/grapevineData/userProfileData/myProfile.txt";
+
+    try {
+        for await (const chunk of ipfs.cat(ipfsPath)) {
+            var userData = new TextDecoder("utf-8").decode(chunk);
+
+            var oUserData = JSON.parse(userData);
+            if (typeof oUserData == "object") {
+                var sUserData = JSON.stringify(oUserData,null,4);
+                var imageCid = oUserData.imageCid;
+            }
+        }
+    } catch (e) {}
+
+    return imageCid;
+}
 /*
 stockAvatar_00: QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS // the one that looks like a baseball
 stockAvatar_01: QmaYjy2JC1VAfiP2wViNfrnkSvHUZBJa9Fo87CjhR1Lcbh

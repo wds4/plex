@@ -46,7 +46,7 @@ const populateFields = async (cid) => {
                 MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
             }
         }
-    } catch (e) {
+    } catch (e) { 
         console.log("error: "+e)
         console.log("populateFields: user profile not found")
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)

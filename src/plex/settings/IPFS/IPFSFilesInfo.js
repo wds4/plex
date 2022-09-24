@@ -5,7 +5,7 @@ import Masthead from '../../mastheads/plexMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/ipfs_leftNav2';
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 
 const reportMutableFilesTree = async (path) => {
     const stats = await MiscIpfsFunctions.ipfs.files.stat(path)

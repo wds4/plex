@@ -29,6 +29,12 @@ export default class GrapevineMasthead extends React.Component {
                 }
             } catch (e) {}
         }
+
+        // var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+        var myAvatarCid = await MiscIpfsFunctions.returnUserImageCid(cid)
+        var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(myAvatarCid)
+        var img = document.getElementById("mastheadAvatarThumb") // the img tag you want it in
+        img.src = window.URL.createObjectURL(blob)
     }
     render() {
         return (
@@ -43,12 +49,13 @@ export default class GrapevineMasthead extends React.Component {
                       </div>
 
                       <div style={{float:"right",display:"inline-block",marginRight:"50px",height:"100%"}}>
+                          <div className="mastheadAvatarContainer" >
+                                <img id='mastheadAvatarThumb' className='contactsPageAvatarThumb' />
+                          </div>
                           <div style={{display:"inline-block",marginTop:"10px",marginRight:"10px"}} >
-                              <div >
-                                <div style={{verticalAlign:"bottom",fontSize:"20px",display:"inline-block"}} >Hi</div>
+                                <div style={{fontSize:"20px",display:"inline-block"}} >Hi</div>
                                 <div id="myUsernameMastheadContainer" style={{display:"inline-block",marginLeft:"5px",fontSize:"20px",color:"purple"}}>my username</div>
-                                <div style={{verticalAlign:"bottom",display:"inline-block",fontSize:"20px"}} >!</div>
-                              </div>
+                                <div style={{display:"inline-block",fontSize:"20px"}} >!</div>
                           </div>
                           <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >Settings</NavLink>
                           <NavLink className="mastheadNavButton" exact activeClassName="active" to='/ProfileMainPage' >Profile</NavLink>

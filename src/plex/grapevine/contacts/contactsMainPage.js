@@ -7,15 +7,21 @@ import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 
 const jQuery = require("jquery");
 
-const addPeerToUserList = async (cid) => {
+const updateUserContactInfo = async (cid,sUserData) => {
+    var pathA = '/grapevineData/users/'+cid;
+    var pathB = pathA + "/userProfile.txt"
+    await MiscIpfsFunctions.ipfs.files.mkdir(pathA,{"parents":true});
+    await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
+}
+
+const addPeerToUserList = async (myPeerID,cid) => {
 
     var ipfsPath = "/ipns/"+cid+"/grapevineData/userProfileData/myProfile.txt";
 
-    // console.log("ipfsPath: "+ipfsPath)
-
     var userHTML = "";
-    userHTML += "<div class='contactPageSingleContactContainer' data-cid='"+cid+"' >";
-        // userHTML += cid;
+    userHTML += "<div class='contactPageSingleContactContainer' data-cid='"+cid+"' ";
+    if (myPeerID==cid) { userHTML += " style='background-color:#7FB3D5;' "; }
+    userHTML += " >";
         userHTML += "<div class='contactsPageAvatarContainer' >";
         userHTML += "<img id='contactsPageAvatarThumb_"+cid+"' class='contactsPageAvatarThumb' />";
         userHTML += "</div>";
@@ -27,6 +33,7 @@ const addPeerToUserList = async (cid) => {
 
     jQuery("#usersListContainer").append(userHTML)
 
+    // modify DOM element with image and username (or just cid if username not available)
     try {
         var ipfsPathB = "/ipns/"+cid+"/grapevineData/userProfileData";
 
@@ -52,6 +59,9 @@ const addPeerToUserList = async (cid) => {
                 jQuery("#contactsPageUsernameContainer_"+cid).html(username)
                 jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
 
+                // if contact info is discovered (from the other users' own node), save it to my local mutable files
+                await updateUserContactInfo(cid,sUserData)
+
             } else {
             }
         }
@@ -65,7 +75,7 @@ const addPeerToUserList = async (cid) => {
         img.src = window.URL.createObjectURL(blob)
     }
 }
-const fetchUsersList = async () => {
+const fetchUsersList = async (myPeerID) => {
     var aUsers = [];
     const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
     var numPeers = peerInfos.length;
@@ -76,7 +86,7 @@ const fetchUsersList = async () => {
     peerInfos.forEach(info => {
         var nextPeerID = info.id;
         aUsers.push(nextPeerID)
-        addPeerToUserList(nextPeerID)
+        addPeerToUserList(myPeerID,nextPeerID)
     })
     return aUsers;
 }
@@ -89,7 +99,9 @@ export default class GrapevineContactsMainPage extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
-        var aUsers = await fetchUsersList()
+        var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+        var myPeerID = oIpfsID.id;
+        var aUsers = await fetchUsersList(myPeerID)
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")
             console.log("contactPageSingleContactContainer; cid: "+cid)

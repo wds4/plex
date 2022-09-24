@@ -16,14 +16,14 @@ import { create, urlSource } from 'ipfs'
 
 const jQuery = require("jquery");
 
-const populateFieldsWithoutEditing = async () => {
+const populateFieldsWithoutEditing = async (cid) => {
     console.log("populateFieldsWithoutEditing")
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
     // var ipfsPathToFlush = "/grapevineData/userProfileData";
-    for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
-        var myUserData = new TextDecoder("utf-8").decode(chunk);
-        console.log("populateFieldsWithoutEditing; myUserData: "+myUserData)
-        try {
+    try {
+        for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
+            var myUserData = new TextDecoder("utf-8").decode(chunk);
+            console.log("populateFieldsWithoutEditing; myUserData: "+myUserData)
             console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
             var oMyUserData = JSON.parse(myUserData);
 
@@ -46,17 +46,33 @@ const populateFieldsWithoutEditing = async () => {
                 // var cid1 = 'QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
                 // var cid2 = '/ipfs/QmWQmayHks3Gf5oV3RRVbEV37gm9j3aCxYcgx4SZfdHiRY' // darth vader
                 // var cid2 = null;
-                MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
+                if (imageCid) {
+                    MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
+                }
+                if (!imageCid) {
+                    stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+                    console.log("populateFieldsWithoutEditing no imageCid stockAvatarCid: "+stockAvatarCid)
+                    MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
+                }
 
             } else {
+                console.log("populateFieldsWithoutEditing: user data not found")
+                var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+                console.log("populateFieldsWithoutEditing: data not an object stockAvatarCid: "+stockAvatarCid)
+                MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
             }
-        } catch (e) {
-            console.log("error: "+e)
         }
+    }
+    catch (e) {
+        console.log("error: "+e)
+        console.log("populateFieldsWithoutEditing: user profile not found")
+        var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+        console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
+        MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
     }
 }
 
-const populateFieldsWithEditing = async () => {
+const populateFieldsWithEditing = async (cid) => {
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
 
     for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
@@ -101,6 +117,10 @@ const populateFieldsWithEditing = async () => {
             }
         } catch (e) {
             console.log("error: "+e)
+            console.log("populateFieldsWithEditing: user profile not found")
+            var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
+            console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
+            MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
         }
     }
     jQuery(".profileDataEntryField").change(function(){
@@ -183,14 +203,16 @@ export default class ProfileMainPage extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
-        populateFieldsWithoutEditing();
+        var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+        var cid = oIpfsID.id;
+        populateFieldsWithoutEditing(cid);
         jQuery("#toggleEditProfileButton").click(function(){
             var editStatus = jQuery(this).data("editstatus")
             if (editStatus=="off") {
                 jQuery(this).data("editstatus","on")
                 // jQuery("#avatarBox").css("display","none");
                 // jQuery("#uploadProfileImageButtonContainer").css("display","inline-block");
-                populateFieldsWithEditing();
+                populateFieldsWithEditing(cid);
                 jQuery("#saveProfileChangesButton").css("display","inline-block")
                 jQuery("#toggleEditProfileButton").html("done editing")
             }
@@ -199,7 +221,7 @@ export default class ProfileMainPage extends React.Component {
                 // jQuery("#avatarBox").css("display","inline-block");
                 // MiscIpfsFunctions.fetchImgFromIPFS(cid2);
                 // jQuery("#uploadProfileImageButtonContainer").css("display","none");
-                populateFieldsWithoutEditing();
+                populateFieldsWithoutEditing(cid);
                 jQuery("#saveProfileChangesButton").css("display","none")
                 jQuery("#toggleEditProfileButton").html("edit profile")
             }
@@ -210,7 +232,7 @@ export default class ProfileMainPage extends React.Component {
                 jQuery(this).data("editstatus","on")
                 jQuery("#avatarBox").css("display","none");
                 jQuery("#uploadProfileImageButtonContainer").css("display","inline-block");
-                // populateFieldsWithEditing();
+                // populateFieldsWithEditing(cid);
                 jQuery("#saveProfilePicChangesButton").css("display","inline-block")
                 jQuery("#toggleEditProfilePicButton").html("keep old pic")
             }
@@ -219,7 +241,7 @@ export default class ProfileMainPage extends React.Component {
                 jQuery("#avatarBox").css("display","inline-block");
                 // MiscIpfsFunctions.fetchImgFromIPFS(cid2);
                 jQuery("#uploadProfileImageButtonContainer").css("display","none");
-                populateFieldsWithoutEditing();
+                populateFieldsWithoutEditing(cid);
                 jQuery("#saveProfilePicChangesButton").css("display","none")
                 jQuery("#toggleEditProfilePicButton").html("update profile pic")
             }

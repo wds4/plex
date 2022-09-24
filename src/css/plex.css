@@ -957,6 +957,16 @@
 	text-align:center;
 	position:relative;
 }
+.mastheadAvatarContainer {
+	display:inline-block;
+	background-color:#EFEFEF;
+	width:70px;
+	height:70px;
+	text-align:center;
+	position:relative;
+    margin-right:10px;
+    margin-top:5px;
+}
 .contactsPageAvatarThumb {
     display:inline-block;
     background-color:blue;
