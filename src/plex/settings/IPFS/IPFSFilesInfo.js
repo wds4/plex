@@ -5,7 +5,7 @@ import Masthead from '../../mastheads/plexMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/ipfs_leftNav2';
 
-const jQuery = require("jquery"); 
+const jQuery = require("jquery");
 
 const reportMutableFilesTree = async (path) => {
     const stats = await MiscIpfsFunctions.ipfs.files.stat(path)
@@ -175,7 +175,7 @@ export default class IPFSFilesInfo extends React.Component {
         jQuery("#establishGrapevineDataUsersMyProfileMutableFileButton").click(async function(){
             var oBlankMyProfile = {
                 "username": null,
-                "peerID": null,
+                "peerID": ipfsID,
                 "loc": null,
                 "about": null,
                 "lastUpdated": null,
@@ -184,6 +184,11 @@ export default class IPFSFilesInfo extends React.Component {
             var sBlankMyProfile = JSON.stringify(oBlankMyProfile,null,4)
             await MiscIpfsFunctions.ipfs.files.write('/grapevineData/userProfileData/myProfile.txt',new TextEncoder().encode(sBlankMyProfile), {create: true, flush: true});
             alert("/grapevineData/userProfileData/myProfile.txt} has been created within the ipfs mutable file system")
+        })
+
+        jQuery("#eraseMyProfileMutableFileButton").click(async function(){
+            await MiscIpfsFunctions.ipfs.files.rm('/grapevineData/userProfileData/myProfile.txt')
+            alert("/grapevineData/userProfileData/myProfile.txt} has been deleted from the ipfs mutable file system")
         })
         try {
             await MiscIpfsFunctions.ipfs.files.mkdir('/plex/images');
@@ -310,6 +315,14 @@ export default class IPFSFilesInfo extends React.Component {
                                 <div id="establishGrapevineDataUsersMyProfileMutableFileButtonContainer"  >
                                     <div id="establishGrapevineDataUsersMyProfileMutableFileButton" className="doSomethingButton" >establish mutable file: /grapevineData/userProfileData/myProfile.txt</div>
                                 </div>
+                            </div>
+
+                            <div>
+                                <div style={{display:"inline-block"}} >
+                                erase and reset myProfile.txt:
+                                </div>
+
+                                <div id="eraseMyProfileMutableFileButton" className="doSomethingButton" >erase file: /grapevineData/userProfileData/myProfile.txt</div>
                             </div>
                         </div>
 

@@ -77,6 +77,7 @@ const populateFieldsWithEditing = async (cid) => {
 
     for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
         var myUserData = new TextDecoder("utf-8").decode(chunk);
+        console.log("myUserData: "+myUserData)
         try {
             var oMyUserData = JSON.parse(myUserData);
             if (typeof oMyUserData == "object") {
