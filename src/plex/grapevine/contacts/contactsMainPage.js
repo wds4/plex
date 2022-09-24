@@ -145,8 +145,10 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
                 // if contact info is discovered from an active node (from the other users' own node), save it to my local mutable files
                 await updateUserContactInfo(cid,sUserData)
+                return true;
 
             } else {
+                return true;
             }
         }
     } catch (e) {
@@ -157,7 +159,9 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
         var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(stockAvatarCid)
         var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
         img.src = window.URL.createObjectURL(blob)
+        return true;
     }
+
 }
 
 export default class GrapevineContactsMainPage extends React.Component {
@@ -181,7 +185,7 @@ export default class GrapevineContactsMainPage extends React.Component {
         for (var u=0;u<a1Users.length;u++) {
             var nextPeerID = a1Users[u];
             masterUserList.push(nextPeerID)
-            addPeerToUserList(myPeerID,nextPeerID,grouping)
+            var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
             var oUserData = {};
             oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
             oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
@@ -199,7 +203,7 @@ export default class GrapevineContactsMainPage extends React.Component {
             var nextPeerID = a2Users[u];
             if (!masterUserList.includes(nextPeerID)) {
                 masterUserList.push(nextPeerID)
-                addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
                 var oUserData = {};
                 oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
                 oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
@@ -218,7 +222,7 @@ export default class GrapevineContactsMainPage extends React.Component {
             var nextPeerID = a3Users[u];
             if (!masterUserList.includes(nextPeerID)) {
                 masterUserList.push(nextPeerID)
-                addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
                 var oUserData = {};
                 oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
                 oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
