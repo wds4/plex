@@ -22,7 +22,7 @@ function makeThisPageTable(tableName,conceptDataSet) {
             },
             { },
             { },
-            { },
+            { "visible": false },
             { }
         ],
         "dom": '<"pull-left"f><"pull-right"l>tip'
@@ -35,7 +35,7 @@ export default class AllConceptsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            conceptLinks: [] 
+            conceptLinks: []
         }
     }
     componentDidMount() {
@@ -69,6 +69,8 @@ export default class AllConceptsTable extends React.Component {
             window.aLookupConceptInfoBySqlID[nextRow_id].slug = concept_slug;
             window.aLookupConceptInfoBySqlID[nextRow_id].name = oConcept.wordData.name;
             window.aLookupConceptInfoBySqlID[nextRow_id].title = oConcept.wordData.title;
+
+            // var concept_conceptName = oConcept.conceptData.name.singular;
 
             var aNextPattern = [
                 "",
