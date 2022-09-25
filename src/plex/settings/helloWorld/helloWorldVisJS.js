@@ -45,9 +45,9 @@ export const groupOptions={
 // options_vis_c2c
 var options = {
     clickToUse: true,
-		interaction:{hover:true},
-		manipulation: {
-  			enabled: true,
+	interaction:{hover:true},
+	manipulation: {
+		enabled: true,
         editEdge: function(edgeData,callback) {
             editEdgeFunction(edgeData);
             callback(edgeData);
@@ -60,11 +60,11 @@ var options = {
             deleteNodeFunction(nodeData);
             callback(nodeData);
         }
-		},
-		physics:{
-		    enabled: true
+	},
+	physics: {
+	    enabled: true
         // wind: { x:0, y:0.1 }
-        // barnesHut:{gravitationalConstant:-30000}
+        // barnesHut: { gravitationalConstant: -30 }
         // stabilization: {iterations:2500}
     },
     /*
@@ -85,46 +85,46 @@ var options = {
             maximum: 100
         }
     },
-		edges: {
-		    hoverWidth: 5,
-		    selectionWidth: 5,
-		    color: {
-		        hover: 'red'
-		    },
-            scaling: {
-                min:1,
-                max:10,
-                label: {
-                    enabled: false,
-                    min:14,
-                    max:30
-                },
-                customScalingFunction: function (min,max,total,value) {
-                    if (max === min) {
-                        return 0.5;
-                    }
-                    else {
-                        var scale = 1 / (max - min);
-                        return Math.max(0,(value - min)*scale);
-                    }
-                }
+	edges: {
+	    hoverWidth: 5,
+	    selectionWidth: 5,
+	    color: {
+	        hover: 'red'
+	    },
+        scaling: {
+            min:1,
+            max:10,
+            label: {
+                enabled: false,
+                min:14,
+                max:30
             },
-            arrows: {
-                to: {
-                    enabled: true,
-                    type: "arrow"
-                },
-                middle: {
-                    enabled: false,
-                    type: "arrow"
-                },
-                from: {
-                    enabled: false,
-                    type: "circle" // or could do bar; however, it looks odd with arrowStrikethrough false
+            customScalingFunction: function (min,max,total,value) {
+                if (max === min) {
+                    return 0.5;
+                }
+                else {
+                    var scale = 1 / (max - min);
+                    return Math.max(0,(value - min)*scale);
                 }
             }
-		},
-		groups: groupOptions
+        },
+        arrows: {
+            to: {
+                enabled: true,
+                type: "arrow"
+            },
+            middle: {
+                enabled: false,
+                type: "arrow"
+            },
+            from: {
+                enabled: false,
+                type: "circle" // or could do bar; however, it looks odd with arrowStrikethrough false
+            }
+        }
+	},
+	groups: groupOptions
 };
 
 export var network = {};

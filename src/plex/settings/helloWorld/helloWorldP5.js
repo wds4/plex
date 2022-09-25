@@ -39,7 +39,7 @@ const sketch = (p) => {
 }
 
 //Instantiates P5 sketch to keep it out of the global scope.
-const app = new p5(sketch);
+// const app = new p5(sketch);
 
 export default class HelloWorldP5 extends React.Component {
     constructor(props) {
@@ -81,7 +81,7 @@ export default class HelloWorldP5 extends React.Component {
         p.windowResized = () => {
           p.resizeCanvas(p.windowWidth, p.windowHeight);
         }
-        
+
     }
 
     componentDidMount() {

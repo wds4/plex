@@ -15,8 +15,8 @@ export default class GrapevineMasthead extends React.Component {
     async componentDidMount() {
         if (window.hasIpfsMfsBeenInitialized == false) {
             try {
-                var foo = await MiscIpfsFunctions.initializeIpfsMutableFileSystem();
                 window.hasIpfsMfsBeenInitialized = true;
+                var foo = await MiscIpfsFunctions.initializeIpfsMutableFileSystem();
             } catch (e) {
                 console.log("grapevineMasthead initializeIpfsMutableFileSystem e: "+e)
             }

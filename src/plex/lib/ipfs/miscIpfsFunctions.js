@@ -16,6 +16,20 @@ export const ipfs = IpfsHttpClient({
 //
 ////////////////////////////////////////////////////////////////////////////
 
+export const fetchImgFromIPFS_c = async (cid) => {
+    if (!cid) {
+        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
+    }
+	try {
+    	let bufs = []
+    	for await (const buf of ipfs.cat(cid)) {
+    	    bufs.push(buf)
+    	}
+    	const data = Buffer.concat(bufs)
+        return data;
+    } catch (e) {}
+}
+
 export const fetchImgFromIPFS_b = async (cid) => {
     if (!cid) {
         cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
@@ -337,4 +351,68 @@ export const initializeIpfsMutableFileSystem = async () => {
     await ipfs.files.mkdir('/plex/images');
 
     return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// Fetch Users via IPFS //////////////////////////////////////
+
+export const fetchUsersFromExternalMFS = async (nextPeerID) => {
+    var path = "/ipns/"+nextPeerID+"/grapevineData/users/masterUsersList.txt";
+    try {
+        for await (const chunk of ipfs.cat(path)) {
+            var masterUsersListData = new TextDecoder("utf-8").decode(chunk);
+
+            var aUsers = JSON.parse(masterUsersListData);
+            console.log("fetchUsersFromExternalMFS "+nextPeerID+" SUCCESS! aUsers: "+JSON.stringify(aUsers,null,4))
+            return aUsers;
+        }
+    } catch (e) {
+        console.log("fetchUsersFromExternalMFS "+nextPeerID+" error: "+e)
+        var aUsers = [];
+        return aUsers;
+    }
+
+    return aUsers;
+}
+
+export const fetchUsersFromMyGrapevineMFS = async () => {
+    var aUsers = [];
+    var path = "/grapevineData/users/";
+    for await (const file of ipfs.files.ls(path)) {
+        console.log("path: "+path+"; file name: "+file.name)
+        console.log("path: "+path+"; file type: "+file.type)
+        if (file.type=="directory") {
+            aUsers.push(file.name)
+        }
+    }
+
+    return aUsers;
+}
+
+export const fetchUsersListViaSwarmAddrs = async () => {
+    var aUsers = [];
+
+    const peerInfos = await ipfs.swarm.addrs();
+    var numPeers = peerInfos.length;
+    console.log("numPeers: "+numPeers);
+    peerInfos.forEach(info => {
+        var nextPeerID = info.id;
+        aUsers.push(nextPeerID)
+    })
+
+    return aUsers;
+}
+
+export const fetchUsersListViaSwarmPeers = async () => {
+    var aUsers = [];
+
+    const peerInfos = await ipfs.swarm.peers();
+    console.log("peerInfos: "+JSON.stringify(peerInfos,null,4));
+    var numPeers = peerInfos.length;
+    peerInfos.forEach(info => {
+        var nextPeerID = info.peer;
+        aUsers.push(nextPeerID)
+    })
+
+    return aUsers;
 }

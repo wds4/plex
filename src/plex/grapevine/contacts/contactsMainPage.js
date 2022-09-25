@@ -7,6 +7,8 @@ import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 
 const jQuery = require("jquery");
 
+const electronFs = window.require('fs');
+
 const updateMasterUsersList = async (sMasterUsersList) => {
     // var path = '/grapevineData/users/masterUsersList.txt';
     var ipfsPath = "/grapevineData/users/masterUsersList.txt";
@@ -25,77 +27,20 @@ const updateMasterUsersList = async (sMasterUsersList) => {
 const updateUserContactInfo = async (cid,sUserData) => {
     var pathA = '/grapevineData/users/'+cid;
     var pathB = pathA + "/userProfile.txt"
+    await MiscIpfsFunctions.ipfs.files.rm(pathB);
+    console.log("qwerty removing pathA: " + pathA)
     await MiscIpfsFunctions.ipfs.files.mkdir(pathA,{"parents":true});
     await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
+
+    await MiscFunctions.timeout(100)
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("qwerty removing thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: 'self' }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
 }
 
-const fetchUsersFromExternalMFS = async (nextPeerID) => {
-    // var path = "/ipns/"+nextPeerID+"/grapevineData/userProfileData/myProfile.txt"; // works to pull the file
-    var path = "/ipns/"+nextPeerID+"/grapevineData/users/masterUsersList.txt";
-    try {
-        for await (const chunk of MiscIpfsFunctions.ipfs.cat(path)) {
-            var masterUsersListData = new TextDecoder("utf-8").decode(chunk);
-
-            var aUsers = JSON.parse(masterUsersListData);
-            console.log("fetchUsersFromExternalMFS "+nextPeerID+" SUCCESS! aUsers: "+JSON.stringify(aUsers,null,4))
-            return aUsers;
-        }
-    } catch (e) {
-        console.log("fetchUsersFromExternalMFS "+nextPeerID+" error: "+e)
-        var aUsers = [];
-        return aUsers;
-    }
-
-    return aUsers;
-}
-
-const fetchUsersFromMyGrapevineMFS = async () => {
-    var aUsers = [];
-    var path = "/grapevineData/users/";
-    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
-        console.log("path: "+path+"; file name: "+file.name)
-        console.log("path: "+path+"; file type: "+file.type)
-        if (file.type=="directory") {
-            aUsers.push(file.name)
-        }
-    }
-
-    return aUsers;
-}
-
-const fetchUsersListViaSwarmAddrs = async () => {
-    var aUsers = [];
-
-    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.addrs();
-    var numPeers = peerInfos.length;
-    console.log("numPeers: "+numPeers);
-    var outputHTML = "number of peers: "+numPeers+"<br>";
-    jQuery("#swarmPeersData").append(outputHTML);
-    peerInfos.forEach(info => {
-        var nextPeerID = info.id;
-        aUsers.push(nextPeerID)
-        // addPeerToUserList(myPeerID,nextPeerID)
-    })
-
-    return aUsers;
-}
-
-const fetchUsersListViaSwarmPeers = async (myPeerID) => {
-    var aUsers = [];
-
-    const peerInfos = await MiscIpfsFunctions.ipfs.swarm.peers();
-    console.log("peerInfos: "+JSON.stringify(peerInfos,null,4));
-    var numPeers = peerInfos.length;
-    var outputHTML = "number of peers: "+numPeers+"<br>";
-    jQuery("#swarmPeersData").append(outputHTML);
-    peerInfos.forEach(info => {
-        var nextPeerID = info.peer;
-        aUsers.push(nextPeerID)
-        // addPeerToUserList(myPeerID,nextPeerID)
-    })
-
-    return aUsers;
-}
 
 const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
@@ -140,6 +85,38 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
                 var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
             	img.src = window.URL.createObjectURL(blob)
 
+                var pathA = "public/grapevine/assets/users/"+peerID;
+                var pathB = pathA+"/avatar.png";
+                var imageData = await MiscIpfsFunctions.fetchImgFromIPFS_c(imageCid);
+                var typeofImageData = typeof imageData;
+                var data = "Hello World test file 2. \n Here is line 2."
+                console.log("typeof imageData: "+typeofImageData);
+
+/*
+                try {
+                    electronFs.mkdir(pathA, (err) => {
+                        if (err)
+                            console.log(err);
+                        else {
+                            console.log("director created successfully\n");
+                        }
+                    });
+
+                    // var path = "src/plex/settings/helloWorld/"+peerID+"/avatar.txt"
+                    // var data = blob;
+                    electronFs.writeFile(pathB, imageData, "binary", (err) => {
+                        if (err)
+                            console.log("err: "+err);
+                        else {
+                            console.log("File written successfully\n");
+                            // console.log("The written has the following contents:");
+                            // console.log(electronFs.readFileSync("src/plex/settings/helloWorld/helloWorldTestFile2.txt", "utf8"));
+                        }
+                    });
+                } catch (e) {
+
+                }
+*/
                 jQuery("#contactsPageUsernameContainer_"+cid).html(username)
                 jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
 
@@ -179,7 +156,7 @@ export default class GrapevineContactsMainPage extends React.Component {
         var masterUserList = [];
         ////////////////////////////////////////////////////////////////
         /////////////////////// swarm peers ////////////////////////////
-        var a1Users = await fetchUsersListViaSwarmPeers(myPeerID)
+        var a1Users = await MiscIpfsFunctions.fetchUsersListViaSwarmPeers()
         console.log("a1Users: "+JSON.stringify(a1Users,null,4))
         var grouping = "swarmPeers";
         for (var u=0;u<a1Users.length;u++) {
@@ -196,7 +173,7 @@ export default class GrapevineContactsMainPage extends React.Component {
 
         ////////////////////////////////////////////////////////////////
         /////////////////////// swarm addrs ////////////////////////////
-        var a2Users = await fetchUsersListViaSwarmAddrs()
+        var a2Users = await MiscIpfsFunctions.fetchUsersListViaSwarmAddrs()
         console.log("a2Users: "+JSON.stringify(a2Users,null,4))
         var grouping = "swarmAddrs";
         for (var u=0;u<a2Users.length;u++) {
@@ -215,7 +192,7 @@ export default class GrapevineContactsMainPage extends React.Component {
 
         ////////////////////////////////////////////////////////////////////
         /////////////////////// previously seen ////////////////////////////
-        var a3Users = await fetchUsersFromMyGrapevineMFS()
+        var a3Users = await MiscIpfsFunctions.fetchUsersFromMyGrapevineMFS()
         console.log("a3Users: "+JSON.stringify(a3Users,null,4))
         var grouping = "previouslySeen";
         for (var u=0;u<a3Users.length;u++) {
@@ -234,22 +211,22 @@ export default class GrapevineContactsMainPage extends React.Component {
 
         // add list of all known peerIDs in MFS for others to find
         var sMasterUserList = JSON.stringify(masterUserList,null,4)
-        console.log("sMasterUserList: "+sMasterUserList)
+        // console.log("sMasterUserList: "+sMasterUserList)
         await updateMasterUsersList(sMasterUserList)
 
         ////////////////////////////////////////////////////////////////////
         /////////////////// scrape data from other users ///////////////////
         for (var u=0;u<a1Users.length;u++) {
             var nextPeerID = a1Users[u];
-            console.log("try fetchUsersFromExternalMFS from nextPeerID: "+nextPeerID)
-            var a4Users = await fetchUsersFromExternalMFS(nextPeerID)
-            console.log("a4Users: "+JSON.stringify(a4Users,null,4))
+            // console.log("try fetchUsersFromExternalMFS from nextPeerID: "+nextPeerID)
+            var a4Users = await MiscIpfsFunctions.fetchUsersFromExternalMFS(nextPeerID)
+            // console.log("a4Users: "+JSON.stringify(a4Users,null,4))
             var grouping = "scraped";
             for (var u=0;u<a4Users.length;u++) {
                 var nextPeerID = a4Users[u];
                 if (!masterUserList.includes(nextPeerID)) {
                     masterUserList.push(nextPeerID)
-                    addPeerToUserList(myPeerID,nextPeerID,grouping)
+                    var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
                     var oUserData = {};
                     oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
                     oUserData.linkfromcid = 'linkFrom_'+nextPeerID;

@@ -1,18 +1,144 @@
-import React from "react";
+import React, { useEffect, useRef }  from "react";
+import ReactDOM from 'react-dom';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
-import P5Demo from './p5demo.js';
+import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
+import * as VisStyleConstants from '../../lib/visjs/visjs-style';
+
+const electronFs = window.require('fs');
 
 const jQuery = require("jquery");
 
-let c2 = require("c2.js");
-let p5 = require("p5");
+// An array of nodes
+export var nodes = new DataSet([
+    { id: 1, label: 'Node 1' },
+    { id: 2, label: 'Node 2' },
+    { id: 3, label: 'Node 3' },
+    { id: 4, label: 'Node 4' },
+    { id: 5, label: 'Node 5' }
+]);
+
+// An array of edges
+export var edges = new DataSet([
+    { from: 1, to: 3 },
+    { from: 1, to: 2 },
+    { from: 2, to: 4 },
+    { from: 2, to: 5 }
+]);
+
+function editEdgeFunction() {
+
+}
+function deleteEdgeFunction() {
+
+}
+function deleteNodeFunction() {
+
+}
 
 
-let rect = new c2.Rect(0, 0, 480, 480);
-let rects = rect.split([1,2,3,5,8], 'squarify');
+// var groupOptions = window.visjs.groupOptions;
+export const groupOptions={
+    "analogy":{"shape":"circle","borderWidth":"3","color":{"background":"white","border":"black"}},
+    "animal":{"shape":"circle","borderWidth":"3","color":{"background":"white","border":"black"}},
+}
+
+// var options = VisStyleConstants.options_vis_propertyTree;
+
+// options_vis_c2c
+var options = {
+    clickToUse: true,
+	interaction:{hover:true},
+	manipulation: {
+		enabled: true,
+        editEdge: function(edgeData,callback) {
+            editEdgeFunction(edgeData);
+            callback(edgeData);
+        },
+        deleteEdge: function(edgeData,callback) {
+            deleteEdgeFunction(edgeData);
+            callback(edgeData);
+        },
+        deleteNode: function(nodeData,callback) {
+            deleteNodeFunction(nodeData);
+            callback(nodeData);
+        }
+	},
+	physics: {
+	    enabled: true
+        // wind: { x:0, y:0.1 }
+        // barnesHut: { gravitationalConstant: -30 }
+        // stabilization: {iterations:2500}
+    },
+    /*
+    physics: false,
+    layout: {
+        hierarchical: {
+            direction: "UD", // UD, DU, LR, RL
+            sortMethod: "hubsize" // directed vs hubsize
+        }
+    },
+    */
+    nodes:{
+        margin: 10,
+        borderWidth:1,
+        color: { background: 'white', border: 'black' },
+        widthConstraint: {
+            minimum: 0,
+            maximum: 100
+        }
+    },
+	edges: {
+	    hoverWidth: 5,
+	    selectionWidth: 5,
+	    color: {
+	        hover: 'red'
+	    },
+        scaling: {
+            min:1,
+            max:10,
+            label: {
+                enabled: false,
+                min:14,
+                max:30
+            },
+            customScalingFunction: function (min,max,total,value) {
+                if (max === min) {
+                    return 0.5;
+                }
+                else {
+                    var scale = 1 / (max - min);
+                    return Math.max(0,(value - min)*scale);
+                }
+            }
+        },
+        arrows: {
+            to: {
+                enabled: true,
+                type: "arrow"
+            },
+            middle: {
+                enabled: false,
+                type: "arrow"
+            },
+            from: {
+                enabled: false,
+                type: "circle" // or could do bar; however, it looks odd with arrowStrikethrough false
+            }
+        }
+	},
+	groups: groupOptions
+};
+
+export var network = {};
+
+var data = {
+    nodes,
+    edges
+};
+
 
 const fetchInfluenceTypes = async (pCG0) => {
 
@@ -110,170 +236,233 @@ const fetchUsersList = async () => {
     return aUsers;
 }
 
-const drawSpring = (aUsers) => {
-    const renderer = new c2.Renderer(document.getElementById('c2'));
-    resize();
+export const VisNetwork_Grapevine = () => {
 
-    renderer.background('#cccccc');
-    let random = new c2.Random();
+    // A reference to the div rendered by this component
+    var domNode = useRef(null);
 
+    // A reference to the vis network instance
+    network = useRef(null);
 
-    let world = new c2.World(new c2.Rect(0, 0, renderer.width, renderer.height));
+    useEffect(
+      () => {
+        network.current = new Network(domNode.current, data, options);
+        network.current.fit();
 
-    // createTree(createParticle(), 0);
+        network.current.on("click",function(params){
+            var nodes_arr = params.nodes;
+            var numNodes = nodes_arr.length;
+        });
 
-    function createParticle(){
-        let x = random.next(renderer.width);
-        let y = random.next(renderer.height);
-        let p = new c2.Particle(x, y);
-        p.radius = random.next(10, renderer.height/15);
-        p.mass = p.radius
-        p.color = c2.Color.hsl(random.next(0, 30), random.next(30, 60), random.next(20, 100));
-        world.addParticle(p);
+        // EDGES
+        network.current.on("selectEdge",function(params){
+            // console.log("selectEdge event triggered")
+            var edges_arr = params.edges;
+            var numEdges = edges_arr.length;
+            if (numEdges==1) {
+                var edgeID = edges_arr[0];
+                jQuery("#selectedEdge_bepm").html(edgeID)
+            }
+        });
+        network.current.on("deselectEdge",function(params){
+            jQuery("#selectedEdge_bepm").html("none")
+        });
 
-        return p;
+        // NODES
+        network.current.on("selectNode",function(params){
+            // console.log("selectNode event triggered")
+            var nodes_arr = params.nodes;
+            var numNodes = nodes_arr.length;
+            if (numNodes==1) {
+                var nodeID = nodes_arr[0];
+                jQuery("#selectedNode_bepm").html(nodeID)
+            }
+        });
+        network.current.on("deselectNode",function(params){
+            jQuery("#selectedNode_bepm").html("none")
+        });
+      },
+      [domNode, network, data, options]
+    );
+
+    return (
+        <div style={{height:"100%",width:"100%"}} ref = { domNode } />
+    );
+};
+
+const makeVisGraph_Grapevine = async (userList) => {
+    var nodes_arr = [];
+    var nodes_slugs_arr = [];
+    var edges_arr = [];
+    var physics = true;
+    var nextNode_wordType = "user";
+    var nextNode_conceptRole = "user"
+    var showNode = true;
+    for (var u=0;u<userList.length;u++) {
+        var nextUserPeerID = userList[u];
+        var ipfsPath = "/grapevineData/users/"+nextUserPeerID+"/userProfile.txt";
+        var nextNode_label = "anon";
+        var nextNode_title = nextUserPeerID;
+
+        console.log("qwerty start ipfsPath: "+ipfsPath)
+        try {
+            var chunks = []
+
+            for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
+                chunks.push(chunk)
+                var chunk2 = new TextDecoder("utf-8").decode(chunk);
+                var oUserProfile = JSON.parse(chunk2);
+                console.log("qwerty oUserProfile: "+JSON.stringify(oUserProfile,null,4))
+                nextNode_label = oUserProfile.username;
+                nextNode_title = oUserProfile.username;
+            }
+        } catch (e) {
+            console.log("qwerty ipfsPath: "+ipfsPath+"; error: "+e)
+        }
+
+        var nextNode_slug = nextUserPeerID;
+
+        var pathToImage = "/grapevine/assets/users/"+nextUserPeerID+"/avatar.png"
+        // var pathToImage = "/grapevine/assets/users/12D3KooWDijvW15ZekGqSTFjkTJ8pTq5Hjm1UdJihq9fDMzeM6Cs/avatar.png"
+        electronFs.readFile(pathToImage, (err) => {
+            if (err){
+                console.log("electronFs nextUserPeerID: "+nextUserPeerID+" err: "+err);
+                pathToImage = "/grapevine/assets/users/12D3KooWDijvW15ZekGqSTFjkTJ8pTq5Hjm1UdJihq9fDMzeM6Cs/avatar.png"
+            }
+            else {
+                console.log("director created successfully\n");
+            }
+        });
+
+        if (showNode) {
+            var nextNode_vis_obj = {
+                id: nextUserPeerID,
+                label: nextNode_label,
+                slug: nextNode_slug,
+                title: nextNode_title,
+                shape:"circularImage",
+                image:pathToImage,
+                brokenImage:"/grapevine/assets/missingAvatar.png",
+                group: nextNode_wordType,
+                conceptRole: nextNode_conceptRole,
+                physics: physics
+            }
+            // console.log("qwerty_showNode: nextNode_slug: "+nextNode_slug+"; nextNode_vis_obj: "+JSON.stringify(nextNode_vis_obj,null,4))
+            nodes_arr = MiscFunctions.pushObjIfNotAlreadyThere(nodes_arr,nextNode_vis_obj)
+            nodes_slugs_arr = MiscFunctions.pushIfNotAlreadyThere(nodes_slugs_arr,nextNode_slug)
+        }
+
     }
 
-    // function createTree(parent, level){
-        for (var u=0;u<6;u++) {
-            let p = createParticle();
-
-            // let s = new c2.Spring(parent, p);
-            // s.length = (parent.radius + p.radius) * 2;
-            // world.addSpring(s);
-
-            // createTree(p, u);
-        }
-    // }
-
-
-    let gravitation = new c2.Gravitation(-10);
-    gravitation.range(10);
-    world.addInteractionForce(gravitation);
-
-
-    renderer.draw(() => {
-        renderer.clear();
-
-        world.update();
-
-        for(let i=0; i<world.springs.length; i++){
-          let s = world.springs[i];
-          renderer.stroke('#333333');
-          renderer.lineWidth(s.length/30);
-          renderer.line(s.p1.position.x, s.p1.position.y,
-                        s.p2.position.x, s.p2.position.y);
-        }
-
-        for(let i=0; i<world.particles.length; i++){
-          let p = world.particles[i];
-          renderer.stroke('#333333');
-          renderer.lineWidth(1);
-          renderer.fill(p.color);
-          renderer.circle(p.position.x, p.position.y, p.radius);
-        }
-    });
-
-
-    window.addEventListener('resize', resize);
-    function resize() {
-        let parent = renderer.canvas.parentElement;
-        renderer.size(parent.clientWidth, parent.clientWidth / 16 * 9);
-    }
+    nodes = new DataSet(nodes_arr);
+    edges = new DataSet(edges_arr);
+    data = {
+        nodes,
+        edges
+    };
+    ReactDOM.render(<VisNetwork_Grapevine clickHandler={console.log('click')} onSelectNode={console.log("onSelectNode") } />,
+        document.getElementById("grapevineContainerElem")
+    )
 }
-
-const drawPoint = () => {
-    const renderer = new c2.Renderer(document.getElementById('c2'));
-    resize();
-
-    renderer.background('#cccccc');
-    let random = new c2.Random();
-
-
-    let world = new c2.World(new c2.Rect(0, 0, renderer.width, renderer.height));
-
-    for(let i=0; i<100; i++){
-      let x = random.next(renderer.width);
-      let y = random.next(renderer.height);
-      let p = new c2.Particle(x, y);
-      p.radius = random.next(10, renderer.height/14);
-      p.color = c2.Color.hsl(random.next(0, 30), random.next(30, 60), random.next(20, 100));
-
-      world.addParticle(p);
-    }
-
-    let collision = new c2.Collision();
-    world.addInteractionForce(collision);
-
-    let pointField = new c2.PointField(new c2.Point(renderer.width/2, renderer.height/2), 1);
-    world.addForce(pointField);
-
-
-    renderer.draw(() => {
-        renderer.clear();
-
-        let time = renderer.frame * .01;
-
-        world.update();
-
-        for(let i=0; i<world.particles.length; i++){
-          let p = world.particles[i];
-          renderer.stroke('#333333');
-          renderer.lineWidth(1);
-          renderer.fill(p.color);
-          renderer.circle(p.position.x, p.position.y, p.radius);
-          renderer.lineWidth(2);
-          renderer.point(p.position.x, p.position.y);
-        }
-    });
-
-
-    window.addEventListener('resize', resize);
-    function resize() {
-        let parent = renderer.canvas.parentElement;
-        renderer.size(parent.clientWidth, parent.clientWidth / 16 * 9);
-    }
-}
-
-
-
 
 export default class GrapevineVisualizationMainPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            contactLinks: []
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
         await makeInfluenceTypeSelector();
         var aUsers = await fetchUsersList()
 
-        // drawPoint();
-        drawSpring(aUsers);
-        /*
-        let canvas = document.getElementById('c2');
-        let renderer = new c2.Renderer(canvas);
+        var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+        var myPeerID = oIpfsID.id;
 
-        renderer.size(480, 480);
-        renderer.background('#cccccc');
+        console.log("GrapevineVisualizationMainPage myPeerID: "+myPeerID)
 
-        let rect = new c2.Rect(0, 0, 480, 480);
-        let rects = rect.split([1,2,3,5,8], 'squarify');
+        var masterUserList = [];
+        ////////////////////////////////////////////////////////////////
+        /////////////////////// swarm peers ////////////////////////////
+        var a1Users = await MiscIpfsFunctions.fetchUsersListViaSwarmPeers()
+        console.log("GrapevineVisualizationMainPage a1Users: "+JSON.stringify(a1Users,null,4))
+        var grouping = "swarmPeers";
+        for (var u=0;u<a1Users.length;u++) {
+            var nextPeerID = a1Users[u];
+            masterUserList.push(nextPeerID)
+            // var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
+            var oUserData = {};
+            oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+            oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+            oUserData.cid = nextPeerID;
+            this.state.contactLinks.push(oUserData)
+            this.forceUpdate();
+        }
 
-        renderer.draw(() => {
-            renderer.clear();
-
-            let mouse = renderer.mouse;
-            let point = new c2.Point(mouse.x, mouse.y);
-            for (let rect of rects) {
-            if(rect.contains(point)) renderer.fill('#ff0000');
-                else renderer.fill(false);
-                renderer.rect(rect);
+        ////////////////////////////////////////////////////////////////
+        /////////////////////// swarm addrs ////////////////////////////
+        var a2Users = await MiscIpfsFunctions.fetchUsersListViaSwarmAddrs()
+        console.log("GrapevineVisualizationMainPage a2Users: "+JSON.stringify(a2Users,null,4))
+        var grouping = "swarmAddrs";
+        for (var u=0;u<a2Users.length;u++) {
+            var nextPeerID = a2Users[u];
+            if (!masterUserList.includes(nextPeerID)) {
+                masterUserList.push(nextPeerID)
+                // var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var oUserData = {};
+                oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+                oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+                oUserData.cid = nextPeerID;
+                this.state.contactLinks.push(oUserData)
+                this.forceUpdate();
             }
-        });
-        */
+        }
 
+        ////////////////////////////////////////////////////////////////////
+        /////////////////////// previously seen ////////////////////////////
+        var a3Users = await MiscIpfsFunctions.fetchUsersFromMyGrapevineMFS()
+        console.log("GrapevineVisualizationMainPage a3Users: "+JSON.stringify(a3Users,null,4))
+        var grouping = "previouslySeen";
+        for (var u=0;u<a3Users.length;u++) {
+            var nextPeerID = a3Users[u];
+            if (!masterUserList.includes(nextPeerID)) {
+                masterUserList.push(nextPeerID)
+                // var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var oUserData = {};
+                oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+                oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+                oUserData.cid = nextPeerID;
+                this.state.contactLinks.push(oUserData)
+                this.forceUpdate();
+            }
+        }
 
+        ////////////////////////////////////////////////////////////////////
+        /////////////////// scrape data from other users ///////////////////
+        for (var u=0;u<a1Users.length;u++) {
+            var nextPeerID = a1Users[u];
+            // console.log("try fetchUsersFromExternalMFS from nextPeerID: "+nextPeerID)
+            var a4Users = await MiscIpfsFunctions.fetchUsersFromExternalMFS(nextPeerID)
+            console.log("GrapevineVisualizationMainPage nextPeerID: "+nextPeerID+"; a4Users: "+JSON.stringify(a4Users,null,4))
+            var grouping = "scraped";
+            for (var u=0;u<a4Users.length;u++) {
+                var nextPeerID = a4Users[u];
+                if (!masterUserList.includes(nextPeerID)) {
+                    masterUserList.push(nextPeerID)
+                    // addPeerToUserList(myPeerID,nextPeerID,grouping)
+                    var oUserData = {};
+                    oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
+                    oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
+                    oUserData.cid = nextPeerID;
+                    this.state.contactLinks.push(oUserData)
+                    this.forceUpdate();
+                }
+            }
+        }
+        var sMasterUserList = JSON.stringify(masterUserList,null,4)
+        console.log("sMasterUserList: "+sMasterUserList)
+        await makeVisGraph_Grapevine(masterUserList);
     }
     render() {
         return (
@@ -309,12 +498,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
                         <center>
                             <div>
-                                <div style={{border:"1px dashed grey",display:"inline-block",width:"1000px",height:"700px"}}>
-                                <P5Demo />
-                                <div id = "p5sketch">
-
-                                </div>
-
+                                <div id="grapevineContainerElem" style={{border:"1px dashed grey",display:"inline-block",width:"1000px",height:"700px"}}>
 
                                 </div>
 

@@ -236,7 +236,7 @@ export const loadNeuroCore2ConceptGraph = async (foo) => {
 
             var oWord = JSON.parse(rawFile)
             var word_slug = oWord.wordData.slug;
-            console.log("loadNeuroCore2ConceptGraph r: "+r+";  word_slug: "+word_slug)
+            // console.log("loadNeuroCore2ConceptGraph r: "+r+";  word_slug: "+word_slug)
             window.neuroCore.engine.oRFL.current[word_slug] = oWord;
         }
         // await timeout(1000)

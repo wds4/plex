@@ -185,7 +185,7 @@ export const updateNodeLookup = async (foo,conceptGraphTableName) => {
                 console.log("setting window.mustReload_lookupWordBySlug = false")
                 window.mustReload_lookupWordBySlug = false;
             }
-            console.log("updateNodeLookup from transferSqlToDOM; success: r="+r)
+            // console.log("updateNodeLookup from transferSqlToDOM; success: r="+r)
         }
 
         return "foo_"+numRows;
@@ -208,7 +208,7 @@ export const updateWordTypesLookup = async (foo) => {
             var oNextWord = aResult[r];
             var nextWord_id = oNextWord.id;
             var nextWord_slug = oNextWord.slug;
-            console.log("updateWordTypesLookup nextWord_id: "+nextWord_id+"; nextWord_slug: "+nextWord_slug)
+            // console.log("updateWordTypesLookup nextWord_id: "+nextWord_id+"; nextWord_slug: "+nextWord_slug)
             var nextWord_template = oNextWord.template;
             var oNextWord_template = JSON.parse(nextWord_template);
             window.lookupWordTypeTemplate[nextWord_slug] = oNextWord_template;

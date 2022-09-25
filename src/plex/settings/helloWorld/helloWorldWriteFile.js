@@ -78,7 +78,7 @@ electronFs.readFile("src/plex/conceptGraph/helloWorld/helloWorldTestFile.txt", "
 })
 */
 
-electronFs.writeFile("src/plex/settings/helloWorld/helloWorldTestFile2.txt", data, (err) => {
+electronFs.writeFile("src/plex/settings/helloWorld/helloWorldTestFile3.txt", data, (err) => {
     if (err)
         console.log(err);
     else {
@@ -107,7 +107,7 @@ export default class HelloWorldWriteFile extends React.Component {
                     <div className="mainPanel" >
                         <Masthead />
                         <div class="h2">Hello World: Write File</div>
-                        See helloWorldTestFile.txt in src/plex/conceptGraph/helloWorld/
+                        See helloWorldTestFile.txt in src/plex/settings/helloWorld/
                         <br/>
                         Also see console.
                     </div>
