@@ -7,7 +7,7 @@ import LeftNavbar1 from '../../../../../navbars/leftNavbar1/conceptGraph_leftNav
 import LeftNavbar2 from '../../../../../navbars/leftNavbar2/singleConcept_leftNav2.js';
 import ReactJSONSchemaOldForm from 'react-jsonschema-form'; // eslint-disable-line import/no-unresolved
 import validator from "@rjsf/validator-ajv6";
-import Form from "@rjsf/core";
+import Form from "@rjsf/core"; 
 
 import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
 import sendAsync from '../../../../../renderer.js';

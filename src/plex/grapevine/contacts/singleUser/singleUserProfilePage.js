@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { NavLink, Link } from "react-router-dom";
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
 import { Button } from "reactstrap";
@@ -46,7 +47,7 @@ const populateFields = async (cid) => {
                 MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
             }
         }
-    } catch (e) { 
+    } catch (e) {
         console.log("error: "+e)
         console.log("populateFields: user profile not found")
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
@@ -164,10 +165,11 @@ export default class SingleUserProfile extends React.Component {
         this.state = {}
     }
     async componentDidMount() {
+        jQuery(".mainPanel").css("width","calc(100% - 100px)");
+
         var cid = this.props.match.params.cid
         var defaultAvatarNumber = parseInt(cid,10);
         console.log("cid: "+cid+"; defaultAvatarNumber: "+defaultAvatarNumber)
-        jQuery(".mainPanel").css("width","calc(100% - 100px)");
         populateFields(cid);
         await makeInfluenceTypeSelector();
         jQuery("#leaveRatingButton").click(function(){
@@ -176,6 +178,8 @@ export default class SingleUserProfile extends React.Component {
 
     }
     render() {
+        // var path = "/SingleUserLeaveRating/QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ"+cid;
+        var path = "/SingleUserLeaveRating/"+this.props.match.params.cid;
         return (
             <>
                 <fieldset className="mainBody" >
@@ -185,7 +189,7 @@ export default class SingleUserProfile extends React.Component {
                         <center>
                             <div style={{border:"1px dashed grey",width:"1210px",textAlign:"left"}}>
                                 <div id="avatarContainer" style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"400px"}}>
-                                    <img id="avatarBox" />
+                                    <img id="avatarBox" className="mainProfilePageAvatarBox" />
                                 </div>
 
                                 <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"400px",position:"relative"}}>
@@ -197,6 +201,8 @@ export default class SingleUserProfile extends React.Component {
 
                                     <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"150px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
+
+                                    <NavLink className="leftNav1Button" activeClassName="active" to={path} >Rate this user</NavLink>
 
                                     <div style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
                                         <div style={{display:"inline-block",fontSize:"14px"}}>ipfs cid: </div>

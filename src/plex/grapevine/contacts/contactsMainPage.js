@@ -27,8 +27,8 @@ const updateMasterUsersList = async (sMasterUsersList) => {
 const updateUserContactInfo = async (cid,sUserData) => {
     var pathA = '/grapevineData/users/'+cid;
     var pathB = pathA + "/userProfile.txt"
-    await MiscIpfsFunctions.ipfs.files.rm(pathB);
-    console.log("qwerty removing pathA: " + pathA)
+    // await MiscIpfsFunctions.ipfs.files.rm(pathB);
+    // console.log("qwerty removing pathA: " + pathA)
     await MiscIpfsFunctions.ipfs.files.mkdir(pathA,{"parents":true});
     await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
 
