@@ -103,6 +103,7 @@ import SettingsMainPage from './plex/conceptGraph/settings/generalSettings.js';
 import ProfileMainPage from './plex/grapevine/profile/profileMainPage.js';
 import PlexAppsNavPage from './plex/conceptGraph/plexAppsNavPage.js';
 import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
+import HelloWorldMarkdown from './plex/settings/helloWorld/helloWorldMarkdown.js';
 
 import HelloWorldVisJS from './plex/settings/helloWorld/helloWorldVisJS.js';
 import HelloWorldP5 from './plex/settings/helloWorld/helloWorldP5.js';
@@ -378,6 +379,7 @@ ReactDOM.render(
           <Route path="/PlexAppsNavPage" exact component={PlexAppsNavPage} />
           <Route path="/HelloWorldMainPage" exact component={HelloWorldMainPage} />
 
+          <Route path="/HelloWorldMarkdown" exact component={HelloWorldMarkdown} />
           <Route path="/HelloWorldVisJS" exact component={HelloWorldVisJS} />
           <Route path="/HelloWorldP5" exact component={HelloWorldP5} />
           <Route path="/HelloWorldC2" exact component={HelloWorldC2} />

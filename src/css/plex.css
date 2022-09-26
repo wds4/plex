@@ -836,6 +836,11 @@
     height:900px;
     overflow:scroll;
 }
+.eBookTocIntroContainer {
+    background-color:white;
+    width:900px;
+    text-align:left;
+}
 .eBookSectionContainer {
     text-align:left;
     margin-bottom:20px;

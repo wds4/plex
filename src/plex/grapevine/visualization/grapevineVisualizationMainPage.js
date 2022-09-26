@@ -157,7 +157,7 @@ const fetchInfluenceTypes = async (pCG0) => {
                 var sNextSpecificInstanceRawFile = new TextDecoder("utf-8").decode(siFile);
                 var oNextSpecificInstanceRawFile = JSON.parse(sNextSpecificInstanceRawFile);
                 var nextInfluenceType_name = oNextSpecificInstanceRawFile.influenceTypeData.name;
-                // console.log("fetchInfluenceTypes; nextInfluenceType_name: "+nextInfluenceType_name)
+                console.log("fetchInfluenceTypes; nextInfluenceType_name: "+nextInfluenceType_name)
                 aResult.push(oNextSpecificInstanceRawFile)
             }
         }

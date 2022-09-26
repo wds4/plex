@@ -7,6 +7,10 @@ import { cap0 } from './chapters/cap0';
 import { cap1 } from './chapters/cap1';
 import { cap2 } from './chapters/cap2';
 import { cap3 } from './chapters/cap3';
+import { cap4 } from './chapters/cap4.md';
+// import sendAsync from '../../renderer.js'
+import { marked } from 'marked';
+const electronFs = window.require('fs');
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
 const oEntireBook = {};
@@ -51,6 +55,10 @@ export const runBindings = () => {
 export const createTitlePage = () => {
     jQuery("#eBookMainContainer").html("");
 
+    const mdFile = electronFs.readFileSync("src/plex/eBooks/eBook1/chapters/tocIntro.md", "utf8");
+    const html2 = marked.parse(mdFile);
+    jQuery("#eBookTocIntroContainer").html(html2)
+
     var tocIntroHTML = "";
     tocIntroHTML += "<div style='text-align:left;margin-bottom:10px;color:#0G0G0G;font-size:14px;' >";
         tocIntroHTML += "<div style='margin-bottom:5px;' >";
@@ -68,7 +76,7 @@ export const createTitlePage = () => {
         tocIntroHTML += "</div>";
     tocIntroHTML += "</div>";
 
-    jQuery("#eBookMainContainer").append(tocIntroHTML)
+    // jQuery("#eBookMainContainer").append(tocIntroHTML)
 
     var aSections = oTableOfContents.sections;
     for (var sectionNumber=0;sectionNumber < aSections.length; sectionNumber++) {
@@ -133,8 +141,11 @@ export default class EBook1Home extends React.Component {
                         <div style={{height:"60px",backgroundColor:"#EFEFEF",borderBottom:"2px solid purple",marginBottom:"10px",paddingTop:"15px"}} >
                             <div id="eBook1MainTitle" class="h2 eBookHoverableElements" >The Cognitive Blind Spot</div>
                         </div>
-                        `
+
                         <center>
+                            <div id="eBookTocIntroContainer" className = "eBookTocIntroContainer" >
+                            </div>
+
                             <div id="eBookMainContainer" className = "eBookMainContainer" >
                             </div>
                         </center>
