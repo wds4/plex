@@ -475,14 +475,16 @@ const makeNewRelationships = () => {
 
         var enumeration_wordName = "enumeration of " + c1namePlural + " by " + p1key;
         var enumeration_wordTitle = "Enumeration of " + c1namePlural + " by " + p1key;
-        var enumeration_wordSlug = "enumerationOf_" + c1namePlural + "_by_" + p1key + "_"+enumeration_ipns.substr(-6);
+        // var enumeration_wordSlug = "enumerationOf_" + c1namePlural + "_by_" + p1key + "_"+enumeration_ipns.substr(-6);
+        var enumeration_wordSlug = "enumerationOf_" + c1slug + "_by_" + p1key + "_"+enumeration_ipns.substr(-6);
         oEnumeration.wordData.slug = enumeration_wordSlug;
         oEnumeration.wordData.title = enumeration_wordTitle;
         oEnumeration.wordData.name = enumeration_wordName;
 
         var enumeration_enumerationName = c1namePlural + " by " + p1key;
         var enumeration_enumerationTitle = c1namePlural + " by " + p1key;
-        var enumeration_enumerationSlug = c1namePlural + "_by_" + p1key + "_"+enumeration_ipns.substr(-6);
+        // var enumeration_enumerationSlug = c1namePlural + "_by_" + p1key + "_"+enumeration_ipns.substr(-6);
+        var enumeration_enumerationSlug = c1slug + "_by_" + p1key + "_"+enumeration_ipns.substr(-6);
         oEnumeration.enumerationData.slug = enumeration_enumerationSlug;
         oEnumeration.enumerationData.title = enumeration_enumerationTitle;
         oEnumeration.enumerationData.name = enumeration_enumerationName;
