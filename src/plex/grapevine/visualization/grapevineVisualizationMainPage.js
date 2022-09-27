@@ -145,12 +145,12 @@ const fetchInfluenceTypes = async (pCG0) => {
     var aResult = [];
 
     var pathToInfluenceTypes = pCG0 + "concepts/influenceType/superset/allSpecificInstances/slug/"
-    // console.log("fetchInfluenceTypes; pathToInfluenceTypes: "+pathToInfluenceTypes)
+    console.log("fetchInfluenceTypes; pathToInfluenceTypes: "+pathToInfluenceTypes)
     for await (const file of MiscIpfsFunctions.ipfs.files.ls(pathToInfluenceTypes)) {
         var fileName = file.name;
         var fileType = file.type;
-        // console.log("fetchInfluenceTypes; file name: "+file.name)
-        // console.log("fetchInfluenceTypes; file type: "+file.type)
+        console.log("fetchInfluenceTypes; file name: "+file.name)
+        console.log("fetchInfluenceTypes; file type: "+file.type)
         if (fileType=="directory") {
             var pathToSpecificInstance = pathToInfluenceTypes + fileName + "/node.txt";
             for await (const siFile of MiscIpfsFunctions.ipfs.files.read(pathToSpecificInstance)) {
@@ -166,6 +166,7 @@ const fetchInfluenceTypes = async (pCG0) => {
 }
 
 const makeInfluenceTypeSelector = async () => {
+    console.log("makeInfluenceTypeSelector")
     var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
     var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
     var mainSchema_ipns = oMainSchema.metaData.ipns;
@@ -173,7 +174,7 @@ const makeInfluenceTypeSelector = async () => {
     var pCG0 = pCG + mainSchema_ipns + "/";
 
     var aInfluenceTypes = await fetchInfluenceTypes(pCG0);
-    // console.log("aInfluenceTypes: "+JSON.stringify(aInfluenceTypes,null,4))
+    console.log("aInfluenceTypes: "+JSON.stringify(aInfluenceTypes,null,4))
 
     var selectorHTML = "";
     selectorHTML += "<select id='influenceTypeSelector' >";
@@ -374,6 +375,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
+        console.log("qwerty componentDidMount")
         await makeInfluenceTypeSelector();
         var aUsers = await fetchUsersList()
 

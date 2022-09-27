@@ -316,7 +316,10 @@ import IPFSPeersInfoPage from './plex/settings/IPFS/IPFSPeersInfo.js';
 import IPFSPubsubInfoPage from './plex/settings/IPFS/IPFSPubsubInfo.js';
 import IPFSPinsInfoPage from './plex/settings/IPFS/IPFSPinsInfo.js';
 import IPFSKeysInfoPage from './plex/settings/IPFS/IPFSKeysInfo.js';
-import IPFSFilesInfoPage from './plex/settings/IPFS/IPFSFilesInfo.js';
+
+import IPFSMutableFilesInfoPage1 from './plex/settings/IPFS/IPFSMutableFilesInfo1.js';
+import IPFSMutableFilesInfoPage2 from './plex/settings/IPFS/IPFSMutableFilesInfo2.js';
+import IPFSMutableFilesInfoPage3 from './plex/settings/IPFS/IPFSMutableFilesInfo3.js';
 
 import NeuroCoreTopPanel from './plex/neuroCore/neuroCoreTopPanel.js'
 import NeuroCore2TopPanel from './plex/neuroCore2/neuroCoreTopPanel.js'
@@ -579,7 +582,10 @@ ReactDOM.render(
           <Route path="/IPFSPubsubInfoPage" exact component={IPFSPubsubInfoPage} />
           <Route path="/IPFSPinsInfoPage" exact component={IPFSPinsInfoPage} />
           <Route path="/IPFSKeysInfoPage" exact component={IPFSKeysInfoPage} />
-          <Route path="/IPFSFilesInfoPage" exact component={IPFSFilesInfoPage} />
+
+          <Route path="/IPFSMutableFilesInfoPage1" exact component={IPFSMutableFilesInfoPage1} />
+          <Route path="/IPFSMutableFilesInfoPage2" exact component={IPFSMutableFilesInfoPage2} />
+          <Route path="/IPFSMutableFilesInfoPage3" exact component={IPFSMutableFilesInfoPage3} />
 
           <Route path="/ReactJSONSchemaForm" exact component={ReactJSONSchemaForm} />
           <Route path="/ReactJSONSchemaForm2" exact component={ReactJSONSchemaForm2} />

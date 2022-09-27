@@ -23,7 +23,14 @@ export default class LeftNavbar2_IPFS extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSConfigInfoPage'>Config file</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSPinsInfoPage'>Pins file</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSKeysInfoPage'>Keys</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSFilesInfoPage'>Mutable Files</NavLink>
+
+            <br/><br/>
+
+            <center>Mutable File System</center>
+
+            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSMutableFilesInfoPage1'>MFS 1</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSMutableFilesInfoPage2'>MFS 2</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSMutableFilesInfoPage3'>MFS 3</NavLink>
         </div>
 
       </>

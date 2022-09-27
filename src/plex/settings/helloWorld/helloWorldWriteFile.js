@@ -77,7 +77,7 @@ electronFs.readFile("src/plex/conceptGraph/helloWorld/helloWorldTestFile.txt", "
     console.log('success; dataB: '+dataB)
 })
 */
-
+/*
 electronFs.writeFile("src/plex/settings/helloWorld/helloWorldTestFile3.txt", data, (err) => {
     if (err)
         console.log(err);
@@ -87,6 +87,7 @@ electronFs.writeFile("src/plex/settings/helloWorld/helloWorldTestFile3.txt", dat
         console.log(electronFs.readFileSync("src/plex/settings/helloWorld/helloWorldTestFile2.txt", "utf8"));
     }
 });
+*/
 
 export default class HelloWorldWriteFile extends React.Component {
     constructor(props) {

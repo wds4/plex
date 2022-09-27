@@ -36,7 +36,7 @@ const updateUserContactInfo = async (cid,sUserData) => {
     var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
     var stats_str = JSON.stringify(stats);
     var thisPeerData_cid = stats.cid.string;
-    console.log("qwerty removing thisPeerData_cid: " + thisPeerData_cid)
+    console.log("qwerty publishing thisPeerData_cid: " + thisPeerData_cid + "; sUserData: "+sUserData)
     var options_publish = { key: 'self' }
     var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
 }

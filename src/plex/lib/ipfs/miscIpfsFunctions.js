@@ -16,6 +16,30 @@ export const ipfs = IpfsHttpClient({
 //
 ////////////////////////////////////////////////////////////////////////////
 
+export const isMfsFileValidObj = async (ipfsPath) => {
+    try {
+        var chunks = []
+        for await (const chunk2 of ipfs.files.read(ipfsPath)) {
+            chunks.push(chunk2)
+            // console.info("chunk2: "+chunk2)
+            var chunk3 = new TextDecoder("utf-8").decode(chunk2);
+            try {
+                var chunk4 = JSON.parse(chunk3);
+                if (typeof chunk4 == "object") {
+                    return true
+                } else {
+                    return false
+                }
+            } catch (e) {
+                return false
+            }
+        }
+    } catch (e) {
+
+    }
+
+    return false;
+}
 export const fetchImgFromIPFS_c = async (cid) => {
     if (!cid) {
         cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
