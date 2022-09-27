@@ -291,6 +291,24 @@ export const VisNetwork_Grapevine = () => {
     );
 };
 
+const loadImgURL = async (cid, mime, limit) => {
+    if (cid == "" || cid == null || cid == undefined) {
+        return false;
+    }
+    for await (const file of MiscIpfsFunctions.ipfs.get(cid)) {
+        if (file.size > limit) {
+            return false;
+        }
+        const content = [];
+        if (file.content) {
+            for await(const chunk of file.content) {
+                content.push(chunk);
+            }
+            return URL.createObjectURL(new Blob(content, {type: mime}));
+        }
+    }
+}
+
 const makeVisGraph_Grapevine = async (userList) => {
     var nodes_arr = [];
     var nodes_slugs_arr = [];
@@ -305,6 +323,13 @@ const makeVisGraph_Grapevine = async (userList) => {
         var nextNode_label = "anon";
         var nextNode_title = nextUserPeerID;
 
+
+        // var pathToImage = "~src/assets/grapevine/users/"+nextUserPeerID+"/avatar.png"
+        // var pathToImage = "/grapevine/assets/users/12D3KooWDijvW15ZekGqSTFjkTJ8pTq5Hjm1UdJihq9fDMzeM6Cs/avatar.png"
+        // var pathToImage = "localhost:3000/d447dfa5-e37b-478f-8b7b-a715e753fd3d";
+
+        var pathToImage = "";
+
         console.log("qwerty start ipfsPath: "+ipfsPath)
         try {
             var chunks = []
@@ -316,6 +341,15 @@ const makeVisGraph_Grapevine = async (userList) => {
                 console.log("qwerty oUserProfile: "+JSON.stringify(oUserProfile,null,4))
                 nextNode_label = oUserProfile.username;
                 nextNode_title = oUserProfile.username;
+
+                var nextNode_imageCid = oUserProfile.imageCid;
+                pathToImage = "http://localhost:8080/ipfs/"+nextNode_imageCid;
+
+                if (nextNode_label=="drDave") {
+                    var imgURL = await loadImgURL(nextNode_imageCid,"image/png", 524288)
+                    console.log(nextNode_label + " imgURL: "+imgURL)
+                }
+
             }
         } catch (e) {
             console.log("qwerty ipfsPath: "+ipfsPath+"; error: "+e)
@@ -323,8 +357,10 @@ const makeVisGraph_Grapevine = async (userList) => {
 
         var nextNode_slug = nextUserPeerID;
 
-        var pathToImage = "/grapevine/assets/users/"+nextUserPeerID+"/avatar.png"
-        // var pathToImage = "/grapevine/assets/users/12D3KooWDijvW15ZekGqSTFjkTJ8pTq5Hjm1UdJihq9fDMzeM6Cs/avatar.png"
+        // var pathToImage = "/grapevine/assets/users/"+nextUserPeerID+"/avatar.png"
+        // var pathToImage = "http://localhost:8080/ipfs/QmeZB53kw8XD318LKRTDS2BJDpHWKuBz4Dv47yNwbc2uof";
+        // var pathToImage = "http://bafybeihq6bfdneqcomarppbpoojs3ydrpegg4z4ozysppjgyevlilz5opi.ipfs.localhost:8080/";
+
         electronFs.readFile(pathToImage, (err) => {
             if (err){
                 console.log("electronFs nextUserPeerID: "+nextUserPeerID+" err: "+err);

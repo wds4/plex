@@ -25,7 +25,7 @@ const populateFields = async (cid) => {
             if (typeof oUserData == "object") {
                 var sUserData = JSON.stringify(oUserData,null,4);
                 console.log("populateFieldsWithoutEditing; --- sUserData: "+sUserData)
-                var myUsername = oUserData.username;
+                var username = oUserData.username;
                 var peerID = oUserData.peerID;
                 var loc = oUserData.loc;
                 var about = oUserData.about;
@@ -33,7 +33,7 @@ const populateFields = async (cid) => {
                 var imageCid = oUserData.imageCid;
                 console.log("imageCid: "+imageCid)
 
-                jQuery("#usernameContainer").html(myUsername)
+                jQuery("#usernameContainer").html(username)
                 jQuery("#locationContainer").html(loc)
                 jQuery("#aboutContainer").html(about)
 
@@ -53,6 +53,32 @@ const populateFields = async (cid) => {
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
         console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
         MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
+
+        var oUserProfile = await MiscIpfsFunctions.returnUserProfileFromMFS(cid);
+        var username = oUserProfile.username;
+        var peerID = oUserProfile.peerID;
+        var loc = oUserProfile.loc;
+        var about = oUserProfile.about;
+        var lastUpdated = oUserProfile.lastUpdated;
+        var imageCid = oUserProfile.imageCid;
+        jQuery("#usernameContainer").html(username)
+        jQuery("#locationContainer").html(loc)
+        jQuery("#aboutContainer").html(about)
+
+        if (imageCid) {
+            var img = document.getElementById("avatarBox") // the img tag you want it in
+            img.src = "http://localhost:8080/ipfs/"+imageCid;
+        }
+
+        var a2Users = await MiscIpfsFunctions.fetchUsersListViaSwarmAddrs()
+        console.log("a2Users: "+JSON.stringify(a2Users,null,4))
+        if (!a2Users.includes(cid)) {
+            console.log("a2Users does not include "+cid)
+            // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
+            // var img = document.getElementById("avatarBox") // the img tag you want it in
+            // img.src = window.URL.createObjectURL(blob)
+            img.src = "http://localhost:8080/ipfs/"+imageCid;
+        }
     }
 }
 

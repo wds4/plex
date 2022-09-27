@@ -41,6 +41,41 @@ const updateUserContactInfo = async (cid,sUserData) => {
     var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
 }
 
+const addArchivedPeerToUserList = async (myPeerID,cid,grouping) => {
+    var userHTML = "";
+    userHTML += "<div data-cid='"+cid+"' class='contactPageSingleContactContainer";
+    if (grouping=="swarmPeers") { userHTML += " contactPageSingleContactContainer_green"; }
+    if (grouping=="previouslySeen") { userHTML += " contactPageSingleContactContainer_grey"; }
+    if (myPeerID==cid) { userHTML += " contactPageSingleContactContainer_blue"; }
+    userHTML += "' >";
+        userHTML += "<div class='contactsPageAvatarContainer' >";
+        userHTML += "<img id='contactsPageAvatarThumb_"+cid+"' class='contactsPageAvatarThumb' />";
+        userHTML += "</div>";
+
+        userHTML += "<div class='contactsPageUsernameContainer' id='contactsPageUsernameContainer_"+cid+"' >";
+        userHTML += cid;
+        userHTML += "</div>";
+    userHTML += "</div>";
+
+    jQuery("#usersListContainer").append(userHTML);
+
+    var oUserProfile = await MiscIpfsFunctions.returnUserProfileFromMFS(cid);
+
+    var username = oUserProfile.username;
+    var peerID = oUserProfile.peerID;
+    var loc = oUserProfile.loc;
+    var about = oUserProfile.about;
+    var lastUpdated = oUserProfile.lastUpdated;
+    var imageCid = oUserProfile.imageCid;
+
+    var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
+    var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
+    // img.src = window.URL.createObjectURL(blob)
+    img.src = "http://localhost:8080/ipfs/"+imageCid;
+
+    jQuery("#contactsPageUsernameContainer_"+cid).html(username)
+    jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
+}
 
 const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
@@ -83,18 +118,36 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
                 var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
                 var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
-            	img.src = window.URL.createObjectURL(blob)
+            	// img.src = window.URL.createObjectURL(blob)
+                img.src = "http://localhost:8080/ipfs/"+imageCid;
 
-                var pathA = "public/grapevine/assets/users/"+peerID;
+                /*
+                // var pathA = "public/grapevine/assets/users/"+peerID;
+                var pathA = "src/assets/grapevine/users/"+peerID;
                 var pathB = pathA+"/avatar.png";
                 var imageData = await MiscIpfsFunctions.fetchImgFromIPFS_c(imageCid);
                 var typeofImageData = typeof imageData;
                 var data = "Hello World test file 2. \n Here is line 2."
                 console.log("typeof imageData: "+typeofImageData);
+                */
 
-                var fooResult = await MiscIpfsFunctions.makeLocalFolderForContact(pathA)
+                // var fooResult = await MiscIpfsFunctions.makeLocalFolderForContact(pathA)
 
-                var fooResult = await MiscIpfsFunctions.storeAvatarForContact(pathB,imageData)
+                /*
+                electronFs.writeFile(pathB, imageData, "binary", (err) => {
+                    if (err) {
+                        console.log("storeAvatarForContact err: "+err);
+                        return false;
+                    } else {
+                        console.log("storeAvatarForContact; file written successfully\n");
+                        // console.log("The written has the following contents:");
+                        // console.log(electronFs.readFileSync("src/plex/settings/helloWorld/helloWorldTestFile2.txt", "utf8"));
+                    }
+                });
+                */
+
+
+                // var fooResult = await MiscIpfsFunctions.storeAvatarForContact(pathB,imageData)
 
                 jQuery("#contactsPageUsernameContainer_"+cid).html(username)
                 jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
@@ -169,7 +222,6 @@ export default class GrapevineContactsMainPage extends React.Component {
             }
         }
 
-        /*
         ////////////////////////////////////////////////////////////////////
         /////////////////////// previously seen ////////////////////////////
         var a3Users = await MiscIpfsFunctions.fetchUsersFromMyGrapevineMFS()
@@ -179,7 +231,7 @@ export default class GrapevineContactsMainPage extends React.Component {
             var nextPeerID = a3Users[u];
             if (!masterUserList.includes(nextPeerID)) {
                 masterUserList.push(nextPeerID)
-                var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
+                var foo = await addArchivedPeerToUserList(myPeerID,nextPeerID,grouping)
                 var oUserData = {};
                 oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
                 oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
@@ -216,7 +268,6 @@ export default class GrapevineContactsMainPage extends React.Component {
                 }
             }
         }
-        */
 
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")

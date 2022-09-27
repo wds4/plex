@@ -1,7 +1,8 @@
 // import sendAsync from '../../renderer.js';
 import IpfsHttpClient from 'ipfs-http-client';
+import * as MiscFunctions from '../../functions/miscFunctions.js';
 const jQuery = require("jquery");
-
+// var request = require("request").defaults({ encoding: null });
 const electronFs = window.require('fs');
 
 // import * as IPFS from 'ipfs-core'
@@ -19,26 +20,28 @@ export const ipfs = IpfsHttpClient({
 ////////////////////////////////////////////////////////////////////////////
 
 export const storeAvatarForContact = async (path,imageData) => {
-    try {
-        if (!electronFs.exists(path)) {
-            electronFs.writeFile(path, imageData, "binary", function(err,result) {
+    // try {
+        // if (!electronFs.exists(path)) {
+            electronFs.writeFile(path, imageData, "binary", (err) => {
                 if (err) {
                     console.log("storeAvatarForContact err: "+err);
                     return false;
                 } else {
                     console.log("storeAvatarForContact; file written successfully\n");
+                    MiscFunctions.timeout(500);
+                    return true;
                     // console.log("The written has the following contents:");
                     // console.log(electronFs.readFileSync("src/plex/settings/helloWorld/helloWorldTestFile2.txt", "utf8"));
                 }
             });
             return true;
-        } else {
-            return true;
-        }
-    } catch (e) {
-        console.log("storeAvatarForContact error: "+e);
-        return false;
-    }
+        // } else {
+            // return true;
+        // }
+    // } catch (e) {
+        // console.log("storeAvatarForContact error: "+e);
+        // return false;
+    // }
     return false;
 }
 
@@ -61,6 +64,34 @@ export const makeLocalFolderForContact = async (path) => {
         return false;
     }
     return false;
+}
+
+export const returnUserProfileFromMFS = async (peerID) => {
+    var oUserProfile = {};
+
+    var mfsPath = "/grapevineData/users/"+peerID+"/userProfile.txt";
+    try {
+        var chunks = []
+        for await (const chunk2 of ipfs.files.read(mfsPath)) {
+            chunks.push(chunk2)
+            // console.info("chunk2: "+chunk2)
+            var chunk3 = new TextDecoder("utf-8").decode(chunk2);
+            try {
+                var chunk4 = JSON.parse(chunk3);
+                if (typeof chunk4 == "object") {
+                    return chunk4
+                } else {
+                    return false
+                }
+            } catch (e) {
+                return false
+            }
+        }
+    } catch (e) {
+        return false;
+    }
+
+    return oUserProfile;
 }
 
 export const isMfsFileValidObj = async (ipfsPath) => {
@@ -113,7 +144,9 @@ export const fetchImgFromIPFS_b = async (cid) => {
     	const data = Buffer.concat(bufs)
     	var blob = new Blob([data], {type:"image/png"})
         return blob;
-    } catch (e) {}
+    } catch (e) {
+        return false;
+    }
 }
 
 export const fetchImgFromIPFS = async (cid) => {
