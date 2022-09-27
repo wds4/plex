@@ -2,6 +2,8 @@
 import IpfsHttpClient from 'ipfs-http-client';
 const jQuery = require("jquery");
 
+const electronFs = window.require('fs');
+
 // import * as IPFS from 'ipfs-core'
 
 export const ipfs = IpfsHttpClient({
@@ -15,6 +17,51 @@ export const ipfs = IpfsHttpClient({
 //         https://github.com/ipfs/js-ipfs/tree/master/docs/core-api
 //
 ////////////////////////////////////////////////////////////////////////////
+
+export const storeAvatarForContact = async (path,imageData) => {
+    try {
+        if (!electronFs.exists(path)) {
+            electronFs.writeFile(path, imageData, "binary", function(err,result) {
+                if (err) {
+                    console.log("storeAvatarForContact err: "+err);
+                    return false;
+                } else {
+                    console.log("storeAvatarForContact; file written successfully\n");
+                    // console.log("The written has the following contents:");
+                    // console.log(electronFs.readFileSync("src/plex/settings/helloWorld/helloWorldTestFile2.txt", "utf8"));
+                }
+            });
+            return true;
+        } else {
+            return true;
+        }
+    } catch (e) {
+        console.log("storeAvatarForContact error: "+e);
+        return false;
+    }
+    return false;
+}
+
+export const makeLocalFolderForContact = async (path) => {
+    try {
+        if (!electronFs.existsSync(path)) {
+            electronFs.mkdir(path, (err) => {
+                if (err)
+                    console.log(err);
+                else {
+                    console.log("director created successfully\n");
+                }
+            });
+            return true;
+        } else {
+            return true;
+        }
+    } catch (e) {
+        console.log("mkdir path: "+path+"; error: "+e)
+        return false;
+    }
+    return false;
+}
 
 export const isMfsFileValidObj = async (ipfsPath) => {
     try {

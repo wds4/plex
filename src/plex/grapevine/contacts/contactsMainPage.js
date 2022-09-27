@@ -27,7 +27,7 @@ const updateMasterUsersList = async (sMasterUsersList) => {
 const updateUserContactInfo = async (cid,sUserData) => {
     var pathA = '/grapevineData/users/'+cid;
     var pathB = pathA + "/userProfile.txt"
-    await MiscIpfsFunctions.ipfs.files.rm(pathB);
+    // await MiscIpfsFunctions.ipfs.files.rm(pathB);
     // console.log("qwerty removing pathA: " + pathA)
     await MiscIpfsFunctions.ipfs.files.mkdir(pathA,{"parents":true});
     await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
@@ -92,31 +92,10 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
                 var data = "Hello World test file 2. \n Here is line 2."
                 console.log("typeof imageData: "+typeofImageData);
 
-/*
-                try {
-                    electronFs.mkdir(pathA, (err) => {
-                        if (err)
-                            console.log(err);
-                        else {
-                            console.log("director created successfully\n");
-                        }
-                    });
+                var fooResult = await MiscIpfsFunctions.makeLocalFolderForContact(pathA)
 
-                    // var path = "src/plex/settings/helloWorld/"+peerID+"/avatar.txt"
-                    // var data = blob;
-                    electronFs.writeFile(pathB, imageData, "binary", (err) => {
-                        if (err)
-                            console.log("err: "+err);
-                        else {
-                            console.log("File written successfully\n");
-                            // console.log("The written has the following contents:");
-                            // console.log(electronFs.readFileSync("src/plex/settings/helloWorld/helloWorldTestFile2.txt", "utf8"));
-                        }
-                    });
-                } catch (e) {
+                var fooResult = await MiscIpfsFunctions.storeAvatarForContact(pathB,imageData)
 
-                }
-*/
                 jQuery("#contactsPageUsernameContainer_"+cid).html(username)
                 jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
 
@@ -190,6 +169,7 @@ export default class GrapevineContactsMainPage extends React.Component {
             }
         }
 
+        /*
         ////////////////////////////////////////////////////////////////////
         /////////////////////// previously seen ////////////////////////////
         var a3Users = await MiscIpfsFunctions.fetchUsersFromMyGrapevineMFS()
@@ -236,7 +216,7 @@ export default class GrapevineContactsMainPage extends React.Component {
                 }
             }
         }
-
+        */
 
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")
