@@ -194,7 +194,7 @@ export const updateNodeLookup3 = async (res2, conceptGraphTableName) => {
                     console.log("setting window.mustReload_lookupWordBySlug = false")
                     window.mustReload_lookupWordBySlug = false;
                 }
-                console.log("updateNodeLookup from EditExistingConceptGraphPage; success: r="+r)
+                // console.log("updateNodeLookup from EditExistingConceptGraphPage; success: r="+r)
             }
         }
         return "foo_"+numRows;

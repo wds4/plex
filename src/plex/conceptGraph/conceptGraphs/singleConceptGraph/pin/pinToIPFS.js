@@ -22,7 +22,7 @@ const populateSuperset = async (path,oConcept) => {
 
     var nextPath = path + "superset/";
     try {
-        await MiscIpfsFunctions.ipfs.files.mkdir(nextPath)
+        await MiscIpfsFunctions.ipfs.files.mkdir(nextPath,{"parents":true})
     } catch (e) {}
 
     try {

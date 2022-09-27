@@ -116,10 +116,13 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
                 var lastUpdated = oUserData.lastUpdated;
                 var imageCid = oUserData.imageCid;
 
-                var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
                 var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
-            	// img.src = window.URL.createObjectURL(blob)
                 img.src = "http://localhost:8080/ipfs/"+imageCid;
+
+                // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
+                // img.src = window.URL.createObjectURL(blob)
+
+
 
                 /*
                 // var pathA = "public/grapevine/assets/users/"+peerID;
@@ -165,9 +168,10 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
         console.log("populateFields: user profile not found")
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
         console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
-        var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(stockAvatarCid)
+        // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(stockAvatarCid)
         var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
-        img.src = window.URL.createObjectURL(blob)
+        img.src = "http://localhost:8080/ipfs/"+stockAvatarCid;
+        // img.src = window.URL.createObjectURL(blob)
         return true;
     }
 

@@ -228,7 +228,7 @@ export default class SingleUserProfile extends React.Component {
                                     <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"150px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
 
-                                    <NavLink className="leftNav1Button" activeClassName="active" to={path} >Rate this user</NavLink>
+                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path} >Rate this user</NavLink>
 
                                     <div style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
                                         <div style={{display:"inline-block",fontSize:"14px"}}>ipfs cid: </div>

@@ -335,9 +335,11 @@ export const updateTemplatingSecondaryPropertiesNumberDisplay = (conceptNumber) 
     jQuery("#templatingDependentPropertiesContainer_"+conceptNumber).html(displayHTML)
 }
 export const runBindings = () => {
+    console.log("runBindings")
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////// CHECKBOXES ////////////////////////////////////////////////
     jQuery(".propertyStringPatternCheckbox").off().change(function(){
+        console.log("propertyStringPatternCheckbox changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var isPatternChecked = jQuery("#propertyStringPatternCheckbox_"+conceptNumber+"_"+propertyNumber).prop("checked")
@@ -350,6 +352,7 @@ export const runBindings = () => {
         }
     });
     jQuery(".limitValuesCheckbox").off().change(function(){
+        console.log("limitValuesCheckbox changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var isChecked = jQuery(this).prop("checked");
@@ -366,18 +369,21 @@ export const runBindings = () => {
         }
     });
     jQuery(".propertyRequiredCheckbox").off().change(function(){
+        console.log("propertyRequiredCheckbox changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var required = jQuery("#propertyRequiredCheckbox_"+conceptNumber+"_"+propertyNumber).prop("checked")
         window.cgOverviewPage.concepts[conceptNumber].properties[propertyNumber].required = required;
     })
     jQuery(".propertyUniqueCheckbox").off().change(function(){
+        console.log("propertyUniqueCheckbox changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var unique = jQuery("#propertyUniqueCheckbox_"+conceptNumber+"_"+propertyNumber).prop("checked")
         window.cgOverviewPage.concepts[conceptNumber].properties[propertyNumber].unique = unique;
     })
     jQuery(".enumerationWithSubsetsCheckbox").off().change(function(){
+        console.log("enumerationWithSubsetsCheckbox changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         recalculatePropertyEnumerationFields(conceptNumber,propertyNumber)
@@ -385,11 +391,13 @@ export const runBindings = () => {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////// DATA FIELDS ////////////////////////////////////////////////
     jQuery(".propertyMinimumValue").off().change(function(){
+        console.log("propertyMinimumValue changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         recalculateNumericPropertyFields(conceptNumber,propertyNumber);
     })
     jQuery(".propertyMaximumValue").off().change(function(){
+        console.log("propertyMaximumValue changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         recalculateNumericPropertyFields(conceptNumber,propertyNumber);
@@ -398,11 +406,13 @@ export const runBindings = () => {
     ///////////////////////////////////////////// SELECTORS /////////////////////////////////////////////////
 
     jQuery(".existingTemplatingConceptSelector").off().change(function(){
+        console.log("existingTemplatingConceptSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var templatingConceptNumber = jQuery("#existingTemplatingConceptSelector_"+conceptNumber+" option:selected").data("templateconceptnumber");
         window.cgOverviewPage.concepts[conceptNumber].templating.templateConceptNumber = templatingConceptNumber;
     });
     jQuery(".templatingConceptSourceMethodSelector").off().change(function(){
+        console.log("templatingConceptSourceMethodSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var templatingConceptSourceMethod = jQuery("#templatingConceptSourceMethodSelector_"+conceptNumber+" option:selected").data("templatingconceptsourcemethod");
         console.log("templatingConceptSourceMethodSelector changed; conceptNumber: "+conceptNumber+"; templatingConceptSourceMethod: "+templatingConceptSourceMethod)
@@ -426,33 +436,39 @@ export const runBindings = () => {
         }
     });
     jQuery(".setSourceSetSelector").off().change(function(){
+        console.log("setSourceSetSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         recalculateSetSourceFields(conceptNumber,setNumber)
     });
     jQuery(".setSourceConceptSelector").off().change(function(){
+        console.log("setSourceConceptSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         recalculateSetSourceFields(conceptNumber,setNumber)
     });
     jQuery(".enumerationWithDependenciesSelector").off().change(function(){
+        console.log("enumerationWithDependenciesSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         recalculatePropertyEnumerationFields(conceptNumber,propertyNumber)
     });
 
     jQuery(".numericPropertyMinimumTypeSelector").off().change(function(){
+        console.log("numericPropertyMinimumTypeSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         recalculateNumericPropertyFields(conceptNumber,propertyNumber);
     });
     jQuery(".numericPropertyMaximumTypeSelector").off().change(function(){
+        console.log("numericPropertyMaximumTypeSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         recalculateNumericPropertyFields(conceptNumber,propertyNumber);
     });
 
     jQuery(".setChildSubsetMatchSelector").off().change(function(){
+        console.log("setChildSubsetMatchSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         var childSubsetNumber = jQuery(this).data("childsubsetnumber");
@@ -460,6 +476,7 @@ export const runBindings = () => {
         window.cgOverviewPage.concepts[conceptNumber].sets[setNumber].subsets[childSubsetNumber].subsetNumber = subsetNumber;
     });
     jQuery(".setChildSpecificInstanceMatchSelector").off().change(function(){
+        console.log("setChildSpecificInstanceMatchSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         var childSpecificInstanceNumber = jQuery(this).data("childspecificinstancenumber");
@@ -467,12 +484,14 @@ export const runBindings = () => {
         window.cgOverviewPage.concepts[conceptNumber].sets[setNumber].specificInstances[childSpecificInstanceNumber].specificInstanceNumber = specificInstanceNumber;
     });
     jQuery(".specificInstanceSourceConceptSelector").off().change(function(){
+        console.log("specificInstanceSourceConceptSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var specificInstanceNumber = jQuery(this).data("specificinstancenumber");
         var specificInstanceSourceConceptNumber = jQuery("#specificInstanceSourceConceptSelector_"+conceptNumber+"_"+specificInstanceNumber+" option:selected").data("specificinstancesourceconceptnumber")
         window.cgOverviewPage.concepts[conceptNumber].specificInstances[specificInstanceNumber].sourceConceptNumber = specificInstanceSourceConceptNumber;
     });
     jQuery(".singleSetTypeSelector").off().change(function(){
+        console.log("singleSetTypeSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         var setCreationType = jQuery("#singleSetTypeSelector_"+conceptNumber+"_"+setNumber+" option:selected").data("setcreationtype")
@@ -492,6 +511,7 @@ export const runBindings = () => {
         recalculateSetSourceFields(conceptNumber,setNumber);
     });
     jQuery(".singleSpecificInstanceTypeSelector").off().change(function(){
+        console.log("singleSpecificInstanceTypeSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var specificInstanceNumber = jQuery(this).data("specificinstancenumber");
         var specificInstanceCreationType = jQuery("#singleSpecificInstanceTypeSelector_"+conceptNumber+"_"+specificInstanceNumber+" option:selected").data("specificinstancecreationtype")
@@ -508,12 +528,14 @@ export const runBindings = () => {
         window.cgOverviewPage.concepts[conceptNumber].specificInstances[specificInstanceNumber].creationType = specificInstanceCreationType;
     });
     jQuery(".enumerationSourceSetSelector").off().change(function(){
+        console.log("enumerationSourceSetSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var enumerationSourceSetNumber = jQuery("#enumerationSourceSetSelector_"+conceptNumber+"_"+propertyNumber+" option:selected").data("enumerationsourcesetnumber")
         window.cgOverviewPage.concepts[conceptNumber].properties[propertyNumber].enumerationData.sourceSetNumber = enumerationSourceSetNumber;
     });
     jQuery(".enumerationSourceConceptSelector").off().change(function(){
+        console.log("enumerationSourceConceptSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var enumerationSourceConceptNumber = jQuery("#enumerationSourceConceptSelector_"+conceptNumber+"_"+propertyNumber+" option:selected").data("enumerationsourceconceptnumber")
@@ -522,9 +544,11 @@ export const runBindings = () => {
         CGOverviewHTMLFunctions.updateEnumerationSourceSetSelector(conceptNumber,propertyNumber,enumerationSourceConceptNumber);
     })
     jQuery(".propertyTypeSelector").off().change(function(){
+        console.log("propertyTypeSelector changed")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var type = jQuery("#propertyTypeSelector_"+conceptNumber+"_"+propertyNumber+" option:selected").data("value")
+        console.log("propertyTypeSelector changed; conceptNumber: "+conceptNumber+"; propertyNumber: "+propertyNumber+"; type: "+type)
 
         jQuery(".propertyTypeDependentVisibility_"+conceptNumber+"_"+propertyNumber).css("display","none")
 
@@ -564,7 +588,9 @@ export const runBindings = () => {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////// BUTTON CLICKS ///////////////////////////////////////////////
+
     jQuery(".independentPropertyForTemplatingButton").off().click(function(){
+        console.log("independentPropertyForTemplatingButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var status = jQuery(this).data("status");
@@ -584,6 +610,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".dependentPropertyForTemplatingButton").off().click(function(){
+        console.log("dependentPropertyForTemplatingButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var propertyNumber = jQuery(this).data("propertynumber");
         var status = jQuery(this).data("status");
@@ -609,6 +636,7 @@ export const runBindings = () => {
     })
 
     jQuery(".toggleSetsButton").off().click(function(){
+        console.log("toggleSetsButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var currStatus = jQuery(this).data("status");
         if (currStatus=="closed") {
@@ -622,6 +650,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".togglePropertiesButton").off().click(function(){
+        console.log("togglePropertiesButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var currStatus = jQuery(this).data("status");
         if (currStatus=="closed") {
@@ -635,6 +664,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".toggleSpecificInstancesButton").off().click(function(){
+        console.log("toggleSpecificInstancesButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var currStatus = jQuery(this).data("status");
         if (currStatus=="closed") {
@@ -648,6 +678,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".toggleTemplatingButton").off().click(function(){
+        console.log("toggleTemplatingButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var currStatus = jQuery(this).data("status");
         if (currStatus=="closed") {
@@ -661,6 +692,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".connectSpecificInstanceToSetButton").off().click(function(){
+        console.log("connectSpecificInstanceToSetButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         var specificInstanceNumber = window.cgOverviewPage.concepts[conceptNumber].sets[setNumber].nextSpecificInstanceNumber;
@@ -673,6 +705,7 @@ export const runBindings = () => {
         openSetsContainer(conceptNumber);
     })
     jQuery(".connectSubsetToSetButton").off().click(function(){
+        console.log("connectSubsetToSetButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         var subsetNumber = window.cgOverviewPage.concepts[conceptNumber].sets[setNumber].nextSubsetNumber;
@@ -683,6 +716,7 @@ export const runBindings = () => {
         openSetsContainer(conceptNumber);
     })
     jQuery(".addSpecificInstanceButton").off().click(function(){
+        console.log("addSpecificInstanceButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var thisSpecificInstanceNumber = window.cgOverviewPage.concepts[conceptNumber].nextSpecificInstanceNumber;
         window.cgOverviewPage.concepts[conceptNumber].specificInstances[thisSpecificInstanceNumber] = {};
@@ -700,6 +734,7 @@ export const runBindings = () => {
         openSpecificInstancesContainer(conceptNumber);
     })
     jQuery(".addSetButton").off().click(function(){
+        console.log("addSetButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var parentSetNumber = jQuery(this).data("setnumber");
         var thisSetNumber = window.cgOverviewPage.concepts[conceptNumber].nextSetNumber;
@@ -721,6 +756,7 @@ export const runBindings = () => {
         openSetsContainer(conceptNumber);
     })
     jQuery(".addPropertyButton").off().click(function(){
+        console.log("addPropertyButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var parentPropertyNumber = jQuery(this).data("propertynumber");
         var thisPropertyNumber = window.cgOverviewPage.concepts[conceptNumber].nextPropertyNumber;
@@ -746,6 +782,7 @@ export const runBindings = () => {
         openPropertiesContainer(conceptNumber);
     })
     jQuery(".toggleDeleteSomethingButton").off().click(function(){
+        console.log("toggleDeleteSomethingButton clicked")
         // var conceptNumber = jQuery(this).data("conceptnumber");
         // var propertyNumber = jQuery(this).data("propertynumber");
         var currentStatus = jQuery(this).data("status")
@@ -759,6 +796,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".toggleConnectSetToSupersetButton").off().click(function(){
+        console.log("toggleConnectSetToSupersetButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var setNumber = jQuery(this).data("setnumber");
         var currentStatus = jQuery(this).data("status")
@@ -774,6 +812,7 @@ export const runBindings = () => {
         }
     })
     jQuery(".toggleConnectSpecificInstanceToSupersetButton").off().click(function(){
+        console.log("toggleConnectSpecificInstanceToSupersetButton clicked")
         var conceptNumber = jQuery(this).data("conceptnumber");
         var specificInstanceNumber = jQuery(this).data("specificinstancenumber");
         var currentStatus = jQuery(this).data("status")

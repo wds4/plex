@@ -18,7 +18,7 @@ export const generatePropertyKeyPath = (conceptNumber,propertyNumber) => {
     var nextPropertyNumber = propertyNumber;
     // if (nextPropertyNumber == -1) { nextPropertyNumber = 0 }
 
-    console.log("window.cgOverviewPage.concepts[conceptNumber].properties: "+JSON.stringify(window.cgOverviewPage.concepts[conceptNumber].properties,null,4))
+    // console.log("window.cgOverviewPage.concepts[conceptNumber].properties: "+JSON.stringify(window.cgOverviewPage.concepts[conceptNumber].properties,null,4))
     propertyNumberSequence.push(nextPropertyNumber);
     do {
         var parentPropertyNumber = window.cgOverviewPage.concepts[conceptNumber].properties[nextPropertyNumber].parentPropertyNumber
@@ -26,7 +26,7 @@ export const generatePropertyKeyPath = (conceptNumber,propertyNumber) => {
         nextPropertyNumber = parentPropertyNumber
     } while (nextPropertyNumber > -1)
 
-    console.log("propertyNumberSequence: "+JSON.stringify(propertyNumberSequence,null,4))
+    // console.log("propertyNumberSequence: "+JSON.stringify(propertyNumberSequence,null,4))
     /*
     if (nextPropertyNumber > -1) {
         var parentPropertyNumber = window.cgOverviewPage.concepts[conceptNumber].properties[nextPropertyNumber].parentPropertyNumber

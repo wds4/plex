@@ -1021,3 +1021,16 @@
 .contactPageSingleContactContainer:hover {
     background-color: yellow;
 }
+.rateSomeoneButton {
+    font-size:12px;
+    display:inline-block;
+    border:2px solid purple;
+    border-radius:3px;
+    padding:4px;
+    margin:4px;
+    background-color:#DFDFDF;
+    color:black;
+}
+.rateSomeoneButton:hover {
+    background-color:yellow;
+}

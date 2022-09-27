@@ -19,14 +19,16 @@ export default class LeftNavbar2_HelloWorld extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldMainPage'>Hello World Home</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldChildToParent'>React: Child to Parent</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldAsyncChain'>Chain Async Fxns</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaForm'>JSONSchemaForm</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormTester'>JSONSchema: Form Tester</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormRender'>JSONSchemaForm via React Render</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormV5'>JSONSchemaForm Version 5</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldDataTables'>DataTables</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldWriteFile'>Write File (fs)</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldUploadImageToIPFS'>Upload Image to IPFS</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldMarkdown'>Markdown</NavLink>
+            <br/><br/>
+            <center>JSON Schema</center>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaForm'>JSONSchemaForm</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormTester'>JSONSchema: Form Tester</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormRender'>JSONSchemaForm via React Render</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormV5'>JSONSchemaForm Version 5</NavLink>
             <br/><br/>
             <center>Imaging</center>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldVisJS'>Vis.js</NavLink>
