@@ -9,6 +9,16 @@ const ajv = new Ajv({
     strictDefault: true
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+// 27 Sep 2022:
+// see at about line 147
+// P.r.s1n.initialProcessing
+// activation line is commented out - makes power nap go faster
+// but unsure whether this will skip needed actions or not
+/////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 export const checkSingleS1nPattern = async (node_slug,patternName) => {
     var oCheckSingleS1nPatternOutput = {};
     var isPatternPresent = false;
@@ -142,7 +152,15 @@ if (oNode.hasOwnProperty("conceptData")) {
                                 aAuxiliaryPatternData = [];
                             }
                             if (oNode.metaData.neuroCore.initialProcessing == false) {
-                                isPatternPresent = true;
+                                /////////////////////////////////////////////////////////////
+                                /////////////////////////////////////////////////////////////
+                                // 27 Sep 2022:
+                                // not sure whether I need to uncomment this line or not!
+                                // Is it necessary if a-r-u1n-01 (see line 420) does not (currently) do anything ???
+                                // a-r-u1n-01 takes a long time and currently is set to do no action!
+                                // isPatternPresent = true;
+                                /////////////////////////////////////////////////////////////
+                                /////////////////////////////////////////////////////////////
 
                                 if (oNode.hasOwnProperty("enumerationData")) {
                                     auxAssistedQueue = true;

@@ -8,6 +8,58 @@ export const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export const zeroThisJSONSchema = (oJSONSchemaData) => {
+    var oZeroedJSONSchemaData = cloneObj(oJSONSchemaData);
+
+    oZeroedJSONSchemaData.definitions = {};
+    oZeroedJSONSchemaData.properties = {};
+    oZeroedJSONSchemaData.allOf = [];
+
+    return oZeroedJSONSchemaData;
+}
+
+export const zeroThisProperty = (oPropertyData) => {
+    var oZeroedPropertyData = cloneObj(oPropertyData);
+    var propertyType = oZeroedPropertyData.propertyData.type;
+
+    if (propertyType=="array") {
+        /*
+        oZeroedPropertyData.propertyData.items = [];
+        oZeroedPropertyData.propertyData.includeDependencies = null;
+        oZeroedPropertyData.propertyData.dependencySlugs = null;
+        oZeroedPropertyData.propertyData.dependencyPlacement = null;
+        */
+        delete oZeroedPropertyData.propertyData.items;
+        delete oZeroedPropertyData.propertyData.includeDependencies;
+        delete oZeroedPropertyData.propertyData.dependencySlugs;
+        delete oZeroedPropertyData.propertyData.dependencyPlacement;
+    }
+    if (propertyType=="string") {
+        /*
+        oZeroedPropertyData.propertyData.enum = [];
+        oZeroedPropertyData.propertyData.includeDependencies = null;
+        oZeroedPropertyData.propertyData.dependencySlugs = null;
+        oZeroedPropertyData.propertyData.dependencyPlacement = null;
+        */
+        delete oZeroedPropertyData.propertyData.enum;
+        delete oZeroedPropertyData.propertyData.includeDependencies;
+        delete oZeroedPropertyData.propertyData.dependencySlugs;
+        delete oZeroedPropertyData.propertyData.dependencyPlacement;
+    }
+    if (propertyType=="object") {
+        oZeroedPropertyData.propertyData.required = [];
+        oZeroedPropertyData.propertyData.unique = [];
+        oZeroedPropertyData.propertyData.properties = {};
+        oZeroedPropertyData.propertyData.dependencies = {};
+        oZeroedPropertyData.propertyData.metaData.requiredDefinitions = [];
+        oZeroedPropertyData.propertyData.metaData.childProperties = {};
+        oZeroedPropertyData.propertyData.metaData.childProperties.direct = [];
+        oZeroedPropertyData.propertyData.metaData.childProperties.thisConcept = [];
+        oZeroedPropertyData.propertyData.metaData.childProperties.allConcepts = [];
+    }
+
+    return oZeroedPropertyData
+}
 export const addAdditionalThenConstraint = (oThenAll_in,oThenNext,aPropertyKeys) => {
     var oThenAll = cloneObj(oThenAll_in);
 

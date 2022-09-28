@@ -738,7 +738,7 @@ if (governingConcept_slug) {
             try {
                 // property to property
                 var oNodeTo_pre = MiscFunctions.cloneObj(oNodeTo);
-                console.log("a-b-u1n-01; oNodeTo_pre: "+JSON.stringify(oNodeTo_pre,null,4))
+                // console.log("a-b-u1n-01; oNodeTo_pre: "+JSON.stringify(oNodeTo_pre,null,4))
 
                 oNodeTo = NeuroCoreFunctions.fetchNewestRawFile(nT_slug,oRFL)
 
@@ -747,7 +747,83 @@ if (governingConcept_slug) {
                 var obj1 = MiscFunctions.cloneObj(oNodeFrom.propertyData)
 
                 var propertyFromType = oNodeFrom.propertyData.type;
-                console.log("propertyFromType: "+propertyFromType)
+                // console.log("propertyFromType: "+propertyFromType)
+
+                var propertyToType = oNodeTo.propertyData.type;
+                // console.log("propertyToType: "+propertyToType)
+
+                ////////////////////////////////////////////////////
+                ///////////////// GOVERNING CONCEPT ////////////////
+                // Transfer governingConcept from nodeTo to nodeFrom
+                if (oNodeTo.propertyData.metaData.governingConcept.hasOwnProperty("slug")) {
+                    var nT_gC_slug = oNodeTo.propertyData.metaData.governingConcept.slug;
+                    oNodeFrom.propertyData.metaData.governingConcept.slug = nT_gC_slug;
+                }
+                ///////////////// GOVERNING CONCEPT ////////////////
+                ////////////////////////////////////////////////////
+
+
+                ///////////////////////////////////////////////////
+                ///////////////// CHILD PROPERTIES ////////////////
+                if (!oNodeFrom.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
+                    oNodeFrom.propertyData.metaData.pendingDeletion = false;
+                }
+                if (!oNodeTo.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
+                    oNodeTo.propertyData.metaData.pendingDeletion = false;
+                }
+                if (propertyToType=="object") {
+                    if (!oNodeTo.propertyData.metaData.hasOwnProperty("childProperties")) {
+                        oNodeTo.propertyData.metaData.childProperties = {};
+                    }
+                    if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("direct")) {
+                        oNodeTo.propertyData.metaData.childProperties.direct = [];
+                    }
+                    if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("thisConcept")) {
+                        oNodeTo.propertyData.metaData.childProperties.thisConcept = [];
+                    }
+                    if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("allConcepts")) {
+                        oNodeTo.propertyData.metaData.childProperties.allConcepts = [];
+                    }
+                    if (!oNodeTo.propertyData.metaData.childProperties.direct.includes(nF_slug)) {
+                        oNodeTo.propertyData.metaData.childProperties.direct.push(nF_slug)
+                    }
+                    if (!oNodeTo.propertyData.metaData.childProperties.thisConcept.includes(nF_slug)) {
+                        oNodeTo.propertyData.metaData.childProperties.thisConcept.push(nF_slug)
+                    }
+                    if (!oNodeTo.propertyData.metaData.childProperties.allConcepts.includes(nF_slug)) {
+                        oNodeTo.propertyData.metaData.childProperties.allConcepts.push(nF_slug)
+                    }
+                    if (propertyFromType=="object") {
+                        if (!oNodeFrom.propertyData.metaData.hasOwnProperty("childProperties")) {
+                            oNodeFrom.propertyData.metaData.childProperties = {};
+                        }
+                        if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("direct")) {
+                            oNodeFrom.propertyData.metaData.childProperties.direct = [];
+                        }
+                        if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("thisConcept")) {
+                            oNodeFrom.propertyData.metaData.childProperties.thisConcept = [];
+                        }
+                        if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("allConcepts")) {
+                            oNodeFrom.propertyData.metaData.childProperties.allConcepts = [];
+                        }
+                        var nF_direct = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.direct)
+                        var nF_thisConcept = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.thisConcept)
+                        var nF_allConcepts = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.allConcepts)
+                        // push nF_direct to nT_thisConcept
+                        oNodeTo.propertyData.metaData.childProperties.thisConcept = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.thisConcept,nF_direct);
+                        // push nF_thisConcept to nT_thisConcept
+                        oNodeTo.propertyData.metaData.childProperties.thisConcept = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.thisConcept,nF_thisConcept);
+                        // push nF_direct to nT_allConcepts
+                        oNodeTo.propertyData.metaData.childProperties.allConcepts = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.allConcepts,nF_direct);
+                        // push nF_allConcepts to nT_allConcepts
+                        oNodeTo.propertyData.metaData.childProperties.allConcepts = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.allConcepts,nF_allConcepts);
+
+                        // Elsewhere: populate allConcepts for property that is the target of an enumeration
+                    }
+                }
+                ///////////////// done with CHILD PROPERTIES ////////////////
+                /////////////////////////////////////////////////////////////
+
 
                 var key2 = oNodeTo.propertyData.key
 
@@ -3524,9 +3600,9 @@ if (withDependencies==true) {
 }
 
 // update JSONSchema with requisite definitions
-console.log("a-e-u1n-enumerates; oNodeTo: "+JSON.stringify(oNodeTo,null,4))
+// console.log("a-e-u1n-enumerates; oNodeTo: "+JSON.stringify(oNodeTo,null,4))
 var governingConcept_slug = oNodeTo.propertyData.metaData.governingConcept.slug;
-console.log("a-e-u1n-enumerates; governingConcept_slug: "+governingConcept_slug)
+// console.log("a-e-u1n-enumerates; governingConcept_slug: "+governingConcept_slug)
 var oGoverningConcept = NeuroCoreFunctions.fetchNewestRawFile(governingConcept_slug,oRFL)
 var jsonSchema_slug = oGoverningConcept.conceptData.nodes.JSONSchema.slug;
 var oJSONSchema = NeuroCoreFunctions.fetchNewestRawFile(jsonSchema_slug,oRFL)

@@ -461,7 +461,7 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
         }
 
         var oNodeFrom = window.lookupWordBySlug[nF_slug];
-        console.log("qwertyy executeSinglePattern_s1r; nF_slug: "+nF_slug+"; oNodeFrom: "+JSON.stringify(oNodeFrom,null,4))
+        // console.log("qwertyy executeSinglePattern_s1r; nF_slug: "+nF_slug+"; oNodeFrom: "+JSON.stringify(oNodeFrom,null,4))
         var nF_wordTypes = oNodeFrom.wordData.wordTypes;
         if (nF_wordTypes.includes(wT_from)) {
             crit2 = true;
