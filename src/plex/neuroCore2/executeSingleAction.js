@@ -737,334 +737,340 @@ if (governingConcept_slug) {
             if (verboseConsole) { console.log("case a-b-u1n-01") }
             try {
                 // property to property
-                var oNodeTo_pre = MiscFunctions.cloneObj(oNodeTo);
-                // console.log("a-b-u1n-01; oNodeTo_pre: "+JSON.stringify(oNodeTo_pre,null,4))
-
-                oNodeTo = NeuroCoreFunctions.fetchNewestRawFile(nT_slug,oRFL)
-
-                var key1 = MiscFunctions.cloneObj(oNodeFrom.propertyData.key)
-                var key2 = MiscFunctions.cloneObj(oNodeTo.propertyData.key)
-                var obj1 = MiscFunctions.cloneObj(oNodeFrom.propertyData)
-
-                var propertyFromType = oNodeFrom.propertyData.type;
-                // console.log("propertyFromType: "+propertyFromType)
-
-                var propertyToType = oNodeTo.propertyData.type;
-                // console.log("propertyToType: "+propertyToType)
-
-                ////////////////////////////////////////////////////
-                ///////////////// GOVERNING CONCEPT ////////////////
-                // Transfer governingConcept from nodeTo to nodeFrom
-                if (oNodeTo.propertyData.metaData.governingConcept.hasOwnProperty("slug")) {
-                    var nT_gC_slug = oNodeTo.propertyData.metaData.governingConcept.slug;
-                    oNodeFrom.propertyData.metaData.governingConcept.slug = nT_gC_slug;
+                var nF_pendingDeletion = false;
+                if (oNodeFrom.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
+                    nF_pendingDeletion = oNodeFrom.propertyData.metaData.pendingDeletion;
                 }
-                ///////////////// GOVERNING CONCEPT ////////////////
-                ////////////////////////////////////////////////////
 
+                if (nF_pendingDeletion == false) {
+                        var oNodeTo_pre = MiscFunctions.cloneObj(oNodeTo);
+                        // console.log("a-b-u1n-01; oNodeTo_pre: "+JSON.stringify(oNodeTo_pre,null,4))
+                        oNodeTo = NeuroCoreFunctions.fetchNewestRawFile(nT_slug,oRFL)
 
-                ///////////////////////////////////////////////////
-                ///////////////// CHILD PROPERTIES ////////////////
-                if (!oNodeFrom.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
-                    oNodeFrom.propertyData.metaData.pendingDeletion = false;
-                }
-                if (!oNodeTo.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
-                    oNodeTo.propertyData.metaData.pendingDeletion = false;
-                }
-                if (propertyToType=="object") {
-                    if (!oNodeTo.propertyData.metaData.hasOwnProperty("childProperties")) {
-                        oNodeTo.propertyData.metaData.childProperties = {};
-                    }
-                    if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("direct")) {
-                        oNodeTo.propertyData.metaData.childProperties.direct = [];
-                    }
-                    if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("thisConcept")) {
-                        oNodeTo.propertyData.metaData.childProperties.thisConcept = [];
-                    }
-                    if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("allConcepts")) {
-                        oNodeTo.propertyData.metaData.childProperties.allConcepts = [];
-                    }
-                    if (!oNodeTo.propertyData.metaData.childProperties.direct.includes(nF_slug)) {
-                        oNodeTo.propertyData.metaData.childProperties.direct.push(nF_slug)
-                    }
-                    if (!oNodeTo.propertyData.metaData.childProperties.thisConcept.includes(nF_slug)) {
-                        oNodeTo.propertyData.metaData.childProperties.thisConcept.push(nF_slug)
-                    }
-                    if (!oNodeTo.propertyData.metaData.childProperties.allConcepts.includes(nF_slug)) {
-                        oNodeTo.propertyData.metaData.childProperties.allConcepts.push(nF_slug)
-                    }
-                    if (propertyFromType=="object") {
-                        if (!oNodeFrom.propertyData.metaData.hasOwnProperty("childProperties")) {
-                            oNodeFrom.propertyData.metaData.childProperties = {};
+                        var key1 = MiscFunctions.cloneObj(oNodeFrom.propertyData.key)
+                        var key2 = MiscFunctions.cloneObj(oNodeTo.propertyData.key)
+                        var obj1 = MiscFunctions.cloneObj(oNodeFrom.propertyData)
+
+                        var propertyFromType = oNodeFrom.propertyData.type;
+                        // console.log("propertyFromType: "+propertyFromType)
+
+                        var propertyToType = oNodeTo.propertyData.type;
+                        // console.log("propertyToType: "+propertyToType)
+
+                        ////////////////////////////////////////////////////
+                        ///////////////// GOVERNING CONCEPT ////////////////
+                        // Transfer governingConcept from nodeTo to nodeFrom
+                        if (oNodeTo.propertyData.metaData.governingConcept.hasOwnProperty("slug")) {
+                            var nT_gC_slug = oNodeTo.propertyData.metaData.governingConcept.slug;
+                            oNodeFrom.propertyData.metaData.governingConcept.slug = nT_gC_slug;
                         }
-                        if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("direct")) {
-                            oNodeFrom.propertyData.metaData.childProperties.direct = [];
+                        ///////////////// GOVERNING CONCEPT ////////////////
+                        ////////////////////////////////////////////////////
+
+
+                        ///////////////////////////////////////////////////
+                        ///////////////// CHILD PROPERTIES ////////////////
+                        if (!oNodeFrom.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
+                            oNodeFrom.propertyData.metaData.pendingDeletion = false;
                         }
-                        if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("thisConcept")) {
-                            oNodeFrom.propertyData.metaData.childProperties.thisConcept = [];
+                        if (!oNodeTo.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
+                            oNodeTo.propertyData.metaData.pendingDeletion = false;
                         }
-                        if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("allConcepts")) {
-                            oNodeFrom.propertyData.metaData.childProperties.allConcepts = [];
+                        if (propertyToType=="object") {
+                            if (!oNodeTo.propertyData.metaData.hasOwnProperty("childProperties")) {
+                                oNodeTo.propertyData.metaData.childProperties = {};
+                            }
+                            if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("direct")) {
+                                oNodeTo.propertyData.metaData.childProperties.direct = [];
+                            }
+                            if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("thisConcept")) {
+                                oNodeTo.propertyData.metaData.childProperties.thisConcept = [];
+                            }
+                            if (!oNodeTo.propertyData.metaData.childProperties.hasOwnProperty("allConcepts")) {
+                                oNodeTo.propertyData.metaData.childProperties.allConcepts = [];
+                            }
+                            if (!oNodeTo.propertyData.metaData.childProperties.direct.includes(nF_slug)) {
+                                oNodeTo.propertyData.metaData.childProperties.direct.push(nF_slug)
+                            }
+                            if (!oNodeTo.propertyData.metaData.childProperties.thisConcept.includes(nF_slug)) {
+                                oNodeTo.propertyData.metaData.childProperties.thisConcept.push(nF_slug)
+                            }
+                            if (!oNodeTo.propertyData.metaData.childProperties.allConcepts.includes(nF_slug)) {
+                                oNodeTo.propertyData.metaData.childProperties.allConcepts.push(nF_slug)
+                            }
+                            if (propertyFromType=="object") {
+                                if (!oNodeFrom.propertyData.metaData.hasOwnProperty("childProperties")) {
+                                    oNodeFrom.propertyData.metaData.childProperties = {};
+                                }
+                                if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("direct")) {
+                                    oNodeFrom.propertyData.metaData.childProperties.direct = [];
+                                }
+                                if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("thisConcept")) {
+                                    oNodeFrom.propertyData.metaData.childProperties.thisConcept = [];
+                                }
+                                if (!oNodeFrom.propertyData.metaData.childProperties.hasOwnProperty("allConcepts")) {
+                                    oNodeFrom.propertyData.metaData.childProperties.allConcepts = [];
+                                }
+                                var nF_direct = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.direct)
+                                var nF_thisConcept = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.thisConcept)
+                                var nF_allConcepts = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.allConcepts)
+                                // push nF_direct to nT_thisConcept
+                                oNodeTo.propertyData.metaData.childProperties.thisConcept = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.thisConcept,nF_direct);
+                                // push nF_thisConcept to nT_thisConcept
+                                oNodeTo.propertyData.metaData.childProperties.thisConcept = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.thisConcept,nF_thisConcept);
+                                // push nF_direct to nT_allConcepts
+                                oNodeTo.propertyData.metaData.childProperties.allConcepts = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.allConcepts,nF_direct);
+                                // push nF_allConcepts to nT_allConcepts
+                                oNodeTo.propertyData.metaData.childProperties.allConcepts = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.allConcepts,nF_allConcepts);
+
+                                // Elsewhere: populate allConcepts for property that is the target of an enumeration
+                            }
                         }
-                        var nF_direct = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.direct)
-                        var nF_thisConcept = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.thisConcept)
-                        var nF_allConcepts = MiscFunctions.cloneObj(oNodeFrom.propertyData.metaData.childProperties.allConcepts)
-                        // push nF_direct to nT_thisConcept
-                        oNodeTo.propertyData.metaData.childProperties.thisConcept = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.thisConcept,nF_direct);
-                        // push nF_thisConcept to nT_thisConcept
-                        oNodeTo.propertyData.metaData.childProperties.thisConcept = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.thisConcept,nF_thisConcept);
-                        // push nF_direct to nT_allConcepts
-                        oNodeTo.propertyData.metaData.childProperties.allConcepts = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.allConcepts,nF_direct);
-                        // push nF_allConcepts to nT_allConcepts
-                        oNodeTo.propertyData.metaData.childProperties.allConcepts = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.childProperties.allConcepts,nF_allConcepts);
-
-                        // Elsewhere: populate allConcepts for property that is the target of an enumeration
-                    }
-                }
-                ///////////////// done with CHILD PROPERTIES ////////////////
-                /////////////////////////////////////////////////////////////
+                        ///////////////// done with CHILD PROPERTIES ////////////////
+                        /////////////////////////////////////////////////////////////
 
 
-                var key2 = oNodeTo.propertyData.key
+                        var key2 = oNodeTo.propertyData.key
 
-                var aPropertyFromRequiredDefinitions = [];
-                if (obj1.metaData.hasOwnProperty("requiredDefinitions")) {
-                    aPropertyFromRequiredDefinitions = obj1.metaData.requiredDefinitions;
-                }
-
-                var setAsRequired = false;
-                var setAsUnique = false;
-                if (obj1.hasOwnProperty("metaData")) {
-                    if (obj1.metaData.hasOwnProperty("required")) {
-                        if ((obj1.metaData.required == "true") || (obj1.metaData.required == true) ) {
-                            setAsRequired = true;
+                        var aPropertyFromRequiredDefinitions = [];
+                        if (obj1.metaData.hasOwnProperty("requiredDefinitions")) {
+                            aPropertyFromRequiredDefinitions = obj1.metaData.requiredDefinitions;
                         }
-                    }
-                    if (obj1.metaData.hasOwnProperty("unique")) {
-                        if ((obj1.metaData.unique == "true") || (obj1.metaData.unique == true) ) {
-                            setAsUnique = true;
-                        }
-                    }
-                }
 
-                if (!oNodeFrom.propertyData.metaData.hasOwnProperty("propertyKeyPaths")) {
-                    oNodeFrom.propertyData.metaData.propertyKeyPaths = [];
-                }
-                if (!oNodeTo.propertyData.metaData.hasOwnProperty("propertyKeyPaths")) {
-                    oNodeTo.propertyData.metaData.propertyKeyPaths = [];
-                }
-
-                if (!oNodeTo.propertyData.metaData.hasOwnProperty("requiredDefinitions")) {
-                    oNodeTo.propertyData.metaData.requiredDefinitions = [];
-                }
-                // add aPropertyFromRequiredDefinitions (from nodeFrom) to oNodeTo.propertyData.metaData.requiredDefinitions
-                oNodeTo.propertyData.metaData.requiredDefinitions = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.requiredDefinitions,aPropertyFromRequiredDefinitions);
-
-                if (!oNodeTo.propertyData.hasOwnProperty("required")) {
-                    oNodeTo.propertyData.required = [];
-                }
-                if (!oNodeTo.propertyData.hasOwnProperty("unique")) {
-                    oNodeTo.propertyData.unique = [];
-                }
-                if (setAsRequired) {
-                    oNodeTo.propertyData.required = MiscFunctions.pushIfNotAlreadyThere(oNodeTo.propertyData.required,key1)
-                }
-                if (setAsUnique) {
-                    oNodeTo.propertyData.unique = MiscFunctions.pushIfNotAlreadyThere(oNodeTo.propertyData.unique,key1)
-                }
-
-                var includeDependencies = false;
-                if (obj1.hasOwnProperty("includeDependencies")) {
-                    includeDependencies = obj1.includeDependencies;
-                }
-                var aDependencySlugs =[];
-                if (obj1.hasOwnProperty("dependencySlugs")) {
-                    aDependencySlugs = obj1.dependencySlugs;
-                }
-                delete obj1.key;
-                delete obj1.metaData;
-                delete obj1.includeDependencies;
-                delete obj1.dependencySlugs;
-
-                if (includeDependencies) {
-                    var dependencyPlacement = null;
-                    if (obj1.hasOwnProperty("dependencyPlacement")) {
-                        dependencyPlacement = obj1.dependencyPlacement;
-                    }
-                    console.log("includeDependencies! dependencyPlacement: "+dependencyPlacement+"; key1: "+key1+"; key2: "+key2+"; nF_slug: "+nF_slug+"; nT_slug: "+nT_slug)
-                    // need to check whether this is upper or lower dependencies
-                    // right now it does lower .... ?????
-                    if (dependencyPlacement=="upper") {
-                        if (!oNodeTo.hasOwnProperty("dependencies")) {
-                            oNodeTo.dependencies = {};
-                        }
-                        var aEnum = [];
-                        if (obj1.hasOwnProperty("enum")) {
-                            aEnum = obj1.enum;
-                        }
-                        oNodeTo.dependencies[key2] = {};
-                        oNodeTo.dependencies[key2].oneOf = [];
-
-                        for (var d=0; d < aDependencySlugs.length; d++) {
-                            var nextSlug = aDependencySlugs[d];
-                            var nextEnum = aEnum[d];
-                            var oNextEntry = {};
-                            oNextEntry.required = [];
-                            oNextEntry.properties = {};
-                            console.log("includeDependencies! nextSlug: "+nextSlug)
-                            // NEED TO LEARN TO DIFFERENTIATE null from "null"
-                            // see. e.g. property types, where "null" is an option (although null should not be an option)
-                            // test: property types, enumeration, with dependencies
-                            // if ((nextSlug==null) || (nextSlug=="null")) {
-                            // if ((nextEnum==null) || (nextEnum=="null")) {
-                            if (nextEnum==null) {
-                                console.log("nextEnum == null")
-                                oNextEntry.properties[key2] = {};
-                                oNextEntry.properties[key2].properties = {};
-                                oNextEntry.properties[key2].properties[key1] = {};
-                                oNextEntry.properties[key2].properties[key1].enum = [ nextEnum ];
-                                oNodeTo.dependencies[key2].oneOf.push(oNextEntry);
-                            } else {
-                                var propertyPath = NeuroCoreFunctions.fetchPropertyPathFromSlug(nextSlug,oRFL);
-                                oNextEntry.required.push(propertyPath);
-                                oNextEntry.properties[propertyPath] = {};
-                                var refValue = "#/definitions/"+propertyPath;
-                                oNextEntry.properties[propertyPath]["$ref"] = refValue;
-                                oNextEntry.properties[key2] = {};
-                                oNextEntry.properties[key2].properties = {};
-                                oNextEntry.properties[key2].properties[key1] = {};
-                                oNextEntry.properties[key2].properties[key1].enum = [ nextEnum ];
-                                // oNextEntry.properties[key2].enum = [ nextEnum ];
-                                console.log("includeDependencies! refValue: "+refValue)
-                                oNodeTo.dependencies[key2].oneOf.push(oNextEntry);
-                                if (!oNodeTo.propertyData.metaData.requiredDefinitions.includes(propertyPath)) {
-                                    oNodeTo.propertyData.metaData.requiredDefinitions.push(propertyPath)
+                        var setAsRequired = false;
+                        var setAsUnique = false;
+                        if (obj1.hasOwnProperty("metaData")) {
+                            if (obj1.metaData.hasOwnProperty("required")) {
+                                if ((obj1.metaData.required == "true") || (obj1.metaData.required == true) ) {
+                                    setAsRequired = true;
+                                }
+                            }
+                            if (obj1.metaData.hasOwnProperty("unique")) {
+                                if ((obj1.metaData.unique == "true") || (obj1.metaData.unique == true) ) {
+                                    setAsUnique = true;
                                 }
                             }
                         }
-                    }
-                    if (dependencyPlacement=="lower") {
-                        if (propertyFromType=="array") {
-                            console.log("propertyFromType == array");
-                            if (!oNodeTo.propertyData.hasOwnProperty("allOf")) {
-                                oNodeTo.propertyData.allOf = [];
-                            }
-                            oNodeTo.propertyData.allOf = [];
-                            var oNextIfThen = {};
-                            for (var d=0; d < aDependencySlugs.length; d++) {
-                                var nextSlug = aDependencySlugs[d];
-                                var propertyPath = NeuroCoreFunctions.fetchPropertyPathFromSlug(nextSlug,oRFL);
-                                var refValue = "#/definitions/"+propertyPath;
 
-                                var sTranslation = obj1.items.enum[d];
-                                // Alternatively, to calculate sTranslation, recalculate nextUniqueProperty from nextSlug; this will require uniquePropertyKey (name, title, slug, etc)
-                                // which right now is in enumerationData.restrictsValueData.uniquePropertyKey; I ought to transfer this to propertyData.metaData.uniquePropertyKey
-                                // var oNextWord = NeuroCoreFunctions.fetchNewestRawFile(nextSlug,oRFL)
-                                // var sTranslation = oNextWord[propertyPath][uniquePropertyKey];
-
-                                oNextIfThen = {};
-                                oNextIfThen.if = {};
-                                oNextIfThen.then = {};
-                                oNextIfThen.if.properties = {};
-                                oNextIfThen.then.properties = {};
-                                oNextIfThen.if.properties[key1] = {};
-                                oNextIfThen.if.properties[key1].contains = { "const": sTranslation }
-                                oNextIfThen.then.properties[propertyPath] = {};
-                                oNextIfThen.then.properties[propertyPath]["$ref"] = refValue;
-                                oNodeTo.propertyData.allOf.push(oNextIfThen)
-                            }
+                        if (!oNodeFrom.propertyData.metaData.hasOwnProperty("propertyKeyPaths")) {
+                            oNodeFrom.propertyData.metaData.propertyKeyPaths = [];
                         }
-                        if (propertyFromType=="string") {
-                            console.log("propertyFromType == string")
-                            if (!oNodeTo.propertyData.hasOwnProperty("dependencies")) {
-                                oNodeTo.propertyData.dependencies = {};
+                        if (!oNodeTo.propertyData.metaData.hasOwnProperty("propertyKeyPaths")) {
+                            oNodeTo.propertyData.metaData.propertyKeyPaths = [];
+                        }
+
+                        if (!oNodeTo.propertyData.metaData.hasOwnProperty("requiredDefinitions")) {
+                            oNodeTo.propertyData.metaData.requiredDefinitions = [];
+                        }
+                        // add aPropertyFromRequiredDefinitions (from nodeFrom) to oNodeTo.propertyData.metaData.requiredDefinitions
+                        oNodeTo.propertyData.metaData.requiredDefinitions = MiscFunctions.pushIfNotAlreadyThere_arrayToArray(oNodeTo.propertyData.metaData.requiredDefinitions,aPropertyFromRequiredDefinitions);
+
+                        if (!oNodeTo.propertyData.hasOwnProperty("required")) {
+                            oNodeTo.propertyData.required = [];
+                        }
+                        if (!oNodeTo.propertyData.hasOwnProperty("unique")) {
+                            oNodeTo.propertyData.unique = [];
+                        }
+                        if (setAsRequired) {
+                            oNodeTo.propertyData.required = MiscFunctions.pushIfNotAlreadyThere(oNodeTo.propertyData.required,key1)
+                        }
+                        if (setAsUnique) {
+                            oNodeTo.propertyData.unique = MiscFunctions.pushIfNotAlreadyThere(oNodeTo.propertyData.unique,key1)
+                        }
+
+                        var includeDependencies = false;
+                        if (obj1.hasOwnProperty("includeDependencies")) {
+                            includeDependencies = obj1.includeDependencies;
+                        }
+                        var aDependencySlugs =[];
+                        if (obj1.hasOwnProperty("dependencySlugs")) {
+                            aDependencySlugs = obj1.dependencySlugs;
+                        }
+                        delete obj1.key;
+                        delete obj1.metaData;
+                        delete obj1.includeDependencies;
+                        delete obj1.dependencySlugs;
+
+                        if (includeDependencies) {
+                            var dependencyPlacement = null;
+                            if (obj1.hasOwnProperty("dependencyPlacement")) {
+                                dependencyPlacement = obj1.dependencyPlacement;
                             }
-                            var aEnum = [];
-                            if (obj1.hasOwnProperty("enum")) {
-                                aEnum = obj1.enum;
+                            console.log("includeDependencies! dependencyPlacement: "+dependencyPlacement+"; key1: "+key1+"; key2: "+key2+"; nF_slug: "+nF_slug+"; nT_slug: "+nT_slug)
+                            // need to check whether this is upper or lower dependencies
+                            // right now it does lower .... ?????
+                            if (dependencyPlacement=="upper") {
+                                if (!oNodeTo.hasOwnProperty("dependencies")) {
+                                    oNodeTo.dependencies = {};
+                                }
+                                var aEnum = [];
+                                if (obj1.hasOwnProperty("enum")) {
+                                    aEnum = obj1.enum;
+                                }
+                                oNodeTo.dependencies[key2] = {};
+                                oNodeTo.dependencies[key2].oneOf = [];
+
+                                for (var d=0; d < aDependencySlugs.length; d++) {
+                                    var nextSlug = aDependencySlugs[d];
+                                    var nextEnum = aEnum[d];
+                                    var oNextEntry = {};
+                                    oNextEntry.required = [];
+                                    oNextEntry.properties = {};
+                                    console.log("includeDependencies! nextSlug: "+nextSlug)
+                                    // NEED TO LEARN TO DIFFERENTIATE null from "null"
+                                    // see. e.g. property types, where "null" is an option (although null should not be an option)
+                                    // test: property types, enumeration, with dependencies
+                                    // if ((nextSlug==null) || (nextSlug=="null")) {
+                                    // if ((nextEnum==null) || (nextEnum=="null")) {
+                                    if (nextEnum==null) {
+                                        console.log("nextEnum == null")
+                                        oNextEntry.properties[key2] = {};
+                                        oNextEntry.properties[key2].properties = {};
+                                        oNextEntry.properties[key2].properties[key1] = {};
+                                        oNextEntry.properties[key2].properties[key1].enum = [ nextEnum ];
+                                        oNodeTo.dependencies[key2].oneOf.push(oNextEntry);
+                                    } else {
+                                        var propertyPath = NeuroCoreFunctions.fetchPropertyPathFromSlug(nextSlug,oRFL);
+                                        oNextEntry.required.push(propertyPath);
+                                        oNextEntry.properties[propertyPath] = {};
+                                        var refValue = "#/definitions/"+propertyPath;
+                                        oNextEntry.properties[propertyPath]["$ref"] = refValue;
+                                        oNextEntry.properties[key2] = {};
+                                        oNextEntry.properties[key2].properties = {};
+                                        oNextEntry.properties[key2].properties[key1] = {};
+                                        oNextEntry.properties[key2].properties[key1].enum = [ nextEnum ];
+                                        // oNextEntry.properties[key2].enum = [ nextEnum ];
+                                        console.log("includeDependencies! refValue: "+refValue)
+                                        oNodeTo.dependencies[key2].oneOf.push(oNextEntry);
+                                        if (!oNodeTo.propertyData.metaData.requiredDefinitions.includes(propertyPath)) {
+                                            oNodeTo.propertyData.metaData.requiredDefinitions.push(propertyPath)
+                                        }
+                                    }
+                                }
                             }
-                            oNodeTo.propertyData.dependencies[key1] = {};
-                            oNodeTo.propertyData.dependencies[key1].oneOf = [];
-                            console.log("includeDependencies! aDependencySlugs.length: "+aDependencySlugs.length)
-                            for (var d=0; d < aDependencySlugs.length; d++) {
-                                var nextSlug = aDependencySlugs[d];
-                                console.log("includeDependencies! nextSlug: "+nextSlug)
-                                var propertyPath = NeuroCoreFunctions.fetchPropertyPathFromSlug(nextSlug,oRFL);
-                                var nextEnum = aEnum[d];
-                                var oNextEntry = {};
-                                oNextEntry.properties = {};
-                                oNextEntry.required = [propertyPath];
-                                oNextEntry.properties[key1] = {};
-                                oNextEntry.properties[key1].enum = [ nextEnum ];
-                                oNextEntry.properties[propertyPath] = {};
-                                var refValue = "#/definitions/"+propertyPath;
-                                oNextEntry.properties[propertyPath]["$ref"] = refValue;
-                                console.log("includeDependencies! refValue: "+refValue)
-                                oNodeTo.propertyData.dependencies[key1].oneOf.push(oNextEntry);
-                                if (!oNodeTo.propertyData.metaData.requiredDefinitions.includes(propertyPath)) {
-                                    oNodeTo.propertyData.metaData.requiredDefinitions.push(propertyPath)
+                            if (dependencyPlacement=="lower") {
+                                if (propertyFromType=="array") {
+                                    console.log("propertyFromType == array");
+                                    if (!oNodeTo.propertyData.hasOwnProperty("allOf")) {
+                                        oNodeTo.propertyData.allOf = [];
+                                    }
+                                    oNodeTo.propertyData.allOf = [];
+                                    var oNextIfThen = {};
+                                    for (var d=0; d < aDependencySlugs.length; d++) {
+                                        var nextSlug = aDependencySlugs[d];
+                                        var propertyPath = NeuroCoreFunctions.fetchPropertyPathFromSlug(nextSlug,oRFL);
+                                        var refValue = "#/definitions/"+propertyPath;
+
+                                        var sTranslation = obj1.items.enum[d];
+                                        // Alternatively, to calculate sTranslation, recalculate nextUniqueProperty from nextSlug; this will require uniquePropertyKey (name, title, slug, etc)
+                                        // which right now is in enumerationData.restrictsValueData.uniquePropertyKey; I ought to transfer this to propertyData.metaData.uniquePropertyKey
+                                        // var oNextWord = NeuroCoreFunctions.fetchNewestRawFile(nextSlug,oRFL)
+                                        // var sTranslation = oNextWord[propertyPath][uniquePropertyKey];
+
+                                        oNextIfThen = {};
+                                        oNextIfThen.if = {};
+                                        oNextIfThen.then = {};
+                                        oNextIfThen.if.properties = {};
+                                        oNextIfThen.then.properties = {};
+                                        oNextIfThen.if.properties[key1] = {};
+                                        oNextIfThen.if.properties[key1].contains = { "const": sTranslation }
+                                        oNextIfThen.then.properties[propertyPath] = {};
+                                        oNextIfThen.then.properties[propertyPath]["$ref"] = refValue;
+                                        oNodeTo.propertyData.allOf.push(oNextIfThen)
+                                    }
+                                }
+                                if (propertyFromType=="string") {
+                                    console.log("propertyFromType == string")
+                                    if (!oNodeTo.propertyData.hasOwnProperty("dependencies")) {
+                                        oNodeTo.propertyData.dependencies = {};
+                                    }
+                                    var aEnum = [];
+                                    if (obj1.hasOwnProperty("enum")) {
+                                        aEnum = obj1.enum;
+                                    }
+                                    oNodeTo.propertyData.dependencies[key1] = {};
+                                    oNodeTo.propertyData.dependencies[key1].oneOf = [];
+                                    console.log("includeDependencies! aDependencySlugs.length: "+aDependencySlugs.length)
+                                    for (var d=0; d < aDependencySlugs.length; d++) {
+                                        var nextSlug = aDependencySlugs[d];
+                                        console.log("includeDependencies! nextSlug: "+nextSlug)
+                                        var propertyPath = NeuroCoreFunctions.fetchPropertyPathFromSlug(nextSlug,oRFL);
+                                        var nextEnum = aEnum[d];
+                                        var oNextEntry = {};
+                                        oNextEntry.properties = {};
+                                        oNextEntry.required = [propertyPath];
+                                        oNextEntry.properties[key1] = {};
+                                        oNextEntry.properties[key1].enum = [ nextEnum ];
+                                        oNextEntry.properties[propertyPath] = {};
+                                        var refValue = "#/definitions/"+propertyPath;
+                                        oNextEntry.properties[propertyPath]["$ref"] = refValue;
+                                        console.log("includeDependencies! refValue: "+refValue)
+                                        oNodeTo.propertyData.dependencies[key1].oneOf.push(oNextEntry);
+                                        if (!oNodeTo.propertyData.metaData.requiredDefinitions.includes(propertyPath)) {
+                                            oNodeTo.propertyData.metaData.requiredDefinitions.push(propertyPath)
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
-                if (!oNodeTo.propertyData.hasOwnProperty("properties")) {
-                    oNodeTo.propertyData.properties = {};
-                }
-                oNodeTo.propertyData.properties[key1] = MiscFunctions.cloneObj(obj1)
+                        if (!oNodeTo.propertyData.hasOwnProperty("properties")) {
+                            oNodeTo.propertyData.properties = {};
+                        }
+                        oNodeTo.propertyData.properties[key1] = MiscFunctions.cloneObj(obj1)
 
-                // Manage metaData.neuroCore variables
-                // 30 July 2022: is this step causing propertyData.type and propertyData.metaData to disappear from oNodeFrom ????
-                var nF_propertyType = oNodeFrom.propertyData.type;
-                if ( (nF_propertyType=="string") || (nF_propertyType=="integer") || (nF_propertyType=="boolean") ) {
-                    oNodeFrom.metaData.neuroCore.initialProcessing = true;
-                    oRFL.updated[nF_slug] = oNodeFrom;
-                    window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
-                }
+                        // Manage metaData.neuroCore variables
+                        // 30 July 2022: is this step causing propertyData.type and propertyData.metaData to disappear from oNodeFrom ????
+                        var nF_propertyType = oNodeFrom.propertyData.type;
+                        if ( (nF_propertyType=="string") || (nF_propertyType=="integer") || (nF_propertyType=="boolean") ) {
+                            oNodeFrom.metaData.neuroCore.initialProcessing = true;
+                            oRFL.updated[nF_slug] = oNodeFrom;
+                            window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
+                        }
 
-                if (oNodeTo.propertyData.metaData.types.includes("primaryProperty")) {
-                    if (!oNodeFrom.propertyData.metaData.types.includes("topLevel")) {
-                        oNodeFrom.propertyData.metaData.types.push("topLevel")
-                        oRFL.updated[nF_slug] = oNodeFrom;
-                        window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
-                    }
-                    if (!oNodeTo.propertyData.metaData.propertyKeyPaths.includes(key2)) {
-                        oNodeTo.propertyData.metaData.propertyKeyPaths.push(key2)
-                    }
-                }
-
-
-                // if oNodeTo is primaryProperty
-                // AND if no changes have been made so far in this action
-                // AND if defaultPropertiesCreated is true, then set initialProcessing to true
-                var oNodeTo_post = MiscFunctions.cloneObj(oNodeTo);
-                var sNodeTo_pre = JSON.stringify(oNodeTo_pre);
-                var sNodeTo_post = JSON.stringify(oNodeTo_post);
-                // console.log("a-b-u1n-01 oNodeTo_pre: "+JSON.stringify(oNodeTo_pre,null,4))
-                // console.log("a-b-u1n-01 oNodeTo_post: "+JSON.stringify(oNodeTo_post,null,4))
-                if (oNodeTo.propertyData.metaData.types.includes("primaryProperty")) {
-                    if (sNodeTo_pre == sNodeTo_post) {
-                        if (oNodeTo.metaData.neuroCore.hasOwnProperty("defaultPropertiesCreated")) {
-                            if (oNodeTo.metaData.neuroCore.defaultPropertiesCreated == true) {
-                                oNodeTo.metaData.neuroCore.initialProcessing = true;
+                        if (oNodeTo.propertyData.metaData.types.includes("primaryProperty")) {
+                            if (!oNodeFrom.propertyData.metaData.types.includes("topLevel")) {
+                                oNodeFrom.propertyData.metaData.types.push("topLevel")
+                                oRFL.updated[nF_slug] = oNodeFrom;
+                                window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
+                            }
+                            if (!oNodeTo.propertyData.metaData.propertyKeyPaths.includes(key2)) {
+                                oNodeTo.propertyData.metaData.propertyKeyPaths.push(key2)
                             }
                         }
-                    }
-                } else {
-                    // not sure if this is the best way to handle non-primaryProperty nodeTo
-                    oNodeTo.metaData.neuroCore.initialProcessing = true;
-                    if (sNodeTo_pre != sNodeTo_post) {
-                        oNodeTo.metaData.neuroCore.initialProcessing = false;
-                    }
-                }
 
-                for (var z=0;z<oNodeTo.propertyData.metaData.propertyKeyPaths.length;z++) {
-                    var pKPath2 = oNodeTo.propertyData.metaData.propertyKeyPaths[z];
-                    var pKPath1 = pKPath2 + "." + key1;
-                    if (!oNodeFrom.propertyData.metaData.propertyKeyPaths.includes(pKPath1)) {
-                        oNodeFrom.propertyData.metaData.propertyKeyPaths.push(pKPath1)
-                    }
-                }
+
+                        // if oNodeTo is primaryProperty
+                        // AND if no changes have been made so far in this action
+                        // AND if defaultPropertiesCreated is true, then set initialProcessing to true
+                        var oNodeTo_post = MiscFunctions.cloneObj(oNodeTo);
+                        var sNodeTo_pre = JSON.stringify(oNodeTo_pre);
+                        var sNodeTo_post = JSON.stringify(oNodeTo_post);
+                        // console.log("a-b-u1n-01 oNodeTo_pre: "+JSON.stringify(oNodeTo_pre,null,4))
+                        // console.log("a-b-u1n-01 oNodeTo_post: "+JSON.stringify(oNodeTo_post,null,4))
+                        if (oNodeTo.propertyData.metaData.types.includes("primaryProperty")) {
+                            if (sNodeTo_pre == sNodeTo_post) {
+                                if (oNodeTo.metaData.neuroCore.hasOwnProperty("defaultPropertiesCreated")) {
+                                    if (oNodeTo.metaData.neuroCore.defaultPropertiesCreated == true) {
+                                        oNodeTo.metaData.neuroCore.initialProcessing = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            // not sure if this is the best way to handle non-primaryProperty nodeTo
+                            oNodeTo.metaData.neuroCore.initialProcessing = true;
+                            if (sNodeTo_pre != sNodeTo_post) {
+                                oNodeTo.metaData.neuroCore.initialProcessing = false;
+                            }
+                        }
+
+                        for (var z=0;z<oNodeTo.propertyData.metaData.propertyKeyPaths.length;z++) {
+                            var pKPath2 = oNodeTo.propertyData.metaData.propertyKeyPaths[z];
+                            var pKPath1 = pKPath2 + "." + key1;
+                            if (!oNodeFrom.propertyData.metaData.propertyKeyPaths.includes(pKPath1)) {
+                                oNodeFrom.propertyData.metaData.propertyKeyPaths.push(pKPath1)
+                            }
+                        }
+                } // end if nF_pendingDeletion == false (approx 300 lines of code)
 
                 oRFL.updated[nF_slug] = oNodeFrom;
                 window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;

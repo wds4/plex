@@ -733,7 +733,7 @@ export default class RestrictsValueManagementExplorer extends React.Component {
                     sentenceHTML += "background-color:yellow;border:4px solid green;";
                 }
                 if (targetPropertyType=="array") {
-                    sentenceHTML += "background-color:red;border:4px solid green;color:white;"; 
+                    sentenceHTML += "background-color:red;border:4px solid green;color:white;";
                 }
             }
             sentenceHTML += "'>";
@@ -883,6 +883,7 @@ export default class RestrictsValueManagementExplorer extends React.Component {
             jQuery("#role2Container").html(nextNodeHTML)
 
             if (role3_slug) {
+                console.log("role3_slug: "+role3_slug)
                 var oRole3 = window.lookupWordBySlug[role3_slug];
                 var targetGoverningConcept_slug = oRole3.propertyData.metaData.governingConcept.slug;
                 var oGovCon = window.lookupWordBySlug[targetGoverningConcept_slug];
@@ -895,6 +896,7 @@ export default class RestrictsValueManagementExplorer extends React.Component {
                 jQuery("#specificInstancesListContainer").html("");
                 for (var s=0;s<aSpecificInstances.length;s++) {
                     var nextSpecificInstance_slug = aSpecificInstances[s];
+                    console.log("nextSpecificInstance_slug: "+nextSpecificInstance_slug)
                     var oNextSpecificInstance = window.lookupWordBySlug[nextSpecificInstance_slug]
                     var oNextSpecificInstance_name = oNextSpecificInstance.wordData.name;
                     var nextSpecificInstanceHTML = "";

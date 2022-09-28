@@ -7,7 +7,7 @@ import LeftNavbar1 from '../../../../../navbars/leftNavbar1/conceptGraph_leftNav
 import LeftNavbar2 from '../../../../../navbars/leftNavbar2/singleConcept_leftNav2.js';
 import ReactJSONSchemaOldForm from 'react-jsonschema-form'; // eslint-disable-line import/no-unresolved
 import validator from "@rjsf/validator-ajv6";
-import Form from "@rjsf/core"; 
+import Form from "@rjsf/core";
 
 import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
 import sendAsync from '../../../../../renderer.js';
@@ -277,6 +277,7 @@ export function makeVisGraph_PropertyTree(mainSchemaSlug,propertySchemaSlug,netw
         var nextNode_x = 0;
         var nextNode_y = 0;
         var nextNode_conceptRole = nextNode_wordType;
+        var pendingDeletion = false;
         try {
             if (nextNode_wordType=="schema") {
                 if (jQuery.inArray("propertySchema",nextNode_rF_obj.schemaData.metaData.types) > -1 ) {
@@ -286,6 +287,9 @@ export function makeVisGraph_PropertyTree(mainSchemaSlug,propertySchemaSlug,netw
             if (nextNode_wordType=="property") {
                 if (jQuery.inArray("primaryProperty",nextNode_rF_obj.propertyData.types) > -1 ) {
                     nextNode_conceptRole = "primaryProperty";
+                }
+                if (nextNode_rF_obj.propertyData.metaData.hasOwnProperty("pendingDeletion")) {
+                    pendingDeletion = nextNode_rF_obj.propertyData.metaData.pendingDeletion;
                 }
             }
             if (nextNode_wordType=="set") {
@@ -363,6 +367,11 @@ export function makeVisGraph_PropertyTree(mainSchemaSlug,propertySchemaSlug,netw
         if (showNode) {
             var nextNode_vis_obj = { id: nextNode_slug, label: nextNode_slug, slug: nextNode_slug, title: nextNode_slug, group: nextNode_wordType, conceptRole: nextNode_conceptRole, physics: physics, x: nextNode_x, y: nextNode_y }
             // console.log("qwerty_showNode: nextNode_slug: "+nextNode_slug+"; nextNode_vis_obj: "+JSON.stringify(nextNode_vis_obj,null,4))
+            if (pendingDeletion) {
+                nextNode_vis_obj.color = {};
+                nextNode_vis_obj.color.border = "red";
+                nextNode_vis_obj.color.background = "#FFCCCC";
+            }
             nodes_arr = MiscFunctions.pushObjIfNotAlreadyThere(nodes_arr,nextNode_vis_obj)
             nodes_slugs_arr = MiscFunctions.pushIfNotAlreadyThere(nodes_slugs_arr,nextNode_slug)
             // nodes_arr.push(nextNode_vis_obj)
