@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { NavLink, Link } from "react-router-dom";
 import ReactDOM from 'react-dom';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
@@ -116,6 +117,7 @@ export default class SingleUserLeaveRating extends React.Component {
         renderFormFromNode(rating_jsonSchema_slug)
     }
     render() {
+        var path = "/SingleUserProfilePage/"+this.props.match.params.cid;
         return (
             <>
                 <fieldset className="mainBody" >
@@ -131,6 +133,7 @@ export default class SingleUserLeaveRating extends React.Component {
                             </div>
                             <div id="usernameContainer" style={{display:"inline-block",height:"70px",padding:"10px",fontSize:"28px",textAlign:"left",overflow:"scroll"}}>
                             </div>
+                            <NavLink className="rateSomeoneButton" activeClassName="active" to={path} >Return to profile</NavLink>
                         </div>
 
                         <div>
