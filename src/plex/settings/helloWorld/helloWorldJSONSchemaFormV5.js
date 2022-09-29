@@ -10,6 +10,10 @@ import Form from "@rjsf/core";
 // const Form = JSONSchemaForm.default;
 // const {default: Form} = JSONSchemaForm;
 
+// See:
+// https://rjsf-team.github.io/react-jsonschema-form/
+// for demonstration 
+
 const oIfThenSchema = {
   "type": "object",
   "properties": {

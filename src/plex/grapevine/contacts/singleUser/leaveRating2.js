@@ -8,51 +8,8 @@ import { useDropzone } from "react-dropzone";
 import Masthead from '../../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/grapevine_leftNav1';
 import { create, urlSource } from 'ipfs'
-import validator from "@rjsf/validator-ajv6";
-import Form from "@rjsf/core";
 
 const jQuery = require("jquery");
-
-const uiSchema = {
-    address: { 'ui:widget': 'hidden' },
-}
-
-const onFormSubmit = async ({formData}, e) => {
-    var sFormData = JSON.stringify(formData,null,4);
-}
-
-const onFormChange = async ({formData}, e) => {
-    var sNewRating = await MiscFunctions.cloneObj(JSON.stringify(formData,null,4));
-    jQuery("#newRatingRawFile").val(sNewRating)
-}
-
-const renderFormFromNode = (slug) => {
-    var oWord = window.lookupWordBySlug[slug];
-    var oSchema = {};
-    if (oWord.hasOwnProperty("propertyData")) {
-        oSchema = oWord.propertyData;
-    }
-    if (oWord.hasOwnProperty("JSONSchemaData")) {
-        oSchema = oWord;
-    }
-
-    jQuery("#ratingJsonSchemaRawFile").val(JSON.stringify(oWord,null,4))
-
-    // oSchema = MiscFunctions.cloneObj(jsonSchemaRatingTest)
-
-    ReactDOM.render(
-        <Form
-            schema={oSchema}
-            validator={validator}
-            onSubmit={onFormSubmit}
-            onChange={onFormChange}
-            uiSchema={uiSchema}
-            liveOmit
-            omitExtraData
-        />,
-        document.getElementById("renderedFormElem")
-    )
-}
 
 const populateFields = async (cid) => {
     console.log("populateFields")
@@ -112,9 +69,6 @@ export default class SingleUserLeaveRating extends React.Component {
         var defaultAvatarNumber = parseInt(cid,10);
         console.log("cid: "+cid+"; defaultAvatarNumber: "+defaultAvatarNumber)
         populateFields(cid);
-
-        var rating_jsonSchema_slug = "JSONSchemaFor_rating";
-        renderFormFromNode(rating_jsonSchema_slug)
     }
     render() {
         var path = "/SingleUserProfilePage/"+this.props.match.params.cid;
@@ -134,17 +88,6 @@ export default class SingleUserLeaveRating extends React.Component {
                             <div id="usernameContainer" style={{display:"inline-block",height:"70px",padding:"10px",fontSize:"28px",textAlign:"left",overflow:"scroll"}}>
                             </div>
                             <NavLink className="rateSomeoneButton" activeClassName="active" to={path} >Return to profile</NavLink>
-                        </div>
-
-                        <div>
-                            <div id="renderedFormElem" style={{width:"440px",display:"inline-block",textAlign:"left"}} >
-                            </div>
-
-                            <textarea id="newRatingRawFile" style={{width:"440px",height:"800px",display:"inline-block",border:"1px dashed grey"}} >
-                            </textarea>
-
-                            <textarea id="ratingJsonSchemaRawFile" style={{width:"700px",height:"800px",display:"inline-block",border:"1px dashed grey"}} >
-                            </textarea>
                         </div>
 
                     </div>

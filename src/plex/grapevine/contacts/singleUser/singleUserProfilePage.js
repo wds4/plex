@@ -205,7 +205,8 @@ export default class SingleUserProfile extends React.Component {
     }
     render() {
         // var path = "/SingleUserLeaveRating/QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ"+cid;
-        var path = "/SingleUserLeaveRating/"+this.props.match.params.cid;
+        var path1 = "/SingleUserLeaveRating1/"+this.props.match.params.cid;
+        var path2 = "/SingleUserLeaveRating2/"+this.props.match.params.cid;
         return (
             <>
                 <fieldset className="mainBody" >
@@ -228,7 +229,8 @@ export default class SingleUserProfile extends React.Component {
                                     <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"150px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
 
-                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path} >Rate this user</NavLink>
+                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} >Rate this user (JSON Schema Form)</NavLink>
+                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Rate this user (custom form)</NavLink>
 
                                     <div style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
                                         <div style={{display:"inline-block",fontSize:"14px"}}>ipfs cid: </div>
