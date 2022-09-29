@@ -192,9 +192,6 @@ export default class SchemaOrgTextNav extends React.Component {
         var cgSuperset_slug = oCgConcept.conceptData.nodes.superset.slug;
         var oCgSuperset = window.lookupWordBySlug[cgSuperset_slug];
         makeContextGraphSelector(oCgSuperset);
-
-
-
     }
     render() {
         return (

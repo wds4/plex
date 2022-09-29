@@ -8,6 +8,9 @@ import { useDropzone } from "react-dropzone";
 import Masthead from '../../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/grapevine_leftNav1';
 import { create, urlSource } from 'ipfs'
+import ContextSelectors from './contextSelectors.js'
+
+import oFormData from '../../ratings/json/prefilledRatings/trustRatingTemplate.json';
 
 const jQuery = require("jquery");
 
@@ -57,6 +60,59 @@ const populateFields = async (cid) => {
     }
 }
 
+const populateRatingRawFile = async (cid) => {
+    var oRating = MiscFunctions.cloneObj(oFormData)
+    oRating.ratingData.rateeData.userData.name = jQuery("#usernameContainer").html();
+    oRating.ratingData.rateeData.userData.peerID = cid;
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceData.userData.peerID = cid;
+    var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
+    var oMyProfile = await MiscIpfsFunctions.ipfs.id();
+    // console.log("oMyProfile: "+JSON.stringify(oMyProfile,null,4))
+    oRating.ratingData.raterData.userData.peerID = oMyProfile.id;
+    for await (const chunk of MiscIpfsFunctions.ipfs.files.read(ipfsPath)) {
+        var myUserData = new TextDecoder("utf-8").decode(chunk);
+        try {
+            // console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
+            var oMyUserData = JSON.parse(myUserData);
+            if (typeof oMyUserData == "object") {
+                var myUsername = oMyUserData.username;
+                var peerID = oMyUserData.peerID;
+                oRating.ratingData.raterData.userData.name = oMyUserData.username;
+                oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceData.userData.name = oMyUserData.username;
+            }
+        } catch (e) {}
+    }
+
+    var topic_wordSlug = jQuery("#contextSelector option:selected").data("contextwordslug")
+    var topic_name = jQuery("#contextSelector option:selected").data("contextname")
+    var topic_ipns = jQuery("#contextSelector option:selected").data("contexttitle")
+    var topic_title = jQuery("#contextSelector option:selected").data("contextipns")
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicWordSlug = topic_wordSlug
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicName = topic_name
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicIPNS = topic_ipns
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicTitle = topic_title
+
+    var contextGraph_wordSlug = jQuery("#influenceTypeSelector option:selected").data("contextgraphwordslug")
+    var contextGraph_name = jQuery("#influenceTypeSelector option:selected").data("contextgraphname")
+    var contextGraph_title = jQuery("#influenceTypeSelector option:selected").data("contextgraphtitle")
+    var contextGraph_ipns = jQuery("#influenceTypeSelector option:selected").data("contextgraphipns")
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.contextGraphData.contextGraphWordSlug = contextGraph_wordSlug
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.contextGraphData.contextGraphName = contextGraph_name
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.contextGraphData.contextGraphIPNS = contextGraph_ipns
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.contextGraphData.contextGraphWordTitle = contextGraph_title
+
+    var influenceType_wordSlug = jQuery("#influenceTypeSelector option:selected").data("influencetypewordslug")
+    var influenceType_name = jQuery("#influenceTypeSelector option:selected").data("influencetypename")
+    var influenceType_title = jQuery("#influenceTypeSelector option:selected").data("influencetypetitle")
+    var influenceType_ipns = jQuery("#influenceTypeSelector option:selected").data("influencetypeipns")
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryWordSlug = influenceType_wordSlug
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryName = influenceType_name
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryIPNS = influenceType_ipns
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryTitle = influenceType_title
+
+    jQuery("#newRatingRawFile").val(JSON.stringify(oRating,null,4))
+}
+
 export default class SingleUserLeaveRating extends React.Component {
     constructor(props) {
         super(props);
@@ -69,6 +125,12 @@ export default class SingleUserLeaveRating extends React.Component {
         var defaultAvatarNumber = parseInt(cid,10);
         console.log("cid: "+cid+"; defaultAvatarNumber: "+defaultAvatarNumber)
         populateFields(cid);
+
+        populateRatingRawFile(cid)
+        jQuery("#optionsSelectorsContainer").change(function(){
+            populateRatingRawFile(cid)
+        })
+
     }
     render() {
         var path = "/SingleUserProfilePage/"+this.props.match.params.cid;
@@ -89,6 +151,18 @@ export default class SingleUserLeaveRating extends React.Component {
                             </div>
                             <NavLink className="rateSomeoneButton" activeClassName="active" to={path} >Return to profile</NavLink>
                         </div>
+
+                        <div>
+                            Presets:
+                            <div className="rateSomeoneButton">Follow</div>
+                        </div>
+
+                        <div id="optionsSelectorsContainer" style={{display:"inline-block"}}>
+                            <ContextSelectors />
+                        </div>
+
+                        <textarea id="newRatingRawFile" style={{width:"800px",height:"800px",display:"inline-block",border:"1px dashed grey"}} >
+                        </textarea>
 
                     </div>
                 </fieldset>

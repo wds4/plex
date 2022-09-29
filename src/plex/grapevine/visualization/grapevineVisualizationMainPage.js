@@ -7,7 +7,7 @@ import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
 import * as VisStyleConstants from '../../lib/visjs/visjs-style';
 
-const electronFs = window.require('fs');
+const electronFs = window.require('fs'); 
 
 const jQuery = require("jquery");
 
