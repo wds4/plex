@@ -81,8 +81,6 @@ const populateSuperset = async (path,oConcept) => {
             await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
         } catch (e) {}
 
-
-
     }
 }
 
@@ -226,6 +224,7 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                 var path = jQuery(this).data("path")
                 var cid = jQuery(this).data("cid")
                 console.log("ipfsMutableFilesFileContainer clicked; fileName: "+fileName+"; path: "+path+"; cid: "+cid)
+                jQuery("#cidToThisFileContainer").html(cid)
                 for await (const chunk2 of MiscIpfsFunctions.ipfs.cat(cid)) {
                     var chunk3 = new TextDecoder("utf-8").decode(chunk2);
                     try {
@@ -274,7 +273,7 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
 
             try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"influenceTypes/") } catch (e) {}
 
-            var concept_wordSlug = "conceptFor_influenceType";
+            var concept_wordSlug = "conceptFor_user";
             // var path = pCG0+"concepts/"+concept_wordSlug+"/";
             var path = pCG0+"concepts/";
             await populateSingleConcept(path,concept_wordSlug);
@@ -363,13 +362,20 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                         <div style={{fontSize:"12px",border:"1px dashed grey",padding:"10px",marginBottom:"10px",height:"430px"}}>
                             <center>current MFS file structure for this concept graph</center>
 
-                            <div style={{marginBottom:"5px"}}>
-                            pGC0 = <div style={{display:"inline-block"}} id="pathToThisConceptGraphContainer" >pathToThisConceptGraphContainer</div>
-                            </div>
-
                             <div style={{height:"400px",overflow:"scroll"}}>
-                                <div id="listOfAllPathsContainer" style={{display:"inline-block",width:"900px",border:"1px dashed purple",height:"380px",overflow:"scroll"}} ></div>
-                                <textarea id="clickedNodeRawFileContainer" style={{display:"inline-block",width:"500px",height:"95%",border:"1px dashed grey",overflow:"scroll"}} ></textarea>
+                                <div style={{display:"inline-block"}} >
+                                    <div style={{marginBottom:"5px"}}>
+                                        pGC0 = <div style={{display:"inline-block"}} id="pathToThisConceptGraphContainer" >pathToThisConceptGraphContainer</div>
+                                    </div>
+                                    <div id="listOfAllPathsContainer" style={{display:"inline-block",width:"900px",border:"1px dashed purple",height:"380px",overflow:"scroll"}} ></div>
+                                </div>
+
+                                <div style={{display:"inline-block",height:"100%"}} >
+                                    <div style={{marginBottom:"5px"}}>
+                                        cid = <div style={{display:"inline-block"}} id="cidToThisFileContainer" >cidToThisFileContainer</div>
+                                    </div>
+                                    <textarea id="clickedNodeRawFileContainer" style={{display:"inline-block",width:"500px",height:"95%",border:"1px dashed grey",overflow:"scroll"}} ></textarea>
+                                </div>
                             </div>
                         </div>
 

@@ -9,7 +9,9 @@ import Masthead from '../../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/grapevine_leftNav1';
 import { create, urlSource } from 'ipfs'
 import ContextSelectors from './contextSelectors.js'
-
+import Nouislider from "nouislider-react";
+import noUiSlider from "nouislider";
+// import "nouislider/distribute/nouislider.css";
 import oFormData from '../../ratings/json/prefilledRatings/trustRatingTemplate.json';
 
 const jQuery = require("jquery");
@@ -60,7 +62,27 @@ const populateFields = async (cid) => {
     }
 }
 
+const makeKeynameAndIpnsForNewRating = async () => {
+    var newWordType = "grapevineTrustRating";
+    var randomNonce = Math.floor(Math.random() * 1000);
+    var currentTime = Date.now();
+    var newKeyname = "plexWord_"+newWordType+"_"+currentTime+"_"+randomNonce;
+    var oGeneratedKey = await MiscIpfsFunctions.ipfs.key.gen(newKeyname, {
+        type: 'rsa',
+        size: 2048
+    })
+
+    // var newWord_ipns = oGeneratedKey["id"];
+    // var generatedKey_name = oGeneratedKey["name"];
+    // console.log("generatedKey_obj id: "+newWord_ipns+"; name: "+generatedKey_name);
+    // newWord_obj.metaData.ipns = newWord_ipns;
+    // newWord_obj.metaData.keyname = newKeyname;
+
+    return oGeneratedKey;
+}
+
 const populateRatingRawFile = async (cid) => {
+    console.log("populateRatingRawFile; cid: "+cid)
     var oRating = MiscFunctions.cloneObj(oFormData)
     oRating.ratingData.rateeData.userData.name = jQuery("#usernameContainer").html();
     oRating.ratingData.rateeData.userData.peerID = cid;
@@ -110,8 +132,31 @@ const populateRatingRawFile = async (cid) => {
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryIPNS = influenceType_ipns
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryTitle = influenceType_title
 
+    var mrSlider = document.getElementById('mainRatingSlider');
+    var mainRatingValue = mrSlider.noUiSlider.get();
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.trustRating = mainRatingValue
+
+    var rrSlider = document.getElementById('referenceRatingSlider');
+    var referenceRatingValue = rrSlider.noUiSlider.get();
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceTrustRating = referenceRatingValue
+
+    var cSlider = document.getElementById('confidenceSlider');
+    var confidenceValue = cSlider.noUiSlider.get();
+    oRating.ratingData.ratingFieldsetData.confidenceFieldsetData.confidence = confidenceValue
+
+    var comments = jQuery("#commentsRawFile").val();
+    oRating.ratingData.ratingFieldsetData.commentsFieldsetData.comments = comments
+
+    var transitivity = jQuery("#transitivityCheckbox").prop("checked")
+    oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.transitivity = transitivity
+
+    oRating.metaData.keyname = jQuery("#newRatingKeyname").html()
+    oRating.metaData.ipns = jQuery("#newRatingIPNS").html()
+
     jQuery("#newRatingRawFile").val(JSON.stringify(oRating,null,4))
 }
+
+
 
 export default class SingleUserLeaveRating extends React.Component {
     constructor(props) {
@@ -131,6 +176,86 @@ export default class SingleUserLeaveRating extends React.Component {
             populateRatingRawFile(cid)
         })
 
+        const callPopulateRatingRawFile = () => {
+            populateRatingRawFile(cid)
+        }
+
+        const updateConfidence = () => {
+            var sliderValue = cSlider.noUiSlider.get();
+            console.log("updateConfidence; sliderValue: "+sliderValue)
+        }
+
+        var mRSlider = document.getElementById('mainRatingSlider');
+        noUiSlider.create(mRSlider, {
+            start: 40,
+            orientation: 'vertical',
+            direction: 'rtl',
+            range: {
+                'max': 100,
+                "min": 0
+            },
+            pips: { mode: "count", values: 5 },
+            clickablePips: true
+        });
+
+        var rRSlider = document.getElementById('referenceRatingSlider');
+        noUiSlider.create(rRSlider, {
+            start: 40,
+            orientation: 'vertical',
+            direction: 'rtl',
+            range: {
+                'min': 0,
+                'max': 100
+            },
+            pips: { mode: "count", values: 5 },
+            clickablePips: true
+        });
+
+        var cSlider = document.getElementById('confidenceSlider');
+        noUiSlider.create(cSlider, {
+            start: 40,
+            orientation: 'vertical',
+            direction: 'rtl',
+            range: {
+                'min': 0,
+                'max': 100
+            },
+            pips: { mode: "count", values: 5 },
+            clickablePips: true,
+            step:1
+        });
+
+        // on update would render changes continuously
+        // on change renders changes at the end of a move
+        // cSlider.noUiSlider.on("change",updateConfidence)
+        cSlider.noUiSlider.on("change",callPopulateRatingRawFile)
+        mRSlider.noUiSlider.on("change",callPopulateRatingRawFile)
+        rRSlider.noUiSlider.on("change",callPopulateRatingRawFile)
+        jQuery("#commentsRawFile").change(function(){
+            callPopulateRatingRawFile()
+        })
+        jQuery("#transitivityCheckbox").change(function(){
+            callPopulateRatingRawFile()
+        })
+        jQuery("#standardFollowButton").click(function(){
+            // set confidence to 20%
+            cSlider.noUiSlider.set(20);
+            // set trust/influence to attention
+            jQuery("#influenceTypeSelector option[data-influencetypename='attention']").prop("selected",true).change()
+            // set context to everything
+            jQuery("#contextSelector option[data-contextname='everything']").prop("selected",true)
+            // set rating to 100
+            mRSlider.noUiSlider.set(100);
+            // set reference rating to 100
+            rRSlider.noUiSlider.set(100);
+            // set transitivity to true
+            jQuery("#transitivityCheckbox").prop("checked",true)
+
+            callPopulateRatingRawFile()
+        })
+        var oGeneratedKey = await makeKeynameAndIpnsForNewRating()
+        jQuery("#newRatingKeyname").html(oGeneratedKey["name"])
+        jQuery("#newRatingIPNS").html(oGeneratedKey["id"])
     }
     render() {
         var path = "/SingleUserProfilePage/"+this.props.match.params.cid;
@@ -154,15 +279,47 @@ export default class SingleUserLeaveRating extends React.Component {
 
                         <div>
                             Presets:
-                            <div className="rateSomeoneButton">Follow</div>
+                            <div className="rateSomeoneButton" id="standardFollowButton" >Follow</div>
+                        </div>
+
+                        <div id="ratingsSelectorsContainer" style={{padding:"10px",paddingTop:"30px",width:"600px",height:"800px",border:"1px dashed grey",display:"inline-block"}}>
+                            <div style={{marginBottom:"50px"}}>
+                                <div style={{textAlign:"center",width:"150px",display:"inline-block"}}>
+                                    <div style={{height:"50px"}}>Rating</div>
+                                    <div id="mainRatingSlider" style={{display:"inline-block",height:"400px",backgroundColor:"orange"}} ></div>
+                                </div>
+                                <div style={{textAlign:"center",width:"150px",display:"inline-block"}}>
+                                    <div style={{height:"50px"}}>Reference Rating</div>
+                                    <div id="referenceRatingSlider" style={{display:"inline-block",height:"400px",backgroundColor:"orange"}} ></div>
+                                </div>
+                                <div style={{textAlign:"center",width:"150px",display:"inline-block"}}>
+                                    <div style={{height:"50px"}}>Confidence</div>
+                                    <div id="confidenceSlider" style={{display:"inline-block",height:"400px",backgroundColor:"orange"}} ></div>
+                                </div>
+                            </div>
+
+                            <div >
+                                <label class="checkboxContainer">Transitivity
+                                    <input id="transitivityCheckbox" type="checkbox" />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+
+                            Comments:<br/>
+                            <textarea id="commentsRawFile" style={{width:"95%",height:"150px",display:"inline-block",fontSize:"10px",border:"1px dashed grey"}} >
+                            </textarea>
                         </div>
 
                         <div id="optionsSelectorsContainer" style={{display:"inline-block"}}>
                             <ContextSelectors />
                         </div>
 
-                        <textarea id="newRatingRawFile" style={{width:"800px",height:"800px",display:"inline-block",border:"1px dashed grey"}} >
-                        </textarea>
+                        <div style={{display:"inline-block",fontSize:"10px"}}>
+                            <div id="newRatingKeyname">newRatingKeyname</div>
+                            <div id="newRatingIPNS">newRatingIPNS</div>
+                            <textarea id="newRatingRawFile" style={{width:"700px",height:"800px",display:"inline-block",border:"1px dashed grey"}} >
+                            </textarea>
+                        </div>
 
                     </div>
                 </fieldset>

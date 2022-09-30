@@ -7,7 +7,10 @@ import './index.css';
 import './css/main.css';
 import './css/plex.css';
 import './css/react.css';
+import './css/checkbox.css';
 import './css/customDataTables.css';
+// import './css/nouislider.css';
+import './css/colorpicker.css';
 // import './lib/vis-network-9-0-2.js';
 // import App from './App';
 import App from './App';
@@ -105,7 +108,7 @@ import ProfileMainPage from './plex/grapevine/profile/profileMainPage.js';
 import PlexAppsNavPage from './plex/conceptGraph/plexAppsNavPage.js';
 import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
 import HelloWorldMarkdown from './plex/settings/helloWorld/helloWorldMarkdown.js';
-
+import HelloWorldNoUiSlider from './plex/settings/helloWorld/helloWorldNoUiSlider.js';
 import HelloWorldVisJS from './plex/settings/helloWorld/helloWorldVisJS.js';
 import HelloWorldP5 from './plex/settings/helloWorld/helloWorldP5.js';
 import HelloWorldC2 from './plex/settings/helloWorld/helloWorldC2.js';
@@ -384,7 +387,7 @@ ReactDOM.render(
           <Route path="/ProfileMainPage" exact component={ProfileMainPage} />
           <Route path="/PlexAppsNavPage" exact component={PlexAppsNavPage} />
           <Route path="/HelloWorldMainPage" exact component={HelloWorldMainPage} />
-
+          <Route path="/HelloWorldNoUiSlider" exact component={HelloWorldNoUiSlider} />
           <Route path="/HelloWorldMarkdown" exact component={HelloWorldMarkdown} />
           <Route path="/HelloWorldVisJS" exact component={HelloWorldVisJS} />
           <Route path="/HelloWorldP5" exact component={HelloWorldP5} />

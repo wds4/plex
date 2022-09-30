@@ -1104,7 +1104,6 @@ export const createNewWordByTemplate = async (newWordType) => {
         type: 'rsa',
         size: 2048
     })
-
     var newWord_ipns = generatedKey_obj["id"];
     var generatedKey_name = generatedKey_obj["name"];
     // console.log("generatedKey_obj id: "+newWord_ipns+"; name: "+generatedKey_name);

@@ -18,17 +18,17 @@
         "raterData": {
             "raterEntityType": "user",
             "userData": {
-                "slug": "",
-                "name": "",
-                "ipns": ""
+                "peerID": null,
+                "username": null,
+                "ipns": null
             }
         },
         "rateeData": {
             "rateeEntityType": "user",
             "userData": {
-                "slug": "",
-                "name": "",
-                "ipns": ""
+                "peerID": null,
+                "username": null,
+                "ipns": null
             }
         },
         "ratingTemplateData": {
@@ -55,8 +55,9 @@
                 "referenceData": {
                     "referenceEntityType": "user",
                     "userData": {
-                        "name": null,
-                        "peerID": null
+                        "peerID": null,
+                        "username": null,
+                        "ipns": null
                     }
                 },
                 "contextData": {

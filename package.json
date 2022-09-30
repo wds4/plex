@@ -55,6 +55,7 @@
     "datatables.net-dt": "^1.10.19",
     "electron-builder": "^22.6.0",
     "marked": "^4.1.0",
+    "nouislider-react": "^3.4.1",
     "p5": "^1.4.2",
     "react": "^17.0.2",
     "react-data-table-component": "^7.0.0-rc2",

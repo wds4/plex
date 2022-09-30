@@ -226,6 +226,7 @@ export default class GrapevineContactsMainPage extends React.Component {
             }
         }
 
+        /*
         ////////////////////////////////////////////////////////////////////
         /////////////////////// previously seen ////////////////////////////
         var a3Users = await MiscIpfsFunctions.fetchUsersFromMyGrapevineMFS()
@@ -250,6 +251,7 @@ export default class GrapevineContactsMainPage extends React.Component {
         // console.log("sMasterUserList: "+sMasterUserList)
         await updateMasterUsersList(sMasterUserList)
 
+
         ////////////////////////////////////////////////////////////////////
         /////////////////// scrape data from other users ///////////////////
         for (var u=0;u<a1Users.length;u++) {
@@ -272,6 +274,7 @@ export default class GrapevineContactsMainPage extends React.Component {
                 }
             }
         }
+        */
 
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")

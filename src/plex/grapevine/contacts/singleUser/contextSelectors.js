@@ -249,7 +249,7 @@ export default class ContextSelectors extends React.Component {
         return (
             <>
                 <div>
-                    <div style={{border:"1px dashed grey",display:"inline-block",width:"400px",height:"800px"}}>
+                    <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"800px"}}>
                         <center>select trust / influence type</center>
                         <div id="influenceTypeSelectorContainer" ></div>
                         <div id="propertyPathContainer" style={{display:"none"}} >propertyPathContainer</div>

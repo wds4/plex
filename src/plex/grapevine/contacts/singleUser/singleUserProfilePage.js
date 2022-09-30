@@ -201,7 +201,22 @@ export default class SingleUserProfile extends React.Component {
         jQuery("#leaveRatingButton").click(function(){
             console.log("leaveRatingButton clicked")
         })
+        jQuery("#saveUserToMutableFileSystemConceptGraphButton").click(function(){
+            var oNewWord = MiscFunctions.cloneObj(window.lookupWordTypeTemplate["user"]);
+            var username = jQuery("#usernameContainer").html()
+            oNewWord.userData.peerID = cid;
+            oNewWord.userData.username = username;
+            var wordSlug = "user_"+username+"_"+cid.slice(cid.length-6);
+            oNewWord.wordData.slug = wordSlug;
+            console.log("saveUserToMutableFileSystemConceptGraphButton clicked; oNewWord: "+JSON.stringify(oNewWord,null,4));
 
+            // will need to create a special function: add specific instance to concept
+            var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug;
+            var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+            var mainSchema_ipns = oMainSchema.metaData.ipns;
+            var pCG = "/plex/conceptGraphs/";
+            var pCG0 = pCG + mainSchema_ipns + "/concepts/users/superset/allSpecificInstances/";
+        })
     }
     render() {
         // var path = "/SingleUserLeaveRating/QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ"+cid;
@@ -231,6 +246,8 @@ export default class SingleUserProfile extends React.Component {
 
                                     <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} >Rate this user (JSON Schema Form)</NavLink>
                                     <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Rate this user (custom form)</NavLink>
+                                    <br/>
+                                    <div id="saveUserToMutableFileSystemConceptGraphButton" className="doSomethingButton">save/update user file to Concept Graph on MFS</div>
 
                                     <div style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
                                         <div style={{display:"inline-block",fontSize:"14px"}}>ipfs cid: </div>
