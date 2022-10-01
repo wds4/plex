@@ -311,7 +311,9 @@ const loadImgURL = async (cid, mime, limit) => {
     }
 }
 
-const makeVisGraph_Grapevine = async (userList,aCids) => {
+const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
+    const oIpfsID = await MiscIpfsFunctions.ipfs.id();
+    const myPeerID = oIpfsID.id;
     var nodes_arr = [];
     var nodes_slugs_arr = [];
     var edges_arr = [];
@@ -393,9 +395,26 @@ const makeVisGraph_Grapevine = async (userList,aCids) => {
         }
     }
 
-    for (var r=0;r<aCids.length;r++) {
-        var nextRatingCid = aCids[r];
+    // fetch ratings
+    var aRatingCidsByOthers = [];
+    for (var u=0;u<listOfPeerIDs.length;u++) {
+        var nextPeerID = listOfPeerIDs[u];
+        if (nextPeerID != myPeerID) {
+            var aRatingCids = await MiscIpfsFunctions.fetchRatingsByMeFromExternalMFS(nextPeerID)
+            for (var a=0;a<aRatingCids.length;a++) {
+                var nextRatingPath = aRatingCids[a];
+                // var nextRatingCid = nextRatingPath.replace("/ipfs/","");
+                aRatingCidsByOthers.push(nextRatingPath)
+            }
+        }
+    }
+
+    var aRatingCids = [...aRatingCidsByMe, ...aRatingCidsByOthers];
+
+    for (var r=0;r<aRatingCids.length;r++) {
+        var nextRatingCid = aRatingCids[r];
         var ipfsPath = nextRatingCid;
+        console.log("ipfsPath: "+ipfsPath)
         for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
             // console.info(chunk)
             var chunk2 = new TextDecoder("utf-8").decode(chunk);

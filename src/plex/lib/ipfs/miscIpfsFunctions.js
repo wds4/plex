@@ -80,6 +80,29 @@ export const makeLocalFolderForContact = async (path) => {
     return false;
 }
 
+//
+export const fetchRatingsByMeFromExternalMFS = async (peerID) => {
+    var aCids = []
+
+    var mfsPath = "/ipns/"+peerID+"/grapevineData/publicRatingsData/ratingsByMe/ratings.txt";
+
+    try {
+        for await (const chunk of ipfs.cat(mfsPath)) {
+            var ratingsListData = new TextDecoder("utf-8").decode(chunk);
+
+            var aCids = JSON.parse(ratingsListData);
+            console.log("fetchRatingsByMeFromExternalMFS "+peerID+" SUCCESS! aCids: "+JSON.stringify(aCids,null,4))
+            return aCids;
+        }
+    } catch (e) {
+        console.log("fetchRatingsByMeFromExternalMFS "+peerID+" error: "+e)
+        var aUsers = [];
+        return aCids;
+    }
+
+    return aCids;
+}
+
 export const returnUserProfileFromMFS = async (peerID) => {
     var oUserProfile = {};
 
