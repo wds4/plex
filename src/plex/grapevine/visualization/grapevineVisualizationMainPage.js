@@ -381,6 +381,11 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
         var borderColor = "black";
         var size = 25;
 
+        if (nextUserPeerID == myPeerID) {
+            borderWidth = 5;
+            size = 50;
+        }
+
         if (showNode) {
             var nextNode_vis_obj = {
                 id: nextUserPeerID,
