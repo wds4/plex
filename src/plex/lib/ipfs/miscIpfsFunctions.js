@@ -502,12 +502,16 @@ export const initializeIpfsMutableFileSystem = async () => {
 
 export const fetchUsersFromExternalMFS = async (nextPeerID) => {
     var path = "/ipns/"+nextPeerID+"/grapevineData/users/masterUsersList.txt";
+    console.log("fetchUsersFromExternalMFS; path: "+path)
     try {
         for await (const chunk of ipfs.cat(path)) {
             var masterUsersListData = new TextDecoder("utf-8").decode(chunk);
-
+            console.log("masterUsersListData: "+typeof masterUsersListData)
             var aUsers = JSON.parse(masterUsersListData);
+            console.log("masterUsersListData; aUsers: "+typeof aUsers)
+            // var aUsers = masterUsersListData
             console.log("fetchUsersFromExternalMFS "+nextPeerID+" SUCCESS! aUsers: "+JSON.stringify(aUsers,null,4))
+            // aUsers = [];
             return aUsers;
         }
     } catch (e) {

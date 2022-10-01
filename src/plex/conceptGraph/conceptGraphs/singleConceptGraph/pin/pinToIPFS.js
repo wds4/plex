@@ -130,11 +130,16 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
 
             try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"influenceTypes/") } catch (e) {}
 
-            // var concept_wordSlug = "conceptFor_user";
-            var concept_wordSlug = "conceptFor_rating";
-            // var path = pCG0+"concepts/"+concept_wordSlug+"/";
             var path = pCG0+"concepts/";
+            var concept_wordSlug = "conceptFor_user";
             await ConceptGraphInMfsFunctions.populateSingleConcept(path,concept_wordSlug);
+            MiscFunctions.timeout(200)
+            var concept_wordSlug = "conceptFor_rating";
+            await ConceptGraphInMfsFunctions.populateSingleConcept(path,concept_wordSlug);
+            MiscFunctions.timeout(200)
+            var concept_wordSlug = "conceptFor_influenceType";
+            await ConceptGraphInMfsFunctions.populateSingleConcept(path,concept_wordSlug);
+            // var path = pCG0+"concepts/"+concept_wordSlug+"/";
             /*
             // iterate through each concept
 

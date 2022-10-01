@@ -376,18 +376,28 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
             }
         });
 
+        var shape = "circularImage";
+        var borderWidth = 1;
+        var borderColor = "black";
+        var size = 25;
+
         if (showNode) {
             var nextNode_vis_obj = {
                 id: nextUserPeerID,
                 label: nextNode_label,
                 slug: nextNode_slug,
                 title: nextNode_title,
-                shape:"circularImage",
-                image:pathToImage,
+                shape: shape,
+                image: pathToImage,
                 brokenImage:"/grapevine/assets/missingAvatar.png",
                 group: nextNode_wordType,
                 conceptRole: nextNode_conceptRole,
-                physics: physics
+                physics: physics,
+                borderWidth: borderWidth,
+                size: size,
+                color: {
+                    border: borderColor
+                }
             }
             // console.log("qwerty_showNode: nextNode_slug: "+nextNode_slug+"; nextNode_vis_obj: "+JSON.stringify(nextNode_vis_obj,null,4))
             nodes_arr = MiscFunctions.pushObjIfNotAlreadyThere(nodes_arr,nextNode_vis_obj)

@@ -9,6 +9,51 @@ const jQuery = require("jquery");
 
 const electronFs = window.require('fs');
 
+const fetchPeerDataFromOtherPeer = async (peerID,sourcePeerID) => {
+    var ipfsPathSource = "/ipns/"+sourcePeerID+"/grapevineData/users/"+peerID+"/userProfile.txt";
+    console.log("ipfsPathSource: "+ipfsPathSource)
+    try {
+        for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPathSource)) {
+            var userData = new TextDecoder("utf-8").decode(chunk);
+
+            var oUserData = JSON.parse(userData);
+            if (typeof oUserData == "object") {
+                var sUserData = JSON.stringify(oUserData,null,4);
+                console.log("sUserData: "+sUserData)
+                var ipfsPathA = "/grapevineData/users/"+peerID+"/";
+                var ipfsPathB = "/grapevineData/users/"+peerID+"/userProfile.txt";
+                // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sUserData), {create: true, flush: true});
+                updateUserContactInfo(peerID,sUserData)
+                // await MiscIpfsFunctions.ipfs.files.mkdir(ipfsPathA,{"parents":true});
+                // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sUserData, {create: true, flush: true});
+            }
+        }
+        /*
+        var chunks = []
+        for await (const chunk2 of MiscIpfsFunctions.ipfs.files.read(ipfsPathSource)) {
+            chunks.push(chunk2)
+            console.info("chunk2: "+chunk2)
+            var chunk3 = new TextDecoder("utf-8").decode(chunk2);
+            console.info("chunk3: "+chunk3)
+            try {
+                var chunk4 = JSON.parse(chunk3);
+                if (typeof chunk4 == "object") {
+                    var ipfsPath = "/grapevineData/users/"+peerID+"/userProfile.txt";
+                    await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(chunk3), {create: true, flush: true});
+                    return true
+                } else {
+                    return false
+                }
+            } catch (e) {
+                return false
+            }
+        }
+        */
+    } catch (e) {
+        return false;
+    }
+}
+
 const updateMasterUsersList = async (sMasterUsersList) => {
     // var path = '/grapevineData/users/masterUsersList.txt';
     var ipfsPath = "/grapevineData/users/masterUsersList.txt";
@@ -16,12 +61,14 @@ const updateMasterUsersList = async (sMasterUsersList) => {
     await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sMasterUsersList), {create: true, flush: true});
     await MiscFunctions.timeout(100)
     // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID
+    /*
     var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
     var stats_str = JSON.stringify(stats);
     var thisPeerData_cid = stats.cid.string;
     console.log("thisPeerData_cid: " + thisPeerData_cid)
     var options_publish = { key: 'self' }
     var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+    */
 }
 
 const updateUserContactInfo = async (cid,sUserData) => {
@@ -121,9 +168,6 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
                 // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
                 // img.src = window.URL.createObjectURL(blob)
-
-
-
                 /*
                 // var pathA = "public/grapevine/assets/users/"+peerID;
                 var pathA = "src/assets/grapevine/users/"+peerID;
@@ -165,14 +209,14 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
         }
     } catch (e) {
         console.log("error: "+e)
-        console.log("populateFields: user profile not found")
+        console.log("populateFields: user profile not found for cid: "+cid)
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
         console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
         // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(stockAvatarCid)
         var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
         img.src = "http://localhost:8080/ipfs/"+stockAvatarCid;
         // img.src = window.URL.createObjectURL(blob)
-        return true;
+        return false;
     }
 
 }
@@ -250,30 +294,43 @@ export default class GrapevineContactsMainPage extends React.Component {
         // console.log("sMasterUserList: "+sMasterUserList)
         await updateMasterUsersList(sMasterUserList)
 
-        /*
+
         ////////////////////////////////////////////////////////////////////
         /////////////////// scrape data from other users ///////////////////
+        console.log("a1Users: "+JSON.stringify(a1Users,null,4))
+
         for (var u=0;u<a1Users.length;u++) {
-            var nextPeerID = a1Users[u];
-            // console.log("try fetchUsersFromExternalMFS from nextPeerID: "+nextPeerID)
-            var a4Users = await MiscIpfsFunctions.fetchUsersFromExternalMFS(nextPeerID)
-            // console.log("a4Users: "+JSON.stringify(a4Users,null,4))
+            var nextSourcePeerID = a1Users[u];
+            console.log("try fetchUsersFromExternalMFS; u: "+u+"; from nextSourcePeerID: "+nextSourcePeerID)
+
+            var a4Users = await MiscIpfsFunctions.fetchUsersFromExternalMFS(nextSourcePeerID)
+            console.log("a4Users: "+JSON.stringify(a4Users,null,4))
+
             var grouping = "scraped";
-            for (var u=0;u<a4Users.length;u++) {
-                var nextPeerID = a4Users[u];
+            for (var z=0;z<a4Users.length;z++) {
+                var nextPeerID = a4Users[z];
                 if (!masterUserList.includes(nextPeerID)) {
                     masterUserList.push(nextPeerID)
-                    var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
                     var oUserData = {};
                     oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
                     oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
                     oUserData.cid = nextPeerID;
                     this.state.contactLinks.push(oUserData)
                     this.forceUpdate();
+                    var success = await addPeerToUserList(myPeerID,nextPeerID,grouping)
+                    if (!success) {
+                        console.log("Try to fetch data about "+nextPeerID+" from "+nextSourcePeerID)
+                        await fetchPeerDataFromOtherPeer(nextPeerID,nextSourcePeerID)
+                    }
                 }
             }
         }
-        */
+
+        // add list of all known peerIDs in MFS for others to find
+        var sMasterUserList = JSON.stringify(masterUserList,null,4)
+        // console.log("sMasterUserList: "+sMasterUserList)
+        await updateMasterUsersList(sMasterUserList)
+
 
         jQuery(".contactPageSingleContactContainer").click(function(){
             var cid = jQuery(this).data("cid")
