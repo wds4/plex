@@ -1,3 +1,4 @@
+import * as MiscFunctions from '../../functions/miscFunctions.js'
 import * as MiscIpfsFunctions from './miscIpfsFunctions.js'
 import IpfsHttpClient from 'ipfs-http-client';
 
@@ -6,6 +7,61 @@ export const ipfs = IpfsHttpClient({
     port: "5001",
     protocol: "http"
 });
+
+// returns an array of cids pointing to specific instances of a given a concept and a subset
+export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetUniqueIdentifier) => {
+
+    // During development, convention will be for conceptUniqueIdentifier to be the wordSlug of the concept, e.g.:
+    // conceptUniqueIdentifier = "conceptFor_rating"
+    // and for subsetUniqueIdentifier to be false, which will default to the superset of the concept
+    var aCids = [];
+    var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug;
+    var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+    var mainSchema_ipns = oMainSchema.metaData.ipns;
+
+    var ipfsID = await MiscIpfsFunctions.returnIpfsID();
+
+    // var basePath = "/plex/conceptGraphs/"+mainSchema_ipns+"/concepts/"+conceptUniqueIdentifier+"/superset/allSpecificInstances/"
+    var basePath = "/plex/conceptGraphs/"+mainSchema_ipns+"/concepts/conceptFor_rating/superset/allSpecificInstances/"
+
+    console.log("fetchFromMutableFileSystem; basePath: "+basePath);
+
+    for await (const file of ipfs.files.ls(basePath)) {
+        console.log("fetchFromMutableFileSystem; file.type: "+file.type)
+        if (file.type=="directory") {
+            var pathToNode = "/ipns/"+ipfsID+"/"+basePath + file.name + "/node.txt";
+            const nextNodeCid = await ipfs.resolve(pathToNode);
+            console.log("fetchFromMutableFileSystem nextNodeCid: "+ nextNodeCid);
+            aCids.push(nextNodeCid);
+        }
+    }
+
+    return aCids;
+}
+
+// similar to publishWordToIpfs, except:
+// MFS path to file must be specified
+// the file is any arbitrary string
+export const publishFileToMFS = async (sFile,pathToFile) => {
+    var fileToWrite = sFile
+    var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(pathToFile, fileToWrite_encoded, {create: true, flush: true})
+
+    await MiscFunctions.timeout(100)
+
+    // This step ??? publishes entier MFS so that others can see it
+    // Better: publish only the file I just stored
+    // Also: need to have a check or a field to determine whether this file should be published to public or not
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: 'self' }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+
+    return res;
+}
 
 // input word must contain metaData.keyname
 // it is published to IPFS, which generates a cid

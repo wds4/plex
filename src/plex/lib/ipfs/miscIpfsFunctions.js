@@ -464,6 +464,9 @@ export const initializeMyProfile = async (peerID) => {
 export const initializeIpfsMutableFileSystem = async () => {
     await ipfs.files.mkdir('/grapevineData/userProfileData',{"parents":true});
     await ipfs.files.mkdir('/grapevineData/users',{"parents":true});
+    await ipfs.files.mkdir('/grapevineData/publicRatingsData',{"parents":true});
+    await ipfs.files.mkdir('/grapevineData/publicRatingsData/ratingsByMe',{"parents":true});
+    await ipfs.files.mkdir('/grapevineData/publicRatingsData/ratingsByOthers',{"parents":true});
 
     await ipfs.files.mkdir('/plex/conceptGraphs');
     await ipfs.files.mkdir('/plex/images');

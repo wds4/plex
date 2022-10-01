@@ -172,7 +172,7 @@ export const VisNetwork_PropertyTree = () => {
     );
 };
 
-export function addEdgeWithStyling_visjsfunctions(edges_arr,nextEdge_obj) {
+export const addEdgeWithStyling_visjsfunctions = (edges_arr,nextEdge_obj) => {
     var nextEdge_out_obj = MiscFunctions.cloneObj(nextEdge_obj);
     var relType = nextEdge_out_obj.relationshipType;
     var relationshipStringified = nextEdge_out_obj.relationshipStringified;

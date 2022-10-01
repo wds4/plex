@@ -92,7 +92,10 @@ import GrapevineContactsMainPage from './plex/grapevine/contacts/contactsMainPag
 import GrapevineChatroomMainPage from './plex/grapevine/chatroom/chatroomMainPage.js';
 import GrapevineVisualizationMainPage from './plex/grapevine/visualization/grapevineVisualizationMainPage.js';
 import GrapevineInfluenceAndTrustScoresMainPage from './plex/grapevine/influenceAndTrustScores/influenceAndTrustScoresMainPage.js';
+
 import GrapevineRatingsMainPage from './plex/grapevine/ratings/ratingsMainPage.js';
+import ShowAllRatings from './plex/grapevine/ratings/showAllRatings.js';
+
 import GrapevineScoresMainPage from './plex/grapevine/scores/scoresMainPage.js';
 import GrapevineContextMainPage from './plex/grapevine/context/contextMainPage.js';
 
@@ -358,8 +361,12 @@ ReactDOM.render(
           <Route path="/GrapevineChatroomMainPage" exact component={GrapevineChatroomMainPage} />
           <Route path="/GrapevineVisualizationMainPage" exact component={GrapevineVisualizationMainPage} />
           <Route path="/GrapevineInfluenceAndTrustScoresMainPage" exact component={GrapevineInfluenceAndTrustScoresMainPage} />
+
           <Route path="/GrapevineRatingsMainPage" exact component={GrapevineRatingsMainPage} />
-          <Route path="/GrapevineScoresMainPage" exact component={GrapevineScoresMainPage} />
+          <Route path="/GrapevineRatingsMainPage" exact component={GrapevineRatingsMainPage} />
+
+          <Route path="/ShowAllRatings" exact component={ShowAllRatings} />
+
           <Route path="/GrapevineContextMainPage" exact component={GrapevineContextMainPage} />
 
           <Route path="/SingleUserProfilePage/:cid" exact component={SingleUserProfilePage} />

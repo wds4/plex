@@ -1,7 +1,9 @@
 import React, { useEffect, useRef }  from "react";
 import ReactDOM from 'react-dom';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
+import * as VisjsFunctions from '../../functions/visjsFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
+import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
@@ -309,7 +311,7 @@ const loadImgURL = async (cid, mime, limit) => {
     }
 }
 
-const makeVisGraph_Grapevine = async (userList) => {
+const makeVisGraph_Grapevine = async (userList,aCids) => {
     var nodes_arr = [];
     var nodes_slugs_arr = [];
     var edges_arr = [];
@@ -317,12 +319,13 @@ const makeVisGraph_Grapevine = async (userList) => {
     var nextNode_wordType = "user";
     var nextNode_conceptRole = "user"
     var showNode = true;
+    var listOfPeerIDs = [];
     for (var u=0;u<userList.length;u++) {
         var nextUserPeerID = userList[u];
+        listOfPeerIDs.push(nextUserPeerID)
         var ipfsPath = "/grapevineData/users/"+nextUserPeerID+"/userProfile.txt";
         var nextNode_label = "anon";
         var nextNode_title = nextUserPeerID;
-
 
         // var pathToImage = "~src/assets/grapevine/users/"+nextUserPeerID+"/avatar.png"
         // var pathToImage = "/grapevine/assets/users/12D3KooWDijvW15ZekGqSTFjkTJ8pTq5Hjm1UdJihq9fDMzeM6Cs/avatar.png"
@@ -388,7 +391,30 @@ const makeVisGraph_Grapevine = async (userList) => {
             nodes_arr = MiscFunctions.pushObjIfNotAlreadyThere(nodes_arr,nextNode_vis_obj)
             nodes_slugs_arr = MiscFunctions.pushIfNotAlreadyThere(nodes_slugs_arr,nextNode_slug)
         }
+    }
 
+    for (var r=0;r<aCids.length;r++) {
+        var nextRatingCid = aCids[r];
+        var ipfsPath = nextRatingCid;
+        for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
+            // console.info(chunk)
+            var chunk2 = new TextDecoder("utf-8").decode(chunk);
+            var oRating = JSON.parse(chunk2);
+            var rating_wordSlug = oRating.wordData.slug;
+            console.log("rating_wordSlug: "+rating_wordSlug)
+            var raterPeerID = oRating.ratingData.raterData.userData.peerID;
+            var rateePeerID = oRating.ratingData.rateeData.userData.peerID;
+
+            if ( (listOfPeerIDs.includes(raterPeerID)) && (listOfPeerIDs.includes(rateePeerID)) ) {
+                var nextRel_vis_obj = {
+                    from: raterPeerID,
+                    to: rateePeerID
+                }
+                edges_arr.push(nextRel_vis_obj)
+                // edges_arr = VisjsFunctions.addEdgeWithStyling(edges_arr,nextRel_vis_obj);
+                // console.log("adding edge: nextRel_nF_slug: "+nextRel_nF_slug)
+            }
+        }
     }
 
     nodes = new DataSet(nodes_arr);
@@ -502,7 +528,17 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         */
         var sMasterUserList = JSON.stringify(masterUserList,null,4)
         console.log("sMasterUserList: "+sMasterUserList)
-        await makeVisGraph_Grapevine(masterUserList);
+
+        var conceptUniqueIdentifier = "conceptFor_rating";
+        var subsetUniqueIdentifier = false; // will default to superset
+        var aCids = await ConceptGraphInMfsFunctions.fetchFromMutableFileSystem(conceptUniqueIdentifier,subsetUniqueIdentifier)
+        console.log("aCids: "+JSON.stringify(aCids,null,4))
+
+        var sListOfCidsOfRatingsByMe = JSON.stringify(aCids,null,4);
+        var pathToMyPublishedRatings = "/grapevineData/publicRatingsData/ratingsByMe/ratings.txt";
+        var fooResult = await ConceptGraphInMfsFunctions.publishFileToMFS(sListOfCidsOfRatingsByMe,pathToMyPublishedRatings)
+
+        await makeVisGraph_Grapevine(masterUserList,aCids);
     }
     render() {
         return (
