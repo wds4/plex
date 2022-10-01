@@ -19,6 +19,20 @@ export const ipfs = IpfsHttpClient({
 //
 ////////////////////////////////////////////////////////////////////////////
 
+export const fetchIpnsFromKeynameIfExists = async (keyname) => {
+    // returns ipns if keyname exists; returns false if does not exist
+    var ipns = false;
+    const keys = await ipfs.key.list()
+    for (var k=0;k<keys.length;k++) {
+        var oNext = keys[k];
+        var nextKeyname = oNext.name;
+        if (nextKeyname==keyname) {
+            ipns = oNext.id;
+        }
+    }
+    return ipns;
+}
+
 export const storeAvatarForContact = async (path,imageData) => {
     // try {
         // if (!electronFs.exists(path)) {

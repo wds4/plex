@@ -1,6 +1,7 @@
 import React from "react";
 import * as MiscFunctions from '../../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../../lib/ipfs/miscIpfsFunctions.js'
+import * as ConceptGraphInMfsFunctions from '../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import ReactDOM from 'react-dom';
 import { Link } from "react-router-dom";
 import ConceptGraphMasthead from '../../../../mastheads/conceptGraphMasthead.js';
@@ -10,149 +11,10 @@ import sendAsync from '../../../../renderer.js';
 
 const jQuery = require("jquery");
 
-const populateSuperset = async (path,oConcept) => {
-    var conceptSlug = oConcept.conceptData.slug;
-    var conceptPropertyPath = oConcept.conceptData.propertyPath;
-    var superset_slug = oConcept.conceptData.nodes.superset.slug;
-    var oSuperset = window.lookupWordBySlug[superset_slug];
-    var aAllSubsets = oSuperset.globalDynamicData.subsets;
-    var aDirectSubsets = oSuperset.globalDynamicData.directSubsets;
-    var aAllSpecificInstances = oSuperset.globalDynamicData.specificInstances;
-    var aDirectSpecificInstances = oSuperset.globalDynamicData.directSpecificInstances;
-
-    var nextPath = path + "superset/";
-    try {
-        await MiscIpfsFunctions.ipfs.files.mkdir(nextPath,{"parents":true})
-    } catch (e) {}
-
-    try {
-        var pathToFile = path + "superset/" + "node.txt";
-        var fileToWrite = JSON.stringify(oSuperset,null,4)
-        await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true})
-    } catch (e) {}
-
-    var nextPath = path + "superset/allSpecificInstances/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    var nextPath = path + "superset/directSpecificInstances/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    var nextPath = path + "superset/allSets/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    var nextPath = path + "superset/directSubsets/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    for (var z=0;z<aAllSpecificInstances.length;z++) {
-        var nextSI_wordSlug = aAllSpecificInstances[z];
-        var oNextNode = window.lookupWordBySlug[nextSI_wordSlug];
-        var nextSI_ipns = oNextNode.metaData.ipns;
-        var nextNode_nodeSpecificSlug = oNextNode[conceptPropertyPath].slug;
-
-        var nextPath = path + "superset/allSpecificInstances/" +nextSI_wordSlug + "/";
-        try {
-            var pathToFile = nextPath + "node.txt";
-            var fileToWrite = JSON.stringify(oNextNode,null,4)
-            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
-            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
-        } catch (e) {}
-
-        var nextPath = path + "superset/allSpecificInstances/slug/" +nextSI_wordSlug + "/";
-        try {
-            var pathToFile = nextPath + "node.txt";
-            var fileToWrite = JSON.stringify(oNextNode,null,4)
-            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
-            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
-        } catch (e) {}
-
-        var nextPath = path + "superset/allSpecificInstances/ipns/" +nextSI_ipns + "/";
-        try {
-            var pathToFile = nextPath + "node.txt";
-            var fileToWrite = JSON.stringify(oNextNode,null,4)
-            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
-            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
-        } catch (e) {}
-
-        var nextPath = path + "superset/allSpecificInstances/"+conceptSlug+"/" +nextNode_nodeSpecificSlug + "/";
-        try {
-            var pathToFile = nextPath + "node.txt";
-            var fileToWrite = JSON.stringify(oNextNode,null,4)
-            // console.log("populateSuperset; si: "+z+"; fileToWrite: "+fileToWrite)
-            await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true, parents: true})
-        } catch (e) {}
-
-    }
-}
-
-const populateSets = async (path,superset_slug) => {
-
-    var nextPath = path + "sets/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    var oSuperset = window.lookupWordBySlug[superset_slug];
-    var aAllSubsets = oSuperset.globalDynamicData.subsets;
-
-}
-
-const populateWordType = async (path,wordType_slug) => {
-    var oWordType = window.lookupWordBySlug[wordType_slug];
-
-    var nextPath = path + "wordType/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    try {
-        var pathToFile = nextPath + "node.txt";
-        var fileToWrite = JSON.stringify(oWordType,null,4)
-        await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true})
-    } catch (e) {}
-}
-
-const populateSingleConceptB = async (path,concept_wordSlug) => {
-    var oConcept = window.lookupWordBySlug[concept_wordSlug];
-    var superset_slug = oConcept.conceptData.nodes.superset.slug;
-
-    var wordType_slug = oConcept.conceptData.nodes.wordType.slug;
 
 
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
 
-    var pathToFile = path + "node.txt";
-    var fileToWrite = JSON.stringify(oConcept,null,4)
-    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
 
-    // wordType
-    await populateWordType(path,wordType_slug)
-
-    var nextPath = path + "properties/";
-    try { await MiscIpfsFunctions.ipfs.files.mkdir(nextPath) } catch (e) {}
-
-    // superset
-    await populateSuperset(path,oConcept)
-
-    // sets
-    await populateSets(path,superset_slug)
-}
-
-const populateSingleConcept = async (path,concept_wordSlug) => {
-    console.log("populateSingleConcept; concept_wordSlug: "+concept_wordSlug+"; path: "+path)
-
-    // all the various unique (unique in this context) identifiers to find this concept
-    var oConcept = window.lookupWordBySlug[concept_wordSlug];
-    var conceptSlug = oConcept.conceptData.slug;
-    var conceptIPNS = oConcept.metaData.ipns;
-
-    var nextUniqueIdentifier = concept_wordSlug;
-    var pathNext = path + nextUniqueIdentifier + "/";
-    populateSingleConceptB(pathNext,concept_wordSlug)
-
-    var nextUniqueIdentifier = conceptSlug;
-    var pathNext = path + nextUniqueIdentifier + "/";
-    populateSingleConceptB(pathNext,concept_wordSlug)
-
-    var nextUniqueIdentifier = conceptIPNS;
-    var pathNext = path + nextUniqueIdentifier + "/";
-    populateSingleConceptB(pathNext,concept_wordSlug)
-}
 
 const reportMutableFilesTree = async (pCG0,path) => {
     var pathMinusPrefix = path.replace(pCG0,"./")
@@ -276,7 +138,7 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
             var concept_wordSlug = "conceptFor_user";
             // var path = pCG0+"concepts/"+concept_wordSlug+"/";
             var path = pCG0+"concepts/";
-            await populateSingleConcept(path,concept_wordSlug);
+            await ConceptGraphInMfsFunctions.populateSingleConcept(path,concept_wordSlug);
             /*
             // iterate through each concept
 

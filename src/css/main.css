@@ -116,6 +116,19 @@ div.h4 {
 .doSomethingButton_small:hover {
     background-color:yellow;
 }
+.doSomethingButton_tiny {
+    font-size:9px;
+    display:inline-block;
+    border:1px solid black;
+    border-radius:2px;
+    padding:0px 1px 0px 1px;
+    margin:0px 1px 0px 1px;
+    background-color:#DFDFDF;
+    color:black;
+}
+.doSomethingButton_tiny:hover {
+    background-color:yellow;
+}
 .smallDoSomethingButton {
     display:inline-block;
     border:1px solid black;

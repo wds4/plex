@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { NavLink, Link } from "react-router-dom";
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
+import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import { Button } from "reactstrap";
 import { useDropzone } from "react-dropzone";
 import Masthead from '../../../mastheads/grapevineMasthead.js';
@@ -36,6 +37,7 @@ const populateFields = async (cid) => {
                 jQuery("#usernameContainer").html(username)
                 jQuery("#locationContainer").html(loc)
                 jQuery("#aboutContainer").html(about)
+                jQuery("#imageCidContainer").html(imageCid)
 
                 // var cid1 = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
                 // var cid2 = '/ipfs/QmWQmayHks3Gf5oV3RRVbEV37gm9j3aCxYcgx4SZfdHiRY' // darth vader
@@ -61,6 +63,7 @@ const populateFields = async (cid) => {
         var about = oUserProfile.about;
         var lastUpdated = oUserProfile.lastUpdated;
         var imageCid = oUserProfile.imageCid;
+        jQuery("#imageCidContainer").html(imageCid)
         jQuery("#usernameContainer").html(username)
         jQuery("#locationContainer").html(loc)
         jQuery("#aboutContainer").html(about)
@@ -82,109 +85,6 @@ const populateFields = async (cid) => {
     }
 }
 
-export const addDataToIPFS = async (metadata) => {
-    const ipfsHash = await MiscIpfsFunctions.ipfs.add(metadata);
-    return ipfsHash.cid.toString();
-};
-
-const fetchInfluenceTypes = async (pCG0) => {
-
-    var aResult = [];
-
-    var pathToInfluenceTypes = pCG0 + "concepts/influenceType/superset/allSpecificInstances/slug/"
-    // console.log("fetchInfluenceTypes; pathToInfluenceTypes: "+pathToInfluenceTypes)
-    for await (const file of MiscIpfsFunctions.ipfs.files.ls(pathToInfluenceTypes)) {
-        var fileName = file.name;
-        var fileType = file.type;
-        // console.log("fetchInfluenceTypes; file name: "+file.name)
-        // console.log("fetchInfluenceTypes; file type: "+file.type)
-        if (fileType=="directory") {
-            var pathToSpecificInstance = pathToInfluenceTypes + fileName + "/node.txt";
-            for await (const siFile of MiscIpfsFunctions.ipfs.files.read(pathToSpecificInstance)) {
-                var sNextSpecificInstanceRawFile = new TextDecoder("utf-8").decode(siFile);
-                var oNextSpecificInstanceRawFile = JSON.parse(sNextSpecificInstanceRawFile);
-                var nextInfluenceType_name = oNextSpecificInstanceRawFile.influenceTypeData.name;
-                // console.log("fetchInfluenceTypes; nextInfluenceType_name: "+nextInfluenceType_name)
-                aResult.push(oNextSpecificInstanceRawFile)
-            }
-        }
-    }
-    return aResult;
-}
-
-const makeInfluenceTypeSelector = async () => {
-    var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
-    var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
-    var mainSchema_ipns = oMainSchema.metaData.ipns;
-    var pCG = "/plex/conceptGraphs/";
-    var pCG0 = pCG + mainSchema_ipns + "/";
-
-    var aInfluenceTypes = await fetchInfluenceTypes(pCG0);
-    // console.log("aInfluenceTypes: "+JSON.stringify(aInfluenceTypes,null,4))
-
-    var selectorHTML = "";
-    selectorHTML += "<select id='influenceTypeSelector' >";
-    for (var z=0;z<aInfluenceTypes.length;z++) {
-        var oNextInfluenceType = aInfluenceTypes[z];
-        var nextInfluenceType_name = oNextInfluenceType.influenceTypeData.name;
-        var nextInfluenceType_title = oNextInfluenceType.influenceTypeData.title;
-        var nextInfluenceType_slug = oNextInfluenceType.influenceTypeData.slug;
-        // console.log("oNextInfluenceType: "+JSON.stringify(oNextInfluenceType,null,4))
-        var nextInfluenceType_associatedContextGraph_slug = oNextInfluenceType.influenceTypeData.contextGraph.slug;
-        selectorHTML += "<option ";
-        selectorHTML += " data-contextgraphslug='"+nextInfluenceType_associatedContextGraph_slug+"' ";
-        selectorHTML += " value='"+nextInfluenceType_associatedContextGraph_slug+"' ";
-        selectorHTML += " >";
-        selectorHTML += nextInfluenceType_name;
-        selectorHTML += "</option>";
-    }
-    selectorHTML += "</select>";
-    jQuery("#influenceTypeSelectorContainer").html(selectorHTML)
-    document.getElementById("influenceTypeSelector").value = "contextGraph_attention_8xr5k8";
-    //
-    makeContextSelector()
-    document.getElementById("contextSelector").value = "everything";
-    jQuery("#influenceTypeSelector").change(function(){
-        makeContextSelector()
-    })
-    // var foo = await MiscFunctions.timeout(500);
-    // document.getElementById("influenceTypeSelector").value = "influenceType_attention_8teh9x";
-
-    // jQuery("#influenceTypeSelector").get[0].change()
-}
-
-// set selector defaults:
-// influenceType_attention_8teh9x, contextGraph_attention_8xr5k8
-// contextStructuredData_context_everything_sei24k
-// document.getElementById("influenceTypeSelector").value = "influenceType_attention_8teh9x";
-// document.getElementById("contextSelector").value = "contextStructuredData_context_everything_sei24k";
-
-const makeContextSelector = () => {
-    var selectorHTML = "";
-    selectorHTML += "<select id='contextSelector' >";
-
-    var contextGraph_slug = jQuery("#influenceTypeSelector option:selected").data("contextgraphslug")
-    var oContextGraph = window.lookupWordBySlug[contextGraph_slug]
-    var aContexts = oContextGraph.schemaData.nodes;
-    for (var z=0;z<aContexts.length;z++) {
-        var oNC = aContexts[z];
-        var nextContext_slug = oNC.slug;
-        var oNextContext = window.lookupWordBySlug[nextContext_slug]
-        var nextContext_contextName = oNextContext.contextStructuredData_contextData.name;
-        var nextContext_contextSlug = oNextContext.contextStructuredData_contextData.slug;
-        selectorHTML += "<option ";
-        selectorHTML += " data-contextwordslug='"+nextContext_slug+"' ";
-        selectorHTML += " data-contextslug='"+nextContext_contextSlug+"' ";
-        selectorHTML += " value='"+nextContext_contextSlug+"' ";
-        selectorHTML += " >";
-        selectorHTML += nextContext_contextName;
-        selectorHTML += "</option>";
-    }
-    selectorHTML += "</select>";
-    jQuery("#contextSelectorContainer").html(selectorHTML)
-
-}
-
 export default class SingleUserProfile extends React.Component {
     constructor(props) {
         super(props);
@@ -197,25 +97,48 @@ export default class SingleUserProfile extends React.Component {
         var defaultAvatarNumber = parseInt(cid,10);
         console.log("cid: "+cid+"; defaultAvatarNumber: "+defaultAvatarNumber)
         populateFields(cid);
-        await makeInfluenceTypeSelector();
-        jQuery("#leaveRatingButton").click(function(){
-            console.log("leaveRatingButton clicked")
-        })
-        jQuery("#saveUserToMutableFileSystemConceptGraphButton").click(function(){
+        // await makeInfluenceTypeSelector();
+
+        jQuery("#saveUserToMutableFileSystemConceptGraphButton").click(async function(){
             var oNewWord = MiscFunctions.cloneObj(window.lookupWordTypeTemplate["user"]);
             var username = jQuery("#usernameContainer").html()
+            var currentTime = Date.now();
+            var user_wordSlug = "user_"+username.replaceAll(" ","-")+"_"+cid.slice(cid.length-6);
+            var user_wordName = "plex user: "+username;
+            var user_wordTitle = "Plex User: "+username;
+            var keyname = "plexWord_user_"+cid;
+
+            var newWord_ipns = await MiscIpfsFunctions.fetchIpnsFromKeynameIfExists(keyname)
+
+            if (!newWord_ipns) {
+                var generatedKey_obj = await MiscIpfsFunctions.ipfs.key.gen(keyname, {
+                    type: 'rsa',
+                    size: 2048
+                })
+                var newWord_ipns = generatedKey_obj["id"];
+                var generatedKey_name = generatedKey_obj["name"];
+                console.log("generatedKey_obj id: "+newWord_ipns+"; name: "+generatedKey_name);
+            }
+
             oNewWord.userData.peerID = cid;
             oNewWord.userData.username = username;
-            var wordSlug = "user_"+username+"_"+cid.slice(cid.length-6);
-            oNewWord.wordData.slug = wordSlug;
-            console.log("saveUserToMutableFileSystemConceptGraphButton clicked; oNewWord: "+JSON.stringify(oNewWord,null,4));
+            oNewWord.userData.ipns = newWord_ipns;
+            oNewWord.userData.loc = jQuery("#locationContainer").html();
+            oNewWord.userData.about = jQuery("#aboutContainer").html();
+            oNewWord.userData.imageCid = jQuery("#imageCidContainer").html();;
+            oNewWord.wordData.slug = user_wordSlug;
+            oNewWord.wordData.name = user_wordName;
+            oNewWord.wordData.title = user_wordTitle;
+            oNewWord.metaData.ipns = newWord_ipns;
+            oNewWord.metaData.keyname = keyname;
+            oNewWord.metaData.lastUpdate = currentTime;
 
-            // will need to create a special function: add specific instance to concept
-            var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug;
-            var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
-            var mainSchema_ipns = oMainSchema.metaData.ipns;
-            var pCG = "/plex/conceptGraphs/";
-            var pCG0 = pCG + mainSchema_ipns + "/concepts/users/superset/allSpecificInstances/";
+            await ConceptGraphInMfsFunctions.publishWordToIpfs(oNewWord)
+
+            console.log("saveUserToMutableFileSystemConceptGraphButton clicked; oNewWord: "+JSON.stringify(oNewWord,null,4));
+            var conceptUniqueIdentifier = "conceptFor_user";
+            var subsetUniqueIdentifier = null; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
+            await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewWord)
         })
     }
     render() {
@@ -245,13 +168,20 @@ export default class SingleUserProfile extends React.Component {
                                     </div>
 
                                     <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} >Rate this user (JSON Schema Form)</NavLink>
-                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Rate this user (custom form)</NavLink>
+                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Trust Rating of this user (custom form)</NavLink>
                                     <br/>
                                     <div id="saveUserToMutableFileSystemConceptGraphButton" className="doSomethingButton">save/update user file to Concept Graph on MFS</div>
 
-                                    <div style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
-                                        <div style={{display:"inline-block",fontSize:"14px"}}>ipfs cid: </div>
-                                        <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"14px",marginLeft:"10px",color:"grey"}}></div>
+                                    <div style={{display:"inline-block",fontSize:"10px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
+                                        <div>
+                                            <div style={{display:"inline-block",fontSize:"10px"}}>peerID (cid): </div>
+                                            <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"10px",marginLeft:"10px",color:"grey"}}></div>
+                                        </div>
+
+                                        <div>
+                                            <div style={{display:"inline-block",fontSize:"10px"}}>image cid: </div>
+                                            <div id="imageCidContainer" style={{display:"inline-block",fontSize:"10px",marginLeft:"10px",color:"grey"}}></div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -273,16 +203,7 @@ export default class SingleUserProfile extends React.Component {
                                     </div>
                                 </div>
                                 <div style={{border:"1px dashed grey",width:"1210px",height:"350px",textAlign:"left",overflow:"scroll"}}>
-                                    <div id="leaveRatingButton" className="doSomethingButton" >FOLLOW</div>
-                                    <div id="toggleRatingsOptionsButton" className="doSomethingButton_small" >more options</div>
-                                    <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
-                                        <center>select trust / influence type</center>
-                                        <div id="influenceTypeSelectorContainer" ></div>
-                                    </div>
-                                    <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
-                                        <center>select context</center>
-                                        <div id="contextSelectorContainer" ></div>
-                                    </div>
+
                                 </div>
                             </div>
 

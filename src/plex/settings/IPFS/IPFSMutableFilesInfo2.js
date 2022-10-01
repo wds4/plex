@@ -17,6 +17,12 @@ const reportMutableFilesTree = async (path) => {
         // reportHTML += "<div style='margin-left:50px;' >cid: "+file.cid+"</div>";
         if (file.type=="directory") {
             reportHTML += "<div style='display:inline-block;margin-left:0px;background-color:yellow;' >" + file.name + "</div>";
+            reportHTML += "<div class='doSomethingButton_tiny deleteDirectoryButton' style='background-color:#DFDFFF;' ";
+            reportHTML += " data-filename='"+file.name+"' ";
+            reportHTML += " data-path='"+path+"' ";
+            reportHTML += " >";
+            reportHTML += "delete directory";
+            reportHTML += "</div>";
         }
         if (file.type=="file") {
             var ipfsPath = path + file.name;
@@ -27,8 +33,15 @@ const reportMutableFilesTree = async (path) => {
             reportHTML += "' ";
             reportHTML += " data-filename='"+file.name+"' ";
             reportHTML += " data-path='"+path+"' ";
+            reportHTML += " data-cid='"+file.cid+"' ";
             reportHTML += " >";
             reportHTML += file.name ;
+            reportHTML += "</div>";
+            reportHTML += "<div class='doSomethingButton_tiny deleteFileButton' ";
+            reportHTML += " data-filename='"+file.name+"' ";
+            reportHTML += " data-path='"+path+"' ";
+            reportHTML += " >";
+            reportHTML += "delete file";
             reportHTML += "</div>";
             if ( (path=="/grapevineData/userProfileData/") && (file.name=="myProfile.txt")) {
                 jQuery("#hasGrapevineDataUsersMyProfileTxtBeenEstablishedContainer").html("YES");
@@ -55,9 +68,28 @@ export default class IPFSMutableFilesInfoPage2 extends React.Component {
         var ipfsID = await MiscIpfsFunctions.returnIpfsID();
         await reportMutableFilesTree('/');
         MiscFunctions.timeout(100);
+        jQuery(".deleteFileButton").click(async function(){
+            var fileName = jQuery(this).data("filename")
+            var path = jQuery(this).data("path")
+            // var ipfsPath = "/ipns/" + ipfsID + path + fileName;
+            var ipfsPathToFileToRemove = path + fileName;
+            console.log("deleteFileButton clicked; fileName: "+fileName+"; ipfsPathToFileToRemove: "+ipfsPathToFileToRemove)
+            await MiscIpfsFunctions.ipfs.files.rm(ipfsPathToFileToRemove)
+        });
+        jQuery(".deleteDirectoryButton").click(async function(){
+            var fileName = jQuery(this).data("filename")
+            var path = jQuery(this).data("path")
+            // var ipfsPath = "/ipns/" + ipfsID + path + fileName;
+            var ipfsPathToDirectoryToRemove = path + fileName;
+            console.log("deleteDirectoryButton clicked; fileName: "+fileName+"; ipfsPathToDirectoryToRemove: "+ipfsPathToDirectoryToRemove)
+            await MiscIpfsFunctions.ipfs.files.rm(ipfsPathToDirectoryToRemove, { recursive: true })
+        });
+
         jQuery(".ipfsMutableFilesFileContainer").click(async function(){
             var fileName = jQuery(this).data("filename")
             var path = jQuery(this).data("path")
+            var cid = jQuery(this).data("cid")
+            jQuery("#cidContainer").html(cid)
             var ipfsPath = "/ipns/" + ipfsID + path + fileName;
             var ipfsPathB = path + fileName;
             // console.log("ipfsMutableFilesFileContainer clicked; fileName: "+fileName+"; ipfsPath: "+ipfsPath)
@@ -92,9 +124,14 @@ export default class IPFSMutableFilesInfoPage2 extends React.Component {
                         <div className="h2">IPFS Mutable Files Info Page 2</div>
 
                         <div>
-                            <div id="ipfsMutableFilesListContainer" style={{marginTop:"20px",border:"1px dashed grey",padding:"5px",height:"800px",width:"800px",display:"inline-block",fontSize:"10px",overflow:"scroll"}} ></div>
 
-                            <pre id="selectedFileContentsContainer" style={{marginTop:"20px",border:"1px dashed grey",padding:"5px",height:"800px",width:"600px",display:"inline-block",fontSize:"12px",overflow:"scroll"}} ></pre>
+                            <div id="ipfsMutableFilesListContainer" style={{marginTop:"20px",border:"1px dashed grey",padding:"5px",height:"800px",width:"800px",display:"inline-block",fontSize:"10px",overflow:"scroll"}} ></div>
+                            <div style={{marginTop:"20px",display:"inline-block"}} >
+                                <div>
+                                    cid: <div id="cidContainer" style={{display:"inline-block"}} > </div>
+                                </div>
+                                <pre id="selectedFileContentsContainer" style={{border:"1px dashed grey",padding:"5px",height:"800px",width:"600px",display:"inline-block",fontSize:"12px",overflow:"scroll"}} ></pre>
+                            </div>
                         </div>
                     </div>
                 </fieldset>

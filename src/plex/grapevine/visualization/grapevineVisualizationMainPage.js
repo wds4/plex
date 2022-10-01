@@ -7,7 +7,7 @@ import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
 import * as VisStyleConstants from '../../lib/visjs/visjs-style';
 
-const electronFs = window.require('fs'); 
+const electronFs = window.require('fs');
 
 const jQuery = require("jquery");
 
@@ -476,6 +476,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
             }
         }
 
+        /*
         ////////////////////////////////////////////////////////////////////
         /////////////////// scrape data from other users ///////////////////
         for (var u=0;u<a1Users.length;u++) {
@@ -498,6 +499,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                 }
             }
         }
+        */
         var sMasterUserList = JSON.stringify(masterUserList,null,4)
         console.log("sMasterUserList: "+sMasterUserList)
         await makeVisGraph_Grapevine(masterUserList);

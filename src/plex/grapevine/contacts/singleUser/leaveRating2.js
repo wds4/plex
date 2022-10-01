@@ -3,6 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import ReactDOM from 'react-dom';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
+import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import { Button } from "reactstrap";
 import { useDropzone } from "react-dropzone";
 import Masthead from '../../../mastheads/grapevineMasthead.js';
@@ -59,6 +60,33 @@ const populateFields = async (cid) => {
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
         console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
         MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
+
+        var oUserProfile = await MiscIpfsFunctions.returnUserProfileFromMFS(cid);
+        var username = oUserProfile.username;
+        var peerID = oUserProfile.peerID;
+        var loc = oUserProfile.loc;
+        var about = oUserProfile.about;
+        var lastUpdated = oUserProfile.lastUpdated;
+        var imageCid = oUserProfile.imageCid;
+        // jQuery("#imageCidContainer").html(imageCid)
+        jQuery("#usernameContainer").html(username)
+        // jQuery("#locationContainer").html(loc)
+        // jQuery("#aboutContainer").html(about)
+
+        if (imageCid) {
+            var img = document.getElementById("avatarBox") // the img tag you want it in
+            img.src = "http://localhost:8080/ipfs/"+imageCid;
+        }
+
+        var a2Users = await MiscIpfsFunctions.fetchUsersListViaSwarmAddrs()
+        console.log("a2Users: "+JSON.stringify(a2Users,null,4))
+        if (!a2Users.includes(cid)) {
+            console.log("a2Users does not include "+cid)
+            // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
+            // var img = document.getElementById("avatarBox") // the img tag you want it in
+            // img.src = window.URL.createObjectURL(blob)
+            img.src = "http://localhost:8080/ipfs/"+imageCid;
+        }
     }
 }
 
@@ -82,9 +110,14 @@ const makeKeynameAndIpnsForNewRating = async () => {
 }
 
 const populateRatingRawFile = async (cid) => {
+    var currentTime = Date.now();
+    var rateePeerIdLast6 = cid.slice(cid.length-6);
+    var raterPeerIdLast6 = "unknown";
+    var rateeUsername = jQuery("#usernameContainer").html();
+
     console.log("populateRatingRawFile; cid: "+cid)
     var oRating = MiscFunctions.cloneObj(oFormData)
-    oRating.ratingData.rateeData.userData.name = jQuery("#usernameContainer").html();
+    oRating.ratingData.rateeData.userData.username = rateeUsername
     oRating.ratingData.rateeData.userData.peerID = cid;
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceData.userData.peerID = cid;
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
@@ -99,7 +132,8 @@ const populateRatingRawFile = async (cid) => {
             if (typeof oMyUserData == "object") {
                 var myUsername = oMyUserData.username;
                 var peerID = oMyUserData.peerID;
-                oRating.ratingData.raterData.userData.name = oMyUserData.username;
+                raterPeerIdLast6 = peerID.slice(peerID.length-6);
+                oRating.ratingData.raterData.userData.username = oMyUserData.username;
                 oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceData.userData.name = oMyUserData.username;
             }
         } catch (e) {}
@@ -107,8 +141,8 @@ const populateRatingRawFile = async (cid) => {
 
     var topic_wordSlug = jQuery("#contextSelector option:selected").data("contextwordslug")
     var topic_name = jQuery("#contextSelector option:selected").data("contextname")
-    var topic_ipns = jQuery("#contextSelector option:selected").data("contexttitle")
-    var topic_title = jQuery("#contextSelector option:selected").data("contextipns")
+    var topic_ipns = jQuery("#contextSelector option:selected").data("contextipns")
+    var topic_title = jQuery("#contextSelector option:selected").data("contexttitle")
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicWordSlug = topic_wordSlug
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicName = topic_name
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicIPNS = topic_ipns
@@ -152,11 +186,50 @@ const populateRatingRawFile = async (cid) => {
 
     oRating.metaData.keyname = jQuery("#newRatingKeyname").html()
     oRating.metaData.ipns = jQuery("#newRatingIPNS").html()
+    oRating.metaData.lastUpdate = currentTime;
+
+    var rTT = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
+
+    // Question: whether to overwrite old rating file vs create a new one and "invalidate" the old one
+    // For now: overwrite, so files don't get out of hand if user makes frequent updates
+    // Solution: Make a unique identifier which is a hash that takes inputs:
+    // rateeEntityType (always user, for now)
+    // rater peerID (assumes the rater entity type is a user)
+    // ratee peerID (assumes the ratee entity type is a user)
+    // topic_ipns
+    // influenceType_ipns
+    // contextGraph_ipns
+    // ratingTemplateIPNS (although this would usually be redundant)
+    // Make hash using ipfs.key.gen, using the string as the key (this is a hack - would be better to use simple hash function without adding a new key!)
+    var ratingTemplateIPNS = oRating.ratingData.ratingTemplateData.ratingTemplateIPNS;
+    var stuffToDigest = peerID + cid + topic_ipns + influenceType_ipns + contextGraph_ipns + ratingTemplateIPNS;
+
+    const addResult = await MiscIpfsFunctions.ipfs.add(stuffToDigest)
+    var ratingUniqueIdentifier = addResult.path;
+    // console.log("stuffToDigest: "+stuffToDigest)
+    // console.log("addResult: "+JSON.stringify(addResult,null,4))
+    // var truncatedIdentifier = new TextDecoder("utf-8").decode(addResult)
+    console.log("ratingUniqueIdentifier: "+ratingUniqueIdentifier)
+
+    var rating_wordSlug = "ratingOf_"+rateePeerIdLast6+"_by_"+raterPeerIdLast6+"_"+ratingUniqueIdentifier.slice(-6);
+    var rating_wordName = "rating of "+rateeUsername+" by "+myUsername+" using "+rTT;
+    var rating_wordTitle = "Rating of "+rateeUsername+" by "+myUsername+" using "+rTT;
+    var rating_wordDescription = "rating of "+rateeUsername+" ("+cid+") by "+myUsername+" ("+peerID+") using "+rTT
+    rating_wordDescription += " for purpose of managing: "+influenceType_name+" along the topic of: "+topic_name+". ";
+    rating_wordDescription += "Authored at time "+currentTime+".";
+
+    oRating.wordData.slug = rating_wordSlug;
+    oRating.wordData.name = rating_wordName;
+    oRating.wordData.title = rating_wordTitle;
+    oRating.wordData.description = rating_wordDescription;
+
+    oRating.ratingData.slug = rating_wordSlug;
+    oRating.ratingData.name = rating_wordName;
+    oRating.ratingData.title = rating_wordTitle;
+    oRating.ratingData.description = rating_wordDescription;
 
     jQuery("#newRatingRawFile").val(JSON.stringify(oRating,null,4))
 }
-
-
 
 export default class SingleUserLeaveRating extends React.Component {
     constructor(props) {
@@ -253,9 +326,53 @@ export default class SingleUserLeaveRating extends React.Component {
 
             callPopulateRatingRawFile()
         })
+        jQuery("#standardIgnoreButton").click(function(){
+            // set confidence to 20%
+            cSlider.noUiSlider.set(20);
+            // set trust/influence to attention
+            jQuery("#influenceTypeSelector option[data-influencetypename='attention']").prop("selected",true).change()
+            // set context to everything
+            jQuery("#contextSelector option[data-contextname='everything']").prop("selected",true)
+            // set rating to 100
+            mRSlider.noUiSlider.set(0);
+            // set reference rating to 100
+            rRSlider.noUiSlider.set(100);
+            // set transitivity to true
+            jQuery("#transitivityCheckbox").prop("checked",false)
+
+            callPopulateRatingRawFile()
+        })
+        jQuery("#standardEntrustWithOntologyVCButton").click(function(){
+            // set confidence to 20%
+            cSlider.noUiSlider.set(20);
+            // set trust/influence to attention
+            jQuery("#influenceTypeSelector option[data-influencetypename='ontology']").prop("selected",true).change()
+            // set context to everything
+            jQuery("#contextSelector option[data-contextname='verifiable credential']").prop("selected",true)
+            // set rating to 100
+            mRSlider.noUiSlider.set(100);
+            // set reference rating to 100
+            rRSlider.noUiSlider.set(100);
+            // set transitivity to true
+            jQuery("#transitivityCheckbox").prop("checked",true)
+
+            callPopulateRatingRawFile()
+        })
+        jQuery("#submitThisRatingButton").click(async function(){
+            console.log("submitThisRatingButton clicked")
+            var sNewRating = jQuery("#newRatingRawFile").val()
+            var oNewRating = JSON.parse(sNewRating)
+            await ConceptGraphInMfsFunctions.publishWordToIpfs(oNewRating)
+            var conceptUniqueIdentifier = "conceptFor_rating";
+            var subsetUniqueIdentifier = null; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
+            await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewRating)
+        })
+
         var oGeneratedKey = await makeKeynameAndIpnsForNewRating()
         jQuery("#newRatingKeyname").html(oGeneratedKey["name"])
         jQuery("#newRatingIPNS").html(oGeneratedKey["id"])
+
+        callPopulateRatingRawFile()
     }
     render() {
         var path = "/SingleUserProfilePage/"+this.props.match.params.cid;
@@ -280,6 +397,13 @@ export default class SingleUserLeaveRating extends React.Component {
                         <div>
                             Presets:
                             <div className="rateSomeoneButton" id="standardFollowButton" >Follow</div>
+                            <div className="rateSomeoneButton" id="standardIgnoreButton" >Ignore</div> (similar functionality to legacy social networks)
+                            <br/>
+                            Contextual:
+                            <div className="rateSomeoneButton" id="standardAgreeButton" >Believe statements on topic of: covid</div>
+                            <div className="rateSomeoneButton" id="standardAgreeButton" >Trust advice: covid</div>
+                            <div className="rateSomeoneButton" id="standardEntrustWithFashionButton" >Trust taste in movies</div>
+                            <div className="rateSomeoneButton" id="standardEntrustWithOntologyVCButton" >Entrust to craft Verifiable Credentials</div>
                         </div>
 
                         <div id="ratingsSelectorsContainer" style={{padding:"10px",paddingTop:"30px",width:"600px",height:"800px",border:"1px dashed grey",display:"inline-block"}}>
@@ -315,9 +439,14 @@ export default class SingleUserLeaveRating extends React.Component {
                         </div>
 
                         <div style={{display:"inline-block",fontSize:"10px"}}>
-                            <div id="newRatingKeyname">newRatingKeyname</div>
-                            <div id="newRatingIPNS">newRatingIPNS</div>
-                            <textarea id="newRatingRawFile" style={{width:"700px",height:"800px",display:"inline-block",border:"1px dashed grey"}} >
+                            <div>
+                                <div className="rateSomeoneButton" id="submitThisRatingButton" >Submit this rating</div>
+                                <div style={{display:"inline-block"}}>
+                                    <div id="newRatingKeyname">newRatingKeyname</div>
+                                    <div id="newRatingIPNS">newRatingIPNS</div>
+                                </div>
+                            </div>
+                            <textarea id="newRatingRawFile" style={{width:"700px",height:"800px",display:"inline-block",border:"1px dashed grey",fontSize:"10px"}} >
                             </textarea>
                         </div>
 
