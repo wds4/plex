@@ -26,6 +26,7 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
 
     console.log("fetchFromMutableFileSystem; basePath: "+basePath);
 
+
     for await (const file of ipfs.files.ls(basePath)) {
         console.log("fetchFromMutableFileSystem; file.type: "+file.type)
         if (file.type=="directory") {
@@ -35,7 +36,7 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
             aCids.push(nextNodeCid);
         }
     }
-
+    
     return aCids;
 }
 

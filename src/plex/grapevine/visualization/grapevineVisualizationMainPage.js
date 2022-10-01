@@ -402,13 +402,41 @@ const makeVisGraph_Grapevine = async (userList,aCids) => {
             var oRating = JSON.parse(chunk2);
             var rating_wordSlug = oRating.wordData.slug;
             console.log("rating_wordSlug: "+rating_wordSlug)
+            var width = 5;
+            var color = "green";
+            var title = "title";
+            var label = "label";
             var raterPeerID = oRating.ratingData.raterData.userData.peerID;
             var rateePeerID = oRating.ratingData.rateeData.userData.peerID;
+            var aRatingFieldsetNames = oRating.ratingData.ratingFieldsetData.ratingFieldsetNames;
+            if (aRatingFieldsetNames.includes("trust fieldset")) {
+                var ratingTemplateTitle = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
+                var trustRating = oRating.ratingData.ratingFieldsetData.trustFieldsetData.trustRating;
+                var referenceTrustRating = oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceTrustRating;
+                var transitivity = oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.transitivity;
+                var influenceCategoryName = oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.influenceCategoryData.influenceCategoryName;
+                var topicName = oRating.ratingData.ratingFieldsetData.trustFieldsetData.contextData.topicData.topicName;
+                width = 10 * (trustRating / referenceTrustRating);
+                label = ratingTemplateTitle;
+                title = ratingTemplateTitle;
+                title += "\n";
+                title += "rater: ";
+            }
+            if (aRatingFieldsetNames.includes("confidence fieldset")) {
+                var confidence = oRating.ratingData.ratingFieldsetData.confidenceFieldsetData.confidence
+            }
+            if (aRatingFieldsetNames.includes("comments fieldset")) {
+                var comments = oRating.ratingData.ratingFieldsetData.confidenceFieldsetData.comments
+            }
 
             if ( (listOfPeerIDs.includes(raterPeerID)) && (listOfPeerIDs.includes(rateePeerID)) ) {
                 var nextRel_vis_obj = {
                     from: raterPeerID,
-                    to: rateePeerID
+                    to: rateePeerID,
+                    width: width,
+                    color: color,
+                    title: title,
+                    label: label
                 }
                 edges_arr.push(nextRel_vis_obj)
                 // edges_arr = VisjsFunctions.addEdgeWithStyling(edges_arr,nextRel_vis_obj);
@@ -531,6 +559,8 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
         var conceptUniqueIdentifier = "conceptFor_rating";
         var subsetUniqueIdentifier = false; // will default to superset
+        var aCids = [];
+
         var aCids = await ConceptGraphInMfsFunctions.fetchFromMutableFileSystem(conceptUniqueIdentifier,subsetUniqueIdentifier)
         console.log("aCids: "+JSON.stringify(aCids,null,4))
 

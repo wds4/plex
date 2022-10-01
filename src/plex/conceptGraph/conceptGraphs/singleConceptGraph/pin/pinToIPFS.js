@@ -11,11 +11,6 @@ import sendAsync from '../../../../renderer.js';
 
 const jQuery = require("jquery");
 
-
-
-
-
-
 const reportMutableFilesTree = async (pCG0,path) => {
     var pathMinusPrefix = path.replace(pCG0,"./")
     for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
@@ -135,7 +130,8 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
 
             try { await MiscIpfsFunctions.ipfs.files.mkdir(pCG0+"influenceTypes/") } catch (e) {}
 
-            var concept_wordSlug = "conceptFor_user";
+            // var concept_wordSlug = "conceptFor_user";
+            var concept_wordSlug = "conceptFor_rating";
             // var path = pCG0+"concepts/"+concept_wordSlug+"/";
             var path = pCG0+"concepts/";
             await ConceptGraphInMfsFunctions.populateSingleConcept(path,concept_wordSlug);
