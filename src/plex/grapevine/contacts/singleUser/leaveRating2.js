@@ -10,7 +10,7 @@ import Masthead from '../../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/grapevine_leftNav1';
 import { create, urlSource } from 'ipfs'
 import ContextSelectors from './contextSelectors.js'
-import Nouislider from "nouislider-react";
+// import Nouislider from "nouislider-react";
 import noUiSlider from "nouislider";
 // import "nouislider/distribute/nouislider.css";
 import oFormData from '../../ratings/json/prefilledRatings/trustRatingTemplate.json';

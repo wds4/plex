@@ -5,7 +5,7 @@ import LeftNavbar2 from '../../navbars/leftNavbar2/helloWorld_leftNav2.js';
 import sendAsync from '../../renderer.js'
 import Nouislider from "nouislider-react";
 import nouislider from "nouislider";
-import "nouislider/distribute/nouislider.css";
+import "nouislider/distribute/nouislider.min.css";
 
 const COLORS = ["red", "green", "blue"];
 var colors = [];
@@ -213,8 +213,9 @@ export default class HelloWorldNoUiSlider extends React.Component {
                         <div>
                             <Vertical />
 
-                            <div id="slider-vertical" style={{height:"400px",backgroundColor:"orange"}} >
-
+                            <div style={{marginBottom:"20px"}}>
+                                <div id="slider-vertical" style={{height:"400px",marginBottom:"10px",backgroundColor:"orange"}} ></div>
+                                <div id="sliderVerticalValueContainer" style={{border:"1px solid black",display:"inline-block",padding:"5px"}} >sliderVerticalValueContainer</div>
                             </div>
 
                             <div style={{width:"500px",height:"100px"}} >

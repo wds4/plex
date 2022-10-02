@@ -8,6 +8,8 @@ import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
 import * as VisStyleConstants from '../../lib/visjs/visjs-style';
+import AttenuationSlider from './modules/attenuationSlider.js'
+import ControlPanel from './modules/controlPanel/controlPanel.js'
 
 const electronFs = window.require('fs');
 
@@ -615,6 +617,10 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
                         <center>
                             <div>
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"500px",height:"100px"}}>
+                                    <AttenuationSlider />
+                                </div>
+
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
                                     <center>viewing</center>
                                     <select>
@@ -638,13 +644,19 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
                         <center>
                             <div>
-                                <div id="grapevineContainerElem" style={{border:"1px dashed grey",display:"inline-block",width:"1000px",height:"700px"}}>
+                                <div id="grapevineContainerElem" style={{border:"1px dashed grey",display:"inline-block",width:"900px",height:"700px"}}>
 
                                 </div>
 
-                                <div style={{border:"1px dashed grey",display:"inline-block",width:"500px",height:"700px"}}>
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"700px",height:"700px"}}>
                                     <center>Control Panel</center>
-                                    <canvas id='c2'/>
+                                    <ControlPanel />
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{border:"1px dashed grey",display:"inline-block",width:"1600px"}}>
+                                    <center>Show Calculations</center>
                                 </div>
                             </div>
                         </center>
