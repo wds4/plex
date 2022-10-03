@@ -1,6 +1,6 @@
 import React from 'react';
 import Masthead from '../mastheads/cGroupsMasthead.js';
-import LeftNavbar1 from '../navbars/leftNavbar1/plex_leftNav1';
+import LeftNavbar1 from '../navbars/leftNavbar1/cGroups_leftNav1';
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
 const jQuery = require("jquery");
