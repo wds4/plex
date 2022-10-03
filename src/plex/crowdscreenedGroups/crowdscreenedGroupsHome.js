@@ -1,5 +1,5 @@
 import React from 'react';
-import Masthead from '../mastheads/plexMasthead.js';
+import Masthead from '../mastheads/cGroupsMasthead.js';
 import LeftNavbar1 from '../navbars/leftNavbar1/plex_leftNav1';
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
