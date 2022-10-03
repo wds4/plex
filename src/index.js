@@ -81,6 +81,7 @@ import ConceptGraphFrontEndHome from './plex/conceptGraphFrontEnd/conceptGraphHo
 
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
+import CrowdscreenedGroupsHome from './plex/crowdscreenedGroups/crowdscreenedGroupsHome.js';
 import DecentralizedRedditHome from './plex/dReddit/dRedditHome.js';
 import DecentralizedOntologiesHome from './plex/dOntologies/dOntologiesHome.js';
 import DecentralizedQuestionsAndAnswersHome from './plex/askPlex/dQuestionsAndAnswersHome.js';
@@ -355,6 +356,7 @@ ReactDOM.render(
           <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 
           <Route path="/DecentralizedProofOfPersonhoodHome" exact component={DecentralizedProofOfPersonhoodHome} />
+          <Route path="/CrowdscreenedGroupsHome" exact component={CrowdscreenedGroupsHome} />
 
           <Route path="/GrapevineHome" exact component={GrapevineHome} />
           <Route path="/GrapevineContactsMainPage" exact component={GrapevineContactsMainPage} />

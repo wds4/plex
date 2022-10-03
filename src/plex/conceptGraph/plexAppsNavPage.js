@@ -42,8 +42,8 @@ export default class PlexAppsNavPage extends React.Component {
 
                                 <br/>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedProofOfPersonhoodHome'>
-                                    <center>decentralized Proof of Personhood</center>
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/CrowdscreenedGroupsHome'>
+                                    <center>Crowdscreened Groups</center>
                                 </NavLink>
 
                                 <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedQuestionsAndAnswersHome'>
@@ -64,6 +64,10 @@ export default class PlexAppsNavPage extends React.Component {
 
                                 <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/EBooksHome'>
                                     <center>eBooks</center>
+                                </NavLink>
+
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedProofOfPersonhoodHome'>
+                                    <center>decentralized Proof of Personhood</center>
                                 </NavLink>
 
                             </div>
