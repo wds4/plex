@@ -4,6 +4,7 @@ import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/singleConceptGraph_leftNav2.js';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import sendAsync from '../../renderer.js';
 
 const jQuery = require("jquery");
@@ -60,7 +61,8 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
                     var options_publish = { key: conceptGraphKeyname }
                     var myPeerID = jQuery("#myCidMastheadContainer").html()
                     oMainSchemaRawFile.metaData.stewardPeerID = myPeerID;
-                    // var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+                    var result = await ConceptGraphInMfsFunctions.publishWordToIpfs()
+                    console.log("SingleConceptGraphDetailedInfo-- publishing word to ipfs; result: "+JSON.stringify(result,null,4))
                 }
             }
             console.log("SingleConceptGraphDetailedInfo-- foundMatch: "+foundMatch);
