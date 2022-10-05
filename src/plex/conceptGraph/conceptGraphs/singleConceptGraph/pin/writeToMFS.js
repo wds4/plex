@@ -56,14 +56,22 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
         jQuery("#numConceptsTotalContainer").html(aConcepts.length);
 
         jQuery("#publishAllWordsButton").click(async function(){
+            var aCurrentTimes = []
+            var currentTime = 0;
+            var elapsedTime = 0;
             console.log("publishAllWordsButton clicked")
-            for (var w=8;w<9;w++) {
+            for (var w=0;w<5;w++) {
+                currentTime = Date.now();
+                aCurrentTimes[w] = currentTime;
+
                 var nextSlug = aWords[w];
                 var oNextWord = window.lookupWordBySlug[nextSlug];
-                console.log("w = "+w+"; nextSlug: "+nextSlug)
-                console.log("oNextWord: "+JSON.stringify(oNextWord,null,4))
+                // console.log("oNextWord: "+JSON.stringify(oNextWord,null,4))
                 var oNextWordUpdated = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oNextWord);
-                console.log("oNextWordUpdated: "+JSON.stringify(oNextWordUpdated,null,4))
+                elapsedTime = currentTime - aCurrentTimes[0];
+                elapsedTime = Math.floor(elapsedTime/1000);
+                console.log("w = "+w+"; nextSlug: "+nextSlug+"; elapsedTime: "+elapsedTime+" seconds")
+                // console.log("oNextWordUpdated: "+JSON.stringify(oNextWordUpdated,null,4))
             }
         })
         jQuery("#updateAllSchemasButton").click(async function(){
