@@ -133,8 +133,14 @@ export const publishFileToMFS = async (sFile,pathToFile) => {
 export const publishWordToIpfs = async (oWord) => {
     var fileToWrite = JSON.stringify(oWord,null,4)
     var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
+    /*
+    // I'm not sure how the path is applied 
     var oFile = {
         path: "/tmpp/",
+        content: fileToWrite
+    }
+    */
+    var oFile = {
         content: fileToWrite
     }
     const addResult = await MiscIpfsFunctions.ipfs.add(oFile)
