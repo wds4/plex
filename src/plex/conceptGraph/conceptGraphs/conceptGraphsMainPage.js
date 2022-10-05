@@ -4,6 +4,7 @@ import ConceptGraphMasthead from '../../mastheads/conceptGraphMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/conceptGraphs_leftNav2.js';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
+import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js';
 import sendAsync from '../../renderer.js';
 
 const jQuery = require("jquery");
@@ -41,7 +42,7 @@ export default class ConceptGraphsMainPage extends React.Component {
             conceptGraphLinks: []
         }
     }
-    componentDidMount() {
+    async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
         var sql = " SELECT * FROM "+conceptGraphsTableName;

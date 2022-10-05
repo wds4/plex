@@ -3,6 +3,7 @@ import ConceptGraphMasthead from '../../mastheads/conceptGraphMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/singleConceptGraph_leftNav2.js';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
+import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js';
 import sendAsync from '../../renderer.js';
 
 const jQuery = require("jquery");
@@ -111,7 +112,7 @@ const populateDataFromWindowLookupRawFile = () => {
         var oWord = oRFL[slug];
         var aWordTypes = oWord.wordData.wordTypes;
         if (jQuery.inArray("property",aWordTypes) > -1) {
-            console.log("slug: "+slug)
+            // console.log("slug: "+slug)
             var nextWordHTML = "";
             nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
             nextWordHTML += " data-slug='"+slug+"' ";
@@ -128,7 +129,7 @@ const populateDataFromWindowLookupRawFile = () => {
             }
         }
         if (jQuery.inArray("wordType",aWordTypes) > -1) {
-            console.log("slug: "+slug)
+            // console.log("slug: "+slug)
             var nextWordHTML = "";
             nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
             nextWordHTML += " data-slug='"+slug+"' ";
@@ -139,7 +140,7 @@ const populateDataFromWindowLookupRawFile = () => {
             jQuery("#wordTypesListContainer").append(nextWordHTML)
         }
         if (jQuery.inArray("set",aWordTypes) > -1) {
-            console.log("slug: "+slug)
+            // console.log("slug: "+slug)
             var nextWordHTML = "";
             nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
             nextWordHTML += " data-slug='"+slug+"' ";
@@ -150,7 +151,7 @@ const populateDataFromWindowLookupRawFile = () => {
             jQuery("#setsListContainer").append(nextWordHTML)
         }
         if (jQuery.inArray("superset",aWordTypes) > -1) {
-            console.log("slug: "+slug)
+            // console.log("slug: "+slug)
             var nextWordHTML = "";
             nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
             nextWordHTML += " data-slug='"+slug+"' ";
@@ -161,7 +162,7 @@ const populateDataFromWindowLookupRawFile = () => {
             jQuery("#supersetsListContainer").append(nextWordHTML)
         }
         if (jQuery.inArray("JSONSchema",aWordTypes) > -1) {
-            console.log("slug: "+slug)
+            // console.log("slug: "+slug)
             var nextWordHTML = "";
             nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
             nextWordHTML += " data-slug='"+slug+"' ";
@@ -175,7 +176,7 @@ const populateDataFromWindowLookupRawFile = () => {
     // })
     jQuery(".singleWordWrapper2").click(function(){
         var clickedSlug = jQuery(this).data("slug");
-        console.log("singleWordWrapper2; clickedSlug: "+clickedSlug)
+        // console.log("singleWordWrapper2; clickedSlug: "+clickedSlug)
         var oClickedWord = window.lookupWordBySlug[clickedSlug];
         var sClickedWord = JSON.stringify(oClickedWord,null,4)
         jQuery("#rightColumnTextarea").val(sClickedWord);
@@ -194,7 +195,7 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
             conceptGraphMainSchemaSlug: null
         }
     }
-    componentDidMount() {
+    async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
         var conceptGraphSqlID = this.props.match.params.conceptgraphsqlid
@@ -207,6 +208,34 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         var conceptGraphTableName = window.aLookupConceptGraphInfoBySqlID[conceptGraphSqlID].tableName
         var conceptGraphMainSchemaSlug = window.aLookupConceptGraphInfoBySqlID[conceptGraphSqlID].mainSchema_slug;
         var conceptGraphTableNamePath = "/SQLViewSingleTablePage/"+conceptGraphTableName;
+
+        var oConceptGraphMainSchema = window.lookupWordBySlug[conceptGraphMainSchemaSlug];
+        var conceptGraphIPNS = oConceptGraphMainSchema.metaData.ipns;
+        var conceptGraphKeyname = oConceptGraphMainSchema.metaData.keyname;
+
+        var aKeys = await MiscIpfsFunctions.ipfs.key.list()
+        console.log("SingleConceptGraphDetailedInfo; numKeys: "+aKeys.length)
+        for (var k=0;k<aKeys.length;k++) {
+            var oNext = aKeys[k];
+            var name = oNext.name;
+            if (name==conceptGraphKeyname) {
+                console.log("SingleConceptGraphDetailedInfo match: oNext: "+JSON.stringify(oNext,null,4))
+            }
+        }
+        /*
+        var oGeneratedKey = await MiscIpfsFunctions.ipfs.key.gen(conceptGraphKeyname, {
+            type: 'rsa',
+            size: 2048
+        })
+        var newWord_ipns = oGeneratedKey["id"];
+        var generatedKey_name = oGeneratedKey["name"];
+        if (newWord_ipns==conceptGraphIPNS) {
+            console.log("SingleConceptGraphDetailedInfo: IPNS match")
+        }
+        if (generatedKey_name==conceptGraphKeyname) {
+            console.log("SingleConceptGraphDetailedInfo: keyname match")
+        }
+        */
 
         this.setState({
             conceptGraphSqlID: conceptGraphSqlID,
