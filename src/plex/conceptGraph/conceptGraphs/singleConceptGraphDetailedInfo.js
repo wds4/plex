@@ -128,7 +128,7 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
     })
 }
 
-const populateDataFromWindowLookupRawFile = () => {
+const populateDataFromWindowLookupRawFile = async () => {
     var oRFL = MiscFunctions.cloneObj(window.lookupWordBySlug)
     var aSlugs = [];
     jQuery.each(oRFL, function(slug,oWord){
@@ -213,6 +213,10 @@ const populateDataFromWindowLookupRawFile = () => {
     });
 }
 
+const updateConceptGraphSchemaData = async (oConceptGraph) => {
+    console.log("updateConceptGraphSchemaData")
+}
+
 export default class SingleConceptGraphDetailedInfo extends React.Component {
     constructor(props) {
         super(props);
@@ -243,6 +247,14 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
             conceptGraphTableNamePath: conceptGraphTableNamePath,
             conceptGraphMainSchemaSlug: conceptGraphMainSchemaSlug
         })
+
+        var oConceptGraph = window.lookupWordBySlug[conceptGraphMainSchemaSlug];
+
+        var amISteward = await ConceptGraphInMfsFunctions.checkWordWhetherIAmSteward(oConceptGraph)
+
+        if (amISteward) {
+            await updateConceptGraphSchemaData(oConceptGraph)
+        }
 
         populateDataFromWindowLookupRawFile();
 

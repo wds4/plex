@@ -134,7 +134,7 @@ export const publishWordToIpfs = async (oWord) => {
     var fileToWrite = JSON.stringify(oWord,null,4)
     var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
     /*
-    // I'm not sure how the path is applied 
+    // I'm not sure how the path is applied
     var oFile = {
         path: "/tmpp/",
         content: fileToWrite
@@ -152,6 +152,27 @@ export const publishWordToIpfs = async (oWord) => {
     return oWord;
 }
 
+// determine whether I am the steward of this word per metaData; same method as republishWordIfSteward
+export const checkWordWhetherIAmSteward = async (oWord) => {
+    var wordIPNS = oWord.metaData.ipns;
+    var wordKeyname = oWord.metaData.keyname;
+
+    var aKeys = await MiscIpfsFunctions.ipfs.key.list()
+    console.log("checkWordWhetherIAmSteward-- numKeys: "+aKeys.length)
+    var foundMatch = false;
+    for (var k=0;k<aKeys.length;k++) {
+        var oNext = aKeys[k];
+        var name = oNext.name;
+        var ipfs = oNext.id;
+        if ((name==wordKeyname) && (ipfs==wordIPNS)) {
+            console.log("checkWordWhetherIAmSteward-- match: oNext: "+JSON.stringify(oNext,null,4))
+            foundMatch = true;
+        }
+    }
+    console.log("checkWordWhetherIAmSteward-- foundMatch: "+foundMatch);
+    return foundMatch;
+}
+
 // This function tests whether metaData.keyname and metaData.ipns are a match. If yes, it means I am the steward of this word
 // and publishWordToIpfs, which updates the file on ipfs, which means other users can access the updated file using the ipns
 // (Alternatively, could check whether metaData.stewardPeerID matches my peerID; but I will probably use this function to set that field)
@@ -160,7 +181,7 @@ export const republishWordIfSteward = async (oWord) => {
     var wordKeyname = oWord.metaData.keyname;
 
     var aKeys = await MiscIpfsFunctions.ipfs.key.list()
-    console.log("SingleConceptGraphDetailedInfo-- numKeys: "+aKeys.length)
+    console.log("republishWordIfSteward-- numKeys: "+aKeys.length)
     var foundMatch = false;
     for (var k=0;k<aKeys.length;k++) {
         var oNext = aKeys[k];
