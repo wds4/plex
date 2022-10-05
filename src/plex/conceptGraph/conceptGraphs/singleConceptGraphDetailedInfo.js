@@ -214,14 +214,17 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         var conceptGraphKeyname = oConceptGraphMainSchema.metaData.keyname;
 
         var aKeys = await MiscIpfsFunctions.ipfs.key.list()
-        console.log("SingleConceptGraphDetailedInfo; numKeys: "+aKeys.length)
+        console.log("SingleConceptGraphDetailedInfo-- numKeys: "+aKeys.length)
+        var foundMatch = false;
         for (var k=0;k<aKeys.length;k++) {
             var oNext = aKeys[k];
             var name = oNext.name;
             if (name==conceptGraphKeyname) {
-                console.log("SingleConceptGraphDetailedInfo match: oNext: "+JSON.stringify(oNext,null,4))
+                console.log("SingleConceptGraphDetailedInfo-- match: oNext: "+JSON.stringify(oNext,null,4))
+                foundMatch = true;
             }
         }
+        console.log("SingleConceptGraphDetailedInfo-- foundMatch: "+foundMatch);
         /*
         var oGeneratedKey = await MiscIpfsFunctions.ipfs.key.gen(conceptGraphKeyname, {
             type: 'rsa',
