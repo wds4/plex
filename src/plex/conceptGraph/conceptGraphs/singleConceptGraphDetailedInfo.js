@@ -253,10 +253,10 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         setTimeout( async function(){
             populateConceptGraphFields_from_thisConceptGraphTable(conceptGraphTableName,conceptGraphMainSchemaSlug);
         },2000);
-        jQuery("#updateConceptGraphButton").click(function(){
+        jQuery("#updateConceptGraphButton").click(async function(){
             var sWord = jQuery("#rightColumnTextarea").val();
             var oWord = JSON.parse(sWord);
-            oWord = ConceptGraphInMfsFunctions.republishWordIfSteward(oWord)
+            oWord = await ConceptGraphInMfsFunctions.republishWordIfSteward(oWord)
             MiscFunctions.createOrUpdateWordInAllTables(oWord);
         })
         jQuery(".showButton").click(function(){
