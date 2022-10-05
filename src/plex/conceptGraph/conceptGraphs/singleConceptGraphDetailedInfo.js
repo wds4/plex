@@ -33,13 +33,43 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
     var sql = " SELECT * FROM "+conceptGraphTableName+" WHERE slug='"+cgMainSchemaSlug+"' ";
     console.log("sql: "+sql)
 
-    sendAsync(sql).then((result) => {
+    sendAsync(sql).then( async (result) => {
         var numResults = result.length;
         if (numResults==1) {
             var oMainSchemaData = result[0];
             var sMainSchemaRawFile = oMainSchemaData.rawFile;
 
             var oMainSchemaRawFile = JSON.parse(sMainSchemaRawFile)
+
+
+
+
+            var conceptGraphIPNS = oMainSchemaRawFile.metaData.ipns;
+            var conceptGraphKeyname = oMainSchemaRawFile.metaData.keyname;
+
+            var aKeys = await MiscIpfsFunctions.ipfs.key.list()
+            console.log("SingleConceptGraphDetailedInfo-- numKeys: "+aKeys.length)
+            var foundMatch = false;
+            for (var k=0;k<aKeys.length;k++) {
+                var oNext = aKeys[k];
+                var name = oNext.name;
+                var ipfs = oNext.id;
+                if ((name==conceptGraphKeyname) && (ipfs==conceptGraphIPNS)) {
+                    console.log("SingleConceptGraphDetailedInfo-- match: oNext: "+JSON.stringify(oNext,null,4))
+                    foundMatch = true;
+                    var options_publish = { key: conceptGraphKeyname }
+                    var myPeerID = jQuery("#myCidMastheadContainer").html()
+                    oMainSchemaRawFile.metaData.stewardPeerID = myPeerID;
+                    // var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+                }
+            }
+            console.log("SingleConceptGraphDetailedInfo-- foundMatch: "+foundMatch);
+
+
+
+
+
+
             var conceptGraphMainSchemaTitle = oMainSchemaRawFile.wordData.title;
             var conceptGraphMainSchemaName = oMainSchemaRawFile.wordData.name;
             var conceptGraphMainSchemaSlug = oMainSchemaRawFile.wordData.name;
@@ -208,37 +238,6 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         var conceptGraphTableName = window.aLookupConceptGraphInfoBySqlID[conceptGraphSqlID].tableName
         var conceptGraphMainSchemaSlug = window.aLookupConceptGraphInfoBySqlID[conceptGraphSqlID].mainSchema_slug;
         var conceptGraphTableNamePath = "/SQLViewSingleTablePage/"+conceptGraphTableName;
-
-        var oConceptGraphMainSchema = window.lookupWordBySlug[conceptGraphMainSchemaSlug];
-        var conceptGraphIPNS = oConceptGraphMainSchema.metaData.ipns;
-        var conceptGraphKeyname = oConceptGraphMainSchema.metaData.keyname;
-
-        var aKeys = await MiscIpfsFunctions.ipfs.key.list()
-        console.log("SingleConceptGraphDetailedInfo-- numKeys: "+aKeys.length)
-        var foundMatch = false;
-        for (var k=0;k<aKeys.length;k++) {
-            var oNext = aKeys[k];
-            var name = oNext.name;
-            if (name==conceptGraphKeyname) {
-                console.log("SingleConceptGraphDetailedInfo-- match: oNext: "+JSON.stringify(oNext,null,4))
-                foundMatch = true;
-            }
-        }
-        console.log("SingleConceptGraphDetailedInfo-- foundMatch: "+foundMatch);
-        /*
-        var oGeneratedKey = await MiscIpfsFunctions.ipfs.key.gen(conceptGraphKeyname, {
-            type: 'rsa',
-            size: 2048
-        })
-        var newWord_ipns = oGeneratedKey["id"];
-        var generatedKey_name = oGeneratedKey["name"];
-        if (newWord_ipns==conceptGraphIPNS) {
-            console.log("SingleConceptGraphDetailedInfo: IPNS match")
-        }
-        if (generatedKey_name==conceptGraphKeyname) {
-            console.log("SingleConceptGraphDetailedInfo: keyname match")
-        }
-        */
 
         this.setState({
             conceptGraphSqlID: conceptGraphSqlID,
