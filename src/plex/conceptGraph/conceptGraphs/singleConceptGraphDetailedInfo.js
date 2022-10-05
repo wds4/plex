@@ -60,7 +60,11 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
                     foundMatch = true;
                     var options_publish = { key: conceptGraphKeyname }
                     var myPeerID = jQuery("#myCidMastheadContainer").html()
+                    var myUsername = jQuery("#myUsernameMastheadContainer").html()
+                    var currentTime = Date.now();
                     oMainSchemaRawFile.metaData.stewardPeerID = myPeerID;
+                    oMainSchemaRawFile.metaData.stewardUsername = myUsername;
+                    oMainSchemaRawFile.metaData.lastUpdate = currentTime;
                     var result = await ConceptGraphInMfsFunctions.publishWordToIpfs(oMainSchemaRawFile)
                     console.log("SingleConceptGraphDetailedInfo-- publishing word to ipfs; result: "+JSON.stringify(result,null,4))
                 }
@@ -119,7 +123,7 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
                 });
             }
 
-            jQuery("#rightColumnTextarea").val(sMainSchemaRawFile);
+            jQuery("#rightColumnTextarea").val(JSON.stringify(oMainSchemaRawFile,null,4));
             jQuery("#currConceptGraphMainSchemaSlugField").html(conceptGraphMainSchemaSlug);
             jQuery("#currConceptGraphMainSchemaTitleField").val(conceptGraphMainSchemaTitle);
             jQuery("#currConceptGraphMainSchemaNameField").val(conceptGraphMainSchemaName);

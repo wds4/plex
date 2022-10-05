@@ -48,7 +48,6 @@ export const addConceptGraphSeedToMFS = async (oMainSchema) => {
     oMainSchema.metaData.prevSource.ipns = oldIpns;
     oMainSchema.metaData.prevSource.keyname = oldKeyname;
     // var randomNonce = Math.floor(Math.random() * 1000);
-    var currentTime = Date.now();
 
     var currentTime = Date.now();
     var newKeyname = "plexWord_mainSchemaForConceptGraph_"+currentTime;
