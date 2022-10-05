@@ -36,8 +36,70 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
             aCids.push(nextNodeCid);
         }
     }
-    
+
     return aCids;
+}
+
+export const addConceptGraphSeedToMFS = async (oMainSchema) => {
+    var oldKeyname = oMainSchema.metaData.keyname;
+    var oldIpns = oMainSchema.metaData.ipns;
+    oMainSchema.metaData.prevSource = {};
+    oMainSchema.metaData.prevSource.peerID = null;
+    oMainSchema.metaData.prevSource.ipns = oldIpns;
+    oMainSchema.metaData.prevSource.keyname = oldKeyname;
+    // var randomNonce = Math.floor(Math.random() * 1000);
+    var currentTime = Date.now();
+
+    var currentTime = Date.now();
+    var newKeyname = "plexWord_mainSchemaForConceptGraph_"+currentTime;
+    var generatedKey_obj = await MiscIpfsFunctions.ipfs.key.gen(newKeyname, {
+        type: 'rsa',
+        size: 2048
+    })
+    var newWord_ipns = generatedKey_obj["id"];
+    var generatedKey_name = generatedKey_obj["name"];
+    oMainSchema.metaData.ipns = newWord_ipns;
+    oMainSchema.metaData.keyname = newKeyname;
+
+    var path1 = "/plex/conceptGraphs/mainSchemaForConceptGraph/";
+    await MiscIpfsFunctions.ipfs.files.mkdir(path1,{parents:true});
+    var sMainSchema = JSON.stringify(oMainSchema,null,4)
+    var path2 = "/plex/conceptGraphs/mainSchemaForConceptGraph/node.txt";
+    var fileToWrite_encoded = new TextEncoder().encode(sMainSchema)
+
+    try { await MiscIpfsFunctions.ipfs.files.rm(path2) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(path2, fileToWrite_encoded, {create: true, flush: true})
+
+    // var oStat = await MiscIpfsFunctions.ipfs.files.stat(path2)
+    // var newCid = oStat.cid.toV1().toString('base16')
+    // console.log("oStat: "+JSON.stringify(oStat,null,4))
+    // console.log("addConceptGraphSeedToMFS cid: "+oStat.cid.toV1().toString('base16'))
+
+    // var options_publish = { key: newKeyname }
+    // var res = await MiscIpfsFunctions.ipfs.name.publish(path2, options_publish)
+
+    var stats = await MiscIpfsFunctions.ipfs.files.stat(path2);
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: newKeyname }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+
+    return newWord_ipns
+}
+export const addConceptGraphSeedToMFS_old = async (oMainSchema) => {
+    var path1 = "/plex/conceptGraphs/mainSchemaForConceptGraph/";
+    await MiscIpfsFunctions.ipfs.files.mkdir(path1,{parents:true});
+    var sMainSchema = JSON.stringify(oMainSchema,null,4)
+    var path2 = "/plex/conceptGraphs/mainSchemaForConceptGraph/node.txt";
+    var fileToWrite_encoded = new TextEncoder().encode(sMainSchema)
+
+    try { await MiscIpfsFunctions.ipfs.files.rm(path2) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(path2, fileToWrite_encoded, {create: true, flush: true})
+
+    var oStat = await MiscIpfsFunctions.ipfs.files.stat(path2)
+    // console.log("oStat: "+JSON.stringify(oStat,null,4))
+    console.log("addConceptGraphSeedToMFS cid: "+oStat.cid.toV1().toString('base16'))
 }
 
 // similar to publishWordToIpfs, except:

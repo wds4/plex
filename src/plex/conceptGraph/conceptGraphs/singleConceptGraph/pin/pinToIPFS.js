@@ -173,7 +173,7 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                     <LeftNavbar2 />
                     <div className="mainPanel" >
                         <ConceptGraphMasthead />
-                        <div class="h2">Push this Concept Graph to the IPFS Mutable File System</div>
+                        <div class="h2">Push this Concept Graph to the IPFS Mutable File System (deprecating)</div>
 
                         <div style={{border:"1px dashed grey",padding:"5px"}} >
                             <div>

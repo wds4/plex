@@ -6,7 +6,7 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
     return (
       <>
         <div className="leftNav2Panel_NeuroCore" >
-            <center>Concepts</center>
+            <center>Concepts in the MFS</center>
             <br/>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ConceptsMainPage'>Concepts</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_TableOfConcepts'>Table of Concepts</NavLink>

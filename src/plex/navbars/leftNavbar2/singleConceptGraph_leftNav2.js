@@ -30,6 +30,7 @@ export default class LeftNavbar2_SingleConceptGraph extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptGraphImport/current'>Import via Compact Files</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptGraphTemplating/current'>Templating</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptGraphDataModeling/current'>Data Modeling</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptGraphWriteToMFS'>Write to MFS</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SingleConceptGraphPinToIPFS'>Pin to IPFS</NavLink>
 
             <br/><br/>
