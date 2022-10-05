@@ -2,6 +2,8 @@ import * as MiscFunctions from '../../functions/miscFunctions.js'
 import * as MiscIpfsFunctions from './miscIpfsFunctions.js'
 import IpfsHttpClient from 'ipfs-http-client';
 
+const jQuery = require("jquery");
+
 export const ipfs = IpfsHttpClient({
     host: "localhost",
     port: "5001",
@@ -141,7 +143,40 @@ export const publishWordToIpfs = async (oWord) => {
     var recordedKeyname = oWord.metaData.keyname
     var options_publish = { key: recordedKeyname }
     var res = await MiscIpfsFunctions.ipfs.name.publish(newCid, options_publish)
-    return res;
+    return oWord;
+}
+
+// This function tests whether metaData.keyname and metaData.ipns are a match. If yes, it means I am the steward of this word
+// and publishWordToIpfs, which updates the file on ipfs, which means other users can access the updated file using the ipns
+// (Alternatively, could check whether metaData.stewardPeerID matches my peerID; but I will probably use this function to set that field)
+export const republishWordIfSteward = async (oWord) => {
+    var wordIPNS = oWord.metaData.ipns;
+    var wordKeyname = oWord.metaData.keyname;
+
+    var aKeys = await MiscIpfsFunctions.ipfs.key.list()
+    console.log("SingleConceptGraphDetailedInfo-- numKeys: "+aKeys.length)
+    var foundMatch = false;
+    for (var k=0;k<aKeys.length;k++) {
+        var oNext = aKeys[k];
+        var name = oNext.name;
+        var ipfs = oNext.id;
+        if ((name==wordKeyname) && (ipfs==wordIPNS)) {
+            console.log("republishWordIfSteward-- match: oNext: "+JSON.stringify(oNext,null,4))
+            foundMatch = true;
+            var options_publish = { key: wordKeyname }
+            var myPeerID = jQuery("#myCidMastheadContainer").html()
+            var myUsername = jQuery("#myUsernameMastheadContainer").html()
+            var currentTime = Date.now();
+            oWord.metaData.stewardPeerID = myPeerID;
+            oWord.metaData.stewardUsername = myUsername;
+            oWord.metaData.lastUpdate = currentTime;
+            var oWordUpdated = await publishWordToIpfs(oWord)
+            console.log("republishWordIfSteward-- publishing word to ipfs")
+            return oWordUpdated;
+        }
+    }
+    console.log("republishWordIfSteward-- foundMatch: "+foundMatch);
+    return oWord;
 }
 
 // convert from one unique identifier to another

@@ -42,9 +42,6 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
 
             var oMainSchemaRawFile = JSON.parse(sMainSchemaRawFile)
 
-
-
-
             var conceptGraphIPNS = oMainSchemaRawFile.metaData.ipns;
             var conceptGraphKeyname = oMainSchemaRawFile.metaData.keyname;
 
@@ -65,16 +62,11 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
                     oMainSchemaRawFile.metaData.stewardPeerID = myPeerID;
                     oMainSchemaRawFile.metaData.stewardUsername = myUsername;
                     oMainSchemaRawFile.metaData.lastUpdate = currentTime;
-                    var result = await ConceptGraphInMfsFunctions.publishWordToIpfs(oMainSchemaRawFile)
-                    console.log("SingleConceptGraphDetailedInfo-- publishing word to ipfs; result: "+JSON.stringify(result,null,4))
+                    var oUpdatedWord = await ConceptGraphInMfsFunctions.publishWordToIpfs(oMainSchemaRawFile)
+                    // console.log("SingleConceptGraphDetailedInfo-- publishing word to ipfs; result: "+JSON.stringify(result,null,4))
                 }
             }
             console.log("SingleConceptGraphDetailedInfo-- foundMatch: "+foundMatch);
-
-
-
-
-
 
             var conceptGraphMainSchemaTitle = oMainSchemaRawFile.wordData.title;
             var conceptGraphMainSchemaName = oMainSchemaRawFile.wordData.name;
@@ -262,9 +254,10 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
             populateConceptGraphFields_from_thisConceptGraphTable(conceptGraphTableName,conceptGraphMainSchemaSlug);
         },2000);
         jQuery("#updateConceptGraphButton").click(function(){
-            var sConceptGraph = jQuery("#rightColumnTextarea").val();
-            var oConceptGraph = JSON.parse(sConceptGraph);
-            MiscFunctions.createOrUpdateWordInAllTables(oConceptGraph);
+            var sWord = jQuery("#rightColumnTextarea").val();
+            var oWord = JSON.parse(sWord);
+            oWord = ConceptGraphInMfsFunctions.republishWordIfSteward(oWord)
+            MiscFunctions.createOrUpdateWordInAllTables(oWord);
         })
         jQuery(".showButton").click(function(){
             jQuery(".showButton").css("backgroundColor","grey")
