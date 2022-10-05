@@ -213,12 +213,13 @@ const populateDataFromWindowLookupRawFile = async (oConceptGraph,amIStewardOfThi
                 var myPeerID = jQuery("#myCidMastheadContainer").html()
                 var myUsername = jQuery("#myUsernameMastheadContainer").html()
                 var currentTime = Date.now();
-                // if (numConceptsRepublished < 10) {
-                    await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
-                    numConceptsRepublished++;
-                    concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
-                    concept_ipfs = concept_ipfs.replace("/ipfs/","");
-                // }
+                /*
+                // takes a while to do this step; ought to perform on a separate page 
+                await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
+                numConceptsRepublished++;
+                concept_ipfs = concept_ipfs.replace("/ipfs/","");
+                */
+                concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
                 var oConceptBlurb = {}
                 oConceptBlurb.slug = slug;
                 oConceptBlurb.ipns = concept_ipns;
