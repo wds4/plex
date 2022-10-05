@@ -21,7 +21,18 @@ export default class ConceptGraphHome extends React.Component {
                     <LeftNavbar1 />
                     <div className="mainPanel" >
                         <ConceptGraphMasthead />
-                        <div class="h2">Concept Graph Home</div>
+                        <div class="h2">Concept Graph Home (back end)</div>
+
+
+                        <div style={{backgroundColor:"#BBFFBB",padding:"10px",margin:"20px"}} >
+                        Concept Graph back end: build CG in SQL; neuroCore sends updates to SQL database.
+                        </div>
+
+                        <div style={{backgroundColor:"#BBFFBB",padding:"10px",margin:"20px"}} >
+                        Concept Graph front end: download starter CG from single founder schema file (given its ipns, ipfs, or steward peerID + MFS path)
+                        to local Mutable File System; neuroCore sends updates to local MFS.
+                        </div>
+
                     </div>
                 </fieldset>
             </>
