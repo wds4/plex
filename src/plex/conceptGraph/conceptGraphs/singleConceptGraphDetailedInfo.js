@@ -61,7 +61,7 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
                     var options_publish = { key: conceptGraphKeyname }
                     var myPeerID = jQuery("#myCidMastheadContainer").html()
                     oMainSchemaRawFile.metaData.stewardPeerID = myPeerID;
-                    var result = await ConceptGraphInMfsFunctions.publishWordToIpfs()
+                    var result = await ConceptGraphInMfsFunctions.publishWordToIpfs(oMainSchemaRawFile)
                     console.log("SingleConceptGraphDetailedInfo-- publishing word to ipfs; result: "+JSON.stringify(result,null,4))
                 }
             }
