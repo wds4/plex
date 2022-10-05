@@ -256,8 +256,9 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         jQuery("#updateConceptGraphButton").click(async function(){
             var sWord = jQuery("#rightColumnTextarea").val();
             var oWord = JSON.parse(sWord);
-            oWord = await ConceptGraphInMfsFunctions.republishWordIfSteward(oWord)
-            MiscFunctions.createOrUpdateWordInAllTables(oWord);
+            var oWordUpdated = await ConceptGraphInMfsFunctions.republishWordIfSteward(oWord)
+            MiscFunctions.createOrUpdateWordInAllTables(oWordUpdated);
+            jQuery("#rightColumnTextarea").val(JSON.stringify(oWordUpdated,null,4));
         })
         jQuery(".showButton").click(function(){
             jQuery(".showButton").css("backgroundColor","grey")
