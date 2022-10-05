@@ -153,12 +153,11 @@ export default class ConceptGraphMasthead extends React.Component {
                   <div style={{fontSize:"20px",display:"inline-block",marginTop:"10px",color:"#003300"}}>
                   the
                   </div>
-                  <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"#5F5F5F",marginRight:"10px"}}>
+                  <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"#5F5F5F",marginRight:"0px"}}>
                   Concept Graph
                   </div>
-                  <div style={{fontSize:"14px",display:"inline-block",marginTop:"10px",color:"#003300",marginRight:"10px"}}>
-                    <div>front</div>
-                    <div>end</div>
+                  <div style={{fontSize:"14px",display:"inline-block",marginTop:"10px",color:"#003300",marginRight:"20px"}}>
+                    <div style={{lineHeight:"90%"}}>front<br/>end</div>
                   </div>
 
                   <div style={{float:"right",display:"inline-block",marginRight:"50px",height:"100%"}}>
@@ -178,21 +177,19 @@ export default class ConceptGraphMasthead extends React.Component {
                   <div style={{clear:"both"}}></div>
               </div>
               <div className="landingPageSubBanner" >
-                  <div style={{display:"none"}} >Concept Graph SQL ID: {window.currentConceptGraphSqlID}</div>
+                    <div style={{display:"inline-block",float:"right"}} >
+                          <NavLink id="goToCurrentConceptGraphMainPageButton" class="mastheadBarNavButton" style={{display:"inline-block"}} to="/EditExistingConceptGraphPage/current" >
+                              <div style={{display:"inline-block"}} >Concept Graph Back End: </div>
+                              <div style={{display:"inline-block",marginLeft:"20px"}} id="conceptGraphTitleContainer_masthead" >conceptGraphTitleContainer_masthead</div>
+                              <div style={{display:"inline-block",marginLeft:"5px"}} >[ ID: {this.state.currentConceptGraphSqlID} ]</div>
+                          </NavLink>
 
-                  <NavLink id="goToCurrentConceptGraphMainPageButton" class="mastheadBarNavButton" style={{display:"inline-block",float:"left"}} to="/EditExistingConceptGraphPage/current" >
-                      <div style={{display:"inline-block"}} id="conceptGraphTitleContainer_masthead" >conceptGraphTitleContainer_masthead</div>
-                      <div style={{display:"inline-block",marginLeft:"5px"}} >[ ID: {this.state.currentConceptGraphSqlID} ]</div>
-                  </NavLink>
-
-                  <NavLink class="mastheadBarNavButton" style={{display:"inline-block",float:"left",marginLeft:"100px"}} to='/SingleConceptGeneralInfo/current' >
-                      <div style={{display:"inline-block"}} id="conceptFieldContainer_masthead" >conceptFieldContainer_masthead</div>
-                      <div style={{display:"inline-block",marginLeft:"5px"}} >[ ID: {this.state.currentConceptSqlID} ]</div>
-                  </NavLink>
-
-                  <div style={{display:"none",float:"right",marginRight:"200px"}} >Concept: {window.currentConceptSqlID}</div>
-
-                  <div style={{display:"inline-block",clear:"both"}} ></div>
+                          <NavLink class="mastheadBarNavButton" style={{display:"inline-block",marginLeft:"10px"}} to='/SingleConceptGeneralInfo/current' >
+                              <div style={{display:"inline-block"}} id="conceptFieldContainer_masthead" >conceptFieldContainer_masthead</div>
+                              <div style={{display:"inline-block",marginLeft:"5px"}} >[ ID: {this.state.currentConceptSqlID} ]</div>
+                          </NavLink>
+                    </div>
+                    <div style={{display:"inline-block",clear:"both"}} ></div>
               </div>
           </>
         );

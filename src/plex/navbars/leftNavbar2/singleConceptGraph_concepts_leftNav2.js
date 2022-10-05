@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Link } from "react-router-dom"; 
+import { NavLink, Link } from "react-router-dom";
 
 export default class LeftNavbar2_SingleConceptGraph_concepts extends React.Component {
   render() {
@@ -18,8 +18,11 @@ export default class LeftNavbar2_SingleConceptGraph_concepts extends React.Compo
             </div>
 
             <center>Concepts</center>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/AllConceptsTable_fast'>Show All Concepts (table)</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/AllConceptsTable_sql'>Show All Concepts (table) (slow, from SQL)</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/AllConceptsTable_fast'>All Concepts (fast)</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/AllConceptsTable_sql'>All Concepts (slow, from SQL)</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/AllConceptsTable_MFS'>All Concepts in MFS (table)</NavLink>
+
+            <br/><br/>
             <NavLink className="leftNav2Button" activeClassName="active" to='/MakeNewConcept/current'>Make New Concept</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ExpandWordIntoNewConcept/current'>Expand Existing Word into New Concept</NavLink>
         </div>

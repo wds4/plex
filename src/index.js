@@ -126,6 +126,10 @@ import HelloWorldJSONSchemaFormV5 from './plex/settings/helloWorld/helloWorldJSO
 import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.js';
 import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUploadImageToIPFS.js';
 
+import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/concepts/conceptsMainPage.js';
+import ConceptGraphsFrontEnd_TableOfConcepts from './plex/conceptGraphFrontEnd/concepts/tableOfConcepts/tableOfConcepts.js';
+import ConceptGraphsFrontEnd_SingleConceptMainPage from './plex/conceptGraphFrontEnd/concepts/singleConcept/singleConceptMainPage.js';
+
 import ConceptGraphsMainPage from './plex/conceptGraph/conceptGraphs/conceptGraphsMainPage.js';
 import MakeNewConceptGraphPage from './plex/conceptGraph/conceptGraphs/makeNewConceptGraphPage.js';
 import ConceptGraphsImportsExportsPage from './plex/conceptGraph/conceptGraphs/conceptGraphsImportsExportsPage.js';
@@ -219,6 +223,7 @@ import RestrictPropertyValue from './plex/conceptGraph/conceptGraphs/singleConce
 
 import AllConceptsTable_fast from './plex/conceptGraph/conceptGraphs/singleConceptGraph/allConceptsTable_fast.js';
 import AllConceptsTable_sql from './plex/conceptGraph/conceptGraphs/singleConceptGraph/allConceptsTable_sql.js';
+import AllConceptsTable_MFS from './plex/conceptGraph/conceptGraphs/singleConceptGraph/allConceptsTable_MFS.js';
 import SingleConceptGeneralInfo from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptGeneralInfo.js';
 import SingleConceptDetailedInfo from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptDetailedInfo.js';
 import SingleConceptHierarchicalOverview from './plex/conceptGraph/conceptGraphs/singleConceptGraph/singleConcept/singleConceptHierarchicalOverview.js';
@@ -411,6 +416,10 @@ ReactDOM.render(
           <Route path="/HelloWorldWriteFile" exact component={HelloWorldWriteFile} />
           <Route path="/HelloWorldUploadImageToIPFS" exact component={HelloWorldUploadImageToIPFS} />
 
+          <Route path="/ConceptGraphsFrontEnd_ConceptsMainPage" exact component={ConceptGraphsFrontEnd_ConceptsMainPage} />
+          <Route path="/ConceptGraphsFrontEnd_TableOfConcepts" exact component={ConceptGraphsFrontEnd_TableOfConcepts} />
+          <Route path="/ConceptGraphsFrontEnd_SingleConceptMainPage/:conceptcid" exact component={ConceptGraphsFrontEnd_SingleConceptMainPage} />
+
           <Route path="/ConceptGraphsMainPage" exact component={ConceptGraphsMainPage} />
           <Route path="/EditExistingConceptGraphPage/:conceptgraphsqlid" exact component={EditExistingConceptGraphPage} />
           <Route path="/SingleConceptGraphDetailedInfo/:conceptgraphsqlid" exact component={SingleConceptGraphDetailedInfo} />
@@ -494,6 +503,7 @@ ReactDOM.render(
 
           <Route path="/AllConceptsTable_fast" exact component={AllConceptsTable_fast} />
           <Route path="/AllConceptsTable_sql" exact component={AllConceptsTable_sql} />
+          <Route path="/AllConceptsTable_MFS" exact component={AllConceptsTable_MFS} />
           <Route path="/SingleConceptGeneralInfo/:conceptsqlid" exact component={SingleConceptGeneralInfo} />
           <Route path="/SingleConceptDetailedInfo/:conceptsqlid" exact component={SingleConceptDetailedInfo} />
           <Route path="/SingleConceptHierarchicalOverview/:conceptsqlid" exact component={SingleConceptHierarchicalOverview} />

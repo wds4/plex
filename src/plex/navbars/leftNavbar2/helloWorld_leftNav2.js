@@ -1,5 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect }  from 'react';
 import { NavLink, Link } from "react-router-dom";
+
+function LeftNav1Timer() {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setCount((count) => count + 1);
+        }, 1000);
+    }, [count]); // <- add empty brackets here
+
+    return <div>I've rendered {count} times!</div>;
+}
 
 export default class LeftNavbar2_HelloWorld extends React.Component {
   render() {
@@ -35,7 +47,10 @@ export default class LeftNavbar2_HelloWorld extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldVisJS'>Vis.js</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldP5'>p5.js</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldC2'>c2.js</NavLink>
-            <br/><br/>
+
+            <br/><br/><br/>
+
+            <LeftNav1Timer />
         </div>
 
       </>

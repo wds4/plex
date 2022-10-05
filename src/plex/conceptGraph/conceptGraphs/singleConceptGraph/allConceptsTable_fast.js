@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ConceptGraphMasthead from '../../../mastheads/conceptGraphMasthead.js';
+import Masthead from '../../../mastheads/conceptGraphMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../../navbars/leftNavbar2/singleConceptGraph_concepts_leftNav2.js';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
@@ -222,10 +222,12 @@ export default class AllConceptsTable extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" style={{backgroundColor:"#CFCFCF"}} >
-                        <ConceptGraphMasthead />
-                        <div class="h2">All Concepts (Table)</div>
-                        <div class="h3" >generated from conceptGraphMainSchema; {window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].title}</div>
-                        <div id="thisPageTableNameContainer" style={{display:"inline-block"}}>
+                        <Masthead />
+                        <div class="h2">All Concepts</div>
+                        <div style={{marginLeft:"20px"}} >
+                            This list of concepts is generated from the conceptGraphMainSchema at: conceptGraphData.concepts. If incomplete or incorrect, may need to run neuroCore to edit the list.
+                        </div>
+                        <div id="thisPageTableNameContainer" style={{display:"none"}} >
                             thisPageTableNameContainer
                         </div>
 

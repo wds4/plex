@@ -8,7 +8,7 @@ export default class LeftNavbar1_eBooks extends React.PureComponent {
         <div className="leftNav1Panel_ConceptGraph" >
             <NavLink className="leftNav1Button" exact activeClassName="active" to='/PlexHome'>
                 <div style={{fontSize:"42px"}} >&#x221E;</div>
-                Plex
+                <div style={{fontSize:"12px",lineHeight:"100%"}} >Plex</div>
                 </NavLink>
 
             <br/><br/>

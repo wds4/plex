@@ -1,6 +1,6 @@
 import React from 'react';
 import Masthead from '../mastheads/conceptGraphMasthead_frontEnd.js';
-import LeftNavbar1 from '../navbars/leftNavbar1/conceptGraph_leftNav1';
+import LeftNavbar1 from '../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 // import * as InitDOMFunctions from '../functions/transferSqlToDOM.js';
 

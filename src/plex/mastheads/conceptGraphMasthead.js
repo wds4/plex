@@ -153,12 +153,11 @@ export default class ConceptGraphMasthead extends React.Component {
                   <div style={{fontSize:"20px",display:"inline-block",marginTop:"10px",color:"#003300"}}>
                   the
                   </div>
-                  <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"#5F5F5F",marginRight:"10px"}}>
+                  <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"#5F5F5F",marginRight:"0px"}}>
                   Concept Graph
                   </div>
-                  <div style={{fontSize:"14px",display:"inline-block",marginTop:"10px",color:"#003300",marginRight:"10px"}}>
-                    <div>back</div>
-                    <div>end</div>
+                  <div style={{fontSize:"14px",display:"inline-block",marginTop:"10px",color:"#003300",marginRight:"20px"}}>
+                    <div style={{lineHeight:"90%"}}>back<br/>end</div>
                   </div>
                   <div style={{display:"inline-block"}} >
                       <div className="doSomethingButton" id="sqlInDOMPanelToggleButton" data-status="closed" style={{display:"none"}} >show SQL in DOM panel</div>
