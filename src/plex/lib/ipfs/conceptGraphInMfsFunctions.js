@@ -134,7 +134,7 @@ export const publishWordToIpfs = async (oWord) => {
     var fileToWrite = JSON.stringify(oWord,null,4)
     var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
     var oFile = {
-        path: "/",
+        path: "/tmpp/",
         content: fileToWrite
     }
     const addResult = await MiscIpfsFunctions.ipfs.add(oFile)
