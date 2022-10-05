@@ -198,7 +198,6 @@ const populateDataFromWindowLookupRawFile = async (oConceptGraph,amIStewardOfThi
         aSlugs.push(slug)
     });
     if (amIStewardOfThisConceptGraph) {
-        delete oConceptGraph.conceptGraphData.oConcepts;
         oConceptGraph.conceptGraphData.aConcepts = []
     }
     // jQuery.each(oRFL, function(slug,oWord){
@@ -207,32 +206,28 @@ const populateDataFromWindowLookupRawFile = async (oConceptGraph,amIStewardOfThi
         var slug = aSlugs[w];
         var oWord = oRFL[slug];
         var aWordTypes = oWord.wordData.wordTypes;
-        if (jQuery.inArray("concept",aWordTypes) > -1) {
-            var concept_ipns = oWord.metaData.ipns;
-            var concept_ipfs = null;
-            var myPeerID = jQuery("#myCidMastheadContainer").html()
-            var myUsername = jQuery("#myUsernameMastheadContainer").html()
-            var currentTime = Date.now();
-            if (numConceptsRepublished < 1) {
-                await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
-                numConceptsRepublished++;
-                concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
-                concept_ipfs = concept_ipfs.replace("/ipfs/","");
+        if (amIStewardOfThisConceptGraph) {
+            if (jQuery.inArray("concept",aWordTypes) > -1) {
+                var concept_ipns = oWord.metaData.ipns;
+                var concept_ipfs = null;
+                var myPeerID = jQuery("#myCidMastheadContainer").html()
+                var myUsername = jQuery("#myUsernameMastheadContainer").html()
+                var currentTime = Date.now();
+                if (numConceptsRepublished < 1) {
+                    await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
+                    numConceptsRepublished++;
+                    concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
+                    concept_ipfs = concept_ipfs.replace("/ipfs/","");
+                }
+                var oConceptBlurb = {}
+                oConceptBlurb.slug = slug;
+                oConceptBlurb.ipns = concept_ipns;
+                oConceptBlurb.ipfs = concept_ipfs;
+                oConceptBlurb.stewardPeerID = myPeerID;
+                oConceptBlurb.stewardUsername = myUsername;
+                oConceptBlurb.lastUpdated = currentTime;
+                oConceptGraph.conceptGraphData.aConcepts.push(oConceptBlurb)
             }
-            var oConceptBlurb = {}
-            oConceptBlurb.slug = slug;
-            oConceptBlurb.ipns = concept_ipns;
-            oConceptBlurb.ipfs = concept_ipfs;
-            oConceptBlurb.stewardPeerID = myPeerID;
-            oConceptBlurb.stewardUsername = myUsername;
-            oConceptBlurb.lastUpdated = currentTime;
-            oConceptGraph.conceptGraphData.aConcepts.push(oConceptBlurb)
-            /*
-            var amITheStewardOfThisConcept = await ConceptGraphInMfsFunctions.checkWordWhetherIAmSteward(oWord)
-            if (amITheStewardOfThisConcept) {
-                // await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
-            }
-            */
         }
         if (jQuery.inArray("property",aWordTypes) > -1) {
             // console.log("slug: "+slug)
