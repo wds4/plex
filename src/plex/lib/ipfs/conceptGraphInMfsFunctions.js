@@ -152,6 +152,22 @@ export const publishWordToIpfs = async (oWord) => {
     return oWord;
 }
 
+export const publishWordToIpfsAndUpdateSql = async (oWord) => {
+    var fileToWrite = JSON.stringify(oWord,null,4)
+    var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
+    var oFile = {
+        content: fileToWrite
+    }
+    const addResult = await MiscIpfsFunctions.ipfs.add(oFile)
+    var newCid = addResult.cid;
+    console.info("added file cid: "+newCid)
+    var recordedKeyname = oWord.metaData.keyname
+    var options_publish = { key: recordedKeyname }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(newCid, options_publish)
+    await MiscFunctions.createOrUpdateWordInAllTables(oWord)
+    return oWord;
+}
+
 // determine whether I am the steward of this word per metaData; same method as republishWordIfSteward
 export const checkWordWhetherIAmSteward = async (oWord) => {
     var wordIPNS = oWord.metaData.ipns;
@@ -198,6 +214,36 @@ export const republishWordIfSteward = async (oWord) => {
             oWord.metaData.stewardUsername = myUsername;
             oWord.metaData.lastUpdate = currentTime;
             var oWordUpdated = await publishWordToIpfs(oWord)
+            console.log("republishWordIfSteward-- publishing word to ipfs")
+            return oWordUpdated;
+        }
+    }
+    console.log("republishWordIfSteward-- foundMatch: "+foundMatch);
+    return oWord;
+}
+export const republishWordToIpfsAndSqlIfSteward = async (oWord) => {
+    var wordIPNS = oWord.metaData.ipns;
+    var wordKeyname = oWord.metaData.keyname;
+
+    var aKeys = await MiscIpfsFunctions.ipfs.key.list()
+    console.log("republishWordIfSteward-- numKeys: "+aKeys.length)
+    var foundMatch = false;
+    for (var k=0;k<aKeys.length;k++) {
+        var oNext = aKeys[k];
+        var name = oNext.name;
+        var ipfs = oNext.id;
+        if ((name==wordKeyname) && (ipfs==wordIPNS)) {
+            console.log("republishWordIfSteward-- match: oNext: "+JSON.stringify(oNext,null,4))
+            foundMatch = true;
+            var options_publish = { key: wordKeyname }
+            var myPeerID = jQuery("#myCidMastheadContainer").html()
+            var myUsername = jQuery("#myUsernameMastheadContainer").html()
+            var currentTime = Date.now();
+            oWord.metaData.stewardPeerID = myPeerID;
+            oWord.metaData.stewardUsername = myUsername;
+            oWord.metaData.lastUpdate = currentTime;
+            var oWordUpdated = await publishWordToIpfs(oWord)
+            await MiscFunctions.createOrUpdateWordInAllTables(oWordUpdated)
             console.log("republishWordIfSteward-- publishing word to ipfs")
             return oWordUpdated;
         }
