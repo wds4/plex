@@ -30,7 +30,66 @@ const populateConceptGraphFields_from_myConceptGraphs = async (sqlid) => {
     })
 }
 
-const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGraphTableName,cgMainSchemaSlug) => {
+const populateConceptGraphFields_from_thisConceptGraphTable = async (oMainConceptGraphSchema) => {
+    jQuery("#rightColumnTextarea").val("error");
+    jQuery("#currConceptGraphMainSchemaSlugField").html("error");
+    jQuery("#currConceptGraphMainSchemaTitleField").val("error");
+    jQuery("#currConceptGraphMainSchemaNameField").val("error");
+
+    oMainConceptGraphSchema = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oMainConceptGraphSchema)
+
+    var conceptGraphMainSchemaTitle = oMainConceptGraphSchema.wordData.title;
+    var conceptGraphMainSchemaName = oMainConceptGraphSchema.wordData.name;
+    var conceptGraphMainSchemaSlug = oMainConceptGraphSchema.wordData.name;
+
+    var aRels = oMainConceptGraphSchema.schemaData.relationships;
+    var numRels = aRels.length;
+    jQuery("#numRelationshipsContainer").html(numRels)
+
+    if (oMainConceptGraphSchema.hasOwnProperty("conceptGraphData")) {
+        var aConcepts = oMainConceptGraphSchema.conceptGraphData.concepts;
+        var aSchemas = oMainConceptGraphSchema.conceptGraphData.schemas;
+        var numConcepts = aConcepts.length;
+        var numSchemas = aSchemas.length;
+        jQuery("#numConceptsContainer").html(numConcepts)
+        jQuery("#numSchemasContainer").html(numSchemas)
+        for (var c=0;c<numConcepts;c++) {
+            var nextConceptSlug = aConcepts[c];
+            var nextConceptHTML = "";
+            nextConceptHTML += "<div style=display:inline-block; class=singleWordWrapper ";
+            nextConceptHTML += " data-slug='"+nextConceptSlug+"' ";
+            nextConceptHTML += " >";
+            nextConceptHTML += nextConceptSlug;
+            nextConceptHTML += "</div>";
+            nextConceptHTML += "<br>";
+            jQuery("#conceptsListContainer").append(nextConceptHTML)
+        }
+        for (var s=0;s<numSchemas;s++) {
+            var nextSchemaSlug = aSchemas[s];
+            var nextSchemaHTML = "";
+            nextSchemaHTML += "<div style=display:inline-block; class=singleWordWrapper ";
+            nextSchemaHTML += " data-slug='"+nextSchemaSlug+"' ";
+            nextSchemaHTML += " >";
+            nextSchemaHTML += nextSchemaSlug;
+            nextSchemaHTML += "</div>";
+            nextSchemaHTML += "<br>";
+            jQuery("#schemasListContainer").append(nextSchemaHTML)
+        }
+        jQuery(".singleWordWrapper").click(function(){
+            var clickedSlug = jQuery(this).data("slug");
+            var oClickedWord = window.lookupWordBySlug[clickedSlug];
+            var sClickedWord = JSON.stringify(oClickedWord,null,4)
+            jQuery("#rightColumnTextarea").val(sClickedWord);
+            jQuery(".singleWordWrapper").css("backgroundColor","#CFCFCF")
+            jQuery(this).css("backgroundColor","orange")
+        });
+    }
+    jQuery("#rightColumnTextarea").val(JSON.stringify(oMainConceptGraphSchema,null,4));
+    jQuery("#currConceptGraphMainSchemaSlugField").html(conceptGraphMainSchemaSlug);
+    jQuery("#currConceptGraphMainSchemaTitleField").val(conceptGraphMainSchemaTitle);
+    jQuery("#currConceptGraphMainSchemaNameField").val(conceptGraphMainSchemaName);
+}
+const populateConceptGraphFields_from_thisConceptGraphTable_depr = async (conceptGraphTableName,cgMainSchemaSlug) => {
     var sql = " SELECT * FROM "+conceptGraphTableName+" WHERE slug='"+cgMainSchemaSlug+"' ";
     console.log("sql: "+sql)
 
@@ -132,19 +191,42 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (conceptGrap
     })
 }
 
-const populateDataFromWindowLookupRawFile = async (amIStewardOfThisConceptGraph) => {
+const populateDataFromWindowLookupRawFile = async (oConceptGraph,amIStewardOfThisConceptGraph) => {
     var oRFL = MiscFunctions.cloneObj(window.lookupWordBySlug)
     var aSlugs = [];
     jQuery.each(oRFL, function(slug,oWord){
         aSlugs.push(slug)
     });
+    if (amIStewardOfThisConceptGraph) {
+        delete oConceptGraph.conceptGraphData.oConcepts;
+        oConceptGraph.conceptGraphData.aConcepts = []
+    }
     // jQuery.each(oRFL, function(slug,oWord){
+    var numConceptsRepublished = 0;
     for (var w=0;w<aSlugs.length;w++) {
         var slug = aSlugs[w];
         var oWord = oRFL[slug];
         var aWordTypes = oWord.wordData.wordTypes;
         if (jQuery.inArray("concept",aWordTypes) > -1) {
-            await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
+            var concept_ipns = oWord.metaData.ipns;
+            var concept_ipfs = null;
+            var myPeerID = jQuery("#myCidMastheadContainer").html()
+            var myUsername = jQuery("#myUsernameMastheadContainer").html()
+            var currentTime = Date.now();
+            if (numConceptsRepublished < 1) {
+                await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
+                numConceptsRepublished++;
+                concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
+                concept_ipfs = concept_ipfs.replace("/ipfs/","");
+            }
+            var oConceptBlurb = {}
+            oConceptBlurb.slug = slug;
+            oConceptBlurb.ipns = concept_ipns;
+            oConceptBlurb.ipfs = concept_ipfs;
+            oConceptBlurb.stewardPeerID = myPeerID;
+            oConceptBlurb.stewardUsername = myUsername;
+            oConceptBlurb.lastUpdated = currentTime;
+            oConceptGraph.conceptGraphData.aConcepts.push(oConceptBlurb)
             /*
             var amITheStewardOfThisConcept = await ConceptGraphInMfsFunctions.checkWordWhetherIAmSteward(oWord)
             if (amITheStewardOfThisConcept) {
@@ -224,6 +306,8 @@ const populateDataFromWindowLookupRawFile = async (amIStewardOfThisConceptGraph)
         jQuery(".singleWordWrapper2").css("backgroundColor","#CFCFCF")
         jQuery(this).css("backgroundColor","orange")
     });
+
+    return oConceptGraph;
 }
 
 const updateConceptGraphSchemaData = async (oConceptGraph) => {
@@ -265,18 +349,19 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
 
         var amIStewardOfThisConceptGraph = await ConceptGraphInMfsFunctions.checkWordWhetherIAmSteward(oConceptGraph)
 
-        if (amIStewardOfThisConceptGraph) {
-            await updateConceptGraphSchemaData(oConceptGraph)
-        }
+        // if (amIStewardOfThisConceptGraph) {
+            // await updateConceptGraphSchemaData(oConceptGraph)
+        // }
 
-        populateDataFromWindowLookupRawFile(amIStewardOfThisConceptGraph);
+        oConceptGraph = await populateDataFromWindowLookupRawFile(oConceptGraph,amIStewardOfThisConceptGraph);
 
         setTimeout( async function(){
             populateConceptGraphFields_from_myConceptGraphs(conceptGraphSqlID);
         },1000);
 
         setTimeout( async function(){
-            populateConceptGraphFields_from_thisConceptGraphTable(conceptGraphTableName,conceptGraphMainSchemaSlug);
+            // populateConceptGraphFields_from_thisConceptGraphTable(conceptGraphTableName,conceptGraphMainSchemaSlug);
+            populateConceptGraphFields_from_thisConceptGraphTable(oConceptGraph);
         },2000);
 
         jQuery("#updateConceptGraphButton").click(async function(){
