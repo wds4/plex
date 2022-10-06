@@ -20,6 +20,9 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
+        var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+        var myPeerID = oIpfsID.id;
+        // var myPeerID = jQuery("#myCidMastheadContainer").html()
         var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
         var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
         var mainSchema_ipns = oMainSchema.metaData.ipns;
@@ -34,8 +37,6 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
             console.log("storeSeedMSFCGButton clicked")
             // await ConceptGraphInMfsFunctions.updateConceptGraphSeedToMFS(oMainSchema)
         })
-
-
 
         var oRFL = MiscFunctions.cloneObj(window.lookupWordBySlug);
         var aWords = Object.keys(oRFL)
@@ -130,77 +131,82 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
             for (var w=0;w<aConcepts.length;w++) {
                 var nextSlug = aConcepts[w];
                 var oNextConcept = window.lookupWordBySlug[nextSlug];
+                // console.log("qwerty w = "+w+"; nextSlug: "+nextSlug)
 
-                var nextConcept_slug = oNextConcept.conceptData.nodes.concept.slug;
-                var nextWordType_slug = oNextConcept.conceptData.nodes.wordType.slug;
-                var nextSchema_slug = oNextConcept.conceptData.nodes.schema.slug;
-                var nextSuperset_slug = oNextConcept.conceptData.nodes.superset.slug;
-                var nextJSONSchema_slug = oNextConcept.conceptData.nodes.JSONSchema.slug;
-                var nextPrimaryProperty_slug = oNextConcept.conceptData.nodes.primaryProperty.slug;
-                var nextPropertySchema_slug = oNextConcept.conceptData.nodes.propertySchema.slug;
-                var nextProperties_slug = oNextConcept.conceptData.nodes.properties.slug;
+                var stewardPeerID = oNextConcept.metaData.stewardPeerID;
+                console.log("qwerty w = "+w+"; nextSlug: "+nextSlug+"; stewardPeerID: "+stewardPeerID+"; myPeerID: "+myPeerID)
 
-                var oNextWordType = window.lookupWordBySlug[nextWordType_slug]
-                var oNextSchema = window.lookupWordBySlug[nextSchema_slug]
-                var oNextSuperset = window.lookupWordBySlug[nextSuperset_slug]
-                var oNextJSONSchema = window.lookupWordBySlug[nextJSONSchema_slug]
-                var oNextPrimaryProperty = window.lookupWordBySlug[nextPrimaryProperty_slug]
-                var oNextPropertySchema = window.lookupWordBySlug[nextPropertySchema_slug]
-                var oNextProperties = window.lookupWordBySlug[nextProperties_slug]
+                if (stewardPeerID==myPeerID) {
+                    var nextConcept_slug = oNextConcept.conceptData.nodes.concept.slug;
+                    var nextWordType_slug = oNextConcept.conceptData.nodes.wordType.slug;
+                    var nextSchema_slug = oNextConcept.conceptData.nodes.schema.slug;
+                    var nextSuperset_slug = oNextConcept.conceptData.nodes.superset.slug;
+                    var nextJSONSchema_slug = oNextConcept.conceptData.nodes.JSONSchema.slug;
+                    var nextPrimaryProperty_slug = oNextConcept.conceptData.nodes.primaryProperty.slug;
+                    var nextPropertySchema_slug = oNextConcept.conceptData.nodes.propertySchema.slug;
+                    var nextProperties_slug = oNextConcept.conceptData.nodes.properties.slug;
 
-                var nextConcept_ipns = oNextConcept.metaData.ipns;
-                var nextWordType_ipns = oNextWordType.metaData.ipns;
-                var nextSchema_ipns = oNextSchema.metaData.ipns;
-                var nextSuperset_ipns = oNextSuperset.metaData.ipns;
-                var nextJSONSchema_ipns = oNextJSONSchema.metaData.ipns;
-                var nextPrimaryProperty_ipns = oNextPrimaryProperty.metaData.ipns;
-                var nextPropertySchema_ipns = oNextPropertySchema.metaData.ipns;
-                var nextProperties_ipns = oNextProperties.metaData.ipns;
+                    var oNextWordType = window.lookupWordBySlug[nextWordType_slug]
+                    var oNextSchema = window.lookupWordBySlug[nextSchema_slug]
+                    var oNextSuperset = window.lookupWordBySlug[nextSuperset_slug]
+                    var oNextJSONSchema = window.lookupWordBySlug[nextJSONSchema_slug]
+                    var oNextPrimaryProperty = window.lookupWordBySlug[nextPrimaryProperty_slug]
+                    var oNextPropertySchema = window.lookupWordBySlug[nextPropertySchema_slug]
+                    var oNextProperties = window.lookupWordBySlug[nextProperties_slug]
 
-                oNextConcept.conceptData.nodes.concept.ipns = nextConcept_ipns;
-                oNextConcept.conceptData.nodes.wordType.ipns = nextWordType_ipns;
-                oNextConcept.conceptData.nodes.schema.ipns = nextSchema_ipns;
-                oNextConcept.conceptData.nodes.superset.ipns = nextSuperset_ipns;
-                oNextConcept.conceptData.nodes.JSONSchema.ipns = nextJSONSchema_ipns;
-                oNextConcept.conceptData.nodes.primaryProperty.ipns = nextPrimaryProperty_ipns;
-                oNextConcept.conceptData.nodes.propertySchema.ipns = nextPropertySchema_ipns;
-                oNextConcept.conceptData.nodes.properties.ipns = nextProperties_ipns;
+                    var nextConcept_ipns = oNextConcept.metaData.ipns;
+                    var nextWordType_ipns = oNextWordType.metaData.ipns;
+                    var nextSchema_ipns = oNextSchema.metaData.ipns;
+                    var nextSuperset_ipns = oNextSuperset.metaData.ipns;
+                    var nextJSONSchema_ipns = oNextJSONSchema.metaData.ipns;
+                    var nextPrimaryProperty_ipns = oNextPrimaryProperty.metaData.ipns;
+                    var nextPropertySchema_ipns = oNextPropertySchema.metaData.ipns;
+                    var nextProperties_ipns = oNextProperties.metaData.ipns;
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextConcept_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                // oNextConcept.conceptData.nodes.concept.ipfs = nn_ipfs
+                    oNextConcept.conceptData.nodes.concept.ipns = nextConcept_ipns;
+                    oNextConcept.conceptData.nodes.wordType.ipns = nextWordType_ipns;
+                    oNextConcept.conceptData.nodes.schema.ipns = nextSchema_ipns;
+                    oNextConcept.conceptData.nodes.superset.ipns = nextSuperset_ipns;
+                    oNextConcept.conceptData.nodes.JSONSchema.ipns = nextJSONSchema_ipns;
+                    oNextConcept.conceptData.nodes.primaryProperty.ipns = nextPrimaryProperty_ipns;
+                    oNextConcept.conceptData.nodes.propertySchema.ipns = nextPropertySchema_ipns;
+                    oNextConcept.conceptData.nodes.properties.ipns = nextProperties_ipns;
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextWordType_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                oNextConcept.conceptData.nodes.wordType.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextConcept_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    // oNextConcept.conceptData.nodes.concept.ipfs = nn_ipfs
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextSchema_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                // oNextConcept.conceptData.nodes.schema.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextWordType_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    oNextConcept.conceptData.nodes.wordType.ipfs = nn_ipfs
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextSuperset_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                oNextConcept.conceptData.nodes.superset.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextSchema_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    // oNextConcept.conceptData.nodes.schema.ipfs = nn_ipfs
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextJSONSchema_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                oNextConcept.conceptData.nodes.JSONSchema.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextSuperset_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    oNextConcept.conceptData.nodes.superset.ipfs = nn_ipfs
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextPrimaryProperty_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                oNextConcept.conceptData.nodes.primaryProperty.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextJSONSchema_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    oNextConcept.conceptData.nodes.JSONSchema.ipfs = nn_ipfs
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextPropertySchema_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                // oNextConcept.conceptData.nodes.propertySchema.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextPrimaryProperty_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    oNextConcept.conceptData.nodes.primaryProperty.ipfs = nn_ipfs
 
-                var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextProperties_ipns)
-                nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                oNextConcept.conceptData.nodes.properties.ipfs = nn_ipfs
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextPropertySchema_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    // oNextConcept.conceptData.nodes.propertySchema.ipfs = nn_ipfs
 
-                console.log("qwerty concept w = "+w+"; oNextConcept: "+JSON.stringify(oNextConcept,null,4))
-                var oNextConcept = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oNextConcept);
+                    var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nextProperties_ipns)
+                    nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                    oNextConcept.conceptData.nodes.properties.ipfs = nn_ipfs
 
+                    console.log("qwerty concept w = "+w+"; oNextConcept: "+JSON.stringify(oNextConcept,null,4))
+                    var oNextConcept = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oNextConcept);
+                }
             }
         })
         jQuery("#updateMainSchemaForConceptGraphButton").click(async function(){
