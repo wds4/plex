@@ -60,7 +60,7 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
             var currentTime = 0;
             var elapsedTime = 0;
             console.log("publishAllWordsButton clicked")
-            for (var w=0;w<5;w++) {
+            for (var w=0;w<aWords.length;w++) {
                 currentTime = Date.now();
                 aCurrentTimes[w] = currentTime;
 
