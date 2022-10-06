@@ -221,6 +221,37 @@ export const republishWordIfSteward = async (oWord) => {
     console.log("republishWordIfSteward-- foundMatch: "+foundMatch);
     return oWord;
 }
+export const republishWordToIpfsAndSqlAsNewSteward = async (oWord) => {
+    // var wordIPNS = oWord.metaData.ipns;
+    // var wordKeyname = oWord.metaData.keyname;
+    // if (!wordKeyname) {
+
+    // }
+    var wordType = oWord.wordData.wordType;
+    var currentTime = Date.now();
+    var newKeyname = "plexWord_"+wordType+"_"+currentTime;
+
+    var generatedKey_obj = await MiscIpfsFunctions.ipfs.key.gen(newKeyname, {
+        type: 'rsa',
+        size: 2048
+    })
+    var newWord_ipns = generatedKey_obj["id"];
+    var generatedKey_name = generatedKey_obj["name"];
+    oWord.metaData.ipns = newWord_ipns;
+    oWord.metaData.keyname = newKeyname;
+
+    var options_publish = { key: newKeyname }
+    var myPeerID = jQuery("#myCidMastheadContainer").html()
+    var myUsername = jQuery("#myUsernameMastheadContainer").html()
+    oWord.metaData.stewardPeerID = myPeerID;
+    oWord.metaData.stewardUsername = myUsername;
+    oWord.metaData.lastUpdate = currentTime;
+    var oWordUpdated = await publishWordToIpfs(oWord)
+    await MiscFunctions.createOrUpdateWordInAllTables(oWordUpdated)
+    console.log("republishWordIfSteward-- publishing word to ipfs")
+    return oWordUpdated;
+
+}
 export const republishWordToIpfsAndSqlIfSteward = async (oWord) => {
     var wordIPNS = oWord.metaData.ipns;
     var wordKeyname = oWord.metaData.keyname;

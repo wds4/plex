@@ -66,12 +66,24 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
 
                 var nextSlug = aWords[w];
                 var oNextWord = window.lookupWordBySlug[nextSlug];
+                var oNextWordStewardPeerID = oNextWord.metaData.stewardPeerID;
+                /*
+                // If steward is unknown and must be reassigned.
+                // This is a PITA bc it means IPNS must be fixed in all schemas and concepts and in mainSchemaForConceptGraph 
+                if ( (oNextWordStewardPeerID != "QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ") && (oNextWordStewardPeerID != "12D3KooWJpiTmrQGWG9oThj6MAMhMmm756htH2Co1TT6LsPsBWki") ) {
+                    console.log("publishAllWordsButton, unknown steward; nextSlug: "+nextSlug)
+                    var oNextWordUpdated = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlAsNewSteward(oNextWord)
+                    console.log("w = "+w+"; nextSlug: "+nextSlug)
+                }
+                */
+                // normal operations:
                 // console.log("oNextWord: "+JSON.stringify(oNextWord,null,4))
                 var oNextWordUpdated = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oNextWord);
                 elapsedTime = currentTime - aCurrentTimes[0];
                 elapsedTime = Math.floor(elapsedTime/1000);
                 console.log("w = "+w+"; nextSlug: "+nextSlug+"; elapsedTime: "+elapsedTime+" seconds")
                 // console.log("oNextWordUpdated: "+JSON.stringify(oNextWordUpdated,null,4))
+
             }
         })
         jQuery("#updateAllSchemasButton").click(async function(){
