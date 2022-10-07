@@ -17,10 +17,14 @@ export default class LeftNavbar1_conceptGraph extends React.PureComponent {
                 <div style={{fontSize:"38px"}} >&#x1F4A1;</div>
                 <div style={{fontSize:"10px",lineHeight:"100%"}} >Concept Graph (front end)</div>
                 </NavLink>
+
+            <NavLink className="leftNav1Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ManageDownload' >
+                <div style={{fontSize:"10px",lineHeight:"100%"}} >Manage Download of Concept Graph from IPFS or External MFS</div>
+                </NavLink>
+
             <NavLink className="leftNav1Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ConceptsMainPage' >
                 <div style={{fontSize:"10px",lineHeight:"100%"}} >Concepts</div>
                 </NavLink>
-
         </div>
 
       </>

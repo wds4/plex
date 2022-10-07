@@ -23,20 +23,6 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
         // var myPeerID = jQuery("#myCidMastheadContainer").html()
-        var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
-        var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
-        var mainSchema_ipns = oMainSchema.metaData.ipns;
-        console.log("mainSchema_ipns: "+mainSchema_ipns)
-        jQuery("#mainSchemaSeedIPNSContainer").html(mainSchema_ipns)
-
-        jQuery("#storeSeedMSFCGButton").click(async function(){
-            console.log("storeSeedMSFCGButton clicked")
-            var newIPNS = await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(oMainSchema)
-        })
-        jQuery("#updateSeedMSFCGButton").click(async function(){
-            console.log("storeSeedMSFCGButton clicked")
-            // await ConceptGraphInMfsFunctions.updateConceptGraphSeedToMFS(oMainSchema)
-        })
 
         var oRFL = MiscFunctions.cloneObj(window.lookupWordBySlug);
         var aWords = Object.keys(oRFL)
@@ -226,6 +212,16 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px"}} >
                             <center>Prepare Concept Graph: update and publish from local SQL to IPFS</center>
 
+                            <div style={{backgroundColor:"#BBBBFF",padding:"5px",marginBottom:"20px"}} >
+                            The steps below will allow other IPFS nodes / users to download my Concept Graph.
+                            To start this process, they will need to know the location of just one file: mainSchemaForConceptGraph,
+                            which contains IPNS and/or IPFS links (and perhaps other links as well) to download all other needed files.
+                            To do this, they need to know one of the following:
+                            <li>either the IPNS or the IPFS address of the mainSchemaForConceptGraph</li>
+                            <li>my peerID and the Mutable File System pathway to my public "recommended" mainSchemaForConceptGraph file(s)</li>
+                            Default will be that all Plex downloads will come with a preloaded IPNS for mainSchemaForConceptGraph (currently IPNS: k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y)
+                            </div>
+
                             <div style={{backgroundColor:"#BBFFBB",padding:"5px",marginBottom:"20px"}} >
                                 <div >
                                 Cycle through all words in SQL; if I control the key - ipns pair within metaData, then I will ipfs.add the word,
@@ -277,28 +273,6 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                                 <div className="doSomethingButton" id="updateMainSchemaForConceptGraphButton" >update mainSchemaForConceptGraph</div>
                             </div>
                         </div>
-
-                        <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
-                            <div>
-                                <div style={{display:"inline-block",width:"500px"}} >
-                                mainSchemaForConceptGraph IPNS (seed):
-                                </div>
-                                <div id="mainSchemaSeedIPNSContainer" style={{display:"inline-block"}} >
-                                </div>
-                                <div className="doSomethingButton_small" id="storeSeedMSFCGButton" >plant seed</div>
-                                <div className="doSomethingButton_small" id="updateSeedMSFCGButton" >update seed</div>
-                            </div>
-                            <div >
-                            This is the seed IPNS which will be used to download the default Concept Graph from an external source.
-                            Once downloaded, the mainSchemaForConceptGraph will be given a new IPNS, with the old one archived in metaData.
-                            Next, each word will be placed in the MFS and given a new, local IPNS address. The same keynames will be used if present.
-                            The old IPNS, author (if known), and keyname will be recorded.
-                            </div>
-                            <div >
-                            pCG0 = /plex/conceptGraphs/mainSchemaForConceptGraph/node.txt -- IPNS will be derived from this.
-                            </div>
-                        </div>
-
 
                     </div>
                 </fieldset>
