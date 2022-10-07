@@ -124,6 +124,7 @@ import HelloWorldJSONSchemaFormTester from './plex/settings/helloWorld/helloWorl
 import HelloWorldJSONSchemaFormRender from './plex/settings/helloWorld/helloWorldJSONSchemaFormRender.js';
 import HelloWorldJSONSchemaFormV5 from './plex/settings/helloWorld/helloWorldJSONSchemaFormV5.js';
 import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.js';
+import HelloWorldReadFile from './plex/settings/helloWorld/helloWorldReadFile.js';
 import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUploadImageToIPFS.js';
 
 import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/concepts/conceptsMainPage.js';
@@ -415,6 +416,7 @@ ReactDOM.render(
           <Route path="/HelloWorldJSONSchemaFormRender" exact component={HelloWorldJSONSchemaFormRender} />
           <Route path="/HelloWorldJSONSchemaFormV5" exact component={HelloWorldJSONSchemaFormV5} />
           <Route path="/HelloWorldWriteFile" exact component={HelloWorldWriteFile} />
+          <Route path="/HelloWorldReadFile" exact component={HelloWorldReadFile} />
           <Route path="/HelloWorldUploadImageToIPFS" exact component={HelloWorldUploadImageToIPFS} />
 
           <Route path="/ConceptGraphsFrontEnd_ConceptsMainPage" exact component={ConceptGraphsFrontEnd_ConceptsMainPage} />
