@@ -326,14 +326,36 @@ const updateWithAdditionalSchemas = async (oConceptGraph) => {
         var nextConcept_mainSchemaSlug = oCon.conceptData.nodes.schema.slug;
         var nextConcept_propertySchemaSlug = oCon.conceptData.nodes.propertySchema.slug;
         if (!aFullKnownSchemasList.includes(nextConcept_mainSchemaSlug)) {
-            aUnknownSchemasList.push(nextConcept_mainSchemaSlug)
+            var oNxtSchema = window.lookupWordBySlug[nextConcept_mainSchemaSlug]
+            var nxtSchema_ipns = oNxtSchema.metaData.ipns
+            var nxtSchema_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nxtSchema_ipns)
+            nxtSchema_ipfs = nxtSchema_ipfs.replace("/ipfs/","");
+            var oNextSchemaInfo = {};
+            oNextSchemaInfo.slug = nextConcept_mainSchemaSlug;
+            oNextSchemaInfo.ipns = nxtSchema_ipns;
+            oNextSchemaInfo.ipfs = nxtSchema_ipfs
+            oNextSchemaInfo.stewardPeerID = oNxtSchema.metaData.stewardPeerID
+            oNextSchemaInfo.stewardUsername = oNxtSchema.metaData.stewardUsername
+            oNextSchemaInfo.lastUpdated = oNxtSchema.metaData.lastUpdate
+            aUnknownSchemasList.push(oNextSchemaInfo)
         }
         if (!aFullKnownSchemasList.includes(nextConcept_propertySchemaSlug)) {
-            aUnknownSchemasList.push(nextConcept_propertySchemaSlug)
+            var oNxtSchema = window.lookupWordBySlug[nextConcept_propertySchemaSlug]
+            var nxtSchema_ipns = oNxtSchema.metaData.ipns
+            var nxtSchema_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nxtSchema_ipns)
+            nxtSchema_ipfs = nxtSchema_ipfs.replace("/ipfs/","");
+            var oNextSchemaInfo = {};
+            oNextSchemaInfo.slug = nextConcept_propertySchemaSlug;
+            oNextSchemaInfo.ipns = nxtSchema_ipns;
+            oNextSchemaInfo.ipfs = nxtSchema_ipfs
+            oNextSchemaInfo.stewardPeerID = oNxtSchema.metaData.stewardPeerID
+            oNextSchemaInfo.stewardUsername = oNxtSchema.metaData.stewardUsername
+            oNextSchemaInfo.lastUpdated = oNxtSchema.metaData.lastUpdate
+            aUnknownSchemasList.push(oNextSchemaInfo)
         }
     }
     oUpdatedConceptGraph.conceptGraphData.aAdditionalSchemas = aUnknownSchemasList;
-    delete oUpdatedConceptGraph.conceptGraphData.aSchemas;
+    // delete oUpdatedConceptGraph.conceptGraphData.aSchemas;
     return oUpdatedConceptGraph
 }
 
