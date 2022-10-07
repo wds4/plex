@@ -199,7 +199,7 @@ const updateConceptGraphSchemaData = async (oConceptGraph,amIStewardOfThisConcep
     });
     if (amIStewardOfThisConceptGraph) {
         oConceptGraph.conceptGraphData.aConcepts = []
-        oConceptGraph.conceptGraphData.aAdditionalSchemas = []
+        // oConceptGraph.conceptGraphData.aAdditionalSchemas = []
     }
     // jQuery.each(oRFL, function(slug,oWord){
     var numConceptsRepublished = 0;
@@ -332,8 +332,8 @@ const updateWithAdditionalSchemas = async (oConceptGraph) => {
             aUnknownSchemasList.push(nextConcept_propertySchemaSlug)
         }
     }
-    oUpdatedConceptGraph.conceptGraphData.aSchemas = aUnknownSchemasList;
-
+    oUpdatedConceptGraph.conceptGraphData.aAdditionalSchemas = aUnknownSchemasList;
+    delete oUpdatedConceptGraph.conceptGraphData.aSchemas;
     return oUpdatedConceptGraph
 }
 
