@@ -220,6 +220,7 @@ const updateConceptGraphSchemaData = async (oConceptGraph,amIStewardOfThisConcep
                 concept_ipfs = concept_ipfs.replace("/ipfs/","");
                 */
                 concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
+                concept_ipfs = concept_ipfs.replace("/ipfs/","");
                 var oConceptBlurb = {}
                 oConceptBlurb.slug = slug;
                 oConceptBlurb.ipns = concept_ipns;
@@ -577,7 +578,14 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
                                     rightColumnTextarea
                                 </textarea>
                                 <br/>
-                                <div id="updateConceptGraphButton" className="doSomethingButton">UPDATE</div>
+                                <div>
+                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Update ... </div>
+                                    <div id="" className="doSomethingButton_small">UPDATE</div>
+                                </div>
+                                <div>
+                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Send above to SQL and (if I am steward) to IPFS: </div>
+                                    <div id="updateConceptGraphButton" className="doSomethingButton_small">UPDATE</div>
+                                </div>
                             </div>
                         </div>
                     </div>
