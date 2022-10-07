@@ -199,6 +199,7 @@ const updateConceptGraphSchemaData = async (oConceptGraph,amIStewardOfThisConcep
     });
     if (amIStewardOfThisConceptGraph) {
         oConceptGraph.conceptGraphData.aConcepts = []
+        oConceptGraph.conceptGraphData.aAdditionalSchemas = []
     }
     // jQuery.each(oRFL, function(slug,oWord){
     var numConceptsRepublished = 0;
@@ -307,6 +308,35 @@ const updateConceptGraphSchemaData = async (oConceptGraph,amIStewardOfThisConcep
     return oConceptGraph;
 }
 
+// This function updates conceptGraphData.aAdditionalSchemas
+// the purpose of which is to supply IPFS, IPNS, stewardPeerID, etc
+// for any schema where this info is not already known; it is already known for mainSchemaForConceptGraph
+// and for every schema and propertySchema in every concept in conceptGraphData.aConcepts
+const updateWithAdditionalSchemas = async (oConceptGraph) => {
+    // first make a list of all known schemas by wordSlug
+    console.log("updateWithAdditionalSchemas")
+    var aFullKnownSchemasList = oConceptGraph.conceptGraphData.schemas;
+    var aUnknownSchemasList = [];
+    var oUpdatedConceptGraph = MiscFunctions.cloneObj(oConceptGraph)
+    var aConceptDataObjects = MiscFunctions.cloneObj(oConceptGraph.conceptGraphData.aConcepts);
+    for (var c=0;c<aConceptDataObjects.length;c++) {
+        var oNextConceptData = aConceptDataObjects[c];
+        var nextConcept_slug = oNextConceptData.slug;
+        var oCon = window.lookupWordBySlug[nextConcept_slug]
+        var nextConcept_mainSchemaSlug = oCon.conceptData.nodes.schema.slug;
+        var nextConcept_propertySchemaSlug = oCon.conceptData.nodes.propertySchema.slug;
+        if (!aFullKnownSchemasList.includes(nextConcept_mainSchemaSlug)) {
+            aUnknownSchemasList.push(nextConcept_mainSchemaSlug)
+        }
+        if (!aFullKnownSchemasList.includes(nextConcept_propertySchemaSlug)) {
+            aUnknownSchemasList.push(nextConcept_propertySchemaSlug)
+        }
+    }
+    oUpdatedConceptGraph.conceptGraphData.aSchemas = aUnknownSchemasList;
+
+    return oUpdatedConceptGraph
+}
+
 export default class SingleConceptGraphDetailedInfo extends React.Component {
     constructor(props) {
         super(props);
@@ -342,8 +372,13 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
 
         var amIStewardOfThisConceptGraph = await ConceptGraphInMfsFunctions.checkWordWhetherIAmSteward(oConceptGraph)
 
+
         if (amIStewardOfThisConceptGraph) {
             oConceptGraph = await updateConceptGraphSchemaData(oConceptGraph,amIStewardOfThisConceptGraph);
+        }
+
+        if (amIStewardOfThisConceptGraph) {
+            oConceptGraph = await updateWithAdditionalSchemas(oConceptGraph,amIStewardOfThisConceptGraph);
         }
 
         await populateConceptGraphFields_from_myConceptGraphs(conceptGraphSqlID);
@@ -359,6 +394,15 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
             // populateConceptGraphFields_from_thisConceptGraphTable(conceptGraphTableName,conceptGraphMainSchemaSlug);
 
         },2000);
+        */
+
+        /*
+        jQuery("#updateWithAdditionalSchemasButton").click(async function(){
+            var sWord = jQuery("#rightColumnTextarea").val();
+            var oConceptGraph = JSON.parse(sWord);
+            oConceptGraph = await updateWithAdditionalSchemas(oConceptGraph);
+            jQuery("#rightColumnTextarea").val(JSON.stringify(oConceptGraph,null,4));
+        })
         */
 
         jQuery("#updateConceptGraphButton").click(async function(){
@@ -579,8 +623,8 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
                                 </textarea>
                                 <br/>
                                 <div>
-                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Update ... </div>
-                                    <div id="" className="doSomethingButton_small">UPDATE</div>
+                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Update conceptGraphData.concepts, .schemas, and (if steward) .aConcepts</div>
+                                    <div id="updateWithAdditionalSchemasButton" className="doSomethingButton_small">make changes to conceptGraphData in above window</div>
                                 </div>
                                 <div>
                                     <div style={{display:"inline-block",verticalAlign:"middle"}} >Send above to SQL and (if I am steward) to IPFS: </div>
