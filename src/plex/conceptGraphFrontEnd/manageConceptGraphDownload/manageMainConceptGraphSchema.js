@@ -89,7 +89,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 dirForPathToActiveConceptGraphContainer1
                                 </div>
-                                <div id="isDirectory1PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"yellow",width:"45px",textAlign:"center",color:"white"}} >
+                                <div id="isDirectory1PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
                                 ?
                                 </div>
                             </div>
@@ -111,7 +111,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 ipnsForPathToActiveConceptGraphContainer
                                 </div>
-                                <div id="isDirectory2PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"yellow",width:"45px",textAlign:"center",color:"white"}} >
+                                <div id="isDirectory2PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
                                 ?
                                 </div>
                             </div>
