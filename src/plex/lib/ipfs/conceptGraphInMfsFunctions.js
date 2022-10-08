@@ -13,28 +13,32 @@ export const ipfs = IpfsHttpClient({
 export const isActiveConceptGraphDirPresent = async (ipns10_forActiveCGPathDir,mainSchema_local_ipns) => {
     var result = false;
     var path = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"
-    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
-        var fileName = file.name;
-        var fileType = file.type;
-        var fileCid = file.cid;
-        if ( (fileType=="directory") && (fileName == mainSchema_local_ipns) ) {
-            result = true;
+    try {
+        for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+            var fileName = file.name;
+            var fileType = file.type;
+            var fileCid = file.cid;
+            if ( (fileType=="directory") && (fileName == mainSchema_local_ipns) ) {
+                result = true;
+            }
         }
-    }
+    } catch (e) {}
     return result;
 }
 
 export const isIpns10DirPresent = async (ipns10_forActiveCGPathDir) => {
     var result = false;
     var path = "/plex/conceptGraphs/"
-    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
-        var fileName = file.name;
-        var fileType = file.type;
-        var fileCid = file.cid;
-        if ( (fileType=="directory") && (fileName == ipns10_forActiveCGPathDir) ) {
-            result = true;
+    try {
+        for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+            var fileName = file.name;
+            var fileType = file.type;
+            var fileCid = file.cid;
+            if ( (fileType=="directory") && (fileName == ipns10_forActiveCGPathDir) ) {
+                result = true;
+            }
         }
-    }
+    } catch (e) {}
     return result;
 }
 
