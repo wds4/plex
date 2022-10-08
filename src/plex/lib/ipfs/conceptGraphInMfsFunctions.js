@@ -10,6 +10,20 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+export const isIpns10DirPresent = async (ipns10_forActiveCGPathDir) => {
+    var result = false;
+    var path = "/plex/conceptGraphs/"
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        var fileCid = file.cid;
+        if ( (fileType=="directory") && (fileName == ipns10_forActiveCGPathDir) ) {
+            result = true;
+        }
+    }
+    return result;
+}
+
 export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
     var aSlugs = [];
     var path = pCG0 + "words/"

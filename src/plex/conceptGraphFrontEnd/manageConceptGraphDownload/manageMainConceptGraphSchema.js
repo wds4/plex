@@ -24,6 +24,17 @@ export default class ManageConceptGraphDownload extends React.Component {
         var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
         jQuery("#ipnsForPathToActiveConceptGraphContainer").html(ipns_forActiveCGPathDir)
         var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+        var isIpns10DirPresent = await ConceptGraphInMfsFunctions.isIpns10DirPresent(ipns10_forActiveCGPathDir);
+        if (isIpns10DirPresent) {
+            var resultHTML = "YES";
+            jQuery("#isDirectoryPresentContainer").css("backgroundColor","green")
+        }
+        if (!isIpns10DirPresent) {
+            var resultHTML = "NO";
+            jQuery("#isDirectoryPresentContainer").css("backgroundColor","red")
+        }
+        jQuery("#isDirectoryPresentContainer").html(resultHTML)
+
         jQuery("#dirForPathToActiveConceptGraphContainer1").html(ipns10_forActiveCGPathDir)
         jQuery("#dirForPathToActiveConceptGraphContainer2").html(ipns10_forActiveCGPathDir)
         jQuery("#dirForPathToActiveConceptGraphContainer3").html(ipns10_forActiveCGPathDir)
@@ -46,8 +57,6 @@ export default class ManageConceptGraphDownload extends React.Component {
         var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
         jQuery("#mainSchemaSeed_local_IPNSContainer").html(mainSchema_local_ipns)
         jQuery("#conceptGraphRootPathContainer").html(mainSchema_local_ipns)
-
-
     }
     render() {
         return (
@@ -62,27 +71,30 @@ export default class ManageConceptGraphDownload extends React.Component {
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
                             <div style={{color:"purple"}} >Directory Generation (10 characters, unknown to other nodes)</div>
                             <div>
-                                <div style={{display:"inline-block",width:"500px"}} >
+                                <div style={{display:"inline-block",width:"300px"}} >
+                                dir:
+                                </div>
+                                <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
+                                dirForPathToActiveConceptGraphContainer1
+                                </div>
+                                <div id="isDirectoryPresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"yellow",width:"45px",textAlign:"center",color:"white"}} >
+                                ?
+                                </div>
+                            </div>
+                            <div>
+                                <div style={{display:"inline-block",width:"300px"}} >
                                 keyname:
                                 </div>
-                                <div id="keynameForPathToActiveConceptGraphContainer" style={{display:"inline-block"}} >
+                                <div id="keynameForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 keynameForPathToActiveConceptGraphContainer
                                 </div>
                             </div>
                             <div>
-                                <div style={{display:"inline-block",width:"500px"}} >
+                                <div style={{display:"inline-block",width:"300px"}} >
                                 IPNS:
                                 </div>
-                                <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block"}} >
+                                <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 ipnsForPathToActiveConceptGraphContainer
-                                </div>
-                            </div>
-                            <div>
-                                <div style={{display:"inline-block",width:"500px"}} >
-                                dir:
-                                </div>
-                                <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block"}} >
-                                dirForPathToActiveConceptGraphContainer1
                                 </div>
                             </div>
                         </div>
