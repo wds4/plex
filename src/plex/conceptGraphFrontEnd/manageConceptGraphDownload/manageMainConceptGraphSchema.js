@@ -24,16 +24,17 @@ export default class ManageConceptGraphDownload extends React.Component {
         var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
         jQuery("#ipnsForPathToActiveConceptGraphContainer").html(ipns_forActiveCGPathDir)
         var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+
         var isIpns10DirPresent = await ConceptGraphInMfsFunctions.isIpns10DirPresent(ipns10_forActiveCGPathDir);
         if (isIpns10DirPresent) {
             var resultHTML = "YES";
-            jQuery("#isDirectoryPresentContainer").css("backgroundColor","green")
+            jQuery("#isDirectory1PresentContainer").css("backgroundColor","green")
         }
         if (!isIpns10DirPresent) {
             var resultHTML = "NO";
-            jQuery("#isDirectoryPresentContainer").css("backgroundColor","red")
+            jQuery("#isDirectory1PresentContainer").css("backgroundColor","red")
         }
-        jQuery("#isDirectoryPresentContainer").html(resultHTML)
+        jQuery("#isDirectory1PresentContainer").html(resultHTML)
 
         jQuery("#dirForPathToActiveConceptGraphContainer1").html(ipns10_forActiveCGPathDir)
         jQuery("#dirForPathToActiveConceptGraphContainer2").html(ipns10_forActiveCGPathDir)
@@ -57,6 +58,17 @@ export default class ManageConceptGraphDownload extends React.Component {
         var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
         jQuery("#mainSchemaSeed_local_IPNSContainer").html(mainSchema_local_ipns)
         jQuery("#conceptGraphRootPathContainer").html(mainSchema_local_ipns)
+
+        var isCgDirPresent = await ConceptGraphInMfsFunctions.isActiveConceptGraphDirPresent(ipns10_forActiveCGPathDir,mainSchema_local_ipns);
+        if (isCgDirPresent) {
+            var resultHTML = "YES";
+            jQuery("#isDirectory2PresentContainer").css("backgroundColor","green")
+        }
+        if (!isCgDirPresent) {
+            var resultHTML = "NO";
+            jQuery("#isDirectory2PresentContainer").css("backgroundColor","red")
+        }
+        jQuery("#isDirectory2PresentContainer").html(resultHTML)
     }
     render() {
         return (
@@ -77,7 +89,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 dirForPathToActiveConceptGraphContainer1
                                 </div>
-                                <div id="isDirectoryPresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"yellow",width:"45px",textAlign:"center",color:"white"}} >
+                                <div id="isDirectory1PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"yellow",width:"45px",textAlign:"center",color:"white"}} >
                                 ?
                                 </div>
                             </div>
@@ -88,6 +100,9 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 <div id="keynameForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 keynameForPathToActiveConceptGraphContainer
                                 </div>
+                                <div style={{display:"inline-block",marginLeft:"20px",backgroundColor:"#EFEFEF"}} >
+                                (derived from my peerID)
+                                </div>
                             </div>
                             <div>
                                 <div style={{display:"inline-block",width:"300px"}} >
@@ -95,6 +110,9 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 </div>
                                 <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 ipnsForPathToActiveConceptGraphContainer
+                                </div>
+                                <div id="isDirectory2PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"yellow",width:"45px",textAlign:"center",color:"white"}} >
+                                ?
                                 </div>
                             </div>
                         </div>
@@ -107,7 +125,12 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 </div>
                                 <div id="mainSchemaSeedIPNSContainer" style={{display:"inline-block"}} >
                                 </div>
+                                <div style={{display:"inline-block",marginLeft:"20px",backgroundColor:"#EFEFEF"}} >
+                                (hardcoded default)
+                                </div>
+
                                 <br/>
+
                                 <div className="doSomethingButton_small" id="storeSeedMSFCGButton" >plant (or update) seed</div>
                             </div>
                             <div >
