@@ -418,15 +418,6 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         },2000);
         */
 
-        /*
-        jQuery("#updateWithAdditionalSchemasButton").click(async function(){
-            var sWord = jQuery("#rightColumnTextarea").val();
-            var oConceptGraph = JSON.parse(sWord);
-            oConceptGraph = await updateWithAdditionalSchemas(oConceptGraph);
-            jQuery("#rightColumnTextarea").val(JSON.stringify(oConceptGraph,null,4));
-        })
-        */
-
         jQuery("#updateConceptGraphButton").click(async function(){
             var sWord = jQuery("#rightColumnTextarea").val();
             var oWord = JSON.parse(sWord);
@@ -644,10 +635,6 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
                                     rightColumnTextarea
                                 </textarea>
                                 <br/>
-                                <div>
-                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Update conceptGraphData.concepts, .schemas, and (if steward) .aConcepts</div>
-                                    <div id="updateWithAdditionalSchemasButton" className="doSomethingButton_small">make changes to conceptGraphData in above window</div>
-                                </div>
                                 <div>
                                     <div style={{display:"inline-block",verticalAlign:"middle"}} >Send above to SQL and (if I am steward) to IPFS: </div>
                                     <div id="updateConceptGraphButton" className="doSomethingButton_small">UPDATE</div>

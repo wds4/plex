@@ -10,6 +10,83 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
+    var aSlugs = [];
+    var path = pCG0 + "words/"
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        var fileCid = file.cid;
+        if (fileType=="directory") {
+            aSlugs.push(fileName);
+        }
+    }
+
+    return aSlugs;
+}
+
+export const addOrUpdateWordInLocalConceptGraph = async (pCG0,ipns) => {
+    var oNode = await fetchObjectByIPNS(ipns)
+    var oNodeLocal = await convertExternalNodeToLocalWord(oNode);
+    var node_slug = oNode.wordData.slug;
+    var path = pCG0+"words/"+node_slug+"/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+    var pathToFile = path + "node.txt";
+    var fileToWrite = JSON.stringify(oNodeLocal,null,4)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+}
+
+// Used for creation of the directory used for local active concept graph
+// /plex/concepgGraphs/[activePathDir]/
+// where [activePathDir] is derived from the last 10 characters of the IPNS generated using keyname:
+// plex_pathToActiveConceptGraph_[last 10 digits of local peerID]
+// This function returns the IPNS; if IPNS not yet generated, it will generate it and then return it
+export const returnIPNSForActiveCGPathDir = async (keyname_forActiveCGPathDir) => {
+    // keyname generated from myPeerID like this:
+    // var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+
+    var ipns_forActiveCGPathDir = null;
+    var aKeys = await MiscIpfsFunctions.ipfs.key.list()
+    console.log("returnIPNSForActiveCGPathDir-- numKeys: "+aKeys.length)
+    var foundMatch = false;
+    for (var k=0;k<aKeys.length;k++) {
+        var oNext = aKeys[k];
+        var name = oNext.name;
+        var ipfs = oNext.id;
+        if (name==keyname_forActiveCGPathDir) {
+            console.log("returnIPNSForActiveCGPathDir -- match: oNext: "+JSON.stringify(oNext,null,4))
+            foundMatch = true;
+            ipns_forActiveCGPathDir = ipfs;
+        }
+    }
+    if (!foundMatch) {
+        var generatedKey_obj = await MiscIpfsFunctions.ipfs.key.gen(keyname_forActiveCGPathDir, {
+            type: 'rsa',
+            size: 2048
+        })
+        console.log("returnIPNSForActiveCGPathDir -- make new key: generatedKey_obj: "+JSON.stringify(generatedKey_obj,null,4))
+        var ipns_forActiveCGPathDir = generatedKey_obj["id"];
+        var generatedKey_name = generatedKey_obj["name"];
+    }
+    return ipns_forActiveCGPathDir;
+}
+
+export const fetchObjectByLocalMutableFileSystemPath = async (path) => {
+    // console.log("fetchObjectByLocalMutableFileSystemPath; path:")
+    // var chunks = []
+    var chunks1 = []
+    for await (const chunk of ipfs.files.read(path)) {
+        // chunks.push(chunk)
+        var sResult1 = new TextDecoder("utf-8").decode(chunk);
+        chunks1.push(sResult1)
+        // console.log("qwertyyy sResult: "+sResult)
+    }
+    var sResult = chunks1.join('')
+    // need to add check to make sure sResult is in json format
+    var oResult = JSON.parse(sResult)
+    return oResult;
+}
 // returns an array of cids pointing to specific instances of a given a concept and a subset
 export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetUniqueIdentifier) => {
 
@@ -28,7 +105,6 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
 
     console.log("fetchFromMutableFileSystem; basePath: "+basePath);
 
-
     for await (const file of ipfs.files.ls(basePath)) {
         console.log("fetchFromMutableFileSystem; file.type: "+file.type)
         if (file.type=="directory") {
@@ -41,15 +117,87 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
 
     return aCids;
 }
+// This function could be moved to MiscIpfsFunctions since it does not interact with MFS
+export const fetchObjectByIPNS = async (ipns) => {
+    var ipfsPath = "/ipns/"+ipns;
+    console.log("fetchObjectByIPNS; ipfsPath: "+ipfsPath)
 
-export const addConceptGraphSeedToMFS = async (oMainSchema) => {
+    for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
+        var chunk2 = new TextDecoder("utf-8").decode(chunk);
+        try {
+            var oWord = JSON.parse(chunk2);
+            return oWord;
+        } catch (e) {
+            console.log("error: "+e)
+            return false;
+        }
+    }
+    // return false;
+}
+
+export const convertExternalNodeToLocalWord = async (oWordExternal) => {
+    var oWordLocal = MiscFunctions.cloneObj(oWordExternal);
+
+    var wordType = oWordExternal.wordData.wordType;
+
+    var oldKeyname = oWordExternal.metaData.keyname;
+    var oldIpns = oWordExternal.metaData.ipns;
+    var prevStewardPeerID = oWordExternal.metaData.stewardPeerID;
+    var prevStewardUsername = oWordExternal.metaData.stewardUsername;
+    var prevLastUpdate = oWordExternal.metaData.lastUpdate;
+    oWordLocal.metaData.prevSource = {};
+    oWordLocal.metaData.prevSource.ipns = oldIpns;
+    oWordLocal.metaData.prevSource.keyname = oldKeyname;
+    oWordLocal.metaData.prevSource.peerID = prevStewardPeerID;
+    oWordLocal.metaData.prevSource.username = prevStewardUsername;
+    oWordLocal.metaData.prevSource.lastUpdate = prevLastUpdate;
+
+    var myPeerID = jQuery("#myCidMastheadContainer").html()
+    var myUsername = jQuery("#myUsernameMastheadContainer").html()
+
+    var currentTime = Date.now();
+    var randomNonce = Math.floor(Math.random() * 1000);
+    var newKeyname = "plexWord_"+wordType+"_"+currentTime+"_"+randomNonce;
+    var generatedKey_obj = await MiscIpfsFunctions.ipfs.key.gen(newKeyname, {
+        type: 'rsa',
+        size: 2048
+    })
+    var newWord_ipns = generatedKey_obj["id"];
+    var generatedKey_name = generatedKey_obj["name"];
+    oWordLocal.metaData.ipns = newWord_ipns;
+    oWordLocal.metaData.keyname = newKeyname;
+    oWordLocal.metaData.stewardPeerID = myPeerID;
+    oWordLocal.metaData.stewardUsername = myUsername;
+    oWordLocal.metaData.lastUpdate = currentTime;
+
+    // note that, unlike addConceptGraphSeedToMFS, this function does not publish this word to IPFS.
+    // Therefore there is not yet an IPFS hash associated with this word.
+    // The ipns at this point is merely used as an internal identifier.
+
+    return oWordLocal;
+}
+
+export const addConceptGraphSeedToMFS = async (ipns,ipns10_forActiveCGPathDir) => {
+    var oMainSchema = await fetchObjectByIPNS(ipns)
+    console.log("addConceptGraphSeedToMFS; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
+
     var oldKeyname = oMainSchema.metaData.keyname;
     var oldIpns = oMainSchema.metaData.ipns;
+    var prevStewardPeerID = oMainSchema.metaData.stewardPeerID;
+    var prevStewardUsername = oMainSchema.metaData.stewardUsername;
+    var prevLastUpdate = oMainSchema.metaData.lastUpdate;
     oMainSchema.metaData.prevSource = {};
-    oMainSchema.metaData.prevSource.peerID = null;
     oMainSchema.metaData.prevSource.ipns = oldIpns;
     oMainSchema.metaData.prevSource.keyname = oldKeyname;
+    oMainSchema.metaData.prevSource.peerID = prevStewardPeerID;
+    oMainSchema.metaData.prevSource.username = prevStewardUsername;
+    oMainSchema.metaData.prevSource.lastUpdate = prevLastUpdate;
     // var randomNonce = Math.floor(Math.random() * 1000);
+
+    var myPeerID = jQuery("#myCidMastheadContainer").html()
+    var myUsername = jQuery("#myUsernameMastheadContainer").html()
+    // var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+    // var myPeerID = oIpfsID.id;
 
     var currentTime = Date.now();
     var newKeyname = "plexWord_mainSchemaForConceptGraph_"+currentTime;
@@ -61,11 +209,14 @@ export const addConceptGraphSeedToMFS = async (oMainSchema) => {
     var generatedKey_name = generatedKey_obj["name"];
     oMainSchema.metaData.ipns = newWord_ipns;
     oMainSchema.metaData.keyname = newKeyname;
+    oMainSchema.metaData.stewardPeerID = myPeerID;
+    oMainSchema.metaData.stewardUsername = myUsername;
+    oMainSchema.metaData.lastUpdate = currentTime;
 
-    var path1 = "/plex/conceptGraphs/mainSchemaForConceptGraph/";
+    var path1 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/";
     await MiscIpfsFunctions.ipfs.files.mkdir(path1,{parents:true});
     var sMainSchema = JSON.stringify(oMainSchema,null,4)
-    var path2 = "/plex/conceptGraphs/mainSchemaForConceptGraph/node.txt";
+    var path2 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
     var fileToWrite_encoded = new TextEncoder().encode(sMainSchema)
 
     try { await MiscIpfsFunctions.ipfs.files.rm(path2) } catch (e) {}

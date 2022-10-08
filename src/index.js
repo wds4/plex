@@ -130,6 +130,7 @@ import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUp
 import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/concepts/conceptsMainPage.js';
 import ConceptGraphsFrontEnd_ManageDownload from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageConceptGraphDownload.js';
 import ConceptGraphsFrontEnd_ManageMainConceptGraphSchema from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageMainConceptGraphSchema.js';
+import ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/downloadConceptGraphFromExternalSource.js';
 
 import ConceptGraphsFrontEnd_TableOfConcepts from './plex/conceptGraphFrontEnd/concepts/tableOfConcepts/tableOfConcepts.js';
 import ConceptGraphsFrontEnd_SingleConceptMainPage from './plex/conceptGraphFrontEnd/concepts/singleConcept/singleConceptMainPage.js';
@@ -425,6 +426,7 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEnd_ConceptsMainPage" exact component={ConceptGraphsFrontEnd_ConceptsMainPage} />
           <Route path="/ConceptGraphsFrontEnd_ManageDownload" exact component={ConceptGraphsFrontEnd_ManageDownload} />
           <Route path="/ConceptGraphsFrontEnd_ManageMainConceptGraphSchema" exact component={ConceptGraphsFrontEnd_ManageMainConceptGraphSchema} />
+          <Route path="/ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource" exact component={ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource} />
 
           <Route path="/ConceptGraphsFrontEnd_TableOfConcepts" exact component={ConceptGraphsFrontEnd_TableOfConcepts} />
           <Route path="/ConceptGraphsFrontEnd_SingleConceptMainPage/:conceptcid" exact component={ConceptGraphsFrontEnd_SingleConceptMainPage} />

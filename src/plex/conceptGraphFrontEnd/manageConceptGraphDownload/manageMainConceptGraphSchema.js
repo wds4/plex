@@ -19,20 +19,35 @@ export default class ManageConceptGraphDownload extends React.Component {
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
 
-        var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
-        var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
-        var mainSchema_ipns = oMainSchema.metaData.ipns;
-        console.log("mainSchema_ipns: "+mainSchema_ipns)
-        jQuery("#mainSchemaSeedIPNSContainer").html(mainSchema_ipns)
+        var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+        jQuery("#keynameForPathToActiveConceptGraphContainer").html(keyname_forActiveCGPathDir)
+        var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+        jQuery("#ipnsForPathToActiveConceptGraphContainer").html(ipns_forActiveCGPathDir)
+        var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+        jQuery("#dirForPathToActiveConceptGraphContainer1").html(ipns10_forActiveCGPathDir)
+        jQuery("#dirForPathToActiveConceptGraphContainer2").html(ipns10_forActiveCGPathDir)
+        jQuery("#dirForPathToActiveConceptGraphContainer3").html(ipns10_forActiveCGPathDir)
 
         jQuery("#storeSeedMSFCGButton").click(async function(){
             console.log("storeSeedMSFCGButton clicked")
-            var newIPNS = await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(oMainSchema)
+            var newIPNS = await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(mainSchema_external_ipns,ipns10_forActiveCGPathDir)
         })
-        jQuery("#updateSeedMSFCGButton").click(async function(){
-            console.log("storeSeedMSFCGButton clicked")
-            // await ConceptGraphInMfsFunctions.updateConceptGraphSeedToMFS(oMainSchema)
-        })
+
+        // var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
+        // var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+        // var mainSchema_external_ipns = oMainSchema.metaData.ipns;
+        // Default mainSchema ipns:
+        var mainSchema_external_ipns = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
+        console.log("mainSchema_external_ipns: "+mainSchema_external_ipns)
+        jQuery("#mainSchemaSeedIPNSContainer").html(mainSchema_external_ipns)
+
+        var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+        var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
+        var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
+        jQuery("#mainSchemaSeed_local_IPNSContainer").html(mainSchema_local_ipns)
+        jQuery("#conceptGraphRootPathContainer").html(mainSchema_local_ipns)
+
+
     }
     render() {
         return (
@@ -45,14 +60,43 @@ export default class ManageConceptGraphDownload extends React.Component {
                         <div class="h2">Manage mainSchemaForConceptGraph</div>
 
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
+                            <div style={{color:"purple"}} >Directory Generation (10 characters, unknown to other nodes)</div>
                             <div>
                                 <div style={{display:"inline-block",width:"500px"}} >
-                                mainSchemaForConceptGraph IPNS (seed):
+                                keyname:
+                                </div>
+                                <div id="keynameForPathToActiveConceptGraphContainer" style={{display:"inline-block"}} >
+                                keynameForPathToActiveConceptGraphContainer
+                                </div>
+                            </div>
+                            <div>
+                                <div style={{display:"inline-block",width:"500px"}} >
+                                IPNS:
+                                </div>
+                                <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block"}} >
+                                ipnsForPathToActiveConceptGraphContainer
+                                </div>
+                            </div>
+                            <div>
+                                <div style={{display:"inline-block",width:"500px"}} >
+                                dir:
+                                </div>
+                                <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block"}} >
+                                dirForPathToActiveConceptGraphContainer1
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
+                            <div style={{color:"purple"}} >Download mainSchemaForConceptGraph from external source to local MFS</div>
+                            <div>
+                                <div style={{display:"inline-block",width:"500px"}} >
+                                mainSchemaForConceptGraph externally-derived IPNS (seed):
                                 </div>
                                 <div id="mainSchemaSeedIPNSContainer" style={{display:"inline-block"}} >
                                 </div>
-                                <div className="doSomethingButton_small" id="storeSeedMSFCGButton" >plant seed</div>
-                                <div className="doSomethingButton_small" id="updateSeedMSFCGButton" >update seed</div>
+                                <br/>
+                                <div className="doSomethingButton_small" id="storeSeedMSFCGButton" >plant (or update) seed</div>
                             </div>
                             <div >
                             This is the seed IPNS which will be used to download the default Concept Graph from an external source.
@@ -61,7 +105,32 @@ export default class ManageConceptGraphDownload extends React.Component {
                             The old IPNS, author (if known), and keyname will be recorded.
                             </div>
                             <div >
-                            pCG0 = /plex/conceptGraphs/mainSchemaForConceptGraph/node.txt -- IPNS will be derived from this.
+                            pCGs = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer2" style={{display:"inline-block"}} ></div>/mainSchemaForConceptGraph/node.txt
+                            <br/>
+                            pCGs is the path to the active "seed" node (with locally-controlled keyname and IPNS) for the Concept Graph.
+                            </div>
+                        </div>
+
+                        <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
+                            <div>
+                                <div style={{display:"inline-block",width:"500px"}} >
+                                mainSchemaForConceptGraph local IPNS:
+                                </div>
+                                <div id="mainSchemaSeed_local_IPNSContainer" style={{display:"inline-block"}} >
+                                </div>
+                            </div>
+                            <div >
+                            If pCGs (above) yields a functioning data file -- (slug: mainSchemaForConceptGraph, with keyname and IPNS under my control) --
+                            its IPNS will be recorded here (above). This is the ACTIVE concept graph for this node.
+                            (Other concept graphs may also be recorded in the Mutable File System. Switching the ACTIVE cg from one to another is achieved simply by replacing
+                            the file at the end of the pCGs pathway.)
+                            </div>
+                            Root path via Mutable File System to the entirety of the CURRENTLY ACTIVE concept graph:
+                            <div >
+                            pGC0 = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer3" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer" style={{display:"inline-block"}} ></div>/
+                            </div>
+                            <div >
+                            The files under pGC0 will be managed on a separate page.
                             </div>
                         </div>
 
