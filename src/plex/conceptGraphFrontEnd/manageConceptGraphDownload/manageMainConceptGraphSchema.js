@@ -82,20 +82,7 @@ export default class ManageConceptGraphDownload extends React.Component {
 
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
                             <div style={{color:"purple"}} >Directory Generation (10 characters, unknown to other nodes)</div>
-                            <div>
-                                <div style={{display:"inline-block",width:"300px"}} >
-                                dir:
-                                </div>
-                                <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
-                                dirForPathToActiveConceptGraphContainer1
-                                </div>
-                                <div style={{display:"inline-block",marginLeft:"20px",width:"100px"}} >
-                                directory exist?
-                                </div>
-                                <div id="isDirectory1PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
-                                ?
-                                </div>
-                            </div>
+
                             <div>
                                 <div style={{display:"inline-block",width:"300px"}} >
                                 keyname:
@@ -114,16 +101,29 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
                                 ipnsForPathToActiveConceptGraphContainer
                                 </div>
-                                <div style={{display:"inline-block",marginLeft:"20px",width:"100px"}} >
-                                directory exist?
-                                </div>
-                                <div id="isDirectory2PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
-                                ?
-                                </div>
-                                <div style={{display:"inline-block",marginLeft:"20px"}} >
-                                (if not - establish it with Build Skeleton Directory on next page)
+                                <div style={{display:"inline-block",marginLeft:"20px",backgroundColor:"#EFEFEF"}} >
+                                (derived from above keyname)
                                 </div>
                             </div>
+
+                            <div>
+                                <div style={{display:"inline-block",width:"300px"}} >
+                                dir:
+                                </div>
+                                <div style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
+                                    /plex/conceptGraphs/
+                                    <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block"}} >
+                                    dirForPathToActiveConceptGraphContainer1
+                                    </div>
+                                </div>
+                                <div style={{display:"inline-block",marginLeft:"20px"}} >
+                                (last 10 chars of ipns) - directory exist?
+                                </div>
+                                <div id="isDirectory1PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
+                                ?
+                                </div>
+                            </div>
+
                         </div>
 
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
@@ -162,6 +162,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 </div>
                                 <div id="mainSchemaSeed_local_IPNSContainer" style={{display:"inline-block"}} >
                                 </div>
+
                             </div>
                             <div >
                             If pCGs (above) yields a functioning data file -- (slug: mainSchemaForConceptGraph, with keyname and IPNS under my control) --
@@ -172,6 +173,17 @@ export default class ManageConceptGraphDownload extends React.Component {
                             Root path via Mutable File System to the entirety of the CURRENTLY ACTIVE concept graph:
                             <div >
                             pGC0 = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer3" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer" style={{display:"inline-block"}} ></div>/
+
+                            <div style={{display:"inline-block",marginLeft:"20px",width:"100px"}} >
+                            directory exist?
+                            </div>
+                            <div id="isDirectory2PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
+                            ?
+                            </div>
+                            <div style={{display:"inline-block",marginLeft:"20px"}} >
+                            (if not - establish it with Build Skeleton Directory on next page)
+                            </div>
+
                             </div>
                             <div >
                             The files under pGC0 will be managed on a separate page.
