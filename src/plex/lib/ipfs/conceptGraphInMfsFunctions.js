@@ -57,6 +57,9 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
     return aSlugs;
 }
 
+// Download an external word from IPFS using its externally-controlled ipns address,
+// update its metaData including giving it a new, locally controlled ipns address,
+// and store it in the local mutable file system active concept graph.
 export const addOrUpdateWordInLocalConceptGraph = async (pCG0,ipns) => {
     var oNode = await fetchObjectByIPNS(ipns)
     var oNodeLocal = await convertExternalNodeToLocalWord(oNode);
@@ -102,6 +105,122 @@ export const returnIPNSForActiveCGPathDir = async (keyname_forActiveCGPathDir) =
         var generatedKey_name = generatedKey_obj["name"];
     }
     return ipns_forActiveCGPathDir;
+}
+
+// This function must be called once at startup (currently by Plex Home Page).
+// It is important for initialization of window.ipfs - notably, for frequent lookup of pCG0, myPeerID, myUsername
+export const loadActiveIpfsConceptGraph = async () => {
+    var oIpfsID = await ipfs.id();
+    var myPeerID = oIpfsID.id;
+
+    var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
+    for await (const chunk of ipfs.files.read(ipfsPath)) {
+        var myUserData = new TextDecoder("utf-8").decode(chunk);
+        try {
+            // console.log("populateFieldsWithoutEditing; try; myUserData: "+myUserData)
+            var oMyUserData = JSON.parse(myUserData);
+            if (typeof oMyUserData == "object") {
+                var myUsername = oMyUserData.username;
+                var peerID = oMyUserData.peerID;
+                jQuery("#myUsernameMastheadContainer").html(myUsername)
+            }
+        } catch (e) {}
+    }
+    var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+    var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+    var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+    var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt"
+    var oMainSchemaForConceptGraphLocal = await fetchObjectByLocalMutableFileSystemPath(pCGs)
+    var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
+    var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
+    var pCGw = pCG0 + "words/";
+
+    window.ipfs = {};
+    window.ipfs.myPeerID = myPeerID;
+    window.ipfs.myUsername = myUsername
+    window.ipfs.activeConceptGraph = {};
+    window.ipfs.activeConceptGraph.slug = "mainSchemaForConceptGraph";
+    window.ipfs.activeConceptGraph.mainSchema_external_ipns = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y"; // only needed if need to re-download to pCGs
+    window.ipfs.activeConceptGraph.keyname = keyname_forActiveCGPathDir
+    window.ipfs.activeConceptGraph.ipns = ipns_forActiveCGPathDir;
+    window.ipfs.activeConceptGraph.ipns10 = ipns10_forActiveCGPathDir;
+    window.ipfs.activeConceptGraph.mainSchema_local_ipns = mainSchema_local_ipns;
+    window.ipfs.pCGs = pCGs;
+    window.ipfs.pCG0 = pCG0;
+    window.ipfs.pCGw = pCGw; // path to every word in the active concept graph
+    console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
+}
+
+export const addWordToActiveMfsConceptGraph = async (oWord) => {
+    var amISteward = checkWordWhetherIAmSteward(oWord)
+    if (!amISteward) {
+        return false;
+    }
+    console.log("addWordToActiveMfsConceptGraph; amISteward: "+amISteward)
+    var slug = oWord.wordData.slug;
+    var keyname = oWord.metaData.keyname;
+    var sWord = JSON.stringify(oWord,null,4)
+    var fileToWrite_encoded = new TextEncoder().encode(sWord)
+
+    var pCG0 = window.ipfs.pCG0;
+    var path1 = pCG0 + "words/" + slug + "/";
+    var path2 = pCG0 + "words/" + slug + "/node.txt";
+
+    await MiscIpfsFunctions.ipfs.files.mkdir(path1,{parents:true});
+    try { await MiscIpfsFunctions.ipfs.files.rm(path2) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(path2, fileToWrite_encoded, {create: true, flush: true})
+
+    /*
+    // This publishes this word to the IPFS so that external nodes can find it
+    // Future: set up an option not to do this? Perhaps do not publish by default, but only under special circumstances?
+    var stats = await MiscIpfsFunctions.ipfs.files.stat(path2);
+    // var stats_str = JSON.stringify(stats);
+    var cid = stats.cid.string;
+    console.log("this word cid: " + cid)
+    var options_publish = { key: keyname }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(cid, options_publish)
+    */
+    publishWordToIpfs(oWord)
+
+    // Future: Need to evaluate res first before returning true
+    return true;
+}
+
+// 9 Oct 2022:
+// This function (addSpecificInstanceToConceptGraphMfs2) replaces that of almost the same name addSpecificInstanceToConceptGraphMfs which assumed more structure to the MFS tree
+// This function assumes the concept graph structure lives within the nodes themselves and is not necessarily reflected within the MFS tree.
+// This function therefore relies more heavily on a functioning IpfsNeuroCore.
+// This function: import the new word (oWord) and an array of set or sets aSets to which it will be specific instance.
+// "Unique Identifiers" is used, whereby the unique slug (wordSlug or otherwise, if concept is known), IPNS, or other unique identifier for a node is used.
+// If a concept or wordType is supplied (e.g. rating or conceptFor_rating), then this will be automatically converted into the superset, and
+// oWord will be made a direct specific instance of that superset.
+// If the name of a concept or a wordType
+// This function:
+// 1. adds the new word to pGC0/words/
+// From each set, find the governing concept -> find the main schema -> add relationship: new word -- specific instance of -- set
+// 2. Update main schema with the new relationship.
+// IpfsNeuroCore will take care of all subsequent updates.
+export const addSpecificInstanceToConceptGraphMfs2 = async (aSubsetUniqueIdentifiers,oWord) => {
+    // add oWord to the local Concept Graph
+    var success = await addWordToActiveMfsConceptGraph(oWord);
+    if (!success) {
+        return false; // faled to publish because I am not the steward of this keyname - ipns pair
+    }
+
+    // for each set in aSubsetUniqueIdentifiers, add relationship to make oWord a specific instance of that set
+    for (var s=0;s<aSubsetUniqueIdentifiers.length;s++) {
+        var nextSet = aSubsetUniqueIdentifiers[s]
+    }
+
+}
+
+// This function should be used extensively to look up words from the local MFS active concept graph using the word's slug (wordData.slug).
+export const lookupWordBySlug = async (slug) => {
+    var pCG0 = window.ipfs.pCG0;
+    var mfsPath = pCG0 + "words/" + slug + "/node.txt";
+    // console.log("mfsPath: "+mfsPath)
+    var oWord = await fetchObjectByLocalMutableFileSystemPath(mfsPath)
+    return oWord;
 }
 
 export const fetchObjectByLocalMutableFileSystemPath = async (path) => {
@@ -475,6 +594,7 @@ export const convertUniqueIdentifier = (uniqueIdType_in,uniqueIdType_out,input) 
 }
 
 export const addSpecificInstanceToConceptGraphMfs = async (conceptUniqueIdentifier,subsetUniqueIdentifier,oWord) => {
+    // e.g.: "conceptFor_rating", null, oNewRating
     // oWord must be a concept graph word, as an object, ready to save to the MFS
     // conceptUniqueIdentifier can be any of the (spaceless) unique identifiers for a concept (concept word slug, concept slug, ipfs)
     // convention during development will be concept word slug and set word slug

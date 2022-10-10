@@ -17,7 +17,7 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
 
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_SingleConceptMainPage/current'>Current Concept Main Page</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/'>Full MFS directory for this concept</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/'>Sets @ s.i Tree</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/'>Sets & s.i Tree</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/'>Specific Instances</NavLink>
 
             <br/><br/>

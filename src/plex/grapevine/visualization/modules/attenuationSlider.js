@@ -37,8 +37,8 @@ export default class AttenuationSliderModule extends React.Component {
                 <div style={{display:"inline-block",fontSize:"12px"}} >ATTENUATION FACTOR</div>
                 <div id="attenuationFactorValueContainer" style={{display:"inline-block",marginLeft:"10px",width:"30px",fontSize:"12px"}} >1.00</div>
                 <div style={{display:"inline-block",marginLeft:"10px",fontSize:"12px"}} >OFF</div>
-                <div id="attenuationSlider" style={{display:"inline-block",width:"200px",marginLeft:"10px",backgroundColor:"blue"}} ></div>
-                <div style={{display:"inline-block",marginLeft:"10px",fontSize:"12px"}} >ON</div>
+                <div id="attenuationSlider" style={{display:"inline-block",width:"200px",marginLeft:"20px",backgroundColor:"blue"}} ></div>
+                <div style={{display:"inline-block",marginLeft:"20px",fontSize:"12px"}} >ON</div>
             </>
         );
     }

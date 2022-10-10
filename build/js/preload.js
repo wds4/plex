@@ -434,3 +434,11 @@ var oMainSchemaForConceptGraph = window.lookupWordBySlug[window.aLookupConceptGr
 // NOTES:
 jQuery("#whateverButton").get(0).click();
 */
+
+// 9 Oct 2022: rebuilding NeuroCore so that it operates with Concept Graph stored in the Mutable File System of IPFS as opposed to SQL
+// oWord = window.lookupWordBySlug(slug) has been used extensively so far and is loaded at started with the ACTIVE Concept Graph
+// but oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug) will take its place.
+// For this to work,
+// window.ipfs will require intialization by ConceptGraphInMfsFunctions.loadActiveIpfsConceptGraph()
+// (currently called by Plex Home Page)
+window.ipfs = {}

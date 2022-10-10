@@ -114,6 +114,8 @@ import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
 import HelloWorldMarkdown from './plex/settings/helloWorld/helloWorldMarkdown.js';
 import HelloWorldNoUiSlider from './plex/settings/helloWorld/helloWorldNoUiSlider.js';
 import HelloWorldVisJS from './plex/settings/helloWorld/helloWorldVisJS.js';
+import HelloWorldVictory from './plex/settings/helloWorld/helloWorldVictory.js';
+import HelloWorldGoogleCharts from './plex/settings/helloWorld/helloWorldGoogleCharts.js';
 import HelloWorldP5 from './plex/settings/helloWorld/helloWorldP5.js';
 import HelloWorldC2 from './plex/settings/helloWorld/helloWorldC2.js';
 import HelloWorldAsyncChain from './plex/settings/helloWorld/helloWorldAsyncChain.js';
@@ -131,6 +133,7 @@ import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/
 import ConceptGraphsFrontEnd_ManageDownload from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageConceptGraphDownload.js';
 import ConceptGraphsFrontEnd_ManageMainConceptGraphSchema from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageMainConceptGraphSchema.js';
 import ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/downloadConceptGraphFromExternalSource.js';
+import ConceptGraphsFrontEnd_UpdateIPNSs from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/updateIpnsInSchemaDataAndConceptData.js';
 
 import ConceptGraphsFrontEnd_TableOfConcepts from './plex/conceptGraphFrontEnd/concepts/tableOfConcepts/tableOfConcepts.js';
 import ConceptGraphsFrontEnd_SingleConceptMainPage from './plex/conceptGraphFrontEnd/concepts/singleConcept/singleConceptMainPage.js';
@@ -410,6 +413,8 @@ ReactDOM.render(
           <Route path="/HelloWorldNoUiSlider" exact component={HelloWorldNoUiSlider} />
           <Route path="/HelloWorldMarkdown" exact component={HelloWorldMarkdown} />
           <Route path="/HelloWorldVisJS" exact component={HelloWorldVisJS} />
+          <Route path="/HelloWorldGoogleCharts" exact component={HelloWorldGoogleCharts} />
+          <Route path="/HelloWorldVictory" exact component={HelloWorldVictory} />
           <Route path="/HelloWorldP5" exact component={HelloWorldP5} />
           <Route path="/HelloWorldC2" exact component={HelloWorldC2} />
           <Route path="/HelloWorldAsyncChain" exact component={HelloWorldAsyncChain} />
@@ -427,9 +432,10 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEnd_ManageDownload" exact component={ConceptGraphsFrontEnd_ManageDownload} />
           <Route path="/ConceptGraphsFrontEnd_ManageMainConceptGraphSchema" exact component={ConceptGraphsFrontEnd_ManageMainConceptGraphSchema} />
           <Route path="/ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource" exact component={ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource} />
+          <Route path="/ConceptGraphsFrontEnd_UpdateIPNSs" exact component={ConceptGraphsFrontEnd_UpdateIPNSs} />
 
           <Route path="/ConceptGraphsFrontEnd_TableOfConcepts" exact component={ConceptGraphsFrontEnd_TableOfConcepts} />
-          <Route path="/ConceptGraphsFrontEnd_SingleConceptMainPage/:conceptcid" exact component={ConceptGraphsFrontEnd_SingleConceptMainPage} />
+          <Route path="/ConceptGraphsFrontEnd_SingleConceptMainPage/:conceptslug" exact component={ConceptGraphsFrontEnd_SingleConceptMainPage} />
 
           <Route path="/ConceptGraphsMainPage" exact component={ConceptGraphsMainPage} />
           <Route path="/EditExistingConceptGraphPage/:conceptgraphsqlid" exact component={EditExistingConceptGraphPage} />

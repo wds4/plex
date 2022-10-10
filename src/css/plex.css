@@ -89,6 +89,19 @@
     margin-left:10px;
     background-color:#BFBFBF;
 }
+.leftColStyleH {
+    display:inline-block;
+    width:300px;
+    text-align:right;
+}
+.rightColStyleH {
+    display:inline-block;
+    width:60px;
+    margin-left:10px;
+    margin-right:10px;
+    background-color:#BFBFBF;
+    padding-left:5px;
+}
 .singleItemContainer {
     margin-bottom:2px;
 }

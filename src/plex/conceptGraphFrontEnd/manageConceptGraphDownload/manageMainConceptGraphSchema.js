@@ -21,6 +21,7 @@ export default class ManageConceptGraphDownload extends React.Component {
 
         var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
         jQuery("#keynameForPathToActiveConceptGraphContainer").html(keyname_forActiveCGPathDir)
+
         var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
         jQuery("#ipnsForPathToActiveConceptGraphContainer").html(ipns_forActiveCGPathDir)
         var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);

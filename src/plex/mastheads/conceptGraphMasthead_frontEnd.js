@@ -172,10 +172,16 @@ export default class ConceptGraphMasthead extends React.Component {
                             <div id="myCidMastheadContainer" style={{display:"inline-block",marginLeft:"5px",color:"grey"}}>peerID</div>
                           </div>
                       </div>
+
+                      <NavLink className="mastheadNavButton" exact activeClassName="active" to='/ConceptGraphsFrontEnd_ManageDownload' >
+                          <div style={{fontSize:"10px",lineHeight:"100%"}} >Download Concept Graph from External MFS</div>
+                          </NavLink>
+
                       <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >
                           Settings
                           <div style={{fontSize:"8px"}}>(Concept Graph)</div>
-                      </NavLink>
+                          </NavLink>
+
                       <NavLink className="mastheadNavButton" exact activeClassName="active" to='/ProfileMainPage' >Profile</NavLink>
                   </div>
                   <div style={{clear:"both"}}></div>

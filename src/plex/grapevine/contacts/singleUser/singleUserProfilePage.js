@@ -153,11 +153,24 @@ export default class SingleUserProfile extends React.Component {
                         <Masthead />
                         <center>
                             <div style={{border:"1px dashed grey",width:"1210px",textAlign:"left"}}>
-                                <div id="avatarContainer" style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"400px"}}>
-                                    <img id="avatarBox" className="mainProfilePageAvatarBox" />
+                                <div style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"440px",position:"relative"}}>
+                                    <div id="avatarContainer" style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"400px"}}>
+                                        <img id="avatarBox" className="mainProfilePageAvatarBox" />
+                                    </div>
+                                    <div style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",position:"absolute",bottom:"5px",left:"5px"}}>
+                                        <div>
+                                            <div style={{display:"inline-block",fontSize:"9px"}}>peerID (cid): </div>
+                                            <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
+                                        </div>
+
+                                        <div>
+                                            <div style={{display:"inline-block",fontSize:"9px"}}>image cid: </div>
+                                            <div id="imageCidContainer" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"400px",position:"relative"}}>
+                                <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"440px",position:"relative"}}>
                                     <div id="usernameContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"70px",padding:"10px",fontSize:"28px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
 
@@ -167,22 +180,14 @@ export default class SingleUserProfile extends React.Component {
                                     <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"150px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
                                     </div>
 
-                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} >Rate this user (JSON Schema Form)</NavLink>
-                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Trust Rating of this user (custom form)</NavLink>
-                                    <br/>
+                                    <div>
+                                        <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Trust Rating of this user (custom form)</NavLink>
+                                        <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} style={{float:"right"} }>Rate this user (JSON Schema Form) (?deprecating)</NavLink>
+                                        <div style={{clear:"both"}} ></div>
+                                    </div>
                                     <div id="saveUserToMutableFileSystemConceptGraphButton" className="doSomethingButton">save/update user file to Concept Graph on MFS</div>
 
-                                    <div style={{display:"inline-block",fontSize:"10px",marginLeft:"10px",position:"absolute",bottom:"5px",left:"5px"}}>
-                                        <div>
-                                            <div style={{display:"inline-block",fontSize:"10px"}}>peerID (cid): </div>
-                                            <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"10px",marginLeft:"10px",color:"grey"}}></div>
-                                        </div>
 
-                                        <div>
-                                            <div style={{display:"inline-block",fontSize:"10px"}}>image cid: </div>
-                                            <div id="imageCidContainer" style={{display:"inline-block",fontSize:"10px",marginLeft:"10px",color:"grey"}}></div>
-                                        </div>
-                                    </div>
 
                                 </div>
                             </div>

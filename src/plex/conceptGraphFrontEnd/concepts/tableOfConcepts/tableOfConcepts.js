@@ -2,211 +2,124 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Masthead from '../../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
-import LeftNavbar2 from '../../../navbars/leftNavbar2/cgFe_concepts_leftNav2';
+import LeftNavbar2 from '../../../navbars/leftNavbar2/cgFe_concepts_leftNav2.js';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
-import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
-import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 import sendAsync from '../../../renderer.js';
 
 const jQuery = require("jquery");
+jQuery.DataTable = require("datatables.net");
 
-const showDeveloperElements = () => {
-    console.log("showDeveloperElements")
-    jQuery("#toggleDeveloperElementsButton").data("status","show");
-    jQuery("#toggleDeveloperElementsButton").css("background-color","green");
-    var setsContainerHeight = jQuery("#developerElementsInternalContainer").css("height");
-    var setsContainerHeight = parseInt(setsContainerHeight.slice(0,-2)) + 15;
-    setsContainerHeight += "px";
-
-    jQuery("#developerElementsContainer").animate({
-        height: "400px",
-        padding: "3px",
-        borderWidth:"1px"
-    },500);
+function makeThisPageTable(conceptDataSet) {
+    var dtable = jQuery('#table_concepts').DataTable({
+        data: conceptDataSet,
+        pageLength: 100,
+        "columns": [
+            {
+                "class":          'details-control',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ''
+            },
+            { },
+            { },
+            { "visible": false },
+            { }
+        ],
+        "dom": '<"pull-left"f><"pull-right"l>tip'
+    });
 }
 
-const hideDeveloperElements = () => {
-    console.log("hideDeveloperElements")
-    jQuery("#toggleDeveloperElementsButton").data("status","hidden");
-    jQuery("#toggleDeveloperElementsButton").css("background-color","#EFEFEF");
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-    jQuery("#developerElementsContainer").animate({
-        height: "0px",
-        padding: "0px",
-        borderWidth:"0px"
-    },500);
-}
-
-var aConceptCidList = [];
-
-var cidNum = 0;
-
-// This is the hackiest hack of mine I can think of.
-// Somehow passing cid (an object) into the DOM as data-cid converts it to a string when I pull it back out.
-// There's surely a standard way to convert a cid object into a string; I just haven't found it yet and this works for now.
-const convertCidToString = (inputCid) => {
-    var cidHTML = "";
-    cidHTML += "<div ";
-    cidHTML += " id='inputCid_"+cidNum+"' ";
-    cidHTML += " data-cid='"+inputCid+"' ";
-    cidHTML += " >";
-    cidHTML += "</div>";
-    jQuery("#cidConversionContainer").html(cidHTML)
-    var outputCid = jQuery("#inputCid_"+cidNum).data("cid")
-    cidNum++;
-    return outputCid;
-}
-
-const addConceptFile = async (cid) => {
-    // console.log("addConceptFile; cid: "+ typeof cid)
-    var cidHTML = "";
-    cidHTML += "<div>"+cid+"</div>";
-    jQuery("#cidListContainer").append(cidHTML)
-    var decodedCid = convertCidToString(cid)
-    // console.log("addConceptFile decodedCid: "+typeof decodedCid)
-    if (!aConceptCidList.includes(decodedCid)) {
-        aConceptCidList.push(decodedCid)
-
-        for await (const chunk2 of MiscIpfsFunctions.ipfs.cat(cid)) {
-        // amazingly, this works and produces the same result with cid (which is an object) and with decodedCid (which is a string)
-        // for await (const chunk2 of MiscIpfsFunctions.ipfs.cat(decodedCid)) {
-            var chunk3 = new TextDecoder("utf-8").decode(chunk2);
-            try {
-                var oConcept = JSON.parse(chunk3);
-                if (typeof oConcept == "object") {
-                    var concept_wordSlug = oConcept.wordData.slug;
-                    var concept_conceptTitle = oConcept.conceptData.title;
-                    var cidHTML = "";
-                    cidHTML += "<div>";
-                        cidHTML += "<div class='doSomethingButton_small ipfsMutableFilesConceptContainer' ";
-                        cidHTML += " data-cid='"+cid+"' ";
-                        cidHTML += " data-wordslug='"+concept_wordSlug+"' ";
-                        cidHTML += " data-concepttitle='"+concept_conceptTitle+"' ";
-                        cidHTML += " >";
-                        cidHTML += "Show rawFile";
-                        cidHTML += "</div>";
-
-                        cidHTML += "<div class='goToSingleConceptPageButton' style='display:inline-block;margin-left:10px;' ";
-                        cidHTML += " data-cid='"+cid+"' ";
-                        cidHTML += " data-wordslug='"+concept_wordSlug+"' ";
-                        cidHTML += " data-concepttitle='"+concept_conceptTitle+"' ";
-                        cidHTML += " >";
-                        cidHTML += "<div>"+concept_conceptTitle+"</div>";
-                    cidHTML += "</div>";
-                    jQuery("#listOfAllConceptsContainer").append(cidHTML)
-
-                } else {
-                }
-            } catch (e) {
-                console.log("error: "+e)
-            }
-        }
-    }
-}
-
-const reportConceptsFromMutableFiles = async (pCG0,path,currDepth) => {
-    var pathMinusPrefix = path.replace(pCG0,"./")
-    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
-        var fileName = file.name;
-        var fileType = file.type;
-        var fileCid = file.cid;
-        console.log("path: "+path+"; file name: "+fileName)
-        // console.log("path: "+path+"; file type: "+fileType)
-        var reportHTML = "";
-        reportHTML += "<div>";
-        reportHTML += "<div style='display:inline-block;' >"+pathMinusPrefix+"</div>";
-        if (fileType=="directory") {
-            reportHTML += "<div style='display:inline-block;background-color:yellow;' >" + fileName + "</div>";
-        }
-        if (fileType=="file") {
-            reportHTML += "<div class=ipfsMutableFilesFileContainer style='display:inline-block;background-color:orange;' ";
-            reportHTML += " data-filename='"+fileName+"' ";
-            reportHTML += " data-path='"+path+"' ";
-            reportHTML += " data-cid='"+fileCid+"' ";
-            reportHTML += " >";
-            reportHTML += fileName;
-            reportHTML += "</div>";
-            if (fileName=="node.txt") {
-                await addConceptFile(fileCid)
-            }
-        }
-        reportHTML += "</div>";
-        jQuery("#listOfAllPathsContainer").append(reportHTML)
-        if (file.type=="directory") {
-            var newPath=path+file.name+"/";
-            var nextDepth = currDepth + 1;
-            if (nextDepth < 2) {
-                await reportConceptsFromMutableFiles(pCG0,newPath,nextDepth)
-            }
-        }
-    }
-}
-
-export default class AllConceptsInMFS extends React.Component {
+export default class AllConceptsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            conceptLinks: []
+            conceptLinks: [],
+            conceptLinks2: []
         }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        cidNum = 0;
-        aConceptCidList = [];
-        var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
-        var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
-        var mainSchema_ipns = oMainSchema.metaData.ipns;
-        var pCG = "/plex/conceptGraphs/";
-        var pCG0 = pCG + mainSchema_ipns + "/concepts/";
-        var isThisConceptGraphPresentInMFS = false;
-        for await (const file of MiscIpfsFunctions.ipfs.files.ls(pCG)) {
-            if (file.name==mainSchema_ipns) {
-                isThisConceptGraphPresentInMFS = true;
-            }
-        }
-        if (isThisConceptGraphPresentInMFS) {
-            var depth = 0;
-            console.log("isThisConceptGraphPresentInMFS: "+isThisConceptGraphPresentInMFS)
-            await reportConceptsFromMutableFiles(pCG0,pCG0,depth)
-            console.log("aConceptCidList: "+JSON.stringify(aConceptCidList,null,4))
+
+        var conceptGraphMainSchema_slug = window.ipfs.activeConceptGraph.slug;
+        // var oConceptGraphMainSchema = window.lookupWordBySlug[conceptGraphMainSchema_slug];
+
+        var oConceptGraphMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(conceptGraphMainSchema_slug);
+
+        var aConceptList = oConceptGraphMainSchema.conceptGraphData.concepts;
+
+        var conceptDataSet = [];
+
+        for (var c=0;c<aConceptList.length;c++) {
+            var concept_slug = aConceptList[c];
+            // var oConcept = window.lookupWordBySlug[concept_slug];
+            var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_slug);
+            var concept_name = oConcept.conceptData.name.singular;
+            var concept_ipns = oConcept.metaData.ipns;
+            // var concept_slug = oConcept.wordData.slug;
+
+            var r = 0;
+            var nextRow_id = window.lookupSqlIDBySlug[concept_slug];
+            var nextRow_old_button = "<div data-sqlid="+nextRow_id+" class='doSomethingButton_small nextRowEditButton_old' style=margin-right:5px; >VIEW / EDIT (back-end)</div>";
+            var nextRow_button = "<div data-sqlid="+nextRow_id+" data-slug="+concept_slug+" data-ipns="+concept_ipns+" class='doSomethingButton_small nextRowEditButton' style=margin-right:5px; >VIEW / EDIT</div>";
+            // var nextRow_id_html = nextRow_old_button + nextRow_button + nextRow_id;
+            var nextRow_id_html = nextRow_old_button + nextRow_button;
+
+            /*
+            window.ipfs.aLookupConceptInfoBySqlID = [];
+            window.ipfs.aLookupConceptInfoBySqlID[nextRow_id] = {};
+            window.ipfs.aLookupConceptInfoBySqlID[nextRow_id].slug = concept_slug;
+            window.ipfs.aLookupConceptInfoBySqlID[nextRow_id].name = oConcept.wordData.name;
+            window.ipfs.aLookupConceptInfoBySqlID[nextRow_id].title = oConcept.wordData.title;
+            */
+
+            // This updates the Concept Name field in the masthead and is utilized in the back end to keep track
+            window.aLookupConceptInfoBySqlID[nextRow_id] = {};
+            window.aLookupConceptInfoBySqlID[nextRow_id].slug = concept_slug;
+            window.aLookupConceptInfoBySqlID[nextRow_id].name = oConcept.wordData.name;
+            window.aLookupConceptInfoBySqlID[nextRow_id].title = oConcept.wordData.title;
+
+
+            // var concept_conceptName = oConcept.conceptData.name.singular;
+
+            var aNextPattern = [
+                "",
+                c,
+                nextRow_id_html,
+                concept_slug,
+                concept_name
+            ];
+            conceptDataSet.push(aNextPattern);
 
             // create links to individual view / edit existing wordType page
-            for (var c=0;c<aConceptCidList.length;c++) {
-                var nextConceptCid = aConceptCidList[c];
-                var oConceptData = {};
-                oConceptData.pathname = "/ConceptGraphsFrontEnd_SingleConceptMainPage/"+nextConceptCid;
-                oConceptData.conceptcid = nextConceptCid;
-                oConceptData.conceptlink = 'linkFrom_'+nextConceptCid;
-                this.state.conceptLinks.push(oConceptData)
-                this.forceUpdate();
-            }
+            var oConceptData = {};
+            oConceptData.pathname = "/ConceptGraphsFrontEnd_SingleConceptMainPage/"+concept_slug;
+            oConceptData.conceptsqlid = 'linkFrom_'+concept_slug;
+            oConceptData.conceptslug = concept_slug;
+            this.state.conceptLinks.push(oConceptData)
 
-            jQuery(".goToSingleConceptPageButton").click(async function(){
-                var cid = jQuery(this).data("cid")
-                console.log("goToSingleConceptPageButton; cid: "+cid)
-                jQuery("#linkFrom_"+cid).get(0).click();
-            })
+            // Links to back end concept page (stored in SQL, not MFS)
+            var oConceptData2 = {};
+            oConceptData2.pathname = "/SingleConceptGeneralInfo/"+nextRow_id;
+            oConceptData2.conceptsqlid = 'linkOldFrom_'+nextRow_id;
+            oConceptData2.conceptslug = concept_slug;
+            this.state.conceptLinks2.push(oConceptData2)
 
-            jQuery(".ipfsMutableFilesConceptContainer").click(async function(){
-                var cid = jQuery(this).data("cid")
-                jQuery("#cidToThisConceptContainer").html(cid)
-                for await (const chunk2 of MiscIpfsFunctions.ipfs.cat(cid)) {
-                    var chunk3 = new TextDecoder("utf-8").decode(chunk2);
-                    try {
-                        var oConcept = JSON.parse(chunk3);
-                        if (typeof oConcept == "object") {
-                            var chunk5 = JSON.stringify(oConcept,null,4);
-                            jQuery("#clickedConceptRawFileContainer").html(chunk5)
-                        } else {
-                            jQuery("#clickedConceptRawFileContainer").html(chunk3)
-                        }
-                    } catch (e) {
-                        console.log("error: "+e)
-                        jQuery("#clickedConceptRawFileContainer").html(chunk3)
-                    }
-                }
-            })
+            this.forceUpdate();
         }
+        makeThisPageTable(conceptDataSet);
+
+        jQuery(".nextRowEditButton").click(function(){
+            // var sqlid = jQuery(this).data("sqlid");
+            var slug = jQuery(this).data("slug");
+            jQuery("#linkFrom_"+slug).get(0).click();
+        })
+        jQuery(".nextRowEditButton_old").click(function(){
+            var sqlid = jQuery(this).data("sqlid");
+            jQuery("#linkOldFrom_"+sqlid).get(0).click();
+        })
     }
     render() {
         return (
@@ -216,42 +129,57 @@ export default class AllConceptsInMFS extends React.Component {
                     <LeftNavbar2 />
                     <div className="mainPanel" style={{backgroundColor:"#CFCFCF"}} >
                         <Masthead />
-                        <div class="h2">All Concepts (corresponding to this Concept Graph) from the Mutable File System</div>
-                        <div style={{fontSize:"12px",marginBottom:"10px",textAlign:"center"}} >
-                            All concepts found in the Mutable File System that correspond to this Concept Graph.
+                        <div class="h2">All Concepts</div>
+                        <div style={{marginLeft:"20px"}} >
+                            This list of concepts is generated from the conceptGraphMainSchema at: conceptGraphData.concepts. If incomplete or incorrect, may need to run neuroCore to edit the list.
                         </div>
 
-                        <div id="cidConversionContainer" style={{display:"none"}} >
-                        cidConversionContainer
-                        </div>
-
-                        <div style={{display:"none"}} >
+                        <div style={{display:"none"}}>
                         {this.state.conceptLinks.map(link => (
                             <div >
-                                <Link id={link.conceptlink} class='navButton'
+                                <Link id={link.conceptsqlid} class='navButton'
                                   to={link.pathname}
-                                >{link.conceptcid}
+                                >{link.conceptname}
                                 </Link>
                             </div>
                         ))}
                         </div>
 
-                        <div style={{height:"800px",overflow:"scroll"}}>
-                            <div style={{display:"inline-block",height:"100%"}} >
-                                <div id="listOfAllConceptsContainer" style={{display:"inline-block",width:"400px",border:"1px dashed purple",height:"95%",overflow:"scroll"}} >
-                                    <center>All Concepts</center>
-                                    <div style={{fontSize:"10px",textAlign:"center",marginBottom:"10px"}} >Click on concept title to go to overview page</div>
-                                </div>
+                        <div style={{display:"none"}}>
+                        {this.state.conceptLinks2.map(link => (
+                            <div >
+                                <Link id={link.conceptsqlid} class='navButton'
+                                  to={link.pathname}
+                                >{link.conceptname}
+                                </Link>
                             </div>
+                        ))}
+                        </div>
 
-                            <div style={{display:"inline-block",height:"100%"}} >
-                                <div style={{marginBottom:"5px"}}>
-                                    cid = <div style={{display:"inline-block"}} id="cidToThisConceptContainer" >cidToThisConceptContainer</div>
-                                </div>
-                                <textarea id="clickedConceptRawFileContainer" style={{display:"inline-block",width:"600px",height:"95%",border:"1px dashed grey",overflow:"scroll"}} ></textarea>
-                            </div>
+                        <div className="tableContainer" style={{marginTop:"20px",marginLeft:"20px"}} >
+                            <table id="table_concepts" className="display" style={{color:"black",width:"95%"}} >
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>r</th>
+                                        <th>id</th>
+                                        <th>word-slug</th>
+                                        <th>name</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th>r</th>
+                                        <th>id</th>
+                                        <th>word-slug</th>
+                                        <th>name</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
+
                 </fieldset>
             </>
         );

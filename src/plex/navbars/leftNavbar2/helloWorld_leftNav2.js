@@ -45,6 +45,8 @@ export default class LeftNavbar2_HelloWorld extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldJSONSchemaFormV5'>JSONSchemaForm Version 5</NavLink>
             <br/><br/>
             <center>Imaging</center>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldGoogleCharts'>Google Charts</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldVictory'>Victory</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldVisJS'>Vis.js</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldP5'>p5.js</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/HelloWorldC2'>c2.js</NavLink>

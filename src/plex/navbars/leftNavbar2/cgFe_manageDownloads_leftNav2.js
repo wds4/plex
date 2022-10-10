@@ -11,6 +11,7 @@ export default class LeftNavbar2_ManageDownload extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ManageDownload'>Manage Download</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ManageMainConceptGraphSchema'>Manage mainConceptGraphSchema</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource'>Download Concept Graph</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_UpdateIPNSs'>Update IPNS</NavLink>
         </div>
 
       </>

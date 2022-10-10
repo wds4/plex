@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
 import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js'
+// import * as ConceptGraphInMfsFunctions2 from '../../../lib/ipfs/conceptGraphInMfsFunctions2.js'
 import { Button } from "reactstrap";
 import { useDropzone } from "react-dropzone";
 import Masthead from '../../../mastheads/grapevineMasthead.js';
@@ -364,8 +365,12 @@ export default class SingleUserLeaveRating extends React.Component {
             var oNewRating = JSON.parse(sNewRating)
             await ConceptGraphInMfsFunctions.publishWordToIpfs(oNewRating)
             var conceptUniqueIdentifier = "conceptFor_rating";
-            var subsetUniqueIdentifier = null; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
-            await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewRating)
+            var subsetUniqueIdentifier = "supersetFor_rating"; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
+            // await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewRating)
+
+            var aSetUniqueIdentifiers = []
+            aSetUniqueIdentifiers.push(subsetUniqueIdentifier)
+            await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs2(aSetUniqueIdentifiers,oNewRating)
         })
 
         var oGeneratedKey = await makeKeynameAndIpnsForNewRating()
