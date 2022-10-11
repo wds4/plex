@@ -81,7 +81,7 @@ export const makeLocalFolderForContact = async (path) => {
 }
 
 //
-export const fetchRatingsByMeFromExternalMFS = async (peerID) => {
+export const fetchLocalRatingsFromExternalMFS = async (peerID) => {
     var aCids = []
 
     var mfsPath = "/ipns/"+peerID+"/grapevineData/publicRatingsData/ratingsByMe/ratings.txt";
@@ -91,11 +91,11 @@ export const fetchRatingsByMeFromExternalMFS = async (peerID) => {
             var ratingsListData = new TextDecoder("utf-8").decode(chunk);
 
             var aCids = JSON.parse(ratingsListData);
-            console.log("fetchRatingsByMeFromExternalMFS "+peerID+" SUCCESS! aCids: "+JSON.stringify(aCids,null,4))
+            console.log("fetchLocalRatingsFromExternalMFS "+peerID+" SUCCESS! aCids: "+JSON.stringify(aCids,null,4))
             return aCids;
         }
     } catch (e) {
-        console.log("fetchRatingsByMeFromExternalMFS "+peerID+" error: "+e)
+        console.log("fetchLocalRatingsFromExternalMFS "+peerID+" error: "+e)
         var aUsers = [];
         return aCids;
     }

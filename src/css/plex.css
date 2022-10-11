@@ -943,6 +943,12 @@
 .typeNameContainer:hover {
     background-color:yellow;
 }
+.nodeNameContainer {
+    display:inline-block;
+}
+.nodeNameContainer:hover {
+    background-color:yellow;
+}
 .childrenNodesContainer {
     margin-left:30px;
 }

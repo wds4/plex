@@ -363,14 +363,15 @@ export default class SingleUserLeaveRating extends React.Component {
             console.log("submitThisRatingButton clicked")
             var sNewRating = jQuery("#newRatingRawFile").val()
             var oNewRating = JSON.parse(sNewRating)
-            await ConceptGraphInMfsFunctions.publishWordToIpfs(oNewRating)
-            var conceptUniqueIdentifier = "conceptFor_rating";
-            var subsetUniqueIdentifier = "supersetFor_rating"; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
-            // await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewRating)
-
+            var subsetUniqueIdentifier = "setFor_ratings_authoredLocally"; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
             var aSetUniqueIdentifiers = []
             aSetUniqueIdentifiers.push(subsetUniqueIdentifier)
+
+            // await ConceptGraphInMfsFunctions.publishWordToIpfs(oNewRating) // this step is now taken care of by addSpecificInstanceToConceptGraphMfs
             await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs2(aSetUniqueIdentifiers,oNewRating)
+
+            // var conceptUniqueIdentifier = "conceptFor_rating";
+            // await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewRating)
         })
 
         var oGeneratedKey = await makeKeynameAndIpnsForNewRating()

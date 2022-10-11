@@ -10,6 +10,27 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+// Input local word as object;
+// look for ipns from prevSource; if present, obtain that version over ipfs and return word as object
+export const returnPrevSourceVersionOfWordUsingIPNS = async (oWord) => {
+    var prevSourceIPNS = oWord.metaData.prevSource.ipns;
+    var oWord = await fetchObjectByIPNS(prevSourceIPNS)
+    // need to change this to return false if error
+    return oWord;
+}
+// same as returnPrevSourceVersionOfWordUsingIPNS except
+// use prevSource stewardPeerID and slug to fetch word
+// (May want to add slug as a field in prevSource in case local version uses different slug!)
+export const returnPrevSourceVersionOfWordUsingRemoteMFS = async (oWord) => {
+    var slug = oWord.wordData.slug;
+    var prevSourceStewardPeerID = oWord.metaData.prevSource.stewardPeerID;
+}
+// try returnPrevSourceVersionOfWordUsingIPNS
+// if unsuccessful, try returnPrevSourceVersionOfWordUsingRemoteMFS
+export const returnPrevSourceVersionOfWord = async (oWord) => {
+
+}
+
 export const isActiveConceptGraphDirPresent = async (ipns10_forActiveCGPathDir,mainSchema_local_ipns) => {
     var result = false;
     var path = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"
@@ -151,14 +172,19 @@ export const loadActiveIpfsConceptGraph = async () => {
     console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
 }
 
+// maybe rename to addOrUpdateWordToActiveMfsConceptGraph ?
 export const addWordToActiveMfsConceptGraph = async (oWord) => {
     var amISteward = checkWordWhetherIAmSteward(oWord)
     if (!amISteward) {
         return false;
     }
     console.log("addWordToActiveMfsConceptGraph; amISteward: "+amISteward)
+
+    // ?? may want to make this step optional??
+    var oWord = await publishWordToIpfs(oWord)
+
     var slug = oWord.wordData.slug;
-    var keyname = oWord.metaData.keyname;
+    // var keyname = oWord.metaData.keyname;
     var sWord = JSON.stringify(oWord,null,4)
     var fileToWrite_encoded = new TextEncoder().encode(sWord)
 
@@ -180,7 +206,7 @@ export const addWordToActiveMfsConceptGraph = async (oWord) => {
     var options_publish = { key: keyname }
     var res = await MiscIpfsFunctions.ipfs.name.publish(cid, options_publish)
     */
-    publishWordToIpfs(oWord)
+
 
     // Future: Need to evaluate res first before returning true
     return true;
@@ -206,12 +232,34 @@ export const addSpecificInstanceToConceptGraphMfs2 = async (aSubsetUniqueIdentif
     if (!success) {
         return false; // faled to publish because I am not the steward of this keyname - ipns pair
     }
+    var word_slug = oWord.wordData.slug;
 
     // for each set in aSubsetUniqueIdentifiers, add relationship to make oWord a specific instance of that set
     for (var s=0;s<aSubsetUniqueIdentifiers.length;s++) {
-        var nextSet = aSubsetUniqueIdentifiers[s]
+        var nextSetID = aSubsetUniqueIdentifiers[s]
+        // For now, assume the uniqueID type is wordSlug. For future, could be IPNS, etc
+        var set_slug = nextSetID;
+        var oSet = await lookupWordBySlug(set_slug);
+        if (oSet.hasOwnProperty("setData")) {
+            var governingConcept_slug = oSet.setData.metaData.governingConcept.slug;
+        }
+        if (oSet.hasOwnProperty("supersetData")) {
+            var governingConcept_slug = oSet.supersetData.metaData.governingConcept.slug;
+        }
+        var oGoverningConcept = await lookupWordBySlug(governingConcept_slug);
+        var schema_slug = oGoverningConcept.conceptData.nodes.schema.slug;
+        var oSchema = await lookupWordBySlug(schema_slug);
+        var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
+        oNewRel.nodeFrom.slug = word_slug
+        oNewRel.relationshipType.slug = "isASpecificInstanceOf"
+        oNewRel.nodeTo.slug = set_slug
+        var oMiniWordLookup = {}
+        oMiniWordLookup[word_slug] = oWord;
+        oMiniWordLookup[set_slug] = oSet;
+        oSchema = MiscFunctions.updateSchemaWithNewRel(oSchema,oNewRel,oMiniWordLookup)
+        // await republishWordIfSteward(oSchema)
+        var success = await addWordToActiveMfsConceptGraph(oSchema);
     }
-
 }
 
 // This function should be used extensively to look up words from the local MFS active concept graph using the word's slug (wordData.slug).
@@ -268,8 +316,34 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
 
     return aCids;
 }
+export const convertSlugToCid = async (slug) => {
+    // var oWord = await lookupWordBySlug(slug)
+    // var ipns = oWord.metaData.ipns;
+    var pCGw = window.ipfs.pCGw;
+    var myPeerID = window.ipfs.myPeerID;
+    var pathToNode = "/ipns/"+myPeerID + "/" + pCGw + slug + "/node.txt";
+    var cid = await ipfs.resolve(pathToNode);
+    console.log("convertSlugToCid; slug: "+slug+"; cid: "+cid)
+    return cid;
+}
+// returns an array of cids pointing to specific instances of a given a concept and a subset
+export const fetchArrayOfSpecificInstanceCidsFromMfs = async (subsetUniqueID) => {
+    // for now, assume subsetUniqueID is its slug; in future, it could be IPNS or some other unique ID (like name)
+    var aCids = [];
+    var set_slug = subsetUniqueID;
+    var oSet = await lookupWordBySlug(set_slug)
+    var aSpecificInstances = oSet.globalDynamicData.specificInstances;
+    for (var s=0;s<aSpecificInstances.length;s++) {
+        var nextSI_slug = aSpecificInstances[s];
+        var nextCid = await convertSlugToCid(nextSI_slug);
+        aCids.push(nextCid)
+    }
+
+    return aCids;
+}
+
 // This function could be moved to MiscIpfsFunctions since it does not interact with MFS
-export const fetchObjectByIPNS = async (ipns) => {
+export const fetchObjectByIPNS_old = async (ipns) => {
     var ipfsPath = "/ipns/"+ipns;
     console.log("fetchObjectByIPNS; ipfsPath: "+ipfsPath)
 
@@ -286,10 +360,27 @@ export const fetchObjectByIPNS = async (ipns) => {
     // return false;
 }
 
+// This function could be moved to MiscIpfsFunctions since it does not interact with MFS
+export const fetchObjectByIPNS = async (ipns) => {
+    var ipfsPath = "/ipns/"+ipns;
+    console.log("fetchObjectByIPNS; ipfsPath: "+ipfsPath)
+
+    var chunks = []
+    for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
+        var chunk_decoded = new TextDecoder("utf-8").decode(chunk);
+        chunks.push(chunk_decoded)
+    }
+    var sResult = chunks.join('')
+    var oWord = JSON.parse(sResult)
+    return oWord;
+    // return false;
+}
+
 export const convertExternalNodeToLocalWord = async (oWordExternal) => {
     var oWordLocal = MiscFunctions.cloneObj(oWordExternal);
 
     var wordType = oWordExternal.wordData.wordType;
+    var oldSlug = oWordExternal.wordData.slug;
 
     var oldKeyname = oWordExternal.metaData.keyname;
     var oldIpns = oWordExternal.metaData.ipns;
@@ -298,6 +389,7 @@ export const convertExternalNodeToLocalWord = async (oWordExternal) => {
     var prevLastUpdate = oWordExternal.metaData.lastUpdate;
     oWordLocal.metaData.prevSource = {};
     oWordLocal.metaData.prevSource.ipns = oldIpns;
+    oWordLocal.metaData.prevSource.slug = oldSlug;
     oWordLocal.metaData.prevSource.keyname = oldKeyname;
     oWordLocal.metaData.prevSource.peerID = prevStewardPeerID;
     oWordLocal.metaData.prevSource.username = prevStewardUsername;

@@ -417,7 +417,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
     for (var u=0;u<listOfPeerIDs.length;u++) {
         var nextPeerID = listOfPeerIDs[u];
         if (nextPeerID != myPeerID) {
-            var aRatingCids = await MiscIpfsFunctions.fetchRatingsByMeFromExternalMFS(nextPeerID)
+            var aRatingCids = await MiscIpfsFunctions.fetchLocalRatingsFromExternalMFS(nextPeerID)
             for (var a=0;a<aRatingCids.length;a++) {
                 var nextRatingPath = aRatingCids[a];
                 // var nextRatingCid = nextRatingPath.replace("/ipfs/","");
@@ -593,11 +593,13 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         var sMasterUserList = JSON.stringify(masterUserList,null,4)
         console.log("sMasterUserList: "+sMasterUserList)
 
-        var conceptUniqueIdentifier = "conceptFor_rating";
+        // var conceptUniqueIdentifier = "conceptFor_rating";
         var subsetUniqueIdentifier = false; // will default to superset
         var aCids = [];
+        var subsetUniqueIdentifier = "supersetFor_rating"
+        // var aCids = await ConceptGraphInMfsFunctions.fetchFromMutableFileSystem(conceptUniqueIdentifier,subsetUniqueIdentifier)
+        var aCids = await ConceptGraphInMfsFunctions.fetchArrayOfSpecificInstanceCidsFromMfs(subsetUniqueIdentifier)
 
-        var aCids = await ConceptGraphInMfsFunctions.fetchFromMutableFileSystem(conceptUniqueIdentifier,subsetUniqueIdentifier)
         console.log("aCids: "+JSON.stringify(aCids,null,4))
 
         var sListOfCidsOfRatingsByMe = JSON.stringify(aCids,null,4);

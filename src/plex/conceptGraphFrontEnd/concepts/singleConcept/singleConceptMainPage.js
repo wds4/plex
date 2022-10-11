@@ -76,7 +76,7 @@ const generateNodeHTML = async (nextNode_slug,lookupChildTypes,isTopLevel) => {
 
             nextNodeHTML += "</div>";
 
-            nextNodeHTML += "<div id='typeNameContainer_"+nextNode_name+"' data-slug='"+nextNode_slug+"' class='typeNameContainer' ";
+            nextNodeHTML += "<div id='nodeNameContainer_"+nextNode_name+"' data-slug='"+nextNode_slug+"' class='nodeNameContainer' ";
             if (oNodeRole[nextNode_slug]=="specificInstance")  { nextNodeHTML += " style='color:purple;' "; }
             nextNodeHTML += " >";
             nextNodeHTML += nextNode_name
@@ -198,6 +198,60 @@ const generateConceptFullHierarchy = async (oConcept) => {
     }
 }
 
+const addSpecialWord = (oSpecialWord,specialWordType) => {
+    var title = oSpecialWord.wordData.title;
+    var slug = oSpecialWord.wordData.slug;
+    var swHTML = "";
+    swHTML += "<div class='singleItemContainer' >";
+        swHTML += "<div class='leftColumnLeftPanel' >";
+            swHTML += specialWordType;
+        swHTML += "</div>";
+        swHTML += "<div id='JSONSchemaSlugContainer' class='leftColumnRightPanel specialWordContainer' ";
+        swHTML += " data-slug='"+slug+"' ";
+        swHTML += " >";
+            swHTML += title;
+        swHTML += "</div>";
+    swHTML += "</div>";
+    jQuery("#specialWordsContainer").append(swHTML)
+}
+
+const generateConceptSpecialWordsList = async (oConcept) => {
+    jQuery("#specialWordsContainer").html("")
+
+    var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(mainSchema_slug)
+
+    var superset_slug = oConcept.conceptData.nodes.superset.slug;
+    var oSuperset = await ConceptGraphInMfsFunctions.lookupWordBySlug(superset_slug)
+
+    var jsonSchema_slug = oConcept.conceptData.nodes.JSONSchema.slug;
+    var oJsonSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(jsonSchema_slug)
+
+    var propertySchema_slug = oConcept.conceptData.nodes.propertySchema.slug;
+    var oPropertySchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(propertySchema_slug)
+
+    var primaryProperty_slug = oConcept.conceptData.nodes.primaryProperty.slug;
+    var oPrimaryProperty = await ConceptGraphInMfsFunctions.lookupWordBySlug(primaryProperty_slug)
+
+    var concept_slug = oConcept.conceptData.nodes.concept.slug;
+    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_slug)
+
+    var properties_slug = oConcept.conceptData.nodes.properties.slug;
+    var oProperties = await ConceptGraphInMfsFunctions.lookupWordBySlug(properties_slug)
+
+    var wordType_slug = oConcept.conceptData.nodes.wordType.slug;
+    var oWordType = await ConceptGraphInMfsFunctions.lookupWordBySlug(wordType_slug)
+
+    addSpecialWord(oConcept,"concept")
+    addSpecialWord(oWordType,"wordType")
+    addSpecialWord(oJsonSchema,"JSONSchema")
+    addSpecialWord(oSuperset,"superset")
+    addSpecialWord(oMainSchema,"schema")
+    addSpecialWord(oPropertySchema,"propertySchema")
+    addSpecialWord(oPrimaryProperty,"primaryProperty")
+    addSpecialWord(oProperties,"properties")
+}
+
 export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.Component {
     constructor(props) {
         super(props);
@@ -212,12 +266,49 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
         // console.log("conceptSlug: "+conceptSlug+"; oConcept: "+JSON.stringify(oConcept,null,4))
         jQuery("#conceptTitleContainer").html(oConcept.wordData.title)
 
+        await generateConceptSpecialWordsList(oConcept)
+
         await generateConceptFullHierarchy(oConcept)
 
         jQuery(".toggleChildrenOfTypesButton").click(function(){
             var node_slug = jQuery(this).data("slug")
             processClickedToggleButton(node_slug);
         })
+        jQuery(".specialWordContainer").click(async function(){
+            jQuery("#wordRawFileContainer").val();
+            var slug = jQuery(this).data("slug");
+            console.log("show in wordRawFileContainer slug: "+slug)
+            var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug)
+            jQuery("#wordRawFileContainer").val(JSON.stringify(oWord,null,4));
+        });
+        jQuery(".nodeNameContainer").click(async function(){
+            jQuery("#wordRawFileContainer").val();
+            var slug = jQuery(this).data("slug");
+            console.log("show in wordRawFileContainer slug: "+slug)
+            var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug)
+            jQuery("#wordRawFileContainer").val(JSON.stringify(oWord,null,4));
+        });
+        jQuery("#openAllButton").click(async function(){
+            jQuery(".childrenNodesContainer").css("display","block")
+            jQuery(".toggleChildrenOfTypesButton").data("status","open")
+        });
+        jQuery("#closeAllButton").click(async function(){
+            jQuery(".childrenNodesContainer").css("display","none")
+            jQuery(".toggleChildrenOfTypesButton").data("status","closed")
+        });
+        jQuery("#updateThisWordButton").click(async function(){
+            var sWord = jQuery("#wordRawFileContainer").val();
+            console.log("updateThisWordButton; sWord: "+sWord)
+            var oWord = JSON.parse(sWord)
+            await ConceptGraphInMfsFunctions.addWordToActiveMfsConceptGraph(oWord)
+        });
+        jQuery("#showPrevSourceVersionButton").click(async function(){
+            var sWord = jQuery("#wordRawFileContainer").val();
+            console.log("showPrevSourceVersionButton; sWord: "+sWord)
+            var oWord = JSON.parse(sWord)
+            var oPrevSourceVersion = await ConceptGraphInMfsFunctions.returnPrevSourceVersionOfWordUsingIPNS(oWord)
+            jQuery("#wordRawFileContainer").val(JSON.stringify(oPrevSourceVersion,null,4));
+        });
     }
     render() {
         return (
@@ -228,19 +319,24 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
                     <div className="mainPanel" >
                         <Masthead />
                         <div class="h2">
-                            <div style={{display:"inline-block",fontSize:"14px",marginRight:"20px",verticalAlign:"middle"}}>concept title: </div>
                             <div id="conceptTitleContainer" style={{display:"inline-block",marginRight:"20px"}}>conceptTitleContainer</div>
                         </div>
 
                         <div style={{marginTop:"20px"}}>
-                            <div id="propertyPathContainer">propertyPathContainer</div>
+                            <div id="propertyPathContainer" style={{display:"none"}} >propertyPathContainer</div>
 
                             <div style={{display:"inline-block",width:"600px",height:"800px",border:"1px dashed grey"}} >
-                                <center>Content: Hierarchical View</center>
+                                <center>concept structural components</center>
+                                <div id="specialWordsContainer" style={{marginBottom:"20px",fontSize:"12px"}} ></div>
+                                <center>Sets and Specific Instances of this concept</center>
+                                <div id="openAllButton" className="doSomethingButton_small" >open all</div>
+                                <div id="closeAllButton" className="doSomethingButton_small" >close all</div>
                                 <div id="fullHierarchyContainer" style={{overflow:"scroll"}} ></div>
                             </div>
                             <div style={{display:"inline-block",width:"600px",height:"800px",border:"1px dashed grey"}} >
-                                <textarea id="dataModelSchemaRawFileContainer" style={{display:"inline-block",width:"95%",height:"700px"}} >dataModelSchemaRawFileContainer</textarea>
+                                <textarea id="wordRawFileContainer" style={{display:"inline-block",width:"100%",height:"750px"}} >wordRawFileContainer</textarea>
+                                <div id="updateThisWordButton" className="doSomethingButton_small" >UPDATE</div>
+                                <div id="showPrevSourceVersionButton" className="doSomethingButton_small" >show prevSource version</div>
                             </div>
                         </div>
 
