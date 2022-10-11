@@ -39,7 +39,7 @@ export default class ConceptGraphMasthead extends React.Component {
             var currStatus = jQuery("#neuroCorePanelToggleButton").data("status");
             if (currStatus=="closed") {
                 jQuery("#neuroCorePanelToggleButton").data("status","open");
-                jQuery("#neuroCorePanelToggleButton").html("hide NeuroCore")
+                jQuery("#neuroCorePanelToggleButton").html("hide NeuroCore 2")
                 // jQuery("#neuroCoreMonitoringPanel").css("display","block")
                 jQuery("#neuroCoreMonitoringPanel").animate({
                     height: "80%",
@@ -49,7 +49,7 @@ export default class ConceptGraphMasthead extends React.Component {
             }
             if (currStatus=="open") {
                 jQuery("#neuroCorePanelToggleButton").data("status","closed");
-                jQuery("#neuroCorePanelToggleButton").html("show NeuroCore");
+                jQuery("#neuroCorePanelToggleButton").html("show NeuroCore 2");
                 // jQuery("#neuroCoreMonitoringPanel").css("display","none")
                 jQuery("#neuroCoreMonitoringPanel").animate({
                     height: "0%",
@@ -63,7 +63,7 @@ export default class ConceptGraphMasthead extends React.Component {
             var currStatus = jQuery("#neuroCore2PanelToggleButton").data("status");
             if (currStatus=="closed") {
                 jQuery("#neuroCore2PanelToggleButton").data("status","open");
-                jQuery("#neuroCore2PanelToggleButton").html("hide NeuroCore")
+                jQuery("#neuroCore2PanelToggleButton").html("hide NeuroCore 2")
                 // jQuery("#neuroCore2MonitoringPanel").css("display","block")
                 jQuery("#neuroCore2MonitoringPanel").animate({
                     height: "80%",
@@ -73,7 +73,7 @@ export default class ConceptGraphMasthead extends React.Component {
             }
             if (currStatus=="open") {
                 jQuery("#neuroCore2PanelToggleButton").data("status","closed");
-                jQuery("#neuroCore2PanelToggleButton").html("show NeuroCore");
+                jQuery("#neuroCore2PanelToggleButton").html("show NeuroCore 2");
                 // jQuery("#neuroCore2MonitoringPanel").css("display","none")
                 jQuery("#neuroCore2MonitoringPanel").animate({
                     height: "0%",

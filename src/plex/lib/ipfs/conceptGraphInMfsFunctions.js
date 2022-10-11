@@ -156,7 +156,6 @@ export const loadActiveIpfsConceptGraph = async () => {
     var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
     var pCGw = pCG0 + "words/";
 
-    window.ipfs = {};
     window.ipfs.myPeerID = myPeerID;
     window.ipfs.myUsername = myUsername
     window.ipfs.activeConceptGraph = {};

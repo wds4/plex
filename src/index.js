@@ -346,6 +346,7 @@ import IPFSMutableFilesInfoPage3 from './plex/settings/IPFS/IPFSMutableFilesInfo
 
 import NeuroCoreTopPanel from './plex/neuroCore/neuroCoreTopPanel.js'
 import NeuroCore2TopPanel from './plex/neuroCore2/neuroCoreTopPanel.js'
+import NeuroCore3TopPanel from './plex/neuroCore3/neuroCoreTopPanel.js'
 
 window.testVariable = "Alice";
 window.plexTimerCount = 0;
@@ -358,6 +359,7 @@ ReactDOM.render(
   <React.StrictMode>
      <BrowserRouter>
         <NeuroCore2TopPanel />
+        <NeuroCore3TopPanel />
         <div className="App" style={{height:"100%"}} >
 
           <Route path="/" exact component={PlexHome} />

@@ -462,3 +462,14 @@ var oMainSchemaForConceptGraph = window.lookupWordBySlug[window.aLookupConceptGr
 // NOTES:
 jQuery("#whateverButton").get(0).click();
 */
+window.ipfs = {};
+window.ipfs.neuroCore = {};
+window.ipfs.neuroCore.subject = {};
+
+window.ipfs.neuroCore.engine = {};
+window.ipfs.neuroCore.engine.oRecordOfUpdates = {};
+window.ipfs.neuroCore.engine.oPatternsWithAuxiliaryDataQueue = {};
+window.ipfs.neuroCore.engine.oPatternsTriggeredByAction = {};
+
+window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug = {};
+window.ipfs.neuroCore.engine.oMapPatternNameToWordSlug = {};

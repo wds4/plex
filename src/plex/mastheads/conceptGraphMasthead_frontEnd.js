@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Link } from "react-router-dom";
 import * as MiscFunctions from '../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../lib/ipfs/miscIpfsFunctions.js'
-import * as NeuroCore2TopPanel from '../neuroCore2/neuroCoreTopPanel.js';
+import * as NeuroCore3TopPanel from '../neuroCore3/neuroCoreTopPanel.js';
 
 const jQuery = require("jquery");
 
@@ -35,11 +35,11 @@ export default class ConceptGraphMasthead extends React.Component {
                 }
             } catch (e) {}
         }
-        jQuery("#neuroCorePanelToggleButton").click(function(){
-            var currStatus = jQuery("#neuroCorePanelToggleButton").data("status");
+        jQuery("#neuroCore3PanelToggleButton").click(function(){
+            var currStatus = jQuery("#neuroCore3PanelToggleButton").data("status");
             if (currStatus=="closed") {
-                jQuery("#neuroCorePanelToggleButton").data("status","open");
-                jQuery("#neuroCorePanelToggleButton").html("hide NeuroCore")
+                jQuery("#neuroCore3PanelToggleButton").data("status","open");
+                jQuery("#neuroCore3PanelToggleButton").html("hide NeuroCore 3")
                 // jQuery("#neuroCoreMonitoringPanel").css("display","block")
                 jQuery("#neuroCoreMonitoringPanel").animate({
                     height: "80%",
@@ -48,8 +48,8 @@ export default class ConceptGraphMasthead extends React.Component {
                 },500);
             }
             if (currStatus=="open") {
-                jQuery("#neuroCorePanelToggleButton").data("status","closed");
-                jQuery("#neuroCorePanelToggleButton").html("show NeuroCore");
+                jQuery("#neuroCore3PanelToggleButton").data("status","closed");
+                jQuery("#neuroCore3PanelToggleButton").html("show NeuroCore 3");
                 // jQuery("#neuroCoreMonitoringPanel").css("display","none")
                 jQuery("#neuroCoreMonitoringPanel").animate({
                     height: "0%",
@@ -59,23 +59,23 @@ export default class ConceptGraphMasthead extends React.Component {
             }
         });
 
-        jQuery("#neuroCore2PanelToggleButton").click(function(){
-            var currStatus = jQuery("#neuroCore2PanelToggleButton").data("status");
+        jQuery("#neuroCore3PanelToggleButton").click(function(){
+            var currStatus = jQuery("#neuroCore3PanelToggleButton").data("status");
             if (currStatus=="closed") {
-                jQuery("#neuroCore2PanelToggleButton").data("status","open");
-                jQuery("#neuroCore2PanelToggleButton").html("hide NeuroCore")
-                // jQuery("#neuroCore2MonitoringPanel").css("display","block")
-                jQuery("#neuroCore2MonitoringPanel").animate({
+                jQuery("#neuroCore3PanelToggleButton").data("status","open");
+                jQuery("#neuroCore3PanelToggleButton").html("hide NeuroCore 3")
+                // jQuery("#neuroCore3MonitoringPanel").css("display","block")
+                jQuery("#neuroCore3MonitoringPanel").animate({
                     height: "80%",
                     padding: "10px",
                     borderWidth:"1px"
                 },500);
             }
             if (currStatus=="open") {
-                jQuery("#neuroCore2PanelToggleButton").data("status","closed");
-                jQuery("#neuroCore2PanelToggleButton").html("show NeuroCore");
-                // jQuery("#neuroCore2MonitoringPanel").css("display","none")
-                jQuery("#neuroCore2MonitoringPanel").animate({
+                jQuery("#neuroCore3PanelToggleButton").data("status","closed");
+                jQuery("#neuroCore3PanelToggleButton").html("show NeuroCore 3");
+                // jQuery("#neuroCore3MonitoringPanel").css("display","none")
+                jQuery("#neuroCore3MonitoringPanel").animate({
                     height: "0%",
                     padding: "0px",
                     borderWidth:"0px"
@@ -117,16 +117,16 @@ export default class ConceptGraphMasthead extends React.Component {
                 jQuery("#goToCurrentConceptGraphMainPageButton").get(0).click();
             }
             console.log("takeANapButton do some more stuff")
-            document.getElementById("executeChangesSelector").value="yes";
-            document.getElementById("repeatLoopOverPatternListSelector").value="managed";
-            jQuery(".patternCheckbox").prop("checked",false);
-            jQuery("#patternCheckbox_pattern_p-r-s1n-initialprocessing_s8itsr").prop("checked",true);
+            document.getElementById("executeChangesNeuroCore3Selector").value="yes";
+            document.getElementById("repeatLoopOverNeuroCore3PatternListSelector").value="managed";
+            jQuery(".neuroCore3PatternCheckbox").prop("checked",false);
+            jQuery("#neuroCore3PatternCheckbox_pattern_p-r-s1n-initialprocessing_s8itsr").prop("checked",true);
             jQuery("#populateActivePatternsButton").get(0).click();
             await timeout(1000)
-            jQuery("#startNeuroCore2Button").get(0).click();
+            jQuery("#startNeuroCore3Button").get(0).click();
         })
-        jQuery("#takeANapREMButton").click( async function(){
-            console.log("takeANapREMButton clicked")
+        jQuery("#takeANeuroCore3NapREMButton").click( async function(){
+            console.log("takeANeuroCore3NapREMButton clicked")
             var message = "";
             message += "Not yet functional or even fully defined. \n\n";
             message += "REM = gRapevine Enabled Mudulation, lol. \n\n";
@@ -134,7 +134,7 @@ export default class ConceptGraphMasthead extends React.Component {
             alert(message)
         })
         jQuery("#takeADeeperNapButton").click(function(){
-            NeuroCore2TopPanel.takeADeeperNap()
+            NeuroCore3TopPanel.takeADeeperNap()
         })
         jQuery("#neuroCoreTablenameSelector").change(async function(){
             var neuroCoreTablename = jQuery("#neuroCoreTablenameSelector option:selected").data("neurocoretablename")
@@ -142,8 +142,8 @@ export default class ConceptGraphMasthead extends React.Component {
             console.log("changing neuroCoreTable; neuroCoreTablename: "+neuroCoreTablename+"; neuroCoreSqlID: "+neuroCoreSqlID)
             var foo = true;
             window.neuroCore.engine.currentConceptGraphSqlID = neuroCoreSqlID;
-            await NeuroCore2TopPanel.loadNeuroCore2ConceptGraph(foo);
-            await NeuroCore2TopPanel.loadPatterns()
+            await NeuroCore3TopPanel.loadNeuroCore3ConceptGraph(foo);
+            await NeuroCore3TopPanel.loadNeuroCore3Patterns()
         })
     }
     render() {
@@ -158,6 +158,24 @@ export default class ConceptGraphMasthead extends React.Component {
                   </div>
                   <div style={{fontSize:"14px",display:"inline-block",marginTop:"10px",color:"#003300",marginRight:"20px"}}>
                     <div style={{lineHeight:"90%"}}>front<br/>end</div>
+                  </div>
+
+                  <div style={{display:"inline-block"}} >
+                      <div className="doSomethingButton" id="sqlInDOMPanelToggleButton" data-status="closed" style={{display:"none"}} >show SQL in DOM panel</div>
+                      <div className="doSomethingButton" id="takeANapButton" style={{backgroundColor:"white",color:"purple"}}>Take a Power Nap! (non REM)</div>
+                      <div className="doSomethingButton" id="takeADeeperNapButton" style={{backgroundColor:"white",color:"purple"}}>(slightly deeper) Nap! (non REM)</div>
+                      <div className="doSomethingButton" id="takeANeuroCore3NapREMButton" style={{marginLeft:"20px"} }>Take a Nap (REM)</div>
+                      <br/>
+                      <div className="doSomethingButton" id="neuroCore3PanelToggleButton" data-status="closed" >show NeuroCore3</div>
+                      NC2 status:
+                      <div data-currentstatus="off" id="NC2StatusIndicator" style={{display:"inline-block",border:"1px solid black",marginLeft:"10px",padding:"0px 10px 0px 10px"}}>off</div>
+                      <div style={{display:"inline-block"}} id="latestActionContainer"></div>
+                      <select id="neuroCoreTablenameSelector" style={{marginLeft:"10px"}} >
+                          <option data-neurocoresqlid="10" data-neurocoretablename="myConceptGraph_plex" >plex</option>
+                          <option data-neurocoresqlid="11" data-neurocoretablename="myConceptGraph_plexPlayground" >plexPlayground</option>
+                          <option data-neurocoresqlid="12" data-neurocoretablename="myConceptGraph_plexNeuroCore" >plexNeuroCore (not yet exist)</option>
+                          <option data-neurocoresqlid="7" data-neurocoretablename="myConceptGraph_grapevine" >grapevine (should not work)</option>
+                      </select>
                   </div>
 
                   <div style={{float:"right",display:"inline-block",marginRight:"50px",height:"100%"}}>
