@@ -235,10 +235,6 @@ const executeSingleNeuroCore3Pattern_s1n = async (patternSlug,oAuxiliaryPatternD
             nodeAdditionalRestriction = false;
         }
     }
-    // var oRFL_current = MiscFunctions.cloneObj(plexNeuroCore.oRFL.current)
-    // var oRFL_new = MiscFunctions.cloneObj(plexNeuroCore.oRFL.new)
-    // var oRFL_total = Object.assign(oRFL_current,oRFL_new)
-    // console.log("executeSingleNeuroCore3Pattern_s1n; patternSlug: "+patternSlug+"; aNodes: "+JSON.stringify(aNodes,null,4));
 
     for (var r=0;r<aNodes.length;r++) {
         var node_slug = aNodes[r];
@@ -460,10 +456,7 @@ const executeOneNeuroCore3Pattern = async (patternIndex,patternSlug,patternName,
 
 const makeNewWord = async (slugToCreate,newUniqueID) => {
     var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
-    // console.log("slugToCreate: "+slugToCreate+"; newUniqueID: "+newUniqueID+"; oWord_new: "+JSON.stringify(oWord_new,null,4))
     var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
-    // plexNeuroCore.oRFL.updated[slugToCreate] = oWord_new;
-    // plexNeuroCore.oRFL.new[slugToCreate] = oWord_new;
     window.ipfs.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
     window.ipfs.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
     return fooResult;
@@ -472,11 +465,7 @@ const makeNewWord = async (slugToCreate,newUniqueID) => {
 const updateWord = async (slugToUpdate,updateUniqueID) => {
     var oWord_old = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
     var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
-    // console.log("slugToUpdate: "+slugToUpdate+"; updateUniqueID: "+updateUniqueID+"; oWord_old: "+JSON.stringify(oWord_old,null,4))
-    // console.log("slugToUpdate: "+slugToUpdate+"; updateUniqueID: "+updateUniqueID+"; oWord_new: "+JSON.stringify(oWord_new,null,4))
     var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
-    // plexNeuroCore.oRFL.updated[slugToUpdate] = oWord_new;
-    // plexNeuroCore.oRFL.new[slugToUpdate] = oWord_new;
     return fooResult;
 }
 

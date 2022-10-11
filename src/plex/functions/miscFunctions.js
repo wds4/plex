@@ -952,7 +952,6 @@ export const updateWordMaybeNewSlugInAllTables = async (sOldSlug,oUpdatedWord) =
     // jQuery("#loadActiveConceptGraphDataButton").trigger("click")
 }
 
-
 // note: this function requires metaData.keyname to exist!!
 export const createOrUpdateWordInAllTables = async (word_obj) => {
     // perhaps check whether word already exists or not so that only one of the two sql commands needs to be run (update vs insert)

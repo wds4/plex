@@ -18,6 +18,10 @@ export default class LeftNavbar1_conceptGraph extends React.PureComponent {
                 <div style={{fontSize:"10px",lineHeight:"100%"}} >Concept Graph (front end)</div>
                 </NavLink>
 
+            <NavLink className="leftNav1Button" activeClassName="active" to='/ConceptGraphsFrontEnd_WordsMainPage' >
+                <div style={{fontSize:"10px",lineHeight:"100%"}} >Words</div>
+                </NavLink>
+
             <NavLink className="leftNav1Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ConceptsMainPage' >
                 <div style={{fontSize:"10px",lineHeight:"100%"}} >Concepts</div>
                 </NavLink>

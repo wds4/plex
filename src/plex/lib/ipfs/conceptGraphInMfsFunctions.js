@@ -78,6 +78,14 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
     return aSlugs;
 }
 
+// The NeuroCore3 equivalent of NeuroCore2's createOrUpdateWordInAllTables
+// Similar in function to addOrUpdateWordInLocalConceptGraph
+// Except: this word is either generated locally or updating a word that already exists locally
+// Therefore: no need to run convertExternalNodeToLocalWord(oNode)
+export const createOrUpdateWordInMFS = async (oWord) => {
+    var word_slug = oWord.wordData.slug;
+}
+
 // Download an external word from IPFS using its externally-controlled ipns address,
 // update its metaData including giving it a new, locally controlled ipns address,
 // and store it in the local mutable file system active concept graph.
@@ -377,10 +385,9 @@ export const fetchObjectByIPNS = async (ipns) => {
 
 export const convertExternalNodeToLocalWord = async (oWordExternal) => {
     var oWordLocal = MiscFunctions.cloneObj(oWordExternal);
-
     var wordType = oWordExternal.wordData.wordType;
-    var oldSlug = oWordExternal.wordData.slug;
 
+    var oldSlug = oWordExternal.wordData.slug;
     var oldKeyname = oWordExternal.metaData.keyname;
     var oldIpns = oWordExternal.metaData.ipns;
     var prevStewardPeerID = oWordExternal.metaData.stewardPeerID;

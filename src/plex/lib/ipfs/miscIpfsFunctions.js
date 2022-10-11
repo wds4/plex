@@ -1,11 +1,7 @@
-// import sendAsync from '../../renderer.js';
 import IpfsHttpClient from 'ipfs-http-client';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 const jQuery = require("jquery");
-// var request = require("request").defaults({ encoding: null });
 const electronFs = window.require('fs');
-
-// import * as IPFS from 'ipfs-core'
 
 export const ipfs = IpfsHttpClient({
     host: "localhost",

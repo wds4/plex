@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Masthead from '../../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
-import LeftNavbar2 from '../../../navbars/leftNavbar2/cgFe_concepts_leftNav2.js';
+import LeftNavbar2 from '../../../navbars/leftNavbar2/cgFe_words_leftNav2.js';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 import sendAsync from '../../../renderer.js';
@@ -30,7 +30,7 @@ function makeThisPageTable(conceptDataSet) {
     });
 }
 
-export default class AllConceptsTable extends React.Component {
+export default class AllWordsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -127,7 +127,7 @@ export default class AllConceptsTable extends React.Component {
                     <LeftNavbar2 />
                     <div className="mainPanel" style={{backgroundColor:"#CFCFCF"}} >
                         <Masthead />
-                        <div class="h2">All Concepts</div>
+                        <div class="h2">All Words</div>
                         <div style={{marginLeft:"20px"}} >
                             This list of concepts is generated from the conceptGraphMainSchema at: conceptGraphData.concepts. If incomplete or incorrect, may need to run neuroCore to edit the list.
                         </div>

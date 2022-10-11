@@ -129,6 +129,11 @@ import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.
 import HelloWorldReadFile from './plex/settings/helloWorld/helloWorldReadFile.js';
 import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUploadImageToIPFS.js';
 
+import ConceptGraphsFrontEnd_WordsMainPage from './plex/conceptGraphFrontEnd/words/wordsMainPage.js';
+
+import ConceptGraphsFrontEnd_TableOfWords from './plex/conceptGraphFrontEnd/words/tableOfWords/tableOfWords.js';
+import ConceptGraphsFrontEnd_SingleWordMainPage from './plex/conceptGraphFrontEnd/words/singleWord/singleWordMainPage.js';
+
 import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/concepts/conceptsMainPage.js';
 import ConceptGraphsFrontEnd_ManageDownload from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageConceptGraphDownload.js';
 import ConceptGraphsFrontEnd_ManageMainConceptGraphSchema from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageMainConceptGraphSchema.js';
@@ -429,6 +434,11 @@ ReactDOM.render(
           <Route path="/HelloWorldWriteFile" exact component={HelloWorldWriteFile} />
           <Route path="/HelloWorldReadFile" exact component={HelloWorldReadFile} />
           <Route path="/HelloWorldUploadImageToIPFS" exact component={HelloWorldUploadImageToIPFS} />
+
+          <Route path="/ConceptGraphsFrontEnd_WordsMainPage" exact component={ConceptGraphsFrontEnd_WordsMainPage} />
+
+          <Route path="/ConceptGraphsFrontEnd_TableOfWords" exact component={ConceptGraphsFrontEnd_TableOfWords} />
+          <Route path="/ConceptGraphsFrontEnd_SingleWordMainPage/:wordslug" exact component={ConceptGraphsFrontEnd_SingleWordMainPage} />
 
           <Route path="/ConceptGraphsFrontEnd_ConceptsMainPage" exact component={ConceptGraphsFrontEnd_ConceptsMainPage} />
           <Route path="/ConceptGraphsFrontEnd_ManageDownload" exact component={ConceptGraphsFrontEnd_ManageDownload} />
