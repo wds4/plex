@@ -2,23 +2,26 @@ import React from 'react';
 import { NavLink, Link } from "react-router-dom";
 import Masthead from '../../mastheads/eBooksMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/eBooks_leftNav1';
-import oTableOfContents from './toc';
+import oTableOfContents from './toc.json';
+/*
 import { cap0 } from './chapters/cap0';
 import { cap1 } from './chapters/cap1';
 import { cap2 } from './chapters/cap2';
 import { cap3 } from './chapters/cap3';
 import { cap4 } from './chapters/cap4.md';
+*/
 // import sendAsync from '../../renderer.js'
 import { marked } from 'marked';
 const electronFs = window.require('fs');
 // import * as MiscFunctions from '../functions/miscFunctions.js';
 
+/*
 const oEntireBook = {};
 oEntireBook.cap0 = cap0;
 oEntireBook.cap1 = cap1;
 oEntireBook.cap2 = cap2;
 oEntireBook.cap3 = cap3;
-
+*/
 const eBook1Masthead = `
 <div style='height:100px;background-color:#EFEFEF;border-bottom:2px solid purple;margin-bottom:20px;' >
                         <div class="h2">The Cognitive Blind Spot</div>
@@ -30,19 +33,20 @@ export const createChapter = (sectionNumber,chapterNumber) => {
     var oTocChapterData = oTableOfContents.sections[sectionNumber].chapters[chapterNumber]
     var tocChapterTitle = oTocChapterData.title;
     var chapterReference = oTocChapterData.chapterReference
-    var chapterContent = oEntireBook[chapterReference];
+    var sectionDirectory = oTocChapterData.sectionDirectory;
+    var chapterFile = oTocChapterData.chapterFile;
+    // var chapterContent = oEntireBook[chapterReference];
+    // var sectionDirectory = "section1";
 
     var chapterHTML = "";
-    chapterHTML += "<h3>";
+    chapterHTML += "<center>";
+    chapterHTML += "<div style='font-size:22px;margin-bottom:20px;'>";
     chapterHTML += tocChapterTitle;
-    chapterHTML += "</h3>";
-
-    chapterHTML += "<div style='text-align:left;' >";
-    chapterHTML += chapterContent;
     chapterHTML += "</div>";
+    chapterHTML += "</center>";
 
-    // const mdFile = electronFs.readFileSync("src/plex/eBooks/eBook1/chapters/tocIntro.md", "utf8");
-    // chapterHTML = marked.parse(mdFile);
+    const mdFile = electronFs.readFileSync("src/plex/eBooks/eBook1/sections/"+sectionDirectory+"/chapters/"+chapterFile+".md", "utf8");
+    chapterHTML += marked.parse(mdFile);
 
     jQuery("#eBookMainContainer").html(chapterHTML);
 }
@@ -59,7 +63,7 @@ export const runBindings = () => {
 export const createTitlePage = () => {
     jQuery("#eBookMainContainer").html("");
 
-    const mdFile = electronFs.readFileSync("src/plex/eBooks/eBook1/chapters/tocIntro.md", "utf8");
+    const mdFile = electronFs.readFileSync("src/plex/eBooks/eBook1/tocIntro.md", "utf8");
     const html2 = marked.parse(mdFile);
     jQuery("#eBookTocIntroContainer").html(html2)
 
@@ -106,12 +110,14 @@ export const createTitlePage = () => {
                 var oChapter = aChapters[chapterNumber];
                 var chapterTitle = oChapter.title;
                 var chapterReference = oChapter.chapterReference;
+                var sectionDirectory = oChapter.sectionDirectory;
+                var chapterFile = oChapter.chapterFile;
 
                 sectionHTML += "<div data-sectionnumber='"+sectionNumber+"' data-chapternumber='"+chapterNumber+"' class='eBookChapterTitleContainer eBookHoverableElements' >";
                 sectionHTML += chapterTitle
 
-                sectionHTML += "<div style='display:inline-block;float:right;margin-right:10px;' >";
-                sectionHTML += "("+chapterReference+")";
+                sectionHTML += "<div style='display:inline-block;float:right;margin-right:10px;font-size:10px;' >";
+                sectionHTML += "("+sectionDirectory+", "+chapterFile+")";
                 sectionHTML += "</div>";
 
                 sectionHTML += "<div style='clear:both;' ></div>";

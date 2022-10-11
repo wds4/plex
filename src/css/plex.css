@@ -845,6 +845,7 @@
 }
 .eBookMainContainer {
     background-color:white;
+    text-align:left;
     width:900px;
     height:900px;
     overflow:scroll;
@@ -853,6 +854,7 @@
     background-color:white;
     width:900px;
     text-align:left;
+    margin-bottom:20px;
 }
 .eBookSectionContainer {
     text-align:left;

@@ -2,60 +2,85 @@
     "sections": [
         {
             "title": "tl/dr",
+            "sectionDirectory": "section1",
             "chapters": [
                 {
                     "title": "A Brief Glossary",
-                    "chapterReference": "cap1"
+                    "chapterReference": "cap1",
+                    "sectionDirectory": "section1",
+                    "chapterFile": "chapter1"
                 },
                 {
                     "title": "The Brain in One Paragraph",
-                    "chapterReference": "cap2"
+                    "chapterReference": "cap2",
+                    "sectionDirectory": "section1",
+                    "chapterFile": "chapter2"
                 },
                 {
                     "title": "The Brain in One Page",
-                    "chapterReference": "cap3"
+                    "chapterReference": "cap3",
+                    "sectionDirectory": "section1",
+                    "chapterFile": "chapter3"
                 },
                 {
                     "title": "The Brain in One Short Essay",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section1",
+                    "chapterFile": "chapter4"
                 }
             ]
         },
         {
             "title": "Introduction",
+            "sectionDirectory": "section2",
             "chapters": [
                 {
                     "title": "Covid-19, Social Media, and Observations Providing Motivation for this Work",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section2",
+                    "chapterFile": "chapter1"
                 },
                 {
                     "title": "Observations of Human Behaviour",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section2",
+                    "chapterFile": "chapter2"
                 },
                 {
                     "title": "Conventional Wisdom",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section2",
+                    "chapterFile": "chapter3"
                 }
             ]
         },
         {
             "title": "The Proposed Model",
+            "sectionDirectory": "section3",
             "chapters": [
                 {
                     "title": "The Human Condition",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section3",
+                    "chapterFile": "chapter1"
                 },
                 {
                     "title": "The Garden of Eden",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section3",
+                    "chapterFile": "chapter2"
                 },
                 {
                     "title": "A State of Grace / the Fall from Grace",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section3",
+                    "chapterFile": "chapter1"
                 },
                 {
                     "title": "Is Everyone batshit crazy? ... what about ME???",
-                    "chapterReference": "cap0"
+                    "chapterReference": "cap0",
+                    "sectionDirectory": "section3",
+                    "chapterFile": "chapter4"
                 },
                 {
                     "title": "The Hypothesis",
@@ -125,6 +150,7 @@
         },
         {
             "title": "Neuroscience",
+            "sectionDirectory": "section4",
             "chapters": [
                 {
                     "title": "The Thousand Brains Hypothesis",
