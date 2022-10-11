@@ -41,11 +41,15 @@ export const createChapter = (sectionNumber,chapterNumber) => {
     chapterHTML += chapterContent;
     chapterHTML += "</div>";
 
+    // const mdFile = electronFs.readFileSync("src/plex/eBooks/eBook1/chapters/tocIntro.md", "utf8");
+    // chapterHTML = marked.parse(mdFile);
+
     jQuery("#eBookMainContainer").html(chapterHTML);
 }
 
 export const runBindings = () => {
     jQuery(".eBookChapterTitleContainer").off().click(function(){
+        jQuery("#eBookTocIntroContainer").html("")
         var chapterNumber = jQuery(this).data("chapternumber")
         var sectionNumber = jQuery(this).data("sectionnumber")
         createChapter(sectionNumber,chapterNumber)
@@ -59,6 +63,7 @@ export const createTitlePage = () => {
     const html2 = marked.parse(mdFile);
     jQuery("#eBookTocIntroContainer").html(html2)
 
+    /*
     var tocIntroHTML = "";
     tocIntroHTML += "<div style='text-align:left;margin-bottom:10px;color:#0G0G0G;font-size:14px;' >";
         tocIntroHTML += "<div style='margin-bottom:5px;' >";
@@ -75,6 +80,7 @@ export const createTitlePage = () => {
         tocIntroHTML += "We believe there is a method to the madness. In this book we offer an answer to the above questions. More importantly, this book tells us what we can do about it.";
         tocIntroHTML += "</div>";
     tocIntroHTML += "</div>";
+    */
 
     // jQuery("#eBookMainContainer").append(tocIntroHTML)
 
