@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import * as MiscFunctions from '../functions/miscFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../lib/ipfs/conceptGraphInMfsFunctions.js';
 import * as ExecuteSingleAction from './executeSingleAction.js'
 import * as ExecuteSinglePattern_s1n from './neuroCoreFunctions/patterns/patterns-s1n.js'
 import sendAsync from '../../renderer.js';
@@ -283,9 +284,7 @@ export const loadNeuroCore2ConceptGraph_b = async () => {
 }
 
 
-const executeSinglePattern_s1n = async (patternSlug,oAuxiliaryPatternData) => {
-    // console.log("executeSinglePattern_s1n; patternSlug: "+patternSlug+"; oAuxiliaryPatternData: "+JSON.stringify(oAuxiliaryPatternData,null,4))
-    // var oPattern = window.lookupWordBySlug[patternSlug];
+const executeSinglePattern_s1n = async (patternSlug,oAuxiliaryPatternData,whichNeuroCore) => {
     var oPattern = window.neuroCore.engine.oRFL.current[patternSlug];
     var patternName = oPattern.patternData.name;
     var aActions = [];
@@ -320,15 +319,9 @@ const executeSinglePattern_s1n = async (patternSlug,oAuxiliaryPatternData) => {
             nodeAdditionalRestriction = false;
         }
     }
-    // var oRFL_current = MiscFunctions.cloneObj(plexNeuroCore.oRFL.current)
-    // var oRFL_new = MiscFunctions.cloneObj(plexNeuroCore.oRFL.new)
-    // var oRFL_total = Object.assign(oRFL_current,oRFL_new)
-    // console.log("executeSinglePattern_s1n; patternSlug: "+patternSlug+"; aNodes: "+JSON.stringify(aNodes,null,4));
-
     for (var r=0;r<aNodes.length;r++) {
         var node_slug = aNodes[r];
-        var oCheckSingleS1nPatternOutput = await ExecuteSinglePattern_s1n.checkSingleS1nPattern(node_slug,patternName)
-        // var oCheckSingleS1nPatternOutput = await ExecuteSinglePattern_s1n.checkSingleS1nPattern(node_slug,patternName,oRFL_total)
+        var oCheckSingleS1nPatternOutput = await ExecuteSinglePattern_s1n.checkSingleS1nPattern(node_slug,patternName,whichNeuroCore)
 
         var isPatternPresent = oCheckSingleS1nPatternOutput.isPatternPresent;
         if (isPatternPresent) {
@@ -512,7 +505,7 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
     }
 }
 
-const executeOnePattern = async (patternIndex,patternSlug,patternName,oAuxiliaryPatternData) => {
+const executeOnePattern = async (patternIndex,patternSlug,patternName,oAuxiliaryPatternData,whichNeuroCore) => {
     jQuery("#activePattern_"+patternIndex).css("background-color","yellow");
     jQuery("#actions_active_container").html("");
     // console.log("oAuxiliaryPatternData: "+JSON.stringify(oAuxiliaryPatternData));
@@ -525,11 +518,10 @@ const executeOnePattern = async (patternIndex,patternSlug,patternName,oAuxiliary
     // var oPattern = plexNeuroCore.oRFL.current[patternSlug];
     var oPattern = window.neuroCore.engine.oRFL.current[patternSlug];
 
-    // console.log("executeOnePattern patternSlug: "+patternSlug+"; oPattern: "+JSON.stringify(oPattern,null,4))
     var inputField = oPattern.patternData.inputField;
 
     if (inputField=="singleNode") {
-        await executeSinglePattern_s1n(patternSlug,oAuxiliaryPatternData)
+        await executeSinglePattern_s1n(patternSlug,oAuxiliaryPatternData,whichNeuroCore)
     }
     if (inputField=="singleRelationship") {
         await executeSinglePattern_s1r(patternSlug,oAuxiliaryPatternData)
@@ -543,63 +535,63 @@ const executeOnePattern = async (patternIndex,patternSlug,patternName,oAuxiliary
     jQuery("#activePattern_"+patternIndex).css("background-color","green");
 }
 
-const makeNewWord = async (slugToCreate,newUniqueID) => {
-    var oWord_new = window.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
-    // console.log("slugToCreate: "+slugToCreate+"; newUniqueID: "+newUniqueID+"; oWord_new: "+JSON.stringify(oWord_new,null,4))
-    var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
-    // plexNeuroCore.oRFL.updated[slugToCreate] = oWord_new;
-    // plexNeuroCore.oRFL.new[slugToCreate] = oWord_new;
-    window.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
-    window.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
-    return fooResult;
+const makeNewWord = async (slugToCreate,newUniqueID,whichNeuroCore) => {
+    if (whichNeuroCore=="NeuroCore2") {
+        var oWord_new = window.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
+        var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+        window.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
+        window.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
+        return fooResult;
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
+        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        window.ipfs.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
+        window.ipfs.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
+        return fooResult;
+    }
 }
 
-const updateWord = async (slugToUpdate,updateUniqueID) => {
-    var oWord_old = window.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
-    var oWord_new = window.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
-    // console.log("slugToUpdate: "+slugToUpdate+"; updateUniqueID: "+updateUniqueID+"; oWord_old: "+JSON.stringify(oWord_old,null,4))
-    // console.log("slugToUpdate: "+slugToUpdate+"; updateUniqueID: "+updateUniqueID+"; oWord_new: "+JSON.stringify(oWord_new,null,4))
-    var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
-    // plexNeuroCore.oRFL.updated[slugToUpdate] = oWord_new;
-    // plexNeuroCore.oRFL.new[slugToUpdate] = oWord_new;
-    return fooResult;
+const updateWord = async (slugToUpdate,updateUniqueID,whichNeuroCore) => {
+    if (whichNeuroCore=="NeuroCore2") {
+        var oWord_old = window.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
+        var oWord_new = window.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
+        var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+        return fooResult;
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        // NEED TO COMPLETE
+        var oWord_old = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
+        var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
+        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        return fooResult;
+    }
 }
 
-const executeAllActions = async (nc2CycleNumber,p) => {
+const executeAllActions = async (nc2CycleNumber,p,whichNeuroCore) => {
     var aActiveActions = [];
     jQuery(".activeActionBox").each(function(index){
         var sAction = jQuery(this).html()
-        // console.log("executeAllActions; sAction: "+sAction)
         var oAction = JSON.parse(sAction);
         aActiveActions.push(oAction)
-        /*
-        // look up status to make sure this action hasn't been made inactive; only proceed with pushing it if status == active
-        var actionSlug = oAction.actionSlug;
-        var action_wordSlug = window.neuroCore.engine.oMapActionSlugToWordSlug[actionSlug];
-        var oAction_fullWord = window.neuroCore.engine.oRFL.current[action_wordSlug]
-        var status = oAction_fullWord.actionData.status;
-        if (status=="active") {
-            aActiveActions.push(oAction)
-        }
-        */
     })
 
     for (var a=0;a<aActiveActions.length;a++) {
-        // console.log("executeAllActions; nc2CycleNumber: "+nc2CycleNumber+"; aActiveActions a: "+a)
         var oNextActiveAction = aActiveActions[a];
-        var oRFL_updated = await ExecuteSingleAction.executeSingleAction(oNextActiveAction,nc2CycleNumber,p,a);
+
+        var oRFL_updated = await ExecuteSingleAction.executeSingleAction(oNextActiveAction,nc2CycleNumber,p,a,whichNeuroCore);
         // plexNeuroCore.oRFL = MiscFunctions.cloneObj(oRFL_updated);
         window.neuroCore.subject.oRFL = MiscFunctions.cloneObj(oRFL_updated);
     }
     jQuery(".updateWordButton").click(async function(){
         var slugToUpdate = jQuery(this).data("slug");
         var updateUniqueID = jQuery(this).data("updateuniqueidentifier");
-        var fooResult = await updateWord(slugToUpdate,updateUniqueID);
+        var fooResult = await updateWord(slugToUpdate,updateUniqueID,whichNeuroCore);
     })
     jQuery(".makeNewWordButton").click(async function(){
         var slugToCreate = jQuery(this).data("slug");
         var newUniqueID = jQuery(this).data("newuniqueidentifier");
-        var fooResult = await makeNewWord(slugToCreate,newUniqueID);
+        var fooResult = await makeNewWord(slugToCreate,newUniqueID,whichNeuroCore);
     })
     jQuery(".actionUpdatingWord").click(function(){
         var updateUniqueID = jQuery(this).data("updateuniqueidentifier");
@@ -638,11 +630,12 @@ const executeAllActions = async (nc2CycleNumber,p) => {
 var startingNeuroCore2Cycle0Time = 0;
 export const startNeuroCore2 = async (neuroCore2CycleNumber) => {
     // here, changesMadeYetThisCycle actually indicates the previous cycle
+    var whichNeuroCore = "NeuroCore2";
     if (window.neuroCore.engine.changesMadeYetThisCycle == true) {
         var aAuxiliaryPatternData = [];
         var oAuxiliaryPatternData = {"searchMethod":"default","patternName":"P.r.s1n.initialProcessing"};
         aAuxiliaryPatternData.push(oAuxiliaryPatternData)
-        ExecuteSingleAction.addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+        ExecuteSingleAction.addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
     }
     window.neuroCore.engine.changesMadeYetThisCycle = false;
     var conceptGraphTableName = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].tableName;
@@ -653,9 +646,6 @@ export const startNeuroCore2 = async (neuroCore2CycleNumber) => {
     var aAuxiliaryPatternData = [];
     var oAuxiliaryPatternData = {"searchMethod":"default","patternName":"P.r.s1n.initialProcessing"};
     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
-    // ExecuteSingleAction.addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
-    // ExecuteSingleAction.addPatternsWithAuxiliaryPatternDataToQueue(actionSlug,oAuxiliaryPatternData)
-    //////
     if (neuroCore2CycleNumber==0) {
         window.neuroCore.engine.changesMadeYetThisSupercycle = false;
         startingNeuroCore2Cycle0Time = Date.now();
@@ -703,15 +693,14 @@ export const startNeuroCore2 = async (neuroCore2CycleNumber) => {
         for (var p=0;p<aActivePatterns.length;p++) {
             var nextActivePattern = aActivePatterns[p];
             // console.log("qwerty nextActivePattern p: "+p+"; ")
-            await executeOnePattern(nextActivePattern[0],nextActivePattern[1],nextActivePattern[2],nextActivePattern[3])
+            await executeOnePattern(nextActivePattern[0],nextActivePattern[1],nextActivePattern[2],nextActivePattern[3],whichNeuroCore)
 
-            await executeAllActions(neuroCore2CycleNumber,p);
+            await executeAllActions(neuroCore2CycleNumber,p,whichNeuroCore);
         }
         if (window.neuroCore.engine.changesMadeYetThisCycle == true) {
             var aAuxiliaryPatternData = [];
             var oAuxiliaryPatternData = {"searchMethod":"default","patternName":"P.r.s1n.initialProcessing"};
             aAuxiliaryPatternData.push(oAuxiliaryPatternData)
-            // ExecuteSingleAction.addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
         }
         // generate Patterns in Queue from window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue
         var oPWADQ = MiscFunctions.cloneObj(window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue);

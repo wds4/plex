@@ -19,7 +19,7 @@ const ajv = new Ajv({
 /////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-export const checkSingleS1nPattern = async (node_slug,patternName) => {
+export const checkSingleS1nPattern = async (node_slug,patternName,whichNeuroCore) => {
     var oCheckSingleS1nPatternOutput = {};
     var isPatternPresent = false;
     console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug)
@@ -147,7 +147,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                 oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                 // set aAuxiliaryPatternData to empty in case this node also triggers more Pattern searches (below)
                                 aAuxiliaryPatternData = [];
                             }
@@ -169,7 +169,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                     oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                     console.log("P.r.s1n.initialProcessing; node_slug: "+node_slug+"; calling P.r.s1n.enumerationNeedsInitialProcessing")
                                 }
 
@@ -186,7 +186,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                     oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                     console.log("P.r.s1n.initialProcessing; node_slug: "+node_slug+"; calling P.r.s1n.jsonSchemaNeedsInitialProcessing")
                                 }
 
@@ -197,7 +197,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                     oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                     console.log("P.r.s1n.initialProcessing; node_slug: "+node_slug+"; calling P.r.s1n.propertyNeedsInitialProcessing")
                                 }
 
@@ -209,7 +209,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                         oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                         aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                        addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                        addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                         console.log("P.r.s1n.initialProcessing; node_slug: "+node_slug+"; calling P.r.s1n.primaryPropertyNeedsInitialProcessing")
                                     }
                                 }
@@ -221,7 +221,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                     oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                     console.log("P.r.s1n.initialProcessing; node_slug: "+node_slug+"; calling P.r.s1n.conceptNeedsInitialProcessing")
                                 }
                                 /*
@@ -232,7 +232,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                     oAuxiliaryPatternData.domains.aNodes = [ node_slug ];
                                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                     console.log("P.r.s1n.initialProcessing; node_slug: "+node_slug+"; calling P.r.s1n.wordTypeNeedsInitialProcessing")
                                 }
                                 */
@@ -276,7 +276,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                 oAuxiliaryPatternData.domains.aNodesTo = "_ANY_";
                                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
 
                             }
                         }
@@ -307,7 +307,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                 oAuxiliaryPatternData.domains.aNodesTo = [ node_slug ];
                                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
 
                             }
                         }
@@ -335,7 +335,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                 oAuxiliaryPatternData.domains.aNodesTo = "_ANY_" ;
                                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
 
                             }
                         }
@@ -369,7 +369,7 @@ if (oNode.hasOwnProperty("conceptData")) {
                                     oAuxiliaryPatternData.domains.aNodesTo = "_ANY_";
                                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+                                    addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
                                 }
                             }
                         }

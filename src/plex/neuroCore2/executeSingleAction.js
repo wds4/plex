@@ -9,6 +9,13 @@ const ajv = new Ajv({
     strictDefault: true
 });
 
+/////////////////////////
+// BACKUP9: 11 Oct 2022
+// Currently functional for NeuroCore2
+// Next step: try to modify this file in a way so that NeuroCore2 and NeuroCore3 can use it simultaneously
+/////////////////////////
+
+
 const timeout = async (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -43,7 +50,7 @@ const timeout = async (ms) => {
 // a-e-u1n-enumerates add functionality from A.e.u1n.enumeration_populateJSONSchemaDefinitions
 // even though this would be redundant, having the requiredDefinitions system and the older a-e-u1n-enumerates system
 
-const isAPDPresent = (nextPat,oAuxiliaryPatternData) => {
+const isAPDPresent = (nextPat,oAuxiliaryPatternData,whichNeuroCore) => {
     var result = false;
     var sAuxiliaryPatternData = JSON.stringify(oAuxiliaryPatternData);
     var aAPDs = window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat]
@@ -73,24 +80,25 @@ oAPD_s1n.domains = {}
 oAPD_s1n.domains.domainSpecificationMethod = "explicitArray"; // explicitArray (basic method) vs globalDynamicDataSpecificInstances ()
 oAPD_s1n.domains.aNodes = null;
 
-export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNumber,singleActionNumber) => {
+export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNumber,singleActionNumber,whichNeuroCore) => {
     var actionSlug = oAction.actionSlug;
     jQuery("#latestActionContainer").html(actionSlug);
-    // console.log("qwerty executeSingleAction; actionSlug: "+actionSlug)
     var r = oAction.r;
     var suffix = actionSlug + "_" + r;
-    // console.log("executeSingleAction; suffix: "+suffix)
     jQuery("#action_"+suffix).css("background-color","yellow")
 
     await timeout(0)
 
     var verboseConsole = true;
 
-    // var oRFL = MiscFunctions.cloneObj(plexNeuroCore.oRFL)
-    var oRFL = MiscFunctions.cloneObj(window.neuroCore.subject.oRFL)
-    // oRFL.updated = {};
-    // oRFL.new = {};
-    // oRFL.deleted = [];
+    if (whichNeuroCore=="NeuroCore2") {
+        var oRFL = MiscFunctions.cloneObj(window.neuroCore.subject.oRFL)
+        var oWindowNeuroCore = window.neuroCore
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        var oRFL = MiscFunctions.cloneObj(window.ipfs.neuroCore.subject.oRFL)
+        var oWindowNeuroCore = window.ipfs.neuroCore
+    }
 
     var oAuxiliaryData = oAction.oAuxiliaryData;
 
@@ -330,7 +338,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 var aParentJSONSchemaSequence = oNode.globalDynamicData.valenceData.parentJSONSchemaSequence;
                 for (var a=0;a<aParentJSONSchemaSequence.length;a++) {
                     var nextPJSchema_slug = aParentJSONSchemaSequence[a];
-                    var oParent = window.neuroCore.subject.oRFL.current[nextPJSchema_slug];
+                    var oParent = oRFL.current[nextPJSchema_slug];
                     // var primaryProperty = Object.keys(oParent.properties)[0]; // may want to create a function to fetch primary property from any of the core concept wordTypes; function will detect the wordType
                     var primaryProperty = NeuroCoreFunctions.fetchPrimaryProperty(nextPJSchema_slug);
                     delete oParent["$id"];
@@ -340,7 +348,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                         console.log("Successful validation! child: "+node_slug+"; parent: "+nextPJSchema_slug)
                         oNode.metaData.neuroCore.parentJSONSchemaValidations[nextPJSchema_slug] = "valid";
                     }
-                    var aConceptGraphDefaultProperties = window.neuroCore.subject.oMainSchemaForConceptGraph.conceptGraphData.defaultPropertyDescriptors
+                    var aConceptGraphDefaultProperties = oWindowNeuroCore.subject.oMainSchemaForConceptGraph.conceptGraphData.defaultPropertyDescriptors
                     console.log("a-a-u1n-validation; aConceptGraphDefaultProperties: "+JSON.stringify(aConceptGraphDefaultProperties,null,4))
                     if (!valid) {
                         console.log("Failure to validate! child: "+node_slug+"; parent: "+nextPJSchema_slug)
@@ -1024,14 +1032,14 @@ if (governingConcept_slug) {
                         if ( (nF_propertyType=="string") || (nF_propertyType=="integer") || (nF_propertyType=="boolean") ) {
                             oNodeFrom.metaData.neuroCore.initialProcessing = true;
                             oRFL.updated[nF_slug] = oNodeFrom;
-                            window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
+                            // // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nF_slug] = oNodeFrom;
                         }
 
                         if (oNodeTo.propertyData.metaData.types.includes("primaryProperty")) {
                             if (!oNodeFrom.propertyData.metaData.types.includes("topLevel")) {
                                 oNodeFrom.propertyData.metaData.types.push("topLevel")
                                 oRFL.updated[nF_slug] = oNodeFrom;
-                                window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
+                                // // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nF_slug] = oNodeFrom;
                             }
                             if (!oNodeTo.propertyData.metaData.propertyKeyPaths.includes(key2)) {
                                 oNodeTo.propertyData.metaData.propertyKeyPaths.push(key2)
@@ -1073,9 +1081,9 @@ if (governingConcept_slug) {
                 } // end if nF_pendingDeletion == false (approx 300 lines of code)
 
                 oRFL.updated[nF_slug] = oNodeFrom;
-                window.neuroCore.oRFL.updated[nF_slug] = oNodeFrom;
+                // // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nF_slug] = oNodeFrom;
                 oRFL.updated[nT_slug] = oNodeTo;
-                window.neuroCore.oRFL.updated[nT_slug] = oNodeTo;
+                // // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nT_slug] = oNodeTo;
             } catch (err) {
                 console.log("javaScriptError with action a-b-u1n-01; err: "+err);
             }
@@ -1109,7 +1117,7 @@ if (targetPropertyType=="array") {
 }
 
 oRFL.updated[nT_slug] = oNodeTo;
-window.neuroCore.oRFL.updated[nT_slug] = oNodeTo;
+// // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nT_slug] = oNodeTo;
 */
             } catch (err) {
                 console.log("javaScriptError with action a-b-u1n-02; err: "+err);
@@ -1199,7 +1207,7 @@ window.neuroCore.oRFL.updated[nT_slug] = oNodeTo;
                 }
 
                 oRFL.updated[nT_slug] = oNodeTo;
-                window.neuroCore.oRFL.updated[nT_slug] = oNodeTo;
+                // window.neuroCore.oRFL.updated[nF_slug]nT_slug] = oNodeTo;
 
             } catch (err) {
                 console.log("javaScriptError with action a-b-u1n-04; err: "+err);
@@ -1228,7 +1236,7 @@ window.neuroCore.oRFL.updated[nT_slug] = oNodeTo;
                 }
 
                 oRFL.updated[nT_slug] = oNodeTo;
-                window.neuroCore.oRFL.updated[nT_slug] = oNodeTo;
+                // window.neuroCore.oRFL.updated[nF_slug]nT_slug] = oNodeTo;
 
             } catch (err) {
                 console.log("javaScriptError with action a-b-u1n-05; err: "+err);
@@ -1629,7 +1637,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
                 oRFL.updated[node_slug] = oNode;
-                window.neuroCore.oRFL.updated[node_slug] = oNode;
+                // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
                 // specific to JSONSchema
                 oNewWord.JSONSchemaData.slug = sCurrConcept_conceptSlug;
@@ -1685,7 +1693,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
                 oRFL.updated[node_slug] = oNode;
-                window.neuroCore.oRFL.updated[node_slug] = oNode;
+                // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
                 // specific to primaryProperty
 
@@ -1755,7 +1763,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
                 oRFL.updated[node_slug] = oNode;
-                window.neuroCore.oRFL.updated[node_slug] = oNode;
+                // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
                 // specific to properties
                 oNewWord.setData.metaData.types = ["mainPropertiesSet"]
@@ -1812,7 +1820,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
                 oRFL.updated[node_slug] = oNode;
-                window.neuroCore.oRFL.updated[node_slug] = oNode;
+                // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
                 // specific to propertySchema
                 oNewWord.schemaData.slug = sCurrConcept_conceptSlug;
@@ -1866,7 +1874,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
                 oRFL.updated[node_slug] = oNode;
-                window.neuroCore.oRFL.updated[node_slug] = oNode;
+                // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
                 // specific to schema
                 oNewWord.schemaData.slug = sCurrConcept_conceptSlug;
@@ -1966,7 +1974,7 @@ oNode.conceptData.nodes[specialNodeName].slug = newWord_slug;
 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
 oRFL.updated[node_slug] = oNode;
-window.neuroCore.oRFL.updated[node_slug] = oNode;
+// window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
 // specific to superset
 oNewWord.supersetData.slug = sCurrConcept_conceptSlugPlural;
@@ -2022,7 +2030,7 @@ oNode.conceptData.nodes[specialNodeName].slug = newWord_slug;
 oNode.conceptData.nodes[specialNodeName].ipns = newWord_ipns;
 
 oRFL.updated[node_slug] = oNode;
-window.neuroCore.oRFL.updated[node_slug] = oNode;
+// window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
 // specific to wordType
 oNewWord.wordTypeData.slug = sCurrConcept_conceptSlug;
@@ -2526,7 +2534,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 oNode.conceptData.nodes.concept.slug = node_slug;
                 oNode.conceptData.nodes.concept.ipns = node_ipns;
                 oRFL.updated[node_slug] = oNode;
-                window.neuroCore.oRFL.updated[node_slug] = oNode;
+                // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
             } catch (err) {
                 console.log("javaScriptError with action a-c-u1n-updateconcept; err: "+err);
@@ -2556,7 +2564,7 @@ if (propertySchema_slug) {
 // console.log("a-c-u1n-updatemainschemaforconceptgraph; oMSFCG after: "+JSON.stringify(oMSFCG,null,4))
 
 oRFL.updated[mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
-// window.neuroCore.oRFL.updated[mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
+// // window.neuroCore.oRFL.updated[nF_slug]mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
             } catch (err) {
                 console.log("javaScriptError with action a-c-u1n-updatemainschemaforconceptgraph; err: "+err);
             }
@@ -3647,9 +3655,9 @@ oRFL.updated[nT_slug] = oNodeTo;
 
         var newUniqueIdentifier = actionSlug + "_" + nextNew_slug + "_" + x + "_" + nc2CycleNumber + "_" + singlePatternNumber + "_" + singleActionNumber;
 
-        window.neuroCore.engine.oRecordOfUpdates[newUniqueIdentifier] = {}
-        window.neuroCore.engine.oRecordOfUpdates[newUniqueIdentifier].old = {};
-        window.neuroCore.engine.oRecordOfUpdates[newUniqueIdentifier].new = oWord_new;
+        oWindowNeuroCore.engine.oRecordOfUpdates[newUniqueIdentifier] = {}
+        oWindowNeuroCore.engine.oRecordOfUpdates[newUniqueIdentifier].old = {};
+        oWindowNeuroCore.engine.oRecordOfUpdates[newUniqueIdentifier].new = oWord_new;
         var infoHTML = "";
         infoHTML += "<div>";
             infoHTML += newUniqueIdentifier + "<br>";
@@ -3670,14 +3678,14 @@ oRFL.updated[nT_slug] = oNodeTo;
             await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
             oRFL.current[nextNew_slug] = oWord_new;
             oRFL.new[nextNew_slug] = oWord_new;
-            window.neuroCore.subject.oRFL.new[nextNew_slug] = oWord_new;
-            window.neuroCore.subject.oRFL.current[nextNew_slug] = oWord_new;
+            oRFL.new[nextNew_slug] = oWord_new;
+            oRFL.current[nextNew_slug] = oWord_new;
             // for now, currentConceptGraphSqlID will always be the same for active CG and neuroCore.subject CG
-            if (window.neuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
+            if (oWindowNeuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
                 window.lookupWordBySlug[nextUpdate_slug] = oWord_updated;
             }
-            window.neuroCore.engine.changesMadeYetThisSupercycle = true;
-            window.neuroCore.engine.changesMadeYetThisCycle = true;
+            oWindowNeuroCore.engine.changesMadeYetThisSupercycle = true;
+            oWindowNeuroCore.engine.changesMadeYetThisCycle = true;
             addPatternsToQueue(actionSlug);
         }
         var oAuxiliaryPatternData = {"searchMethod":"default"};
@@ -3709,9 +3717,9 @@ oRFL.updated[nT_slug] = oNodeTo;
             oWord_updated.metaData.lastUpdate = lastUpdate;
             var sWord_updated = JSON.stringify(oWord_updated,null,4);
 
-            window.neuroCore.engine.oRecordOfUpdates[updateUniqueIdentifier] = {}
-            window.neuroCore.engine.oRecordOfUpdates[updateUniqueIdentifier].old = MiscFunctions.cloneObj(oWord_current);
-            window.neuroCore.engine.oRecordOfUpdates[updateUniqueIdentifier].new = MiscFunctions.cloneObj(oWord_updated);
+            oWindowNeuroCore.engine.oRecordOfUpdates[updateUniqueIdentifier] = {}
+            oWindowNeuroCore.engine.oRecordOfUpdates[updateUniqueIdentifier].old = MiscFunctions.cloneObj(oWord_current);
+            oWindowNeuroCore.engine.oRecordOfUpdates[updateUniqueIdentifier].new = MiscFunctions.cloneObj(oWord_updated);
             var infoHTML = "";
             infoHTML += "<div>";
                 infoHTML += updateUniqueIdentifier + "<br>";
@@ -3731,12 +3739,12 @@ oRFL.updated[nT_slug] = oNodeTo;
             if (executeChanges=="yes") {
                 await MiscFunctions.createOrUpdateWordInAllTables(oWord_updated)
                 oRFL.current[nextUpdate_slug] = oWord_updated;
-                window.neuroCore.subject.oRFL.current[nextUpdate_slug] = oWord_updated;
-                if (window.neuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
+                oRFL.current[nextUpdate_slug] = oWord_updated;
+                if (oWindowNeuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
                     window.lookupWordBySlug[nextUpdate_slug] = oWord_updated;
                 }
-                window.neuroCore.engine.changesMadeYetThisSupercycle = true;
-                window.neuroCore.engine.changesMadeYetThisCycle = true;
+                oWindowNeuroCore.engine.changesMadeYetThisSupercycle = true;
+                oWindowNeuroCore.engine.changesMadeYetThisCycle = true;
                 addPatternsToQueue(actionSlug);
             }
         }
@@ -3747,7 +3755,8 @@ oRFL.updated[nT_slug] = oNodeTo;
         // actionData.secondaryPatterns is no longer utilized, bc javascript contains all relevant info regarding secondary patterns
         if (auxAssistedQueue) {
             console.log("addToQueue aAuxiliaryPatternData.length: "+aAuxiliaryPatternData.length)
-            addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData);
+            console.log("calling addAuxiliaryPatternDataToQueue; whichNeuroCore: "+whichNeuroCore)
+            addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore);
             // 29 July 2022:
             // step 1: get rid of plexNeuroCore; replace with window.neoroCore.engine ... (done, I think; need to delete plexNeuroCore and window.plexNeuroCore declaration to see if nothing breaks)
             // (also get rid of other variables; see TASKS under notesOnDOMVariables )
@@ -3759,26 +3768,26 @@ oRFL.updated[nT_slug] = oNodeTo;
         }
         // will gradually deprecate cases where auxAssistedQueue == false
         // Make user of actionData.secondaryPatterns
-        // (via aPats = window.neuroCore.engine.oPatternsTriggeredByAction[actionSlug];)
+        // (via aPats = oWindowNeuroCore.engine.oPatternsTriggeredByAction[actionSlug];)
         if (!auxAssistedQueue) {
-            var aPats = window.neuroCore.engine.oPatternsTriggeredByAction[actionSlug];
+            var aPats = oWindowNeuroCore.engine.oPatternsTriggeredByAction[actionSlug];
             // console.log("aPats: "+JSON.stringify(aPats,null,4))
             for (var p=0;p<aPats.length;p++) {
                 var nextPat_slug = aPats[p];
                 // var oPat = MiscFunctions.cloneObj(oRFL.current[nextPat_slug]);
                 // console.log("nextPat_slug: "+nextPat_slug)
-                var oPat = MiscFunctions.cloneObj(window.neuroCore.engine.oRFL.current[nextPat_slug]);
+                var oPat = MiscFunctions.cloneObj(oWindowNeuroCore.engine.oRFL.current[nextPat_slug]);
                 var nextPat_patternName = oPat.patternData.name;
                 // console.log("qwerty nextPat_slug: "+nextPat_slug+"; nextPat_patternName: "+nextPat_patternName)
                 oAuxiliaryPatternData.patternName = nextPat_patternName;
                 var oAPD = MiscFunctions.cloneObj(oAuxiliaryPatternData);
-                if (!window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue.hasOwnProperty(nextPat_slug)) {
-                    window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat_slug] = [];
+                if (!oWindowNeuroCore.engine.oPatternsWithAuxiliaryDataQueue.hasOwnProperty(nextPat_slug)) {
+                    oWindowNeuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat_slug] = [];
                 }
-                var isAPDP = isAPDPresent(nextPat_slug,oAPD);
+                var isAPDP = isAPDPresent(nextPat_slug,oAPD,whichNeuroCore);
                 // console.log("qwerty nextPat_slug: "+nextPat_slug+"; nextPat_patternName: "+nextPat_patternName+"; isAPDP: "+isAPDP)
                 if (!isAPDP) {
-                    window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat_slug].push(oAPD)
+                    oWindowNeuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat_slug].push(oAPD)
                 }
             }
         }
@@ -3790,20 +3799,36 @@ oRFL.updated[nT_slug] = oNodeTo;
     return oRFL;
 }
 
-export const addAuxiliaryPatternDataToQueue = (aAuxiliaryPatternData) => {
+export const addAuxiliaryPatternDataToQueue = (aAuxiliaryPatternData,whichNeuroCore) => {
     // console.log("addAuxiliaryPatternDataToQueue; aAuxiliaryPatternData: "+JSON.stringify(aAuxiliaryPatternData,null,4))
     for (var z=0;z<aAuxiliaryPatternData.length;z++) {
         var oAPD = aAuxiliaryPatternData[z];
         // console.log("addToQueue oAPD: "+JSON.stringify(oAPD,null,4))
         var pattName = oAPD.patternName;
-        var patt_wSlug = window.neuroCore.engine.oMapActionSlugToWordSlug[pattName];
-        if (!window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue.hasOwnProperty(patt_wSlug)) {
-            window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[patt_wSlug] = [];
+        console.log("addAuxiliaryPatternDataToQueue; whichNeuroCore: "+whichNeuroCore)
+        if (whichNeuroCore=="NeuroCore2") {
+            var patt_wSlug = window.neuroCore.engine.oMapActionSlugToWordSlug[pattName];
+            if (!window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue.hasOwnProperty(patt_wSlug)) {
+                window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[patt_wSlug] = [];
+            }
+            var isAPDP = isAPDPresent(patt_wSlug,oAPD,whichNeuroCore);
+            if (!isAPDP) {
+                window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[patt_wSlug].push(oAPD)
+            }
         }
-        var isAPDP = isAPDPresent(patt_wSlug,oAPD);
-        if (!isAPDP) {
-            window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[patt_wSlug].push(oAPD)
+
+
+        if (whichNeuroCore=="NeuroCore3") {
+            var patt_wSlug = window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug[pattName];
+            if (!window.ipfs.neuroCore.engine.oPatternsWithAuxiliaryDataQueue.hasOwnProperty(patt_wSlug)) {
+                window.ipfs.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[patt_wSlug] = [];
+            }
+            var isAPDP = isAPDPresent(patt_wSlug,oAPD,whichNeuroCore);
+            if (!isAPDP) {
+                window.ipfs.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[patt_wSlug].push(oAPD)
+            }
         }
+
     }
     var qHTML = "";
     qHTML += "<div style='background-color:red;' >";
