@@ -198,7 +198,7 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
     return true;
 }
 
-const executeSingleNeuroCore3Pattern_s1n = async (patternSlug,oAuxiliaryPatternData) => {
+const executeSingleNeuroCore3Pattern_s1n = async (patternSlug,oAuxiliaryPatternData,whichNeuroCore) => {
     // console.log("executeSingleNeuroCore3Pattern_s1n; patternSlug: "+patternSlug+"; oAuxiliaryPatternData: "+JSON.stringify(oAuxiliaryPatternData,null,4))
     // var oPattern = window.lookupWordBySlug[patternSlug];
     var oPattern = window.ipfs.neuroCore.engine.oRFL.current[patternSlug];
@@ -238,8 +238,7 @@ const executeSingleNeuroCore3Pattern_s1n = async (patternSlug,oAuxiliaryPatternD
 
     for (var r=0;r<aNodes.length;r++) {
         var node_slug = aNodes[r];
-        var oCheckSingleS1nPatternOutput = await ExecuteSinglePattern_s1n.checkSingleS1nPattern(node_slug,patternName)
-        // var oCheckSingleS1nPatternOutput = await ExecuteSinglePattern_s1n.checkSingleS1nPattern(node_slug,patternName,oRFL_total)
+        var oCheckSingleS1nPatternOutput = await ExecuteSinglePattern_s1n.checkSingleS1nPattern(node_slug,patternName,whichNeuroCore)
 
         var isPatternPresent = oCheckSingleS1nPatternOutput.isPatternPresent;
         if (isPatternPresent) {
@@ -275,11 +274,8 @@ const executeSingleNeuroCore3Pattern_s1n = async (patternSlug,oAuxiliaryPatternD
     }
 }
 
-const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
-    // var oPattern = window.lookupWordBySlug[patternSlug];
+const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData,whichNeuroCore) => {
     var oPattern = window.ipfs.neuroCore.engine.oRFL.current[patternSlug];
-    // console.log("qwertyy; oPattern: "+JSON.stringify(oPattern,null,4))
-    // console.log("qwerty executeSingleNeuroCore3Pattern_s1r; patternSlug: "+patternSlug+"; oAuxiliaryPatternData: "+JSON.stringify(oAuxiliaryPatternData,null,4))
 
     var nodeFromAdditionalRestriction = false;
     var nodeToAdditionalRestriction = false;
@@ -326,8 +322,6 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) =
     if (!wT_from) { wT_from = "ANY"; }
     if (!wT_to) { wT_to = "ANY"; }
 
-    // console.log("executeSingleNeuroCore3Pattern_s1r; patternSlug: "+patternSlug+"; wT_from: "+wT_from+"; relationshipType: "+relationshipType+"; wT_to: "+wT_to)
-
     var aRels = window.allConceptGraphRelationships;
     for (var r=0;r<aRels.length;r++) {
         // console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
@@ -335,8 +329,6 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) =
         var nF_slug = oNextRel.nodeFrom.slug;
         var rT_slug = oNextRel.relationshipType.slug;
         var nT_slug = oNextRel.nodeTo.slug;
-
-        // console.log("qwerty executeSingleNeuroCore3Pattern_s1r; r: "+r+"; nF_slug: "+nF_slug+"; rT_slug: "+rT_slug+"; nT_slug: "+nT_slug)
 
         var crit1 = false; // does rT match?
         var crit2 = false; // does nF wordType match?
@@ -372,7 +364,6 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) =
         }
 
         var oNodeFrom = window.lookupWordBySlug[nF_slug];
-        // console.log("qwertyy executeSingleNeuroCore3Pattern_s1r; nF_slug: "+nF_slug+"; oNodeFrom: "+JSON.stringify(oNodeFrom,null,4))
         var nF_wordTypes = oNodeFrom.wordData.wordTypes;
         if (nF_wordTypes.includes(wT_from)) {
             crit2 = true;
@@ -384,7 +375,6 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) =
         }
 
         var oNodeTo = window.lookupWordBySlug[nT_slug];
-        // console.log("qwertyy executeSingleNeuroCore3Pattern_s1r; nT_slug: "+nT_slug+"; oNodeTo: "+JSON.stringify(oNodeTo,null,4))
         var nT_wordTypes = oNodeTo.wordData.wordTypes;
         if (nT_wordTypes.includes(wT_to)) {
             crit3 = true;
@@ -398,7 +388,6 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) =
         var doesPatternMatch = false;
         if ( (crit1) && (crit2) && (crit3) && (crit4) && (crit5) ) {
             var doesPatternMatch = true;
-            // console.log("qwerty found a match! executeSingleNeuroCore3Pattern_s1r; r: "+r+"; nF_slug: "+nF_slug+"; rT_slug: "+rT_slug+"; nT_slug: "+nT_slug)
             for (var z=0;z<aActions.length;z++) {
                 var nextAction = aActions[z];
 
@@ -423,7 +412,7 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData) =
     }
 }
 
-const executeOneNeuroCore3Pattern = async (patternIndex,patternSlug,patternName,oAuxiliaryPatternData) => {
+const executeOneNeuroCore3Pattern = async (patternIndex,patternSlug,patternName,oAuxiliaryPatternData,whichNeuroCore) => {
     jQuery("#activeNeuroCore3Pattern_"+patternIndex).css("background-color","yellow");
     jQuery("#actions_nc3_active_container").html("");
     // console.log("oAuxiliaryPatternData: "+JSON.stringify(oAuxiliaryPatternData));
@@ -440,10 +429,10 @@ const executeOneNeuroCore3Pattern = async (patternIndex,patternSlug,patternName,
     var inputField = oPattern.patternData.inputField;
 
     if (inputField=="singleNode") {
-        await executeSingleNeuroCore3Pattern_s1n(patternSlug,oAuxiliaryPatternData)
+        await executeSingleNeuroCore3Pattern_s1n(patternSlug,oAuxiliaryPatternData,whichNeuroCore)
     }
     if (inputField=="singleRelationship") {
-        await executeSingleNeuroCore3Pattern_s1r(patternSlug,oAuxiliaryPatternData)
+        await executeSingleNeuroCore3Pattern_s1r(patternSlug,oAuxiliaryPatternData,whichNeuroCore)
     }
     if (inputField=="doubleRelationship") {
         // not yet complete
@@ -454,58 +443,62 @@ const executeOneNeuroCore3Pattern = async (patternIndex,patternSlug,patternName,
     jQuery("#activeNeuroCore3Pattern_"+patternIndex).css("background-color","green");
 }
 
-const makeNewWord = async (slugToCreate,newUniqueID) => {
-    var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
-    // var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new) // NeuroCore2
-    var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new) // NeuroCore3
-    window.ipfs.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
-    window.ipfs.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
-    return fooResult;
+const makeNewWord = async (slugToCreate,newUniqueID,whichNeuroCore) => {
+    if (whichNeuroCore=="NeuroCore2") {
+        var oWord_new = window.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
+        var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+        window.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
+        window.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
+        return fooResult;
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
+        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        window.ipfs.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
+        window.ipfs.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
+        return fooResult;
+    }
 }
 
-const updateWord = async (slugToUpdate,updateUniqueID) => {
-    var oWord_old = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
-    var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
-    // var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new) // NeuroCore2 
-    var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new) // NeuroCore3
-    return fooResult;
+const updateWord = async (slugToUpdate,updateUniqueID,whichNeuroCore) => {
+    if (whichNeuroCore=="NeuroCore2") {
+        var oWord_old = window.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
+        var oWord_new = window.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
+        var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+        return fooResult;
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        // NEED TO COMPLETE
+        var oWord_old = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
+        var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
+        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        return fooResult;
+    }
 }
 
-const executeAllNeuroCore3Actions = async (nc2CycleNumber,p) => {
+const executeAllNeuroCore3Actions = async (nc2CycleNumber,p,whichNeuroCore) => {
     var aActiveActions = [];
     jQuery(".activeNeuroCore3ActionBox").each(function(index){
         var sAction = jQuery(this).html()
-        // console.log("executeAllNeuroCore3Actions; sAction: "+sAction)
         var oAction = JSON.parse(sAction);
         aActiveActions.push(oAction)
-        /*
-        // look up status to make sure this action hasn't been made inactive; only proceed with pushing it if status == active
-        var actionSlug = oAction.actionSlug;
-        var action_wordSlug = window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug[actionSlug];
-        var oAction_fullWord = window.ipfs.neuroCore.engine.oRFL.current[action_wordSlug]
-        var status = oAction_fullWord.actionData.status;
-        if (status=="active") {
-            aActiveActions.push(oAction)
-        }
-        */
     })
 
     for (var a=0;a<aActiveActions.length;a++) {
-        // console.log("executeAllNeuroCore3Actions; nc2CycleNumber: "+nc2CycleNumber+"; aActiveActions a: "+a)
         var oNextActiveAction = aActiveActions[a];
-        var oRFL_updated = await ExecuteSingleAction.executeSingleAction(oNextActiveAction,nc2CycleNumber,p,a);
+        var oRFL_updated = await ExecuteSingleAction.executeSingleAction(oNextActiveAction,nc2CycleNumber,p,a,whichNeuroCore);
         // plexNeuroCore.oRFL = MiscFunctions.cloneObj(oRFL_updated);
         window.ipfs.neuroCore.subject.oRFL = MiscFunctions.cloneObj(oRFL_updated);
     }
     jQuery(".updateNeuroCore3WordButton").click(async function(){
         var slugToUpdate = jQuery(this).data("slug");
         var updateUniqueID = jQuery(this).data("updateuniqueidentifier");
-        var fooResult = await updateWord(slugToUpdate,updateUniqueID);
+        var fooResult = await updateWord(slugToUpdate,updateUniqueID,whichNeuroCore);
     })
     jQuery(".makeNewNeuroCore3WordButton").click(async function(){
         var slugToCreate = jQuery(this).data("slug");
         var newUniqueID = jQuery(this).data("newuniqueidentifier");
-        var fooResult = await makeNewWord(slugToCreate,newUniqueID);
+        var fooResult = await makeNewWord(slugToCreate,newUniqueID,whichNeuroCore);
     })
     jQuery(".actionNeuroCore3UpdatingWord").click(function(){
         var updateUniqueID = jQuery(this).data("updateuniqueidentifier");
@@ -544,11 +537,12 @@ const executeAllNeuroCore3Actions = async (nc2CycleNumber,p) => {
 var startingNeuroCore3Cycle0Time = 0;
 export const startNeuroCore3 = async (neuroCore3CycleNumber) => {
     // here, changesMadeYetThisCycle actually indicates the previous cycle
+    var whichNeuroCore = "NeuroCore3";
     if (window.ipfs.neuroCore.engine.changesMadeYetThisCycle == true) {
         var aAuxiliaryPatternData = [];
         var oAuxiliaryPatternData = {"searchMethod":"default","patternName":"P.r.s1n.initialProcessing"};
         aAuxiliaryPatternData.push(oAuxiliaryPatternData)
-        ExecuteSingleAction.addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData)
+        ExecuteSingleAction.addAuxiliaryPatternDataToQueue(aAuxiliaryPatternData,whichNeuroCore)
     }
     window.ipfs.neuroCore.engine.changesMadeYetThisCycle = false;
     var conceptGraphTableName = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].tableName;
@@ -609,9 +603,9 @@ export const startNeuroCore3 = async (neuroCore3CycleNumber) => {
         for (var p=0;p<aActivePatterns.length;p++) {
             var nextActivePattern = aActivePatterns[p];
             // console.log("qwerty nextActivePattern p: "+p+"; ")
-            await executeOneNeuroCore3Pattern(nextActivePattern[0],nextActivePattern[1],nextActivePattern[2],nextActivePattern[3])
+            await executeOneNeuroCore3Pattern(nextActivePattern[0],nextActivePattern[1],nextActivePattern[2],nextActivePattern[3],whichNeuroCore)
 
-            await executeAllNeuroCore3Actions(neuroCore3CycleNumber,p);
+            await executeAllNeuroCore3Actions(neuroCore3CycleNumber,p,whichNeuroCore);
         }
         if (window.ipfs.neuroCore.engine.changesMadeYetThisCycle == true) {
             var aAuxiliaryPatternData = [];

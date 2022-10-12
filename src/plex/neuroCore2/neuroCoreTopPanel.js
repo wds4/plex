@@ -1,28 +1,10 @@
 import React, { useState, useEffect } from "react";
 import * as MiscFunctions from '../functions/miscFunctions.js';
+import * as MiscIpfsFunctions from '../lib/ipfs/miscIpfsFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../lib/ipfs/conceptGraphInMfsFunctions.js';
 import * as ExecuteSingleAction from './executeSingleAction.js'
 import * as ExecuteSinglePattern_s1n from './neuroCoreFunctions/patterns/patterns-s1n.js'
 import sendAsync from '../../renderer.js';
-
-/*
-if (oAuxiliaryPatternData.searchMethod == "default") {
-    // search through every node in the concept graph
-    var aNodes = Object.keys(plexNeuroCore.oRFL.current);
-}
-
-if (oAuxiliaryPatternData.searchMethod == "restrictedDomain") {
-    // limit the search to a specified set of nodes
-    if (oAuxiliaryPatternData.domainSpecificationMethod == "explicitArray") {
-        var aNodes = oAuxiliaryPatternData.aNodes;
-    }
-    if (oAuxiliaryPatternData.domainSpecificationMethod == "globalDynamicDataSpecificInstances") {
-        var wordSlug = oAuxiliaryPatternData.wordSlug;
-        var oWord = MiscFunctions.cloneObj(window.lookupWordBySlug[wordSlug]);
-        var aNodes = oWord.globalDynamicData.specificInstances;
-    }
-}
-*/
 
 const jQuery = require("jquery");
 
@@ -32,36 +14,6 @@ const timeout = async (ms) => {
 
 var starterConceptGraph_tableName = "myConceptGraph_temporary";
 var activeConceptGraph_tableName = starterConceptGraph_tableName;
-
-/*
-var plexNeuroCore = {};
-plexNeuroCore.oRFL = {};
-plexNeuroCore.oRFL.current = {};
-plexNeuroCore.oRFL.updated = {};
-plexNeuroCore.oRFL.new = {};
-*/
-// plexNeuroCore.oMapActionSlugToWordSlug = {};
-// plexNeuroCore.oMapPatternNameToWordSlug = {};
-
-/*
-window.plexNeuroCore = {};
-// ?? reset with each individual pattern? or each action? or each nc2 iteration?
-window.plexNeuroCore.oRFL = {};
-window.plexNeuroCore.oRFL.current = {};
-window.plexNeuroCore.oRFL.updated = {};
-window.plexNeuroCore.oRFL.new = {};
-
-window.plexNeuroCore.oRecordOfUpdates = {}; // reset at FIRST iteration of neuroCore2, but not with each subsequent iteration; record should be cumulative
-window.plexNeuroCore.patternsWithAuxiliaryDataQueue = {}; // reset at FIRST iteration of neuroCore2
-window.plexNeuroCore.lookupPatternsTriggeredByAction = {}; // reset each time click: "reload var plexNeuroCore"
-*/
-
-window.neuroCore.engine.oRecordOfUpdates = {};
-window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue = {};
-window.neuroCore.engine.oPatternsTriggeredByAction = {};
-
-window.neuroCore.engine.oMapActionSlugToWordSlug = {};
-window.neuroCore.engine.oMapPatternNameToWordSlug = {};
 
 export const loadPatterns = async () => {
     updateOldWordReplacementMapNeuroCore();
@@ -357,11 +309,8 @@ const executeSinglePattern_s1n = async (patternSlug,oAuxiliaryPatternData,whichN
     }
 }
 
-const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
-    // var oPattern = window.lookupWordBySlug[patternSlug];
+const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData,whichNeuroCore) => {
     var oPattern = window.neuroCore.engine.oRFL.current[patternSlug];
-    // console.log("qwertyy; oPattern: "+JSON.stringify(oPattern,null,4))
-    // console.log("qwerty executeSinglePattern_s1r; patternSlug: "+patternSlug+"; oAuxiliaryPatternData: "+JSON.stringify(oAuxiliaryPatternData,null,4))
 
     var nodeFromAdditionalRestriction = false;
     var nodeToAdditionalRestriction = false;
@@ -408,8 +357,6 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
     if (!wT_from) { wT_from = "ANY"; }
     if (!wT_to) { wT_to = "ANY"; }
 
-    // console.log("executeSinglePattern_s1r; patternSlug: "+patternSlug+"; wT_from: "+wT_from+"; relationshipType: "+relationshipType+"; wT_to: "+wT_to)
-
     var aRels = window.allConceptGraphRelationships;
     for (var r=0;r<aRels.length;r++) {
         // console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
@@ -417,8 +364,6 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
         var nF_slug = oNextRel.nodeFrom.slug;
         var rT_slug = oNextRel.relationshipType.slug;
         var nT_slug = oNextRel.nodeTo.slug;
-
-        // console.log("qwerty executeSinglePattern_s1r; r: "+r+"; nF_slug: "+nF_slug+"; rT_slug: "+rT_slug+"; nT_slug: "+nT_slug)
 
         var crit1 = false; // does rT match?
         var crit2 = false; // does nF wordType match?
@@ -454,7 +399,7 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
         }
 
         var oNodeFrom = window.lookupWordBySlug[nF_slug];
-        // console.log("qwertyy executeSinglePattern_s1r; nF_slug: "+nF_slug+"; oNodeFrom: "+JSON.stringify(oNodeFrom,null,4))
+
         var nF_wordTypes = oNodeFrom.wordData.wordTypes;
         if (nF_wordTypes.includes(wT_from)) {
             crit2 = true;
@@ -466,7 +411,7 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
         }
 
         var oNodeTo = window.lookupWordBySlug[nT_slug];
-        // console.log("qwertyy executeSinglePattern_s1r; nT_slug: "+nT_slug+"; oNodeTo: "+JSON.stringify(oNodeTo,null,4))
+
         var nT_wordTypes = oNodeTo.wordData.wordTypes;
         if (nT_wordTypes.includes(wT_to)) {
             crit3 = true;
@@ -480,7 +425,6 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData) => {
         var doesPatternMatch = false;
         if ( (crit1) && (crit2) && (crit3) && (crit4) && (crit5) ) {
             var doesPatternMatch = true;
-            // console.log("qwerty found a match! executeSinglePattern_s1r; r: "+r+"; nF_slug: "+nF_slug+"; rT_slug: "+rT_slug+"; nT_slug: "+nT_slug)
             for (var z=0;z<aActions.length;z++) {
                 var nextAction = aActions[z];
 
@@ -524,7 +468,7 @@ const executeOnePattern = async (patternIndex,patternSlug,patternName,oAuxiliary
         await executeSinglePattern_s1n(patternSlug,oAuxiliaryPatternData,whichNeuroCore)
     }
     if (inputField=="singleRelationship") {
-        await executeSinglePattern_s1r(patternSlug,oAuxiliaryPatternData)
+        await executeSinglePattern_s1r(patternSlug,oAuxiliaryPatternData,whichNeuroCore)
     }
     if (inputField=="doubleRelationship") {
         // not yet complete

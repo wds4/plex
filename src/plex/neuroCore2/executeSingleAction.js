@@ -53,7 +53,12 @@ const timeout = async (ms) => {
 const isAPDPresent = (nextPat,oAuxiliaryPatternData,whichNeuroCore) => {
     var result = false;
     var sAuxiliaryPatternData = JSON.stringify(oAuxiliaryPatternData);
-    var aAPDs = window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat]
+    if (whichNeuroCore=="NeuroCore2") {
+        var aAPDs = window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat]
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        var aAPDs = window.ipfs.neuroCore.engine.oPatternsWithAuxiliaryDataQueue[nextPat]
+    }
     for (var a=0;a<aAPDs.length;a++) {
         var oNextAPD = aAPDs[a];
         var sNextSPD = JSON.stringify(oNextAPD);

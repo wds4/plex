@@ -158,6 +158,8 @@ window.enumerationRolesManagement = {
   "role6_slugs": [],
   "role7_slugs": []
 }
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////  window.neurocore  //////////////////////////////
 window.neuroCore = {};
 window.neuroCore.aS1nPatternsByName = [];
 window.neuroCore.aS1rPatternsByName = [];
@@ -185,6 +187,7 @@ window.neuroCore.engine.oMapActionSlugToWordSlug = {};
 window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue = {};
 window.neuroCore.engine.changesMadeYetThisCycle = false;
 window.neuroCore.engine.changesMadeYetThisSupercycle = false;
+window.neuroCore.engine.oPatternsTriggeredByAction = {};
 
 window.neuroCore.subject.allConceptGraphRelationships = [];
 window.neuroCore.subject.oRFL = {};
@@ -195,6 +198,57 @@ window.neuroCore.subject.oMainSchemaForConceptGraph = {};
 
 window.neuroCore.engine.currentConceptGraphSqlID = 10; // myConceptGraph_plex
 window.neuroCore.subject.currentConceptGraphSqlID = window.currentConceptGraphSqlID;
+
+
+/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////  window.ipfs.neurocore  //////////////////////////////
+window.ipfs = {}
+window.ipfs.neuroCore = {};
+window.ipfs.neuroCore.aS1nPatternsByName = [];
+window.ipfs.neuroCore.aS1rPatternsByName = [];
+window.ipfs.neuroCore.aS2rPatternsByName = [];
+window.ipfs.neuroCore.aU1nActionsByName = [];
+
+window.ipfs.neuroCore.oRFL = {};
+window.ipfs.neuroCore.oRFL.current = {};
+window.ipfs.neuroCore.oRFL.updated = {};
+
+window.ipfs.neuroCore.engine = {};
+window.ipfs.neuroCore.subject = {};
+
+window.ipfs.neuroCore.engine.oOldWordReplacementMap = {};
+window.ipfs.neuroCore.engine.aOldReplacedWords = [];
+window.ipfs.neuroCore.engine.aNewReplacerWords = [];
+
+window.ipfs.neuroCore.engine.oRFL = {};
+window.ipfs.neuroCore.engine.oRFL.current = {};
+window.ipfs.neuroCore.engine.oRecordOfUpdates = {};
+window.ipfs.neuroCore.engine.oMapPatternNameToWordSlug = {};
+window.ipfs.neuroCore.engine.oMapActionNameToWordSlug = {};
+window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug = {};
+window.ipfs.neuroCore.engine.oPatternsWithAuxiliaryDataQueue = {};
+window.ipfs.neuroCore.engine.changesMadeYetThisCycle = false;
+window.ipfs.neuroCore.engine.changesMadeYetThisSupercycle = false;
+window.ipfs.neuroCore.engine.oPatternsTriggeredByAction = {};
+
+window.ipfs.neuroCore.subject.allConceptGraphRelationships = [];
+window.ipfs.neuroCore.subject.oRFL = {};
+window.ipfs.neuroCore.subject.oRFL.current = {};
+window.ipfs.neuroCore.subject.oRFL.updated = {};
+window.ipfs.neuroCore.subject.oRFL.new = {};
+window.ipfs.neuroCore.subject.oMainSchemaForConceptGraph = {};
+
+window.ipfs.neuroCore.engine.currentConceptGraphSqlID = 10; // myConceptGraph_plex
+window.ipfs.neuroCore.subject.currentConceptGraphSqlID = window.currentConceptGraphSqlID;
+
+
+
+
+
+
+
+
+
 
 window.oAutomatedImportData = {};
 window.oAutomatedImportData.running=false;
@@ -441,4 +495,3 @@ jQuery("#whateverButton").get(0).click();
 // For this to work,
 // window.ipfs will require intialization by ConceptGraphInMfsFunctions.loadActiveIpfsConceptGraph()
 // (currently called by Plex Home Page)
-window.ipfs = {}
