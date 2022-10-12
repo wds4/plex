@@ -86,6 +86,10 @@ oAPD_s1n.domains.domainSpecificationMethod = "explicitArray"; // explicitArray (
 oAPD_s1n.domains.aNodes = null;
 
 export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNumber,singleActionNumber,whichNeuroCore) => {
+    var node_slug = null;
+    var nF_slug = null;
+    var nT_slug = null;
+
     var actionSlug = oAction.actionSlug;
     jQuery("#latestActionContainer").html(actionSlug);
     var r = oAction.r;
@@ -147,6 +151,8 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
     var aAuxiliaryPatternData = [];
     var auxAssistedQueue = false;
 
+    // console.log("executeSingleAction! whichNeuroCore: "+whichNeuroCore+"; node_slug: "+node_slug+"; nF_slug: "+nF_slug+"; nT_slug: "+nT_slug)
+
     switch (actionSlug) {
         case "a-c-u1n-applytemplatingconstraints":
             if (verboseConsole) { console.log("case a-c-u1n-applytemplatingconstraints") }
@@ -158,21 +164,25 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 if (oNode.hasOwnProperty("conceptData")) {
                     if (oNode.conceptData.hasOwnProperty("templating")) {
                         var jsonSchema_slug = oNode.conceptData.nodes.JSONSchema.slug;
-                        var oJSONSchema = window.lookupWordBySlug[jsonSchema_slug]
+                        // var oJSONSchema = window.lookupWordBySlug[jsonSchema_slug]
+                        var oJSONSchema = NeuroCoreFunctions.fetchNewestRawFile(jsonSchema_slug,oRFL)
                         var oTemplatingData = oNode.conceptData.templating
                         var templateCreationEnabled = oTemplatingData.templateCreationEnabled
                         if (templateCreationEnabled) {
                             // console.log("implementing a-c-u1n-applytemplatingconstraints; oTemplatingData: "+JSON.stringify(oTemplatingData,null,4))
                             var templatingConcept_wordSlug = oTemplatingData.templatingConcept.wordSlug;
-                            var oTemplatingConcept = window.lookupWordBySlug[templatingConcept_wordSlug];
+                            // var oTemplatingConcept = window.lookupWordBySlug[templatingConcept_wordSlug];
+                            var oTemplatingConcept = NeuroCoreFunctions.fetchNewestRawFile(templatingConcept_wordSlug,oRFL)
                             var templatingSuperset_slug = oTemplatingConcept.conceptData.nodes.superset.slug;
-                            var oTemplatingSuperset = window.lookupWordBySlug[templatingSuperset_slug];
+                            // var oTemplatingSuperset = window.lookupWordBySlug[templatingSuperset_slug];
+                            var oTemplatingSuperset = NeuroCoreFunctions.fetchNewestRawFile(templatingSuperset_slug,oRFL)
                             var aTemplates = oTemplatingSuperset.globalDynamicData.specificInstances;
                             var oAllOf = [];
                             for (var t=0;t < aTemplates.length;t++) {
                                 var nextTemplate_slug = aTemplates[t];
                                 console.log("a-c-u1n-applytemplatingconstraints; nextTemplate_slug: "+nextTemplate_slug)
-                                var oNextTemplate = window.lookupWordBySlug[nextTemplate_slug];
+                                // var oNextTemplate = window.lookupWordBySlug[nextTemplate_slug];
+                                var oNextTemplate = NeuroCoreFunctions.fetchNewestRawFile(nextTemplate_slug,oRFL)
                                 var oTemplateData = oNextTemplate.templateData;
                                 var active = oTemplateData.active;
                                 if (active == true) {
@@ -248,7 +258,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                     }
                 }
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-applytemplatingconstraints; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-applytemplatingconstraints; err: "+err+"; node_slug: "+node_slug);
             }
             break;
 
@@ -273,7 +283,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 */
 
             } catch (err) {
-                console.log("javaScriptError with action a-m-u1n-01; err: "+err);
+                console.log("javaScriptError with action a-m-u1n-01; err: "+err+"; node_slug: "+node_slug);
             }
             break;
 
@@ -310,7 +320,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-l2-c1r-isasubsetof; err: "+err);
+                console.log("javaScriptError with action a-l2-c1r-isasubsetof; err: "+err+"; node_slug: "+node_slug);
             }
             break;
 
@@ -319,7 +329,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
             try {
 
             } catch (err) {
-                console.log("javaScriptError with action a-l2-c1r-isarealizationof; err: "+err);
+                console.log("javaScriptError with action a-l2-c1r-isarealizationof; err: "+err+"; node_slug: "+node_slug);
             }
             break;
 
@@ -328,7 +338,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
             try {
 
             } catch (err) {
-                console.log("javaScriptError with action a-l2-c1r-canbesubdividedinto; err: "+err);
+                console.log("javaScriptError with action a-l2-c1r-canbesubdividedinto; err: "+err+"; node_slug: "+node_slug);
             }
             break;
 
@@ -414,7 +424,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-r-u1n-updateinitialprocessing; err: "+err);
+                console.log("javaScriptError with action a-r-u1n-updateinitialprocessing; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-r-u1n-updateinitialprocessing":
@@ -425,7 +435,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-r-u1n-updateinitialprocessing; err: "+err);
+                console.log("javaScriptError with action a-r-u1n-updateinitialprocessing; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-r-u1n-01":
@@ -435,7 +445,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 // look to see what node type it is; flag for subsequent actions
 
             } catch (err) {
-                console.log("javaScriptError with action a-r-u1n-01; err: "+err);
+                console.log("javaScriptError with action a-r-u1n-01; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-01":
@@ -453,7 +463,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-01; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-01; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-02":
@@ -483,7 +493,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-02; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-02; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-03":
@@ -520,7 +530,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-03; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-03; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-01":
@@ -534,7 +544,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-01; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-01; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-02":
@@ -548,7 +558,7 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-02; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-02; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-03":
@@ -577,7 +587,7 @@ if (governingConcept_slug) {
 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-03; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-03; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-10":
@@ -591,7 +601,7 @@ if (governingConcept_slug) {
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-10; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-10; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-o4":
@@ -627,7 +637,7 @@ if (governingConcept_slug) {
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-o4; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-o4; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-11":
@@ -643,7 +653,7 @@ if (governingConcept_slug) {
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-11; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-11; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-05":
@@ -686,7 +696,7 @@ if (governingConcept_slug) {
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-05; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-05; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-12":
@@ -700,7 +710,7 @@ if (governingConcept_slug) {
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-12; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-12; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-06":
@@ -718,7 +728,7 @@ if (governingConcept_slug) {
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-06; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-06; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-07":
@@ -742,7 +752,7 @@ if (governingConcept_slug) {
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-07; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-07; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-u1n-01":
@@ -1090,7 +1100,7 @@ if (governingConcept_slug) {
                 oRFL.updated[nT_slug] = oNodeTo;
                 // // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nT_slug] = oNodeTo;
             } catch (err) {
-                console.log("javaScriptError with action a-b-u1n-01; err: "+err);
+                console.log("javaScriptError with action a-b-u1n-01; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-u1n-02":
@@ -1125,7 +1135,7 @@ oRFL.updated[nT_slug] = oNodeTo;
 // // window.neuroCore.oRFL.updated[nF_slug]nF_slug]nT_slug] = oNodeTo;
 */
             } catch (err) {
-                console.log("javaScriptError with action a-b-u1n-02; err: "+err);
+                console.log("javaScriptError with action a-b-u1n-02; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-u1n-03":
@@ -1135,7 +1145,7 @@ oRFL.updated[nT_slug] = oNodeTo;
                 // incomplete
 
             } catch (err) {
-                console.log("javaScriptError with action a-b-u1n-03; err: "+err);
+                console.log("javaScriptError with action a-b-u1n-03; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-u1n-04":
@@ -1215,7 +1225,7 @@ oRFL.updated[nT_slug] = oNodeTo;
                 // window.neuroCore.oRFL.updated[nF_slug]nT_slug] = oNodeTo;
 
             } catch (err) {
-                console.log("javaScriptError with action a-b-u1n-04; err: "+err);
+                console.log("javaScriptError with action a-b-u1n-04; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-u1n-05":
@@ -1244,7 +1254,7 @@ oRFL.updated[nT_slug] = oNodeTo;
                 // window.neuroCore.oRFL.updated[nF_slug]nT_slug] = oNodeTo;
 
             } catch (err) {
-                console.log("javaScriptError with action a-b-u1n-05; err: "+err);
+                console.log("javaScriptError with action a-b-u1n-05; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-u1n-06":
@@ -1254,7 +1264,7 @@ oRFL.updated[nT_slug] = oNodeTo;
                 // incomplete
 
             } catch (err) {
-                console.log("javaScriptError with action a-b-u1n-06; err: "+err);
+                console.log("javaScriptError with action a-b-u1n-06; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-08":
@@ -1281,7 +1291,7 @@ oRFL.updated[nT_slug] = oNodeTo;
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-08; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-08; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rV-u1r-canBeSubdividedInto":
@@ -1299,7 +1309,7 @@ oMainSchemaForConceptGraph = MiscFunctions.updateSchemaWithNewRel(oMainSchemaFor
 oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
 
             } catch (err) {
-                console.log("javaScriptError with action a-rV-u1r-canBeSubdividedInto; err: "+err);
+                console.log("javaScriptError with action a-rV-u1r-canBeSubdividedInto; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rV-u2n-init":
@@ -1521,7 +1531,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 oRFL.updated[nT_slug] = oNodeTo;
 
             } catch (err) {
-                console.log("javaScriptError with action a-rV-u2n-init; err: "+err);
+                console.log("javaScriptError with action a-rV-u2n-init; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-09":
@@ -1576,7 +1586,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-09; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-09; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-10":
@@ -1606,7 +1616,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 // does not need to trigger any subsequent Pattern searches (?)
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-10; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-10; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createjsonschema":
@@ -1663,7 +1673,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 // console.log("a-c-c1n-createjsonschema; aAuxiliaryPatternData: "+JSON.stringify(aAuxiliaryPatternData,null,4))
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createjsonschema; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createjsonschema; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createprimaryproperty":
@@ -1733,7 +1743,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createprimaryproperty; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createprimaryproperty; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createproperties":
@@ -1790,7 +1800,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 */
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createproperties; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createproperties; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createpropertyschema":
@@ -1844,7 +1854,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createpropertyschema; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createpropertyschema; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createschema":
@@ -1898,7 +1908,7 @@ oRFL.updated.mainSchemaForConceptGraph = oMainSchemaForConceptGraph;
                 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createschema; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createschema; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createsuperset":
@@ -1999,7 +2009,7 @@ oAuxiliaryPatternData.domains.aNodes = [ newWord_slug ];
 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createsuperset; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createsuperset; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1n-createwordtype":
@@ -2052,7 +2062,7 @@ oAuxiliaryPatternData.domains.aNodes = [ newWord_slug ];
 aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1n-createwordtype; err: "+err);
+                console.log("javaScriptError with action a-c-c1n-createwordtype; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectconcep":
@@ -2098,7 +2108,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectconcep; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectconcep; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectjsonschema":
@@ -2147,7 +2157,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectjsonschema; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectjsonschema; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectprimaryproperty":
@@ -2203,7 +2213,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                     aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectprimaryproperty; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectprimaryproperty; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectpropertyschema":
@@ -2246,7 +2256,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectpropertyschema; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectpropertyschema; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectschema":
@@ -2289,7 +2299,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectschema; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectschema; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectsuperset":
@@ -2332,7 +2342,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectsuperset; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectsuperset; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-c1r-connectwordtype":
@@ -2375,7 +2385,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-c1r-connectwordtype; err: "+err);
+                console.log("javaScriptError with action a-c-c1r-connectwordtype; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-makebasicconceptrels":
@@ -2461,7 +2471,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-makebasicconceptrels; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-makebasicconceptrels; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-makesuperset":
@@ -2527,7 +2537,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-makesuperset; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-makesuperset; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-updateconcept":
@@ -2542,7 +2552,7 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                 // window.neuroCore.oRFL.updated[nF_slug]node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-updateconcept; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-updateconcept; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-updatemainschemaforconceptgraph":
@@ -2571,7 +2581,7 @@ if (propertySchema_slug) {
 oRFL.updated[mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
 // // window.neuroCore.oRFL.updated[nF_slug]mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-updatemainschemaforconceptgraph; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-updatemainschemaforconceptgraph; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-c-u1n-wordtype_in_wordtypes":
@@ -2584,7 +2594,7 @@ oRFL.updated[mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-c-u1n-wordtype_in_wordtypes; err: "+err);
+                console.log("javaScriptError with action a-c-u1n-wordtype_in_wordtypes; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-u1n-cleanglobaldynamicdata":
@@ -2786,7 +2796,7 @@ oRFL.updated[mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-u1n-cleanglobaldynamicdata; err: "+err);
+                console.log("javaScriptError with action a-a-u1n-cleanglobaldynamicdata; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-a-umn-populatespecificinstances":
@@ -2807,7 +2817,7 @@ oRFL.updated[mainSchemaForConceptGraph_slug] = MiscFunctions.cloneObj(oMSFCG);
 
 
             } catch (err) {
-                console.log("javaScriptError with action a-a-umn-populatespecificinstances; err: "+err);
+                console.log("javaScriptError with action a-a-umn-populatespecificinstances; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-b-cmn-primaryproperty":
@@ -2971,7 +2981,7 @@ if (allAlreadyMade) {
 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-b-cmn-primaryproperty; err: "+err);
+                console.log("javaScriptError with action a-b-cmn-primaryproperty; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv-s1n-adddependencyslugs":
@@ -2985,7 +2995,7 @@ if (allAlreadyMade) {
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv-s1n-adddependencyslugs; err: "+err);
+                console.log("javaScriptError with action a-rv-s1n-adddependencyslugs; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv-s1n-addorganizedbysubset":
@@ -3104,7 +3114,7 @@ if (allAlreadyMade) {
                 }
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv-s1n-addorganizedbysubset; err: "+err);
+                console.log("javaScriptError with action a-rv-s1n-addorganizedbysubset; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv-s1n-connectsubsets":
@@ -3132,7 +3142,7 @@ if (allAlreadyMade) {
 
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv-s1n-connectsubsets; err: "+err);
+                console.log("javaScriptError with action a-rv-s1n-connectsubsets; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv-s1n-updaterole5id":
@@ -3171,7 +3181,7 @@ if (allAlreadyMade) {
 
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv-s1n-updaterole5id; err: "+err);
+                console.log("javaScriptError with action a-rv-s1n-updaterole5id; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv-u1n-populatejsonschemadefinitions":
@@ -3193,7 +3203,7 @@ if (allAlreadyMade) {
 
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv-u1n-populatejsonschemadefinitions; err: "+err);
+                console.log("javaScriptError with action a-rv-u1n-populatejsonschemadefinitions; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv-u1n-transferrole6":
@@ -3239,7 +3249,7 @@ if (allAlreadyMade) {
 
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv-u1n-transferrole6; err: "+err);
+                console.log("javaScriptError with action a-rv-u1n-transferrole6; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-rv00-s1n-00":
@@ -3250,7 +3260,7 @@ if (allAlreadyMade) {
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-rv00-s1n-00; err: "+err);
+                console.log("javaScriptError with action a-rv00-s1n-00; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-e-u1n-enumeration_updateRole0":
@@ -3269,7 +3279,7 @@ if (allAlreadyMade) {
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole0; err: "+err);
+                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole0; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-e-u1n-enumeration_updateRole3":
@@ -3293,7 +3303,7 @@ if (allAlreadyMade) {
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole3; err: "+err);
+                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole3; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-e-u1n-enumeration_updateRole4":
@@ -3313,7 +3323,7 @@ if (allAlreadyMade) {
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole4; err: "+err);
+                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole4; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-e-u1n-enumeration_updateRole6":
@@ -3369,7 +3379,7 @@ if (allAlreadyMade) {
                 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole6; err: "+err);
+                console.log("javaScriptError with action a-e-u1n-enumeration_updateRole6; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-e-ma-enumeration_manageRole5":
@@ -3562,7 +3572,7 @@ if (!alreadyCreated) {
 oRFL.updated[node_slug] = oNode;
 
             } catch (err) {
-                console.log("javaScriptError with action a-e-ma-enumeration_manageRole5; err: "+err);
+                console.log("javaScriptError with action a-e-ma-enumeration_manageRole5; err: "+err+"; node_slug: "+node_slug);
             }
             break;
         case "a-e-u1n-enumerates":
@@ -3639,7 +3649,7 @@ oRFL.updated[jsonSchema_slug] = oJSONSchema;
 oRFL.updated[nT_slug] = oNodeTo;
 
             } catch (err) {
-                console.log("javaScriptError with action a-e-u1n-enumerates; err: "+err);
+                console.log("javaScriptError with action a-e-u1n-enumerates; err: "+err+"; node_slug: "+node_slug);
             }
             break;
 
@@ -3687,7 +3697,12 @@ oRFL.updated[nT_slug] = oNodeTo;
             oRFL.current[nextNew_slug] = oWord_new;
             // for now, currentConceptGraphSqlID will always be the same for active CG and neuroCore.subject CG
             if (oWindowNeuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
-                window.lookupWordBySlug[nextUpdate_slug] = oWord_updated;
+                if (whichNeuroCore=="NeuroCore2") {
+                    window.lookupWordBySlug[nextUpdate_slug] = oWord_updated;
+                }
+                if (whichNeuroCore=="NeuroCore3") {
+                    // ? nothing to be done here since the ipfs-equivalent of window.lookupWordBySlug is a function which reads the MFS which gets updated in analagous fashion to when SQL gets updated
+                }
             }
             oWindowNeuroCore.engine.changesMadeYetThisSupercycle = true;
             oWindowNeuroCore.engine.changesMadeYetThisCycle = true;
@@ -3746,7 +3761,12 @@ oRFL.updated[nT_slug] = oNodeTo;
                 oRFL.current[nextUpdate_slug] = oWord_updated;
                 oRFL.current[nextUpdate_slug] = oWord_updated;
                 if (oWindowNeuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
-                    window.lookupWordBySlug[nextUpdate_slug] = oWord_updated;
+                    if (whichNeuroCore=="NeuroCore2") {
+                        window.lookupWordBySlug[nextUpdate_slug] = oWord_updated;
+                    }
+                    if (whichNeuroCore=="NeuroCore3") {
+                        // ? nothing to be done here since the ipfs-equivalent of window.lookupWordBySlug is a function which reads the MFS which gets updated in analagous fashion to when SQL gets updated
+                    }
                 }
                 oWindowNeuroCore.engine.changesMadeYetThisSupercycle = true;
                 oWindowNeuroCore.engine.changesMadeYetThisCycle = true;

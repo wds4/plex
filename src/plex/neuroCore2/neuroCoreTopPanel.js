@@ -357,7 +357,7 @@ const executeSinglePattern_s1r = (patternSlug,oAuxiliaryPatternData,whichNeuroCo
     if (!wT_from) { wT_from = "ANY"; }
     if (!wT_to) { wT_to = "ANY"; }
 
-    var aRels = window.allConceptGraphRelationships;
+    var aRels = window.neuroCore.subject.allConceptGraphRelationships;
     for (var r=0;r<aRels.length;r++) {
         // console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
         var oNextRel = aRels[r];
