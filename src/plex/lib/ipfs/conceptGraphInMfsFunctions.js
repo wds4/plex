@@ -83,7 +83,16 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
 // Except: this word is either generated locally or updating a word that already exists locally
 // Therefore: no need to run convertExternalNodeToLocalWord(oNode)
 export const createOrUpdateWordInMFS = async (oWord) => {
+    var pCGw = window.ipfs.pCGw;
     var word_slug = oWord.wordData.slug;
+    var path = pCGw+word_slug+"/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+    var pathToFile = path + "node.txt";
+    var fileToWrite = JSON.stringify(oWord,null,4)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+    var oWord = await publishWordToIpfs(oWord)
+    return oWord
 }
 
 // Download an external word from IPFS using its externally-controlled ipns address,

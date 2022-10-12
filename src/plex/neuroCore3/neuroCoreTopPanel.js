@@ -456,7 +456,8 @@ const executeOneNeuroCore3Pattern = async (patternIndex,patternSlug,patternName,
 
 const makeNewWord = async (slugToCreate,newUniqueID) => {
     var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
-    var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+    // var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new) // NeuroCore2
+    var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new) // NeuroCore3
     window.ipfs.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
     window.ipfs.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
     return fooResult;
@@ -465,7 +466,8 @@ const makeNewWord = async (slugToCreate,newUniqueID) => {
 const updateWord = async (slugToUpdate,updateUniqueID) => {
     var oWord_old = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
     var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
-    var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+    // var fooResult = await MiscFunctions.createOrUpdateWordInAllTables(oWord_new) // NeuroCore2 
+    var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new) // NeuroCore3
     return fooResult;
 }
 
