@@ -1,6 +1,7 @@
 import * as MiscFunctions from '../functions/miscFunctions.js';
 import * as ConceptGraphFunctions from '../functions/conceptGraphFunctions.js';
 import * as NeuroCoreFunctions from '../functions/neuroCoreFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../lib/ipfs/conceptGraphInMfsFunctions.js';
 const jQuery = require("jquery");
 const Ajv = require('ajv');
 const ajv = new Ajv({
@@ -452,8 +453,14 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
 
             if (verboseConsole) { console.log("case a-a-u1n-01") }
             try {
+                if (nT_slug=="wordTypeFor_cat") {
+                    console.log("QWERTYCAT; oNodeTo before: "+JSON.stringify(oNodeTo,null,4))
+                }
                 oNodeTo.globalDynamicData.valenceData.valenceL1 = MiscFunctions.pushIfNotAlreadyThere(oNodeTo.globalDynamicData.valenceData.valenceL1, nF_slug);
                 oRFL.updated[nT_slug] = oNodeTo;
+                if (nT_slug=="wordTypeFor_cat") {
+                    console.log("QWERTYCAT; oNodeTo after: "+JSON.stringify(oNodeTo,null,4))
+                }
 
                 auxAssistedQueue = true;
                 oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
@@ -3676,7 +3683,14 @@ oRFL.updated[nT_slug] = oNodeTo;
         var infoHTML = "";
         infoHTML += "<div>";
             infoHTML += newUniqueIdentifier + "<br>";
-            infoHTML += " <div class='doSomethingButton_small makeNewWordButton' style='background-color:white;' ";
+            infoHTML += " <div class='doSomethingButton_small ";
+            if (whichNeuroCore=="NeuroCore2") {
+                infoHTML += "makeNewWordButton' ";
+            }
+            if (whichNeuroCore=="NeuroCore3") {
+                infoHTML += "makeNewNeuroCore3WordButton' ";
+            }
+            infoHTML += " style='background-color:white;' ";
             infoHTML += " data-newuniqueidentifier='"+newUniqueIdentifier+"' ";
             infoHTML += " data-slug='"+nextNew_slug+"' ";
             infoHTML += " >";
@@ -3687,10 +3701,21 @@ oRFL.updated[nT_slug] = oNodeTo;
             infoHTML += "</div>";
         infoHTML += "</div>";
         // console.log(infoHTML)
-        jQuery("#neuroCore2ActivityLogContainer").append(infoHTML)
+        if (whichNeuroCore=="NeuroCore2") {
+            jQuery("#neuroCore2ActivityLogContainer").append(infoHTML)
+        }
+        if (whichNeuroCore=="NeuroCore3") {
+            jQuery("#neuroCore3ActivityLogContainer").append(infoHTML)
+        }
         // console.log("executeChanges? "+executeChanges)
         if (executeChanges=="yes") {
-            await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+
+            if (whichNeuroCore=="NeuroCore2") {
+                await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+            }
+            if (whichNeuroCore=="NeuroCore3") {
+                await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+            }
             oRFL.current[nextNew_slug] = oWord_new;
             oRFL.new[nextNew_slug] = oWord_new;
             oRFL.new[nextNew_slug] = oWord_new;
@@ -3743,21 +3768,44 @@ oRFL.updated[nT_slug] = oNodeTo;
             var infoHTML = "";
             infoHTML += "<div>";
                 infoHTML += updateUniqueIdentifier + "<br>";
-                infoHTML += "<div class='doSomethingButton_small updateWordButton' ";
+                infoHTML += "<div class='doSomethingButton_small ";
+                if (whichNeuroCore=="NeuroCore2") {
+                    infoHTML += "updateWordButton' ";
+                }
+                if (whichNeuroCore=="NeuroCore3") {
+                    infoHTML += "updateNeuroCore3WordButton' ";
+                }
                 infoHTML += " data-updateuniqueidentifier='"+updateUniqueIdentifier+"' ";
                 infoHTML += " data-slug='"+nextUpdate_slug+"' ";
                 infoHTML += " >";
                 infoHTML += "UPDATE";
                 infoHTML += "</div>";
-                infoHTML += "<div data-updateuniqueidentifier='"+updateUniqueIdentifier+"' class='actionUpdatingWord' style='display:inline-block;border-left:5px;' >";
+                infoHTML += "<div data-updateuniqueidentifier='"+updateUniqueIdentifier+"' ";
+                if (whichNeuroCore=="NeuroCore2") {
+                    infoHTML += " class='actionUpdatingWord' ";
+                }
+                if (whichNeuroCore=="NeuroCore3") {
+                    infoHTML += " class='actionNeuroCore3UpdatingWord' ";
+                }
+                infoHTML += " style='display:inline-block;border-left:5px;' >";
                 infoHTML += actionSlug+": updating word "+nextUpdate_slug;
                 infoHTML += "</div>";
             infoHTML += "</div>";
             // console.log(infoHTML)
-            jQuery("#neuroCore2ActivityLogContainer").append(infoHTML)
+            if (whichNeuroCore=="NeuroCore2") {
+                jQuery("#neuroCore2ActivityLogContainer").append(infoHTML)
+            }
+            if (whichNeuroCore=="NeuroCore3") {
+                jQuery("#neuroCore3ActivityLogContainer").append(infoHTML)
+            }
             // console.log("executeChanges? "+executeChanges)
             if (executeChanges=="yes") {
-                await MiscFunctions.createOrUpdateWordInAllTables(oWord_updated)
+                if (whichNeuroCore=="NeuroCore2") {
+                    await MiscFunctions.createOrUpdateWordInAllTables(oWord_updated)
+                }
+                if (whichNeuroCore=="NeuroCore3") {
+                    await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_updated)
+                }
                 oRFL.current[nextUpdate_slug] = oWord_updated;
                 oRFL.current[nextUpdate_slug] = oWord_updated;
                 if (oWindowNeuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {

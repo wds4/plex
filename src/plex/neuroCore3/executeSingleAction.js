@@ -1,6 +1,7 @@
 import * as MiscFunctions from '../functions/miscFunctions.js';
 import * as ConceptGraphFunctions from '../functions/conceptGraphFunctions.js';
 import * as NeuroCoreFunctions from '../functions/neuroCoreFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../lib/ipfs/conceptGraphInMfsFunctions.js';
 const jQuery = require("jquery");
 const Ajv = require('ajv');
 const ajv = new Ajv({
@@ -3667,7 +3668,7 @@ oRFL.updated[nT_slug] = oNodeTo;
         jQuery("#neuroCore2ActivityLogContainer").append(infoHTML)
         // console.log("executeChanges? "+executeChanges)
         if (executeChanges=="yes") {
-            await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
+            await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
             oRFL.current[nextNew_slug] = oWord_new;
             oRFL.new[nextNew_slug] = oWord_new;
             window.ipfs.neuroCore.subject.oRFL.new[nextNew_slug] = oWord_new;
@@ -3729,7 +3730,7 @@ oRFL.updated[nT_slug] = oNodeTo;
             jQuery("#neuroCore2ActivityLogContainer").append(infoHTML)
             // console.log("executeChanges? "+executeChanges)
             if (executeChanges=="yes") {
-                await MiscFunctions.createOrUpdateWordInAllTables(oWord_updated)
+                await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_updated)
                 oRFL.current[nextUpdate_slug] = oWord_updated;
                 window.ipfs.neuroCore.subject.oRFL.current[nextUpdate_slug] = oWord_updated;
                 if (window.ipfs.neuroCore.subject.currentConceptGraphSqlID==window.currentConceptGraphSqlID) {
