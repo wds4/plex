@@ -1,23 +1,12 @@
 
-It is no accident that we are all self-deluded, lying hypocrites. This trait -- which I refer to as **toxicity** -- is no accident.
-It cannot be explained away as failure, weakness, or imperfection.
-
-<br>
-
-As I will argue in this book, **we are toxic by design**. Why? Because toxicity is a necessary prerequisite for one of our most basic spiritual needs:
-
-<br>
-
-***to belong.***
-
-<br>
-
-The need to belong to a tribe is fundamental to survival and is one of our deepest needs.
-The price that we pay is the narrative fiction: a set of lies, contradictions characterized by unpalatability, a.k.a. toxicity.
+The need to belong to a tribe is fundamental to survival and has come through evolution to be one of our deepest psychological needs.
+The price that we pay is the narrative fiction: a set of lies and internally inconsistent concepts and beliefs
+that come over time to be associated with the tribe.
 This toxic body of lies, incorporated into our lives and into our psyches,
 functions as a uniform for our tribal identity. The central observation of this book is that toxicity is not an accident.
 The narrative fiction is not a collection of honest mistakes.
-The tribal narrative is toxic by design. Toxicity is central the narrative could not serve its purpose.
+The tribal narrative is toxic by design. Without toxicity, the narrative could not serve its primary purpose:
+to provide a method to distinguish members of the tribe from non-members.
 Toxicity is necessary to discourage infiltrators from donning the uniform.
 Donning the narrative is difficult, by design.
 

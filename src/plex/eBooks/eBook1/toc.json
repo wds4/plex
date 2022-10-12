@@ -5,12 +5,6 @@
             "sectionDirectory": "section1",
             "chapters": [
                 {
-                    "title": "A Brief Glossary",
-                    "chapterReference": "cap1",
-                    "sectionDirectory": "section1",
-                    "chapterFile": "chapter1"
-                },
-                {
                     "title": "The Brain in One Paragraph",
                     "chapterReference": "cap2",
                     "sectionDirectory": "section1",
@@ -27,6 +21,12 @@
                     "chapterReference": "cap0",
                     "sectionDirectory": "section1",
                     "chapterFile": "chapter4"
+                },
+                {
+                    "title": "A Brief Glossary",
+                    "chapterReference": "cap1",
+                    "sectionDirectory": "section1",
+                    "chapterFile": "chapter1"
                 }
             ]
         },

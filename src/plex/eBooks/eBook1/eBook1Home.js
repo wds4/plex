@@ -147,21 +147,21 @@ export default class EBook1Home extends React.Component {
     render() {
         return (
             <>
-                <fieldset className="mainBody" >
+                <fieldset className="mainBody" style={{height:"100%"}} >
                     <LeftNavbar1 />
-                    <div className="eBooksMainPanel" >
+                    <div className="eBooksMainPanel" style={{height:"100%"}} >
                         <div style={{height:"60px",backgroundColor:"#EFEFEF",borderBottom:"2px solid purple",marginBottom:"10px",paddingTop:"15px"}} >
                             <div id="eBook1MainTitle" class="h2 eBookHoverableElements" >The Cognitive Blind Spot</div>
                         </div>
+                        <div style={{overflow:"scroll",height:"950px"}} >
+                            <center>
+                                <div id="eBookTocIntroContainer" className = "eBookTocIntroContainer" >
+                                </div>
 
-                        <center>
-                            <div id="eBookTocIntroContainer" className = "eBookTocIntroContainer" >
-                            </div>
-
-                            <div id="eBookMainContainer" className = "eBookMainContainer" >
-                            </div>
-                        </center>
-
+                                <div id="eBookMainContainer" className = "eBookMainContainer" >
+                                </div>
+                            </center>
+                        </div>
                     </div>
                 </fieldset>
             </>

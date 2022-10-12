@@ -840,7 +840,6 @@
     width: calc(100% - 150px);
     height:100%;
     white-space: normal;
-    overflow-x:scroll;
     background-color:white;
 }
 .eBookMainContainer {
@@ -848,7 +847,6 @@
     text-align:left;
     width:900px;
     height:900px;
-    overflow:scroll;
 }
 .eBookTocIntroContainer {
     background-color:white;
