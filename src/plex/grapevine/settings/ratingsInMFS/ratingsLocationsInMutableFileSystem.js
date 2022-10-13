@@ -12,6 +12,10 @@ export default class GrapevineSettingsRatingsLocationsInMutableFileSystem extend
     }
     componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
+        var pathToLocalRatings = window.grapevine.ratings.local.mfsPath
+        var pathToExternalRatings = window.grapevine.ratings.external.mfsPath
+        var setForLocalRatings = window.grapevine.ratings.local.set
+        var setForExternalRatings = window.grapevine.ratings.external.set
     }
     render() {
         return (
@@ -23,10 +27,35 @@ export default class GrapevineSettingsRatingsLocationsInMutableFileSystem extend
                         <Masthead />
                         <div class="h2">Where Ratings and Composite Scores are stored in the Mutable File System</div>
 
+                        <div style={{marginBottom:"10px",padding:"5px",border:"1px solid purple",borderRadius:"3px"}}>
+                            <div>
+                                transfer ratings data:
+                                <div id="transferRatingsDataAllStepsButton" className="doSomethingButton_small">Transfer</div>
+                            </div>
+                            <li>
+                                <div style={{display:"inline-block"}}>
+                                    From
+                                    <div id="setForLocalRatingsContainer" style={{display:"inline-block",marginLeft:"5px",marginRight:"5px"}} >setForLocalRatingsContainer</div>
+                                    to
+                                    <div id="grapevineMfsFileForLocalRatingsContainer" style={{display:"inline-block",marginLeft:"5px",marginRight:"5px"}} >grapevineMfsFileForLocalRatingsContainer</div>
+                                    <div id="transferLocalRatingsDataButton" className="doSomethingButton_small">Transfer</div>
+                                </div>
+                            </li>
+                            <li>
+                                <div style={{display:"inline-block"}}>
+                                    From
+                                    <div id="setForExternalRatingsContainer" style={{display:"inline-block",marginLeft:"5px",marginRight:"5px"}} >setForExternalRatingsContainer</div>
+                                    to
+                                    <div id="grapevineMfsFileForExternalRatingsContainer" style={{display:"inline-block",marginLeft:"5px",marginRight:"5px"}} >grapevineMfsFileForExternalRatingsContainer</div>
+                                    <div id="transferExternalRatingsDataButton" className="doSomethingButton_small">Transfer</div>
+                                </div>
+                            </li>
+                        </div>
+
                         <div style={{backgroundColor:"#DFDFDF",padding:"5px",marginBottom:"10px"}} >paths to ratings in MFS:</div>
 
                         <li>
-                            <div style={{display:"inline-block"}}>
+                            <div style={{display:"inline-block"}} >
                                 public: ratings by me<br/>
                                 <div>/grapevineData/ratings/locallyAuthored/ratings.txt</div>
                             </div>

@@ -246,7 +246,7 @@ window.ipfs.neuroCore.subject.currentConceptGraphSqlID = window.currentConceptGr
 // to be replaced with these:
 window.ipfs.neuroCore.engine.pCG = null; // eg: pCG0 = /plex/conceptGraphs/1cnx1ekjkv/k2k4r8m51oham1hg0lqrdryt2bjs4vzvmbe9r2geijux4nmqbqeq1r67/
 window.ipfs.neuroCore.subject.pCG = null
-window.ipfs.pCGb = null; // b=base; default path to all operational concept graphs in this node; includes 10-character directory which should be unknown to other nodes 
+window.ipfs.pCGb = null; // b=base; default path to all operational concept graphs in this node; includes 10-character directory which should be unknown to other nodes
 window.ipfs.pCGs = null; // s=schema; path to the active mainSchemaForConceptGraph file
 window.ipfs.pCG0 = null; // 0=most important; path to "active" concept graph. can also have: window.ipfs.pCG1, 2, 3, etc and switch between them
 window.ipfs.pCGw = null; // w=word; path to all words in active concept graph pCG0 + word/
@@ -260,8 +260,14 @@ window.ipfs.pCGncs = null; // ncs = neuroCore subject; default: pCGncs = pCG0
 // window.ipfs.neuroCore.engine.pCG = window.ipfs.pCGnce
 // window.ipfs.neuroCore.subject.pCG = window.ipfs.pCGncs
 
-
-
+window.grapevine = {};
+window.grapevine.ratings = {};
+window.grapevine.ratings.local = {};
+window.grapevine.ratings.local.mfsPath = "/grapevineData/ratings/locallyAuthored/ratings.txt";
+window.grapevine.ratings.local.set = "setFor_ratings_authoredLocally";
+window.grapevine.ratings.external = {};
+window.grapevine.ratings.external.mfsPath = "/grapevineData/ratings/externallyAuthored/ratings.txt"
+window.grapevine.ratings.external.set = "setFor_ratings_authoredExternally"
 
 
 
