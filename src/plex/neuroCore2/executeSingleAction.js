@@ -453,14 +453,18 @@ export const executeSingleAction = async (oAction,nc2CycleNumber,singlePatternNu
 
             if (verboseConsole) { console.log("case a-a-u1n-01") }
             try {
+                /*
                 if (nT_slug=="wordTypeFor_cat") {
                     console.log("QWERTYCAT; oNodeTo before: "+JSON.stringify(oNodeTo,null,4))
                 }
+                */
                 oNodeTo.globalDynamicData.valenceData.valenceL1 = MiscFunctions.pushIfNotAlreadyThere(oNodeTo.globalDynamicData.valenceData.valenceL1, nF_slug);
                 oRFL.updated[nT_slug] = oNodeTo;
+                /*
                 if (nT_slug=="wordTypeFor_cat") {
                     console.log("QWERTYCAT; oNodeTo after: "+JSON.stringify(oNodeTo,null,4))
                 }
+                */
 
                 auxAssistedQueue = true;
                 oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
@@ -3664,8 +3668,12 @@ oRFL.updated[nT_slug] = oNodeTo;
             // code
             break;
     }
-
-    var executeChanges = jQuery("#executeChangesSelector option:selected").val()
+    if (whichNeuroCore=="NeuroCore2") {
+        var executeChanges = jQuery("#executeChangesSelector option:selected").val()
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        var executeChanges = jQuery("#executeChangesNeuroCore3Selector option:selected").val()
+    }
 
     var aNews = Object.keys(oRFL.new);
     // console.log("actionSlug: "+actionSlug+"; number of new words: "+aNews.length)
@@ -3709,12 +3717,12 @@ oRFL.updated[nT_slug] = oNodeTo;
         }
         // console.log("executeChanges? "+executeChanges)
         if (executeChanges=="yes") {
-
             if (whichNeuroCore=="NeuroCore2") {
                 await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
             }
             if (whichNeuroCore=="NeuroCore3") {
                 await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+                window.ipfs.neuroCore.subject.oRFL.current[nextNew_slug] = oWord_new
             }
             oRFL.current[nextNew_slug] = oWord_new;
             oRFL.new[nextNew_slug] = oWord_new;
@@ -3805,6 +3813,7 @@ oRFL.updated[nT_slug] = oNodeTo;
                 }
                 if (whichNeuroCore=="NeuroCore3") {
                     await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_updated)
+                    window.ipfs.neuroCore.subject.oRFL.current[nextUpdate_slug] = oWord_updated
                 }
                 oRFL.current[nextUpdate_slug] = oWord_updated;
                 oRFL.current[nextUpdate_slug] = oWord_updated;

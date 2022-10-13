@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PlexMasthead from './mastheads/plexMasthead.js';
 import LeftNavbar1 from './navbars/leftNavbar1/plex_leftNav1';
@@ -18,6 +17,7 @@ export default class PlexHome extends React.Component {
         // 9 Oct 2022
         // It is important to do this step to initialize window.ipfs
         await ConceptGraphInMfsFunctions.loadActiveIpfsConceptGraph();
+        await ConceptGraphInMfsFunctions.loadNeuroCore3ConceptGraph()
 
 
         // old way: oWord = window.lookupWordBySlug(slug)

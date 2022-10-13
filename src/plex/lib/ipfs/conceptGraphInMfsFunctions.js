@@ -10,6 +10,193 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+
+export const loadNeuroCore3ConceptGraph = async (foo) => {
+    console.log("loadNeuroCore3ConceptGraph")
+    // window.ipfs.neuroCore = {};
+    // window.ipfs.neuroCore.engine = {};
+    // var oWinIpfs = MiscFunctions.cloneObj(window.ipfs)
+    console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
+    window.ipfs.neuroCore.engine.oRFL = {};
+    window.ipfs.neuroCore.engine.oRFL.current = {};
+    window.ipfs.neuroCore.engine.oRFL.updated = {};
+    window.ipfs.neuroCore.engine.oRFL.new = {};
+
+    window.ipfs.neuroCore.subject.oRFL = {};
+    window.ipfs.neuroCore.subject.oRFL.current = {};
+    window.ipfs.neuroCore.subject.oRFL.updated = {};
+    window.ipfs.neuroCore.subject.oRFL.new = {};
+
+    window.ipfs.neuroCore.subject.allConceptGraphRelationships = [];
+
+    // var path = window.ipfs.pCGw;
+    var path = window.ipfs.neuroCore.engine.pCGw
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        var fileCid = file.cid;
+        if (fileType=="directory") {
+            var nextWord_path = path + fileName + "/node.txt";
+            var oNextWord = await fetchObjectByLocalMutableFileSystemPath(nextWord_path)
+            var nextWord_slug = oNextWord.wordData.slug;
+            window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
+            // window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
+            console.log("loadNeuroCore3ConceptGraph neuroCore.engine; nextWord_slug: "+nextWord_slug)
+            if (oNextWord.hasOwnProperty("schemaData")) {
+                var aNextSchemaRels = oNextWord.schemaData.relationships;
+                for (var z=0;z < aNextSchemaRels.length;z++ ) {
+                    var oNextRel = aNextSchemaRels[z];
+                    window.ipfs.neuroCore.subject.allConceptGraphRelationships.push(oNextRel)
+                }
+            }
+
+        }
+    }
+    var path = window.ipfs.neuroCore.subject.pCGw
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        var fileCid = file.cid;
+        if (fileType=="directory") {
+            var nextWord_path = path + fileName + "/node.txt";
+            var oNextWord = await fetchObjectByLocalMutableFileSystemPath(nextWord_path)
+            var nextWord_slug = oNextWord.wordData.slug;
+            // window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
+            window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
+            console.log("loadNeuroCore3ConceptGraph neuroCore.subject; nextWord_slug: "+nextWord_slug)
+        }
+    }
+
+    await loadNeuroCore3Patterns();
+    return true;
+}
+
+export const loadNeuroCore3Patterns = async () => {
+    console.log("loadNeuroCore3Patterns")
+    if (window.ipfs.neuroCore.engine.oRFL.current.hasOwnProperty("supersetFor_action")) {
+        console.log("hasOwnProperty supersetFor_action")
+        var oSupersetAction = window.ipfs.neuroCore.engine.oRFL.current["supersetFor_action"]
+        var aAct = oSupersetAction.globalDynamicData.specificInstances;
+        for (var a=0;a<aAct.length;a++) {
+            var nextAction_wordSlug = aAct[a];
+            // console.log("nextAction_wordSlug: "+nextAction_wordSlug)
+            var oNextAction = window.ipfs.neuroCore.engine.oRFL.current[nextAction_wordSlug]
+            var nextAction_actionName = oNextAction.actionData.name;
+            var nextAction_actionSlug = oNextAction.actionData.slug;
+            // console.log("oNextAction: "+JSON.stringify(oNextAction,null,4))
+            // plexNeuroCore.oMapActionSlugToWordSlug[nextAction_actionSlug] = nextAction_wordSlug;
+            // ???
+            window.ipfs.neuroCore.engine.oMapPatternNameToWordSlug[nextAction_actionSlug] = nextAction_wordSlug;
+            // window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug[nextAction_actionSlug] = nextAction_wordSlug;
+            // console.log("qwerty plexNeuroCore.oMapActionSlugToWordSlug; nextAction_actionSlug: "+nextAction_actionSlug+"; equals nextAction_wordSlug: "+nextAction_wordSlug)
+        }
+    }
+    if (window.ipfs.neuroCore.engine.oRFL.current.hasOwnProperty("patterns_singleNode")) {
+        // s1n
+        jQuery("#neuroCore3Patterns_s1n_container").html("")
+        var oPatterns_sN = window.ipfs.neuroCore.engine.oRFL.current.patterns_singleNode;
+        var aPatterns_sN = oPatterns_sN.globalDynamicData.specificInstances;
+        for (var p=0;p<aPatterns_sN.length;p++) {
+            var nextPattern_slug = aPatterns_sN[p];
+            var oPattern = window.ipfs.neuroCore.engine.oRFL.current[nextPattern_slug]
+            var patternName = oPattern.patternData.name;
+            var patternStatus = oPattern.patternData.status;
+            if (patternStatus=="active") {
+                // ???
+                window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug[patternName] = nextPattern_slug;
+                // window.ipfs.neuroCore.engine.oMapPatternNameToWordSlug[patternName] = nextPattern_slug;
+                var nextPatternHTML = "";
+                nextPatternHTML += "<div class='neuroCore3SinglePatternContainer' ";
+                nextPatternHTML += " >";
+                    nextPatternHTML += "<input id='neuroCore3PatternCheckbox_"+nextPattern_slug+"' data-patternslug='"+nextPattern_slug+"' data-patternname='"+patternName+"' class='neuroCore3PatternCheckbox s1nNeuroCore3PatternCheckbox' type='checkbox' style=margin-right:5px; />";
+                    nextPatternHTML += patternName;
+                nextPatternHTML += "</div>";
+                jQuery("#neuroCore3Patterns_s1n_container").append(nextPatternHTML)
+            }
+        }
+
+        // s1r
+        jQuery("#neuroCore3Patterns_s1r_container").html("")
+        var oPatterns_sR = window.ipfs.neuroCore.engine.oRFL.current.patterns_singleRelationship
+        var aPatterns_sR = oPatterns_sR.globalDynamicData.specificInstances;
+        for (var p=0;p<aPatterns_sR.length;p++) {
+            var nextPattern_slug = aPatterns_sR[p];
+            var oPattern = window.ipfs.neuroCore.engine.oRFL.current[nextPattern_slug]
+            var patternName = oPattern.patternData.name;
+            var patternStatus = oPattern.patternData.status;
+            if (patternStatus=="active") {
+                window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug[patternName] = nextPattern_slug;
+                var nextPatternHTML = "";
+                nextPatternHTML += "<div class='neuroCore3SinglePatternContainer' ";
+                nextPatternHTML += " >";
+                    nextPatternHTML += "<input id='neuroCore3PatternCheckbox_"+nextPattern_slug+"' data-patternslug='"+nextPattern_slug+"' data-patternname='"+patternName+"' class='neuroCore3PatternCheckbox s1rNeuroCore3PatternCheckbox' type='checkbox' style=margin-right:5px; />";
+                    nextPatternHTML += patternName;
+                nextPatternHTML += "</div>";
+                jQuery("#neuroCore3Patterns_s1r_container").append(nextPatternHTML)
+            }
+        }
+        // s2r
+    }
+
+    // populate window.ipfs.neuroCore.engine.oPatternsTriggeredByAction
+    if (window.ipfs.neuroCore.engine.oRFL.current.hasOwnProperty("supersetFor_action")) {
+        window.ipfs.neuroCore.engine.oPatternsTriggeredByAction = {};
+        var oSupersetAction = window.ipfs.neuroCore.engine.oRFL.current["supersetFor_action"]
+        var aActions = oSupersetAction.globalDynamicData.specificInstances;
+        for (var a=0;a<aActions.length;a++) {
+            var nextAction_slug = aActions[a];
+            var oAct = window.ipfs.neuroCore.engine.oRFL.current[nextAction_slug];
+            var nextAction_actionSlug = oAct.actionData.slug;
+            var nextAction_actionName = oAct.actionData.name;
+            window.ipfs.neuroCore.engine.oPatternsTriggeredByAction[nextAction_actionSlug] = [];
+            if (oAct.actionData.hasOwnProperty("secondaryPatterns")) {
+                // go through secondaryPatterns.individualPatterns
+                var aIndividualPatterns = [];
+                if (oAct.actionData.secondaryPatterns.hasOwnProperty("individualPatterns")) {
+                    aIndividualPatterns = oAct.actionData.secondaryPatterns.individualPatterns;
+                }
+                for (var s=0;s<aIndividualPatterns.length;s++) {
+                    var nextPattern_patternName = aIndividualPatterns[s];
+                    var nextPattern_wordSlug = window.ipfs.neuroCore.engine.oMapActionSlugToWordSlug[nextPattern_patternName];
+                    if (!window.ipfs.neuroCore.engine.oPatternsTriggeredByAction[nextAction_actionSlug].includes(nextPattern_wordSlug)) {
+                        window.ipfs.neuroCore.engine.oPatternsTriggeredByAction[nextAction_actionSlug].push(nextPattern_wordSlug);
+                    }
+                }
+
+                // go through secondaryPatterns.sets
+                var aSets = [];
+                if (oAct.actionData.secondaryPatterns.hasOwnProperty("sets")) {
+                    aSets = oAct.actionData.secondaryPatterns.sets;
+                }
+                for (var s=0;s<aSets.length;s++) {
+                    var nextSet_slug = aSets[s];
+                    var oNextSet = {}
+                    // console.log("window.ipfs.neuroCore.engine.aOldReplacedWords: "+JSON.stringify(window.ipfs.neuroCore.engine.aOldReplacedWords,null,4))
+                    if (window.ipfs.neuroCore.engine.oRFL.current.hasOwnProperty(nextSet_slug)) {
+                        oNextSet = window.ipfs.neuroCore.engine.oRFL.current[nextSet_slug];
+                    } else {
+                        if (window.ipfs.neuroCore.engine.aOldReplacedWords.includes(nextSet_slug)) {
+                            oNextSet = window.ipfs.neuroCore.engine.oRFL.current[window.ipfs.neuroCore.engine.oOldWordReplacementMap[nextSet_slug]];
+                        }
+                    }
+                    // console.log("qwerty nextSet_slug: "+nextSet_slug+"; oNextSet: "+JSON.stringify(oNextSet,null,4))
+                    var aNextSet_patterns = oNextSet.globalDynamicData.specificInstances;
+                    for (var z=0;z<aNextSet_patterns.length;z++) {
+                        var nextPattern_wordSlug = aNextSet_patterns[z];
+                        if (!window.ipfs.neuroCore.engine.oPatternsTriggeredByAction[nextAction_actionSlug].includes(nextPattern_wordSlug)) {
+                            window.ipfs.neuroCore.engine.oPatternsTriggeredByAction[nextAction_actionSlug].push(nextPattern_wordSlug);
+                        }
+                    }
+                }
+            }
+        }
+        // var oFoo = JSON.stringify(window.ipfs.neuroCore.engine.oPatternsTriggeredByAction,null,4);
+        // console.log("window.ipfs.neuroCore.engine.oPatternsTriggeredByAction: "+oFoo)
+    }
+    var fooResult = await MiscFunctions.timeout(10);
+    return fooResult;
+}
+
 // Input local word as object;
 // look for ipns from prevSource; if present, obtain that version over ipfs and return word as object
 export const returnPrevSourceVersionOfWordUsingIPNS = async (oWord) => {
@@ -83,6 +270,7 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
 // Except: this word is either generated locally or updating a word that already exists locally
 // Therefore: no need to run convertExternalNodeToLocalWord(oNode)
 export const createOrUpdateWordInMFS = async (oWord) => {
+    console.log("createOrUpdateWordInMFS! adding oWord: " + JSON.stringify(oWord,null,4))
     var pCGw = window.ipfs.pCGw;
     var word_slug = oWord.wordData.slug;
     var path = pCGw+word_slug+"/";
@@ -92,6 +280,17 @@ export const createOrUpdateWordInMFS = async (oWord) => {
     try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
     try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
     var oWord = await publishWordToIpfs(oWord)
+    console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.subject.pCGw: "+window.ipfs.neuroCore.subject.pCGw)
+    console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.engine.pCGw: "+window.ipfs.neuroCore.engine.pCGw)
+    console.log("createOrUpdateWordInMFS! window.ipfs.pCGw: "+window.ipfs.pCGw)
+    if (window.ipfs.neuroCore.subject.pCGw == window.ipfs.pCGw) {
+        console.log("createOrUpdateWordInMFS! yes nc subject == active ")
+        window.ipfs.neuroCore.subject.oRFL.current[word_slug] = oWord
+    }
+    if (window.ipfs.neuroCore.engine.pCGw == window.ipfs.pCGw) {
+        console.log("createOrUpdateWordInMFS! yes nc engine == active ")
+        window.ipfs.neuroCore.engine.oRFL.current[word_slug] = oWord
+    }
     return oWord
 }
 
@@ -164,13 +363,17 @@ export const loadActiveIpfsConceptGraph = async () => {
             }
         } catch (e) {}
     }
+
     var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
     var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
     var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
-    var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt"
+    var pCGb = "/plex/conceptGraphs/" + ipns10_forActiveCGPathDir + "/";
+    // var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt"
+    var pCGs = pCGb + "mainSchemaForConceptGraph/node.txt"
     var oMainSchemaForConceptGraphLocal = await fetchObjectByLocalMutableFileSystemPath(pCGs)
     var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
-    var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
+    // var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
+    var pCG0 = pCGb + mainSchema_local_ipns+"/";
     var pCGw = pCG0 + "words/";
 
     window.ipfs.myPeerID = myPeerID;
@@ -182,9 +385,18 @@ export const loadActiveIpfsConceptGraph = async () => {
     window.ipfs.activeConceptGraph.ipns = ipns_forActiveCGPathDir;
     window.ipfs.activeConceptGraph.ipns10 = ipns10_forActiveCGPathDir;
     window.ipfs.activeConceptGraph.mainSchema_local_ipns = mainSchema_local_ipns;
+    window.ipfs.pCGb = pCGb;
     window.ipfs.pCGs = pCGs;
     window.ipfs.pCG0 = pCG0;
     window.ipfs.pCGw = pCGw; // path to every word in the active concept graph
+
+    window.ipfs.neuroCore.engine.pCG0 = pCG0;
+    window.ipfs.neuroCore.engine.pCGw = pCGw;
+    // window.ipfs.pCGnce = pCG0;
+    window.ipfs.neuroCore.subject.pCG0 = pCG0;
+    window.ipfs.neuroCore.subject.pCGw = pCGw;
+    // window.ipfs.pCGncs = pCG0;
+
     console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
 }
 
