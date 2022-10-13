@@ -272,15 +272,17 @@ window.grapevine.ratings.local = {};
 window.grapevine.ratings.external = {};
 window.grapevine.ratings.local.mfsPath = "/grapevineData/ratings/locallyAuthored/";
 window.grapevine.ratings.external.mfsPath = "/grapevineData/ratings/externallyAuthored/";
+window.grapevine.ratings.local.mfsFile = "/grapevineData/ratings/locallyAuthored/ratings.txt";
+window.grapevine.ratings.external.mfsFile = "/grapevineData/ratings/externallyAuthored/ratings.txt";
 window.grapevine.ratings.local.set = "setFor_ratings_authoredLocally";
 window.grapevine.ratings.external.set = "setFor_ratings_authoredExternally";
 window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
 window.grapevine.users = "/grapevineData/users/"
 
 window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
-window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false 
+window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false
 
-
+window.testVarA = "defined in public/js/preload.js"
 
 
 

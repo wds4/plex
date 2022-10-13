@@ -260,17 +260,8 @@ window.ipfs.pCGncs = null; // ncs = neuroCore subject; default: pCGncs = pCG0
 // window.ipfs.neuroCore.engine.pCG = window.ipfs.pCGnce
 // window.ipfs.neuroCore.subject.pCG = window.ipfs.pCGncs
 
-window.grapevine = {};
-window.grapevine.ratings = {};
-window.grapevine.ratings.local = {};
-window.grapevine.ratings.local.mfsPath = "/grapevineData/ratings/locallyAuthored/ratings.txt";
-window.grapevine.ratings.local.set = "setFor_ratings_authoredLocally";
-window.grapevine.ratings.external = {};
-window.grapevine.ratings.external.mfsPath = "/grapevineData/ratings/externallyAuthored/ratings.txt"
-window.grapevine.ratings.external.set = "setFor_ratings_authoredExternally"
 
-
-
+window.testVarB = "defined in build/js/preload.js"
 
 
 

@@ -796,6 +796,29 @@ export const addConceptGraphSeedToMFS_old = async (oMainSchema) => {
     console.log("addConceptGraphSeedToMFS cid: "+oStat.cid.toV1().toString('base16'))
 }
 
+// similar to publishFileToMFS, except:
+// the input file oFile is an object
+export const publishObjectToMFS = async (oFile,pathToFile) => {
+    var fileToWrite = JSON.stringify(oFile,null,4)
+    var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(pathToFile, fileToWrite_encoded, {create: true, flush: true})
+
+    await MiscFunctions.timeout(100)
+
+    // This step ??? publishes entier MFS so that others can see it
+    // Better: publish only the file I just stored
+    // Also: need to have a check or a field to determine whether this file should be published to public or not
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: 'self' }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+
+    return res;
+}
+
 // similar to publishWordToIpfs, except:
 // MFS path to file must be specified
 // the file is any arbitrary string
