@@ -65,7 +65,11 @@ export default class GrapevineMasthead extends React.Component {
                                 <div id="myUsernameMastheadContainer" style={{display:"inline-block",marginLeft:"5px",fontSize:"20px",color:"purple"}}>my username</div>
                                 <div style={{display:"inline-block",fontSize:"20px"}} >!</div>
                           </div>
-                          <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >Settings</NavLink>
+                          <NavLink className="mastheadNavButton" exact activeClassName="active" to='/GrapevineSettingsMainPage' >
+                              Settings
+                              <div style={{fontSize:"8px"}}>(Grapevine)</div>
+                              </NavLink>
+
                           <NavLink className="mastheadNavButton" exact activeClassName="active" to='/ProfileMainPage' >Profile</NavLink>
                       </div>
 

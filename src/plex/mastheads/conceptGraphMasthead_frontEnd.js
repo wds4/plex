@@ -147,7 +147,7 @@ export default class ConceptGraphMasthead extends React.Component {
                           <div style={{fontSize:"10px",lineHeight:"100%"}} >Download Concept Graph from External MFS</div>
                           </NavLink>
 
-                      <NavLink className="mastheadNavButton" exact activeClassName="active" to='/SettingsMainPage' >
+                      <NavLink className="mastheadNavButton" exact activeClassName="active" to='/ConceptGraphSettingsMainPage' >
                           Settings
                           <div style={{fontSize:"8px"}}>(Concept Graph)</div>
                           </NavLink>

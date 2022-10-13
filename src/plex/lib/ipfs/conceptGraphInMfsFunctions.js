@@ -10,6 +10,71 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+export const areMfsDirectoriesEstablished = async () => {
+    var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+    var myPeerID = oIpfsID.id;
+    var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+    var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+    var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+    var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+    var oMainSchemaForConceptGraphLocal = await fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
+    var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
+    var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
+    var pCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/"
+
+    try {
+        var stats1 = await ipfs.files.stat(window.grapevine.ratings.local.mfsPath)
+        var stats2 = await ipfs.files.stat(window.grapevine.ratings.external.mfsPath)
+        var stats3 = await ipfs.files.stat(window.grapevine.users)
+        var stats4 = await ipfs.files.stat(pCG0)
+        var stats5 = await ipfs.files.stat(pCG0 + "words/")
+        var stats6 = await ipfs.files.stat(pCG0 + "concepts/")
+        var stats7 = await ipfs.files.stat(pCG0 + "wordTypes/")
+        var stats8 = await ipfs.files.stat(pCG0 + "schemas/")
+        var stats9 = await ipfs.files.stat(pCG0 + "JSONSchemas/")
+        var stats10 = await ipfs.files.stat(pCG0 + "supersets/")
+        var stats11 = await ipfs.files.stat(pCG0 + "sets/")
+        var stats12 = await ipfs.files.stat(pCG0 + "properties/")
+        // if no error is thrown, all three paths must exist, so return true; otherwise return false
+        return true;
+    } catch (e) { return false; }
+
+    return false;
+}
+
+export const establishMfsDirectories = async () => {
+    console.log("establishMfsDirectories")
+    var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+    var myPeerID = oIpfsID.id;
+    var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+    var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+    var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+    var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+    var oMainSchemaForConceptGraphLocal = await fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
+    var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
+    var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
+    var pCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/"
+
+    try { await ipfs.files.mkdir(pCG0) } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"words/") } catch (e) { console.log("error: "+e) }
+    // each of the other core wordTypes for concept graphs
+    try { await ipfs.files.mkdir(pCG0+"concepts/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"wordTypes/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"schemas/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"JSONSchemas/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"supersets/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"sets/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(pCG0+"properties/") } catch (e) { console.log("error: "+e) }
+
+    var path1 = window.grapevine.ratings.local.mfsPath;
+    var path2 = window.grapevine.ratings.external.mfsPath;
+    var path3 = window.grapevine.users
+    // var file1 = window.grapevine.myUserData;
+
+    try { await ipfs.files.mkdir(path1,{parents:true}); } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(path2,{parents:true}); } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir(path3,{parents:true}); } catch (e) { console.log("error: "+e) }
+}
 
 export const loadNeuroCore3ConceptGraph = async (foo) => {
     console.log("loadNeuroCore3ConceptGraph")
@@ -291,6 +356,7 @@ export const createOrUpdateWordInMFS = async (oWord) => {
         console.log("createOrUpdateWordInMFS! yes nc engine == active ")
         window.ipfs.neuroCore.engine.oRFL.current[word_slug] = oWord
     }
+    window.ipfs.updatesSinceLastRefresh = true;
     return oWord
 }
 
@@ -380,7 +446,8 @@ export const loadActiveIpfsConceptGraph = async () => {
     window.ipfs.myUsername = myUsername
     window.ipfs.activeConceptGraph = {};
     window.ipfs.activeConceptGraph.slug = "mainSchemaForConceptGraph";
-    window.ipfs.activeConceptGraph.mainSchema_external_ipns = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y"; // only needed if need to re-download to pCGs
+    // window.ipfs.activeConceptGraph.mainSchema_external_ipns = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y"; // only needed if need to re-download to pCGs
+    window.ipfs.activeConceptGraph.mainSchema_external_ipns = window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS
     window.ipfs.activeConceptGraph.keyname = keyname_forActiveCGPathDir
     window.ipfs.activeConceptGraph.ipns = ipns_forActiveCGPathDir;
     window.ipfs.activeConceptGraph.ipns10 = ipns10_forActiveCGPathDir;
@@ -502,17 +569,22 @@ export const lookupWordBySlug = async (slug) => {
 export const fetchObjectByLocalMutableFileSystemPath = async (path) => {
     // console.log("fetchObjectByLocalMutableFileSystemPath; path:")
     // var chunks = []
-    var chunks1 = []
-    for await (const chunk of ipfs.files.read(path)) {
-        // chunks.push(chunk)
-        var sResult1 = new TextDecoder("utf-8").decode(chunk);
-        chunks1.push(sResult1)
-        // console.log("qwertyyy sResult: "+sResult)
+    try {
+        var chunks1 = []
+        for await (const chunk of ipfs.files.read(path)) {
+            // chunks.push(chunk)
+            var sResult1 = new TextDecoder("utf-8").decode(chunk);
+            chunks1.push(sResult1)
+            // console.log("qwertyyy sResult: "+sResult)
+        }
+        var sResult = chunks1.join('')
+        // need to add check to make sure sResult is in json format
+        var oResult = JSON.parse(sResult)
+        return oResult;
+    } catch (e) {
+        console.log("error: "+e)
+        return false;
     }
-    var sResult = chunks1.join('')
-    // need to add check to make sure sResult is in json format
-    var oResult = JSON.parse(sResult)
-    return oResult;
 }
 // returns an array of cids pointing to specific instances of a given a concept and a subset
 export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetUniqueIdentifier) => {

@@ -3,6 +3,7 @@ import PlexMasthead from './mastheads/plexMasthead.js';
 import LeftNavbar1 from './navbars/leftNavbar1/plex_leftNav1';
 // import * as LoadActiveIpfsConceptGraph from './lib/ipfs/loadActiveIpfsConceptGraph.js'
 import * as ConceptGraphInMfsFunctions from './lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as MiscIpfsFunctions from './lib/ipfs/miscIpfsFunctions.js'
 
 const jQuery = require("jquery");
 
@@ -14,10 +15,36 @@ export default class PlexHome extends React.Component {
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
 
-        // 9 Oct 2022
-        // It is important to do this step to initialize window.ipfs
-        await ConceptGraphInMfsFunctions.loadActiveIpfsConceptGraph();
-        await ConceptGraphInMfsFunctions.loadNeuroCore3ConceptGraph()
+        if (!window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal) {
+            var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+            var myPeerID = oIpfsID.id;
+            var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+            var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+            var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+            var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+            var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
+            if (oMainSchemaForConceptGraphLocal) {
+                window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = true;
+                console.log("oMainSchemaForConceptGraphLocal has been established")
+            }
+        }
+        if (!window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal) {
+            var mainSchema_external_ipns = window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS
+            await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(mainSchema_external_ipns,ipns10_forActiveCGPathDir);
+        }
+
+        if (window.ipfs.updatesSinceLastRefresh) {
+            await ConceptGraphInMfsFunctions.loadActiveIpfsConceptGraph();
+            await ConceptGraphInMfsFunctions.loadNeuroCore3ConceptGraph()
+            window.ipfs.updatesSinceLastRefresh = false;
+        }
+        if (!window.ipfs.mfsDirectoriesEstablished) {
+            window.ipfs.mfsDirectoriesEstablished = await ConceptGraphInMfsFunctions.areMfsDirectoriesEstablished();
+            console.log("window.ipfs.mfsDirectoriesEstablished: "+window.ipfs.mfsDirectoriesEstablished)
+        }
+        if (!window.ipfs.mfsDirectoriesEstablished) {
+            await ConceptGraphInMfsFunctions.establishMfsDirectories();
+        }
 
 
         // old way: oWord = window.lookupWordBySlug(slug)

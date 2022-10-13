@@ -89,6 +89,8 @@ import DecentralizedTwitterHome from './plex/dTwitter/dTwitterHome.js';
 import DecentralizedSearchHome from './plex/dSearch/dSearchHome.js';
 
 import GrapevineHome from './plex/grapevine/grapevineHome.js';
+import GrapevineSettingsMainPage from './plex/grapevine/settings/generalSettings.js';
+import GrapevineSettingsRatingsLocationsInMutableFileSystem from './plex/grapevine/settings/ratingsInMFS/ratingsLocationsInMutableFileSystem.js';
 import GrapevineContactsMainPage from './plex/grapevine/contacts/contactsMainPage.js';
 import GrapevineChatroomMainPage from './plex/grapevine/chatroom/chatroomMainPage.js';
 import GrapevineVisualizationMainPage from './plex/grapevine/visualization/grapevineVisualizationMainPage.js';
@@ -107,7 +109,7 @@ import SingleUserLeaveRating2 from './plex/grapevine/contacts/singleUser/leaveRa
 import EBooksHome from './plex/eBooks/eBooksHome.js';
 import EBook1Home from './plex/eBooks/eBook1/eBook1Home.js';
 
-import SettingsMainPage from './plex/conceptGraph/settings/generalSettings.js';
+import ConceptGraphSettingsMainPage from './plex/conceptGraph/settings/generalSettings.js';
 import ProfileMainPage from './plex/grapevine/profile/profileMainPage.js';
 import PlexAppsNavPage from './plex/conceptGraph/plexAppsNavPage.js';
 import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
@@ -380,6 +382,9 @@ ReactDOM.render(
           <Route path="/CrowdscreenedGroupsHome" exact component={CrowdscreenedGroupsHome} />
 
           <Route path="/GrapevineHome" exact component={GrapevineHome} />
+          <Route path="/GrapevineSettingsMainPage" exact component={GrapevineSettingsMainPage} />
+          <Route path="/GrapevineSettingsRatingsLocationsInMutableFileSystem" exact component={GrapevineSettingsRatingsLocationsInMutableFileSystem} />
+
           <Route path="/GrapevineContactsMainPage" exact component={GrapevineContactsMainPage} />
           <Route path="/GrapevineChatroomMainPage" exact component={GrapevineChatroomMainPage} />
           <Route path="/GrapevineVisualizationMainPage" exact component={GrapevineVisualizationMainPage} />
@@ -413,7 +418,7 @@ ReactDOM.render(
           <Route path="/NeuroCoreSettingsControlPanel" exact component={NeuroCoreSettingsControlPanel} />
           <Route path="/NeuroCoreConfig" exact component={NeuroCoreConfig} />
 
-          <Route path="/SettingsMainPage" exact component={SettingsMainPage} />
+          <Route path="/ConceptGraphSettingsMainPage" exact component={ConceptGraphSettingsMainPage} />
           <Route path="/ProfileMainPage" exact component={ProfileMainPage} />
           <Route path="/PlexAppsNavPage" exact component={PlexAppsNavPage} />
           <Route path="/HelloWorldMainPage" exact component={HelloWorldMainPage} />

@@ -260,12 +260,25 @@ window.ipfs.neuroCore.subject.oMainSchemaForConceptGraph = {};
 window.ipfs.neuroCore.engine.currentConceptGraphSqlID = 10; // myConceptGraph_plex
 window.ipfs.neuroCore.subject.currentConceptGraphSqlID = window.currentConceptGraphSqlID;
 
+window.ipfs.updatesSinceLastRefresh = true;
+window.ipfs.mfsDirectoriesEstablished = false;
 // ??
 window.ipfs.neuroCore.engine.oPatternsTriggeredByAction = {};
 
+// The following file system is established by ConceptGraphInMfsFunctions.establishMfsDirectories which is called by the landing page ( src/plex/plexHome.js ) unless it has already been done successfully
+window.grapevine = {};
+window.grapevine.ratings = {};
+window.grapevine.ratings.local = {};
+window.grapevine.ratings.external = {};
+window.grapevine.ratings.local.mfsPath = "/grapevineData/ratings/locallyAuthored/";
+window.grapevine.ratings.external.mfsPath = "/grapevineData/ratings/externallyAuthored/";
+window.grapevine.ratings.local.set = "setFor_ratings_authoredLocally";
+window.grapevine.ratings.external.set = "setFor_ratings_authoredExternally";
+window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
+window.grapevine.users = "/grapevineData/users/"
 
-
-
+window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
+window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false 
 
 
 

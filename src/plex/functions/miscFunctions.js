@@ -1078,7 +1078,7 @@ export const createOrUpdateWordInAllTables = async (word_obj) => {
     // window.mustReload_lookupWordBySlug = true;
 
     // jQuery("#loadActiveConceptGraphDataButton").trigger("click")
-
+    window.ipfs.updatesSinceLastRefresh = true;
     var fooResult = fooRes1 + fooRes2 + fooRes3 + await timeout(100);
     return fooResult;
 }

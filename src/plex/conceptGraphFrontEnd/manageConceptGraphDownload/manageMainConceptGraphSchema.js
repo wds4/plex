@@ -43,6 +43,7 @@ export default class ManageConceptGraphDownload extends React.Component {
 
         jQuery("#storeSeedMSFCGButton").click(async function(){
             console.log("storeSeedMSFCGButton clicked")
+            var mainSchema_external_ipns = window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS
             var newIPNS = await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(mainSchema_external_ipns,ipns10_forActiveCGPathDir)
         })
 
@@ -50,7 +51,8 @@ export default class ManageConceptGraphDownload extends React.Component {
         // var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
         // var mainSchema_external_ipns = oMainSchema.metaData.ipns;
         // Default mainSchema ipns:
-        var mainSchema_external_ipns = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
+        // var mainSchema_external_ipns = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
+        var mainSchema_external_ipns = window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS
         console.log("mainSchema_external_ipns: "+mainSchema_external_ipns)
         jQuery("#mainSchemaSeedIPNSContainer").html(mainSchema_external_ipns)
 

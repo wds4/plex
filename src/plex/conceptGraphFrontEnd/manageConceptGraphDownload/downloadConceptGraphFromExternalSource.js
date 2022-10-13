@@ -50,13 +50,11 @@ export default class ManageConceptGraphDownload extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
+
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
-
         var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-        // jQuery("#keynameForPathToActiveConceptGraphContainer").html(keyname_forActiveCGPathDir)
         var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
-        // jQuery("#ipnsForPathToActiveConceptGraphContainer").html(ipns_forActiveCGPathDir)
         var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
         jQuery("#dirForPathToActiveConceptGraphContainer1").html(ipns10_forActiveCGPathDir)
         jQuery("#dirForPathToActiveConceptGraphContainer2").html(ipns10_forActiveCGPathDir)
