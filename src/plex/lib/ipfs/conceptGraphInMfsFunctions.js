@@ -455,7 +455,7 @@ export const loadActiveIpfsConceptGraph = async () => {
     window.ipfs.pCGb = pCGb;
     window.ipfs.pCGs = pCGs;
     window.ipfs.pCG0 = pCG0;
-    window.ipfs.pCGw = pCGw; // path to every word in the active concept graph 
+    window.ipfs.pCGw = pCGw; // path to every word in the active concept graph
 
     window.ipfs.neuroCore.engine.pCG0 = pCG0;
     window.ipfs.neuroCore.engine.pCGw = pCGw;
@@ -632,6 +632,7 @@ export const fetchArrayOfSpecificInstanceCidsFromMfs = async (subsetUniqueID) =>
     var aCids = [];
     var set_slug = subsetUniqueID;
     var oSet = await lookupWordBySlug(set_slug)
+    // console.log("fetchArrayOfSpecificInstanceCidsFromMfs; oSet: "+JSON.stringify(oSet,null,4))
     var aSpecificInstances = oSet.globalDynamicData.specificInstances;
     for (var s=0;s<aSpecificInstances.length;s++) {
         var nextSI_slug = aSpecificInstances[s];

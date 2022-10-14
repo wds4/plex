@@ -609,9 +609,9 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
         console.log("aCids: "+JSON.stringify(aCids,null,4))
 
-        var sListOfCidsOfRatingsByMe = JSON.stringify(aCids,null,4);
-        var pathToMyPublishedRatings = "/grapevineData/publicRatingsData/ratingsByMe/ratings.txt";
-        var fooResult = await ConceptGraphInMfsFunctions.publishFileToMFS(sListOfCidsOfRatingsByMe,pathToMyPublishedRatings)
+        // var sListOfCidsOfRatingsByMe = JSON.stringify(aCids,null,4);
+        // var pathToMyPublishedRatings = "/grapevineData/publicRatingsData/ratingsByMe/ratings.txt";
+        // var fooResult = await ConceptGraphInMfsFunctions.publishFileToMFS(sListOfCidsOfRatingsByMe,pathToMyPublishedRatings)
 
         await makeVisGraph_Grapevine(masterUserList,aCids);
     }
