@@ -129,7 +129,7 @@ export default class ManageConceptGraphDownload extends React.Component {
             await reportMutableFilesTree(pCG0,pCG0,numNodes)
         })
 
-        jQuery("#importConceptsButton").click(async function(){
+        const importConcepts = async () => {
             // jQuery("#localMainSchemaForConceptGraphButton").get(0).click();
             // var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
             // var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
@@ -163,8 +163,14 @@ export default class ManageConceptGraphDownload extends React.Component {
                 // "/ipns/"+stewardPeerID+"/plex/conceptGraphs/mainSchemaForConceptGraph/node.txt
                 // ?? might add /plex/conceptGraphs/public
             }
+            return true;
+        }
+        // Step (a)
+        jQuery("#importConceptsButton").click(async function(){
+            var fooResult = await importConcepts()
         });
-        jQuery("#importSchemasButton").click(async function(){
+
+        const importSchemas = async () => {
             console.log("importSchemasButton clicked")
             var path = pCG0 + "words/"
             var numConcepts = 0;
@@ -189,12 +195,25 @@ export default class ManageConceptGraphDownload extends React.Component {
                     }
                 }
             }
+            return true;
+        }
+        // Step (b)
+        jQuery("#importSchemasButton").click(async function(){
+            var fooResult = await importSchemas()
         });
-        jQuery("#importAdditionalSchemasButton").click(async function(){
+
+        const importAdditionalSchemas = async () => {
             console.log("importAdditionalSchemasButton clicked")
             var aAdditionalSchemas = oMainSchemaForConceptGraphLocal.conceptGraphData.aAdditionalSchemas;
+            // incomplete!
+            return true;
+        }
+        // Step (c)
+        jQuery("#importAdditionalSchemasButton").click(async function(){
+            var fooResult = await importAdditionalSchemas()
         });
-        jQuery("#importAllWordsButton").click(async function(){
+
+        const importAllWords = async () => {
             console.log("importAllWordsButton clicked")
             var aCurrentLocalConceptGraphSlugs = await ConceptGraphInMfsFunctions.fetchListOfCurrentConceptGraphSlugs(pCG0)
             console.log("aCurrentLocalConceptGraphSlugs: "+JSON.stringify(aCurrentLocalConceptGraphSlugs,null,4))
@@ -228,7 +247,18 @@ export default class ManageConceptGraphDownload extends React.Component {
                     }
                 }
             }
-
+            return true;
+        }
+        // Step (d)
+        jQuery("#importAllWordsButton").click(async function(){
+            var fooResult = await importAllWords()
+        });
+        jQuery("#importAThroughDButton").click(async function(){
+            console.log("importAThroughDButton clicked")
+            var fooResult = await importConcepts() // step (a)
+            var fooResult = await importSchemas() // step (b)
+            var fooResult = await importAdditionalSchemas() // step (c)
+            var fooResult = await importAllWords() // step (d)
         });
 
         jQuery("#listOfAllPathsContainer").html("")
@@ -288,6 +318,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                         console.log("YES IN aCurrentLocalConceptGraphSlugs: "+nxtConcept_slug)
                     }
                     if (!aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
+                        nextConceptHTML += " enabled ";
                         console.log("NOT IN aCurrentLocalConceptGraphSlugs: "+nxtConcept_slug)
                     }
                     nextConceptHTML += " />";
@@ -377,11 +408,13 @@ export default class ManageConceptGraphDownload extends React.Component {
                         populate /words/ from node at end of pCGs
                         </div>
                         <div id="toggleConceptsListButton" data-status="closed" className="doSomethingButton" >+</div>
-                        <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked concept words only</div>
-                        <div id="importConceptsButton" className="doSomethingButton" >import EVERY concept word from conceptGraphData.aConcepts (will overwrite!)</div>
-                        <div id="importSchemasButton" className="doSomethingButton" >import 2 schemas from each concept</div>
-                        <div id="importAdditionalSchemasButton" className="doSomethingButton" >import any additional schemas from conceptGraphData.aAdditionalSchemas</div>
-                        <div id="importAllWordsButton" className="doSomethingButton" >cycle through all schemas; import all words</div>
+                        <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked (and enabled) concept words only (incomplete)</div>
+                        <br/>
+                        <div id="importConceptsButton" className="doSomethingButton" >a. import EVERY concept word from conceptGraphData.aConcepts (will overwrite!)</div>
+                        <div id="importSchemasButton" className="doSomethingButton" >b. import both schemas from each concept (will overwrite!)</div>
+                        <div id="importAdditionalSchemasButton" className="doSomethingButton" >c. import any additional schemas from conceptGraphData.aAdditionalSchemas (will overwrite!)</div>
+                        <div id="importAllWordsButton" className="doSomethingButton" >d. cycle through all schemas; import all words (will overwrite!)</div>
+                        <div id="importAThroughDButton" className="doSomethingButton" >steps a-d (will overwrite!)</div>
 
                         <div id="conceptsAvailableForDownloadOuterContainer" style={{fontSize:"10px",border:"0px dashed grey",padding:"0px",marginBottom:"0px",height:"0px",overflow:"scroll"}}>
                             <center>concepts listed in local schema - available for download</center>
