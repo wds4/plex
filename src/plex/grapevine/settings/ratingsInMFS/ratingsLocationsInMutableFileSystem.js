@@ -75,11 +75,11 @@ export const scrapeRatingsDataFromExternalNodes = async () => {
         var aLocalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(mfsPathLocal)
         var aExternalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(mfsPathExternal)
         if (aLocalRatingsList) {
-            console.log("aLocalRatingsList: "+JSON.stringify(aLocalRatingsList,null,4));
+            console.log("scrapeRatingsDataFromExternalNodes aLocalRatingsList: "+JSON.stringify(aLocalRatingsList,null,4));
             await addToConceptGraphExternalRatingsSet(aLocalRatingsList)
         }
         if (aExternalRatingsList) {
-            console.log("aExternalRatingsList: "+JSON.stringify(aExternalRatingsList,null,4));
+            console.log("scrapeRatingsDataFromExternalNodes aExternalRatingsList: "+JSON.stringify(aExternalRatingsList,null,4));
             await addToConceptGraphExternalRatingsSet(aExternalRatingsList)
         }
 
@@ -115,6 +115,7 @@ export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
             console.log("addToConceptGraphExternalRatingsSet; need to add! nextRating_ipfsPath: "+nextRating_ipfsPath)
             var oNextRating = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_ipfsPath)
             var nextRating_slug = oNextRating.wordData.slug;
+            console.log("addToConceptGraphExternalRatingsSet; need to add! nextRating_slug: "+nextRating_slug)
             if (oNextRating) {
                 console.log("addToConceptGraphExternalRatingsSet; oNextRating: "+JSON.stringify(oNextRating,null,4))
                 oNextRating = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNextRating)
@@ -137,6 +138,63 @@ export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
     }
 }
 
+const populateRatingsLists = async () => {
+    var mfsPathLocal = window.grapevine.ratings.local.mfsFile
+    var mfsPathExternal = window.grapevine.ratings.external.mfsFile
+    var setForLocalRatings_slug = window.grapevine.ratings.local.set
+    var setForExternalRatings_slug = window.grapevine.ratings.external.set
+
+    var aLocalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(mfsPathLocal)
+    var aExternalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(mfsPathExternal)
+    console.log("mfsPathLocal: "+mfsPathLocal+"; aLocalRatingsList: "+aLocalRatingsList)
+    // var aLocalRatingsList = JSON.parse(sLocalRatingsList)
+    // var aExternalRatingsList = JSON.parse(sExternalRatingsList)
+    for (var r=0;r<aLocalRatingsList.length;r++) {
+        var nextRating_cid = aLocalRatingsList[r];
+        var oRat = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_cid)
+        var nR_slug = oRat.wordData.slug;
+        var nRatingHTML = "";
+        nRatingHTML += "<div>";
+        nRatingHTML += nR_slug;
+        nRatingHTML += "</div>";
+        jQuery("#grapevineDataLocalContainer").append(nRatingHTML)
+    }
+    for (var r=0;r<aExternalRatingsList.length;r++) {
+        var nextRating_cid = aExternalRatingsList[r];
+        var oRat = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_cid)
+        var nR_slug = oRat.wordData.slug;
+        var nRatingHTML = "";
+        nRatingHTML += "<div>";
+        nRatingHTML += nR_slug;
+        nRatingHTML += "</div>";
+        jQuery("#grapevineDataExternalContainer").append(nRatingHTML)
+    }
+
+    var oSet_local = await ConceptGraphInMfsFunctions.lookupWordBySlug(setForLocalRatings_slug)
+    var aRatings_local = oSet_local.globalDynamicData.specificInstances;
+
+    var oSet_external = await ConceptGraphInMfsFunctions.lookupWordBySlug(setForExternalRatings_slug)
+    var aRatings_external = oSet_external.globalDynamicData.specificInstances;
+
+    for (var r=0;r<aRatings_local.length;r++) {
+        var nextRating_cid = aRatings_local[r];
+        var nRatingHTML = "";
+        nRatingHTML += "<div>";
+        nRatingHTML += nextRating_cid;
+        nRatingHTML += "</div>";
+        jQuery("#setLocalContainer").append(nRatingHTML)
+    }
+
+    for (var r=0;r<aRatings_external.length;r++) {
+        var nextRating_cid = aRatings_external[r];
+        var nRatingHTML = "";
+        nRatingHTML += "<div>";
+        nRatingHTML += nextRating_cid;
+        nRatingHTML += "</div>";
+        jQuery("#setExternalContainer").append(nRatingHTML)
+    }
+}
+
 export default class GrapevineSettingsRatingsLocationsInMutableFileSystem extends React.Component {
     constructor(props) {
         super(props);
@@ -144,6 +202,7 @@ export default class GrapevineSettingsRatingsLocationsInMutableFileSystem extend
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
+        await populateRatingsLists()
         jQuery("#transferRatingsDataAllStepsButton").click(async function(){
             console.log("transferRatingsDataAllStepsButton clicked")
             await transferRatingsDataAllSteps();
@@ -261,6 +320,23 @@ export default class GrapevineSettingsRatingsLocationsInMutableFileSystem extend
                         </div>
 
                         <div>The above structure is very likely to evolve over time.</div>
+
+                        <div className="grapevineSettingsRatingsContainer" >
+                            <center>set: local ratings</center>
+                            <div id="setLocalContainer"></div>
+                        </div>
+                        <div className="grapevineSettingsRatingsContainer" >
+                            <center>set: external ratings</center>
+                            <div id="setExternalContainer"></div>
+                        </div>
+                        <div className="grapevineSettingsRatingsContainer" >
+                            <center>grapevineData: local ratings</center>
+                            <div id="grapevineDataLocalContainer"></div>
+                        </div>
+                        <div className="grapevineSettingsRatingsContainer" >
+                            <center>grapevineData: external ratings</center>
+                            <div id="grapevineDataExternalContainer"></div>
+                        </div>
 
                     </div>
                 </fieldset>

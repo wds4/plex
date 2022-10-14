@@ -1053,3 +1053,13 @@
 .rateSomeoneButton:hover {
     background-color:yellow;
 }
+.grapevineSettingsRatingsContainer {
+    display:inline-block;
+    padding:3px;
+    margin:2px;
+    width:350px;
+    height:300px;
+    overflow:scroll;
+    border:1px dashed grey;
+    font-size:10px;
+}
