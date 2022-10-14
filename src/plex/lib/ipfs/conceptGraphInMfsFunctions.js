@@ -862,6 +862,30 @@ export const publishFileToMFS = async (sFile,pathToFile) => {
     return res;
 }
 
+export const publishWordToMFS = async (oWord) => {
+    var word_slug = oWord.wordData.slug;
+    var fileToWrite = JSON.stringify(oWord,null,4)
+    var pathToFile = window.ipfs.pCGw + word_slug+"/node.txt";
+    var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile) } catch (e) {}
+    console.log("publishWordToMFS; pathToFile: "+pathToFile)
+    await MiscIpfsFunctions.ipfs.files.write(pathToFile, fileToWrite_encoded, {create: true, flush: true, parents: true})
+
+    await MiscFunctions.timeout(100)
+
+    // This step ??? publishes entier MFS so that others can see it
+    // Better: publish only the file I just stored
+    // Also: need to have a check or a field to determine whether this file should be published to public or not
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: 'self' }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+
+    return res;
+}
+
 // input word must contain metaData.keyname
 // it is published to IPFS, which generates a cid
 // Then keyname's ipfs and new cid are linked

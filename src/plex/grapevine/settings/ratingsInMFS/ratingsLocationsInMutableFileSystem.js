@@ -3,6 +3,7 @@ import Masthead from '../../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/grapevine_leftNav1';
 import LeftNavbar2 from '../../../navbars/leftNavbar2/grapevine_settings_leftNav2';
 import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as MiscFunctions from '../../../functions/miscFunctions.js'
 
 const jQuery = require("jquery");
 
@@ -64,12 +65,12 @@ export const scrapeRatingsDataFromExternalNodes = async () => {
     var pathToExternalRatingsFile = window.grapevine.ratings.external.mfsFile
     var mfsPath = "/grapevineData/users/masterUsersList.txt"
     var aMasterUsersList = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(mfsPath)
-    // console.log("aMasterUsersList: "+JSON.stringify(aMasterUsersList,null,4));
+    console.log("aMasterUsersList: "+JSON.stringify(aMasterUsersList,null,4));
     for (var u=0;u<aMasterUsersList.length;u++) {
         var nextUserPeerID = aMasterUsersList[u];
         var mfsPathLocal = "/ipns/"+nextUserPeerID+pathToLocalRatingsFile;
         var mfsPathExternal = "/ipns/"+nextUserPeerID+pathToExternalRatingsFile;
-        // console.log("mfsPathLocal: "+mfsPathLocal);
+        console.log("mfsPathLocal: "+mfsPathLocal);
         // console.log("mfsPathExternal: "+mfsPathExternal);
         var aLocalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(mfsPathLocal)
         var aExternalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(mfsPathExternal)
@@ -92,6 +93,7 @@ export const scrapeRatingsDataFromExternalNodes = async () => {
 // Specifically: If the rating is a Grapevine User Trust rating, an identical slug == it is the same rater, same ratee, and same rating settings, so the most recent one should be kept
 // In a different function, these will later be transferred to the file at: window.grapevine.ratings.external.mfsFile
 export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
+    var schemaForRating_slug = window.grapevine.ratings.schema.slug
     var set_external_slug = window.grapevine.ratings.external.set
     var oExternalSet = await ConceptGraphInMfsFunctions.lookupWordBySlug(set_external_slug)
     var aCurrentRatingsExternal = oExternalSet.globalDynamicData.specificInstances; // this is a list of the slugs of all the externally-authored ratings already stored in the local concept graph
@@ -103,14 +105,32 @@ export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
     console.log("updateExternalRatingsList; aRatingsList: "+JSON.stringify(aRatingsToAdd,null,4))
     for (var r=0;r<aRatingsToAdd.length;r++) {
         var nextRating_ipfsPath = aRatingsToAdd[r]; // should be of form: /ipfs/abcde12345
+        console.log("addToConceptGraphExternalRatingsSet; nextRating_ipfsPath: "+nextRating_ipfsPath)
         if (aCurrentRatings.includes(nextRating_ipfsPath)) {
             // rating is already known locally; nothing to do
+            console.log("addToConceptGraphExternalRatingsSet; already known! nextRating_ipfsPath: "+nextRating_ipfsPath)
         }
         if (!aCurrentRatings.includes(nextRating_ipfsPath)) {
             // obtain the slug for this; determine whether the slug already exists
+            console.log("addToConceptGraphExternalRatingsSet; need to add! nextRating_ipfsPath: "+nextRating_ipfsPath)
             var oNextRating = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_ipfsPath)
+            var nextRating_slug = oNextRating.wordData.slug;
             if (oNextRating) {
                 console.log("addToConceptGraphExternalRatingsSet; oNextRating: "+JSON.stringify(oNextRating,null,4))
+                oNextRating = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNextRating)
+                await ConceptGraphInMfsFunctions.publishWordToIpfs(oNextRating);
+                await ConceptGraphInMfsFunctions.publishWordToMFS(oNextRating);
+                var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
+                oNewRel.nodeFrom.slug = nextRating_slug
+                oNewRel.relationshipType.slug = "isASpecificInstanceOf"
+                oNewRel.nodeTo.slug = set_external_slug
+                var oRatingsSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(schemaForRating_slug)
+                var oMiniRFL = {};
+                oMiniRFL[nextRating_slug] = oNextRating;
+                oMiniRFL[set_external_slug] = oExternalSet;
+                oMiniRFL[schemaForRating_slug] = oRatingsSchema;
+                oRatingsSchema = MiscFunctions.updateSchemaWithNewRel(oRatingsSchema,oNewRel,oMiniRFL)
+                await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oRatingsSchema)
             }
         }
 
