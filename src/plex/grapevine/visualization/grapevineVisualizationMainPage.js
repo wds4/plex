@@ -415,6 +415,8 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
 
     console.log("makeVisGraph_Grapevine B")
 
+    /*
+    // This function has been deprecated
     // fetch ratings
     var aRatingCidsByOthers = [];
     for (var u=0;u<listOfPeerIDs.length;u++) {
@@ -428,10 +430,13 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
             }
         }
     }
+    */
 
     console.log("makeVisGraph_Grapevine C")
 
-    var aRatingCids = [...aRatingCidsByMe, ...aRatingCidsByOthers];
+    // aRatingCidsByOthers has been deprecated 
+    // var aRatingCids = [...aRatingCidsByMe, ...aRatingCidsByOthers];
+    var aRatingCids = aRatingCidsByMe
 
     for (var r=0;r<aRatingCids.length;r++) {
         var nextRatingCid = aRatingCids[r];
@@ -600,18 +605,12 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         var sMasterUserList = JSON.stringify(masterUserList,null,4)
         console.log("sMasterUserList: "+sMasterUserList)
 
-        // var conceptUniqueIdentifier = "conceptFor_rating";
         var subsetUniqueIdentifier = false; // will default to superset
         var aCids = [];
         var subsetUniqueIdentifier = "supersetFor_rating"
-        // var aCids = await ConceptGraphInMfsFunctions.fetchFromMutableFileSystem(conceptUniqueIdentifier,subsetUniqueIdentifier)
         var aCids = await ConceptGraphInMfsFunctions.fetchArrayOfSpecificInstanceCidsFromMfs(subsetUniqueIdentifier)
 
         console.log("aCids: "+JSON.stringify(aCids,null,4))
-
-        // var sListOfCidsOfRatingsByMe = JSON.stringify(aCids,null,4);
-        // var pathToMyPublishedRatings = "/grapevineData/publicRatingsData/ratingsByMe/ratings.txt";
-        // var fooResult = await ConceptGraphInMfsFunctions.publishFileToMFS(sListOfCidsOfRatingsByMe,pathToMyPublishedRatings)
 
         await makeVisGraph_Grapevine(masterUserList,aCids);
     }

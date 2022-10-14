@@ -76,7 +76,8 @@ export const makeLocalFolderForContact = async (path) => {
     return false;
 }
 
-//
+// This function has been deprecated
+/*
 export const fetchLocalRatingsFromExternalMFS = async (peerID) => {
     var aCids = []
 
@@ -98,6 +99,7 @@ export const fetchLocalRatingsFromExternalMFS = async (peerID) => {
 
     return aCids;
 }
+*/
 
 export const returnUserProfileFromMFS = async (peerID) => {
     var oUserProfile = {};
@@ -483,9 +485,6 @@ export const initializeMyProfile = async (peerID) => {
 export const initializeIpfsMutableFileSystem = async () => {
     await ipfs.files.mkdir('/grapevineData/userProfileData',{"parents":true});
     await ipfs.files.mkdir('/grapevineData/users',{"parents":true});
-    await ipfs.files.mkdir('/grapevineData/publicRatingsData',{"parents":true});
-    await ipfs.files.mkdir('/grapevineData/publicRatingsData/ratingsByMe',{"parents":true});
-    await ipfs.files.mkdir('/grapevineData/publicRatingsData/ratingsByOthers',{"parents":true});
 
     await ipfs.files.mkdir('/plex/conceptGraphs');
     await ipfs.files.mkdir('/plex/images');
