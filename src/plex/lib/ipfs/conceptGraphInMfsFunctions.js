@@ -114,7 +114,6 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
                     window.ipfs.neuroCore.subject.allConceptGraphRelationships.push(oNextRel)
                 }
             }
-
         }
     }
     var path = window.ipfs.neuroCore.subject.pCGw
@@ -335,7 +334,7 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
 // Except: this word is either generated locally or updating a word that already exists locally
 // Therefore: no need to run convertExternalNodeToLocalWord(oNode)
 export const createOrUpdateWordInMFS = async (oWord) => {
-    console.log("createOrUpdateWordInMFS! adding oWord: " + JSON.stringify(oWord,null,4))
+    // console.log("createOrUpdateWordInMFS! adding oWord: " + JSON.stringify(oWord,null,4))
     var pCGw = window.ipfs.pCGw;
     var word_slug = oWord.wordData.slug;
     var path = pCGw+word_slug+"/";
@@ -345,15 +344,15 @@ export const createOrUpdateWordInMFS = async (oWord) => {
     try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
     try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
     var oWord = await publishWordToIpfs(oWord)
-    console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.subject.pCGw: "+window.ipfs.neuroCore.subject.pCGw)
-    console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.engine.pCGw: "+window.ipfs.neuroCore.engine.pCGw)
-    console.log("createOrUpdateWordInMFS! window.ipfs.pCGw: "+window.ipfs.pCGw)
+    // console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.subject.pCGw: "+window.ipfs.neuroCore.subject.pCGw)
+    // console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.engine.pCGw: "+window.ipfs.neuroCore.engine.pCGw)
+    // console.log("createOrUpdateWordInMFS! window.ipfs.pCGw: "+window.ipfs.pCGw)
     if (window.ipfs.neuroCore.subject.pCGw == window.ipfs.pCGw) {
-        console.log("createOrUpdateWordInMFS! yes nc subject == active ")
+        // console.log("createOrUpdateWordInMFS! yes nc subject == active ")
         window.ipfs.neuroCore.subject.oRFL.current[word_slug] = oWord
     }
     if (window.ipfs.neuroCore.engine.pCGw == window.ipfs.pCGw) {
-        console.log("createOrUpdateWordInMFS! yes nc engine == active ")
+        // console.log("createOrUpdateWordInMFS! yes nc engine == active ")
         window.ipfs.neuroCore.engine.oRFL.current[word_slug] = oWord
     }
     window.ipfs.updatesSinceLastRefresh = true;

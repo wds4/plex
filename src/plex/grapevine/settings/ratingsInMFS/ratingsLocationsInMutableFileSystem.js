@@ -100,17 +100,22 @@ export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
     var set_local_slug = window.grapevine.ratings.local.set
     var oLocalSet = await ConceptGraphInMfsFunctions.lookupWordBySlug(set_local_slug)
     var aCurrentRatingsLocal = oLocalSet.globalDynamicData.specificInstances; // this is a list of the slugs of all the locally-authored ratings already stored in the local concept graph
-    var aCurrentRatings = aCurrentRatingsExternal.concat(aCurrentRatingsLocal) // this is a list of the slugs of all the ratings already stored in the local concept graph (simpler way to do this: using ratings superset; no need to concat arrays)
-    console.log("updateExternalRatingsList; aCurrentRatings: "+JSON.stringify(aCurrentRatings,null,4))
+    var aCurrentRatingsBySlug = aCurrentRatingsExternal.concat(aCurrentRatingsLocal) // this is a list of the slugs of all the ratings already stored in the local concept graph (simpler way to do this: using ratings superset; no need to concat arrays)
+    console.log("updateExternalRatingsList; aCurrentRatingsBySlug: "+JSON.stringify(aCurrentRatingsBySlug,null,4))
     console.log("updateExternalRatingsList; aRatingsList: "+JSON.stringify(aRatingsToAdd,null,4))
     for (var r=0;r<aRatingsToAdd.length;r++) {
+        var okToAdd = true;
         var nextRating_ipfsPath = aRatingsToAdd[r]; // should be of form: /ipfs/abcde12345
+        var oNextRating = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_ipfsPath)
+        var nextRating_slug = oNextRating.wordData.slug;
         console.log("addToConceptGraphExternalRatingsSet; nextRating_ipfsPath: "+nextRating_ipfsPath)
-        if (aCurrentRatings.includes(nextRating_ipfsPath)) {
+        // if this slug already is in my concept database, then do not add it (This should include any ratings that are self-authored)
+        if (aCurrentRatingsBySlug.includes(nextRating_slug)) {
             // rating is already known locally; nothing to do
+            okToAdd = false;
             console.log("addToConceptGraphExternalRatingsSet; already known! nextRating_ipfsPath: "+nextRating_ipfsPath)
         }
-        if (!aCurrentRatings.includes(nextRating_ipfsPath)) {
+        if (okToAdd) {
             // obtain the slug for this; determine whether the slug already exists
             console.log("addToConceptGraphExternalRatingsSet; need to add! nextRating_ipfsPath: "+nextRating_ipfsPath)
             var oNextRating = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_ipfsPath)
@@ -132,6 +137,7 @@ export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
                 oMiniRFL[schemaForRating_slug] = oRatingsSchema;
                 oRatingsSchema = MiscFunctions.updateSchemaWithNewRel(oRatingsSchema,oNewRel,oMiniRFL)
                 await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oRatingsSchema)
+                aCurrentRatingsBySlug.push(nextRating_slug)
             }
         }
 
@@ -260,6 +266,7 @@ export default class GrapevineSettingsRatingsLocationsInMutableFileSystem extend
                                     <div id="transferExternalRatingsDataButton" className="doSomethingButton_small">Transfer</div>
                                 </div>
                             </li>
+                            <div style={{fontStyle:"italic"}}>These will set ratings.txt = [] if sets have no specific instances</div>
                             <div>
                                 <b><i>scan trusted nodes and scrape their ratings data:</i></b>
                             </div>

@@ -98,6 +98,8 @@ const generateNodeHTML = async (nextNode_slug,lookupChildTypes,isTopLevel) => {
 
 var oNodeRole = {};
 
+var aAllSets = [];
+
 const generateConceptFullHierarchy = async (oConcept) => {
     var propertyPath = jQuery("#propertyPathContainer").html()
     jQuery("#fullHierarchyContainer").html("")
@@ -106,7 +108,7 @@ const generateConceptFullHierarchy = async (oConcept) => {
 
     var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
     var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(mainSchema_slug)
-    console.log("mainSchema_slug: "+mainSchema_slug+"; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
+    // console.log("mainSchema_slug: "+mainSchema_slug+"; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
     var aNodes = oMainSchema.schemaData.nodes;
     var aRels = oMainSchema.schemaData.relationships;
     var lookupChildTypes = {};
@@ -145,6 +147,12 @@ const generateConceptFullHierarchy = async (oConcept) => {
             if (relType="subsetOf") {
                 oNodeRole[nF_slug] = "set"
                 oNodeRole[nT_slug] = "set"
+                if (!aAllSets.includes(nF_slug)) {
+                    aAllSets.push(nF_slug)
+                }
+                if (!aAllSets.includes(nT_slug)) {
+                    aAllSets.push(nT_slug)
+                }
                 var childNode_slug = oNextRel.nodeFrom.slug;
                 var parentNode_slug = oNextRel.nodeTo.slug;
                 if (!lookupChildTypes[parentNode_slug].includes(childNode_slug)) {
@@ -159,6 +167,9 @@ const generateConceptFullHierarchy = async (oConcept) => {
             if (relType="isASpecificInstanceOf") {
                 oNodeRole[nF_slug] = "specificInstance"
                 oNodeRole[nT_slug] = "set"
+                if (!aAllSets.includes(nT_slug)) {
+                    aAllSets.push(nT_slug)
+                }
                 var childNode_slug = oNextRel.nodeFrom.slug;
                 var parentNode_slug = oNextRel.nodeTo.slug;
                 if (!lookupChildTypes[parentNode_slug].includes(childNode_slug)) {
@@ -252,6 +263,84 @@ const generateConceptSpecialWordsList = async (oConcept) => {
     addSpecialWord(oProperties,"properties")
 }
 
+// cycle through every word in MFS; if word is of that concept's type (hasOwnProperty: [concept]Data), then delete it
+//
+const removeAllSpecificInstancesFromLocalMFS = async (concept_wordSlug) => {
+    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_wordSlug)
+    var propertyPath = oConcept.conceptData.propertyPath;
+    console.log("removeAllSpecificInstancesFromLocalMFS; propertyPath: "+propertyPath)
+    var path = window.ipfs.neuroCore.engine.pCGw
+    for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+        var fileName = file.name;
+        var fileType = file.type;
+        var fileCid = file.cid;
+        if (fileType=="directory") {
+            var nextWord_path = path + fileName + "/node.txt";
+            var oNextWord = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(nextWord_path)
+            var nextWord_slug = oNextWord.wordData.slug;
+            if (oNextWord.hasOwnProperty(propertyPath)) {
+                console.log("removeAllSpecificInstancesFromLocalMFS time to delete: nextWord_slug: "+nextWord_slug)
+                var path1 = window.ipfs.pCGw + nextWord_slug + "/";
+                var path2 = window.ipfs.pCGw + nextWord_slug + "/node.txt";
+                try { await MiscIpfsFunctions.ipfs.files.rm(path2, {recursive: true}) } catch (e) {}
+                try { await MiscIpfsFunctions.ipfs.files.rm(path1, {recursive: true}) } catch (e) {}
+            }
+        }
+    }
+}
+
+
+
+const removeAllSpecificInstancesFromAllSets = async (concept_wordSlug) => {
+    for (var r=0;r<aAllSets.length;r++) {
+        var nextSet_slug = aAllSets[r];
+        console.log("removeAllSpecificInstancesFromAllSets; nextSet_slug: "+nextSet_slug)
+        var oNextSet = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextSet_slug)
+        oNextSet.globalDynamicData.specificInstances = [];
+        oNextSet.globalDynamicData.directSpecificInstances = [];
+        await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oNextSet);
+    }
+}
+const removeAllSpecificInstancesFromMainSchema = async (concept_wordSlug) => {
+    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_wordSlug)
+    var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(mainSchema_slug)
+    // console.log("removeAllSpecificInstancesFromMainSchema; oMainSchema start: "+JSON.stringify(oMainSchema,null,4))
+    var aRels = oMainSchema.schemaData.relationships;
+    var aNodes = oMainSchema.schemaData.nodes;
+    var aRelsUpdated = [];
+    var aSpecificInstances = [];
+    for (var r=0;r<aRels.length;r++) {
+        var oNextRel = aRels[r];
+        var rT_slug = oNextRel.relationshipType.slug;
+        var deleteRel = false;
+        if (rT_slug=="isASpecificInstanceOf") {
+            deleteRel = true;
+            var nF_slug = oNextRel.nodeFrom.slug;
+            aSpecificInstances.push(nF_slug)
+        }
+        if (!deleteRel) {
+            aRelsUpdated.push(oNextRel)
+        }
+    }
+    var aNodesUpdated = [];
+    for (var r=0;r<aNodes.length;r++) {
+        var oNxtNde = aNodes[r];
+        var nn_slug = oNxtNde.slug;
+        var deleteNode = false;
+        if (aSpecificInstances.includes(nn_slug)) {
+            deleteNode = true;
+        }
+        if (!deleteNode) {
+            aNodesUpdated.push(oNxtNde)
+        }
+    }
+    oMainSchema.schemaData.nodes = aNodesUpdated;
+    oMainSchema.schemaData.relationships = aRelsUpdated;
+    // console.log("removeAllSpecificInstancesFromMainSchema; oMainSchema finish: "+JSON.stringify(oMainSchema,null,4))
+    await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oMainSchema);
+}
+
 export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.Component {
     constructor(props) {
         super(props);
@@ -309,6 +398,15 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
             var oPrevSourceVersion = await ConceptGraphInMfsFunctions.returnPrevSourceVersionOfWordUsingIPNS(oWord)
             jQuery("#wordRawFileContainer").val(JSON.stringify(oPrevSourceVersion,null,4));
         });
+        jQuery("#deleteAllSpecificInstancesButton").click(async function(){
+            console.log("deleteAllSpecificInstancesButton")
+            // remove all specific instances from the MFS directory
+            await removeAllSpecificInstancesFromLocalMFS(conceptSlug);
+            // remove all specific instances from the main schema
+            await removeAllSpecificInstancesFromMainSchema(conceptSlug);
+            // remove all specific instances from superset and from all sets
+            await removeAllSpecificInstancesFromAllSets(conceptSlug);
+        });
     }
     render() {
         return (
@@ -326,9 +424,13 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
                             <div id="propertyPathContainer" style={{display:"none"}} >propertyPathContainer</div>
 
                             <div style={{display:"inline-block",width:"600px",height:"800px",border:"1px dashed grey"}} >
+                                <div id="deleteAllSpecificInstancesButton" className="doSomethingButton_small" style={{borderColor:"red"}} >WIPE CLEAN ALL SPECIFIC INSTANCES</div>
+                                <div style={{display:"inline-block",marginLeft:"5px",fontSize:"10px"}} >from active concept graph in MFS, from main schema, & from all sets</div>
+
                                 <center>concept structural components</center>
                                 <div id="specialWordsContainer" style={{marginBottom:"20px",fontSize:"12px"}} ></div>
                                 <center>Sets and Specific Instances of this concept</center>
+
                                 <div id="openAllButton" className="doSomethingButton_small" >open all</div>
                                 <div id="closeAllButton" className="doSomethingButton_small" >close all</div>
                                 <div id="fullHierarchyContainer" style={{overflow:"scroll"}} ></div>
