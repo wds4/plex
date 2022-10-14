@@ -314,6 +314,7 @@ const loadImgURL = async (cid, mime, limit) => {
 }
 
 const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
+    console.log("makeVisGraph_Grapevine A")
     const oIpfsID = await MiscIpfsFunctions.ipfs.id();
     const myPeerID = oIpfsID.id;
     var nodes_arr = [];
@@ -412,6 +413,8 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
         }
     }
 
+    console.log("makeVisGraph_Grapevine B")
+
     // fetch ratings
     var aRatingCidsByOthers = [];
     for (var u=0;u<listOfPeerIDs.length;u++) {
@@ -425,6 +428,8 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
             }
         }
     }
+
+    console.log("makeVisGraph_Grapevine C")
 
     var aRatingCids = [...aRatingCidsByMe, ...aRatingCidsByOthers];
 
@@ -480,6 +485,8 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
             }
         }
     }
+
+    console.log("makeVisGraph_Grapevine D")
 
     nodes = new DataSet(nodes_arr);
     edges = new DataSet(edges_arr);
