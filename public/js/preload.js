@@ -276,6 +276,8 @@ window.grapevine.ratings.local.mfsFile = "/grapevineData/ratings/locallyAuthored
 window.grapevine.ratings.external.mfsFile = "/grapevineData/ratings/externallyAuthored/ratings.txt";
 window.grapevine.ratings.local.set = "setFor_ratings_authoredLocally";
 window.grapevine.ratings.external.set = "setFor_ratings_authoredExternally";
+window.grapevine.ratings.concept = {};
+window.grapevine.ratings.concept.slug = "conceptFor_rating";
 window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
 window.grapevine.users = "/grapevineData/users/"
 

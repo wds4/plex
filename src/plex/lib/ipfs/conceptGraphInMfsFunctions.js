@@ -660,6 +660,24 @@ export const fetchObjectByIPNS_old = async (ipns) => {
     // return false;
 }
 
+export const fetchObjectByCatIpfsPath = async (ipfsPath) => {
+    // console.log("fetchObjectByCatIpfsPath; ipfsPath: "+ipfsPath)
+
+    try {
+        var chunks = []
+        for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
+            var chunk_decoded = new TextDecoder("utf-8").decode(chunk);
+            chunks.push(chunk_decoded)
+        }
+        var sResult = chunks.join('')
+        var oWord = JSON.parse(sResult)
+        return oWord;
+    } catch (e) {
+        // console.log("fetchObjectByCatIpfsPath error: "+e)
+        return false;
+    }
+}
+
 // This function could be moved to MiscIpfsFunctions since it does not interact with MFS
 export const fetchObjectByIPNS = async (ipns) => {
     var ipfsPath = "/ipns/"+ipns;

@@ -33,7 +33,7 @@ export const transferLocalRatingsData = async () => {
         var nR_ipfsPath = await ConceptGraphInMfsFunctions.ipfs.resolve("/ipns/"+nextRating_ipns)
         aIpfsPaths.push(nR_ipfsPath)
     }
-    console.log("transferLocalRatingsData aIpfsPaths: "+JSON.stringify(aIpfsPaths,null,4));
+    // console.log("transferLocalRatingsData aIpfsPaths: "+JSON.stringify(aIpfsPaths,null,4));
     await ConceptGraphInMfsFunctions.publishObjectToMFS(aIpfsPaths,pathToRatingsFile)
 }
 
@@ -53,7 +53,7 @@ export const transferExternalRatingsData = async () => {
         var nR_ipfsPath = await ConceptGraphInMfsFunctions.ipfs.resolve("/ipns/"+nextRating_ipns)
         aIpfsPaths.push(nR_ipfsPath)
     }
-    console.log("transferExternalRatingsData aIpfsPaths: "+JSON.stringify(aIpfsPaths,null,4));
+    // console.log("transferExternalRatingsData aIpfsPaths: "+JSON.stringify(aIpfsPaths,null,4));
     await ConceptGraphInMfsFunctions.publishObjectToMFS(aIpfsPaths,pathToRatingsFile)
 }
 
@@ -64,17 +64,56 @@ export const scrapeRatingsDataFromExternalNodes = async () => {
     var pathToExternalRatingsFile = window.grapevine.ratings.external.mfsFile
     var mfsPath = "/grapevineData/users/masterUsersList.txt"
     var aMasterUsersList = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(mfsPath)
-    console.log("aMasterUsersList: "+JSON.stringify(aMasterUsersList,null,4));
+    // console.log("aMasterUsersList: "+JSON.stringify(aMasterUsersList,null,4));
     for (var u=0;u<aMasterUsersList.length;u++) {
         var nextUserPeerID = aMasterUsersList[u];
         var mfsPathLocal = "/ipns/"+nextUserPeerID+pathToLocalRatingsFile;
         var mfsPathExternal = "/ipns/"+nextUserPeerID+pathToExternalRatingsFile;
-        console.log("mfsPathLocal: "+mfsPathLocal);
-        console.log("mfsPathExternal: "+mfsPathExternal);
-        var aLocalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(mfsPathLocal)
-        var aExternalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(mfsPathExternal)
-        console.log("aLocalRatingsList: "+JSON.stringify(aLocalRatingsList,null,4));
-        console.log("aExternalRatingsList: "+JSON.stringify(aExternalRatingsList,null,4));
+        // console.log("mfsPathLocal: "+mfsPathLocal);
+        // console.log("mfsPathExternal: "+mfsPathExternal);
+        var aLocalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(mfsPathLocal)
+        var aExternalRatingsList = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(mfsPathExternal)
+        if (aLocalRatingsList) {
+            console.log("aLocalRatingsList: "+JSON.stringify(aLocalRatingsList,null,4));
+            await addToConceptGraphExternalRatingsSet(aLocalRatingsList)
+        }
+        if (aExternalRatingsList) {
+            console.log("aExternalRatingsList: "+JSON.stringify(aExternalRatingsList,null,4));
+            await addToConceptGraphExternalRatingsSet(aExternalRatingsList)
+        }
+
+    }
+}
+
+// Input a list (aRatingsToAdd) of ratings obtained from an external node
+// Input list is an array with elements of the form: /ipfs/[cid to rating file]
+// Elements will be added to the local Concept Graph as specific instances of the set: window.grapevine.ratings.external.set
+// If the rating is an updated version of one already on file, then the more recent one will be kept.
+// Specifically: If the rating is a Grapevine User Trust rating, an identical slug == it is the same rater, same ratee, and same rating settings, so the most recent one should be kept
+// In a different function, these will later be transferred to the file at: window.grapevine.ratings.external.mfsFile
+export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
+    var set_external_slug = window.grapevine.ratings.external.set
+    var oExternalSet = await ConceptGraphInMfsFunctions.lookupWordBySlug(set_external_slug)
+    var aCurrentRatingsExternal = oExternalSet.globalDynamicData.specificInstances; // this is a list of the slugs of all the externally-authored ratings already stored in the local concept graph
+    var set_local_slug = window.grapevine.ratings.local.set
+    var oLocalSet = await ConceptGraphInMfsFunctions.lookupWordBySlug(set_local_slug)
+    var aCurrentRatingsLocal = oLocalSet.globalDynamicData.specificInstances; // this is a list of the slugs of all the locally-authored ratings already stored in the local concept graph
+    var aCurrentRatings = aCurrentRatingsExternal.concat(aCurrentRatingsLocal) // this is a list of the slugs of all the ratings already stored in the local concept graph (simpler way to do this: using ratings superset; no need to concat arrays)
+    console.log("updateExternalRatingsList; aCurrentRatings: "+JSON.stringify(aCurrentRatings,null,4))
+    console.log("updateExternalRatingsList; aRatingsList: "+JSON.stringify(aRatingsToAdd,null,4))
+    for (var r=0;r<aRatingsToAdd.length;r++) {
+        var nextRating_ipfsPath = aRatingsToAdd[r]; // should be of form: /ipfs/abcde12345
+        if (aCurrentRatings.includes(nextRating_ipfsPath)) {
+            // rating is already known locally; nothing to do
+        }
+        if (!aCurrentRatings.includes(nextRating_ipfsPath)) {
+            // obtain the slug for this; determine whether the slug already exists
+            var oNextRating = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(nextRating_ipfsPath)
+            if (oNextRating) {
+                console.log("addToConceptGraphExternalRatingsSet; oNextRating: "+JSON.stringify(oNextRating,null,4))
+            }
+        }
+
     }
 }
 
