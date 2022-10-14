@@ -23,7 +23,7 @@ const fetchPeerDataFromOtherPeer = async (peerID,sourcePeerID) => {
                 var ipfsPathA = "/grapevineData/users/"+peerID+"/";
                 var ipfsPathB = "/grapevineData/users/"+peerID+"/userProfile.txt";
                 // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sUserData), {create: true, flush: true});
-                updateUserContactInfo(peerID,sUserData)
+                await updateUserContactInfo(peerID,sUserData)
                 // await MiscIpfsFunctions.ipfs.files.mkdir(ipfsPathA,{"parents":true});
                 // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sUserData, {create: true, flush: true});
             }
@@ -260,7 +260,9 @@ export default class GrapevineContactsMainPage extends React.Component {
             var nextPeerID = a2Users[u];
             if (!masterUserList.includes(nextPeerID)) {
                 masterUserList.push(nextPeerID)
+                console.log("a2Users; starting addPeerToUserList: "+nextPeerID)
                 var foo = await addPeerToUserList(myPeerID,nextPeerID,grouping)
+                console.log("a2Users; done addPeerToUserList: "+nextPeerID)
                 var oUserData = {};
                 oUserData.pathname = "/SingleUserProfilePage/"+nextPeerID;
                 oUserData.linkfromcid = 'linkFrom_'+nextPeerID;
