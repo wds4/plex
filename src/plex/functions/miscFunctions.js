@@ -18,6 +18,36 @@ export const zeroThisJSONSchema = (oJSONSchemaData) => {
     return oZeroedJSONSchemaData;
 }
 
+export const isNodeInArray = (oNde,aNodes) => {
+    var node_slug = oNde.slug;
+    var node_ipns = oNde.ipns;
+    var isNdInArr = false;
+    for (var n=0;n<aNodes.length;n++) {
+        var oNxtNde = aNodes[n];
+        var nxtNode_slug = oNxtNde.slug;
+        var nxtNode_ipns = oNxtNde.ipns;
+        if ( (node_slug==nxtNode_slug) && (node_ipns==nxtNode_ipns) ) {
+            isNdInArr = true;
+        }
+    }
+    return isNdInArr;
+}
+
+export const removeDuplicateNodesFromSchema = (oSchema) => {
+    var oSchemaOut = cloneObj(oSchema);
+    var aNodesOld = oSchema.schemaData.nodes;
+    var aNodesNew = [];
+    for (var n=0;n<aNodesOld.length;n++) {
+        var oNxtNde = aNodesOld[n];
+        var isNodePresent = isNodeInArray(oNxtNde,aNodesNew)
+        if (!isNodePresent) {
+            aNodesNew.push(oNxtNde)
+        }
+    }
+    oSchemaOut.schemaData.nodes = cloneObj(aNodesNew)
+    return oSchemaOut;
+}
+
 export const zeroThisProperty = (oPropertyData) => {
     var oZeroedPropertyData = cloneObj(oPropertyData);
     var propertyType = oZeroedPropertyData.propertyData.type;

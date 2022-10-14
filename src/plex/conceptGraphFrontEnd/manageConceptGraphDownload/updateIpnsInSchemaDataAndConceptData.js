@@ -2,6 +2,7 @@ import React from 'react';
 import Masthead from '../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/cgFe_manageDownloads_leftNav2.js';
+import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js'
 // import * as MiscFunctions from '../functions/miscFunctions.js';
@@ -55,9 +56,11 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
                 console.log("oSchema slug: "+slug)
                 var oSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug);
                 var sSchemaOld = JSON.stringify(oSchema)
+                /*
                 if (s==0) {
                     console.log("oSchema old: "+JSON.stringify(oSchema,null,4))
                 }
+                */
                 var aNodes = oSchema.schemaData.nodes;
                 for (var n=0;n<aNodes.length;n++) {
                     var oNodeData = aNodes[n];
@@ -75,15 +78,20 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
                     oSchema.schemaData.nodes[n].ipns = newIpns;
                     delete oSchema.schemaData.nodes[n].ipfs;
                 }
+
+                var oSchema = MiscFunctions.removeDuplicateNodesFromSchema(oSchema);
                 var sSchemaNew = JSON.stringify(oSchema)
+                /*
                 if (s==0) {
                     console.log("oSchema new: "+JSON.stringify(oSchema,null,4))
                 }
+                */
                 if (sSchemaOld != sSchemaNew) {
                     var currentTime = Date.now()
                     oSchema.metaData.lastUpdate = currentTime;
                     numSchemasUpdated++;
                     jQuery("#numSchemasUpdatedContainer").html(numSchemasUpdated)
+                    // console.log("updating schema: oSchema: "+JSON.stringify(oSchema,null,4))
                     await ConceptGraphInMfsFunctions.addWordToActiveMfsConceptGraph(oSchema)
                 }
             }
@@ -91,9 +99,11 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
                 var slug = aConcepts[c];
                 var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug);
                 var sConceptOld = JSON.stringify(oConcept)
+                /*
                 if (c==0) {
                     console.log("oConcept old: "+JSON.stringify(oConcept,null,4))
                 }
+                */
                 var wordType_slug = oConcept.conceptData.nodes.wordType.slug;
                 var superset_slug = oConcept.conceptData.nodes.superset.slug;
                 var schema_slug = oConcept.conceptData.nodes.schema.slug;
