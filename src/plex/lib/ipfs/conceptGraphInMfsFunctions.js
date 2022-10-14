@@ -455,7 +455,7 @@ export const loadActiveIpfsConceptGraph = async () => {
     window.ipfs.pCGb = pCGb;
     window.ipfs.pCGs = pCGs;
     window.ipfs.pCG0 = pCG0;
-    window.ipfs.pCGw = pCGw; // path to every word in the active concept graph
+    window.ipfs.pCGw = pCGw; // path to every word in the active concept graph 
 
     window.ipfs.neuroCore.engine.pCG0 = pCG0;
     window.ipfs.neuroCore.engine.pCGw = pCGw;

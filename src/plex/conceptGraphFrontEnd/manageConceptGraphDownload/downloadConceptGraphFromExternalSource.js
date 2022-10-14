@@ -259,6 +259,7 @@ export default class ManageConceptGraphDownload extends React.Component {
         })
 
         var aCurrentLocalConceptGraphSlugs = await ConceptGraphInMfsFunctions.fetchListOfCurrentConceptGraphSlugs(pCG0)
+        /*
         var aWordsFromSql = Object.keys(window.lookupWordBySlug);
         for (var w=0;w<aWordsFromSql.length;w++) {
             var nW = aWordsFromSql[w];
@@ -266,6 +267,78 @@ export default class ManageConceptGraphDownload extends React.Component {
                 console.log("NOT IN aCurrentLocalConceptGraphSlugs: "+nW)
             }
         }
+        */
+
+        // populate list of concepts available for download in conceptsAvailableForDownloadOuterContainer
+        var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(window.ipfs.pCGs)
+        console.log("oMainSchemaForConceptGraphLocal; window.ipfs.pCGs: "+window.ipfs.pCGs+"; oMainSchemaForConceptGraphLocal: "+JSON.stringify(oMainSchemaForConceptGraphLocal,null,4))
+        if (oMainSchemaForConceptGraphLocal) {
+            var aAvailableConcepts = oMainSchemaForConceptGraphLocal.conceptGraphData.aConcepts;
+            for (var c=0;c<aAvailableConcepts.length;c++) {
+                var oNxtCncpt = aAvailableConcepts[c]
+                var nxtConcept_slug = oNxtCncpt.slug;
+                var nextConceptHTML = "";
+                nextConceptHTML += "<div>";
+                    nextConceptHTML += "<input type='checkbox' style='display:inline-block;margin-right:5px;' ";
+                    nextConceptHTML += " id='checkBoxForConceptToDownload_"+nxtConcept_slug+"' ";
+                    nextConceptHTML += " data-conceptslug='"+nxtConcept_slug+"' ";
+                    nextConceptHTML += " class='checkBoxForConceptToDownload' ";
+                    if (aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
+                        nextConceptHTML += " disabled ";
+                        console.log("YES IN aCurrentLocalConceptGraphSlugs: "+nxtConcept_slug)
+                    }
+                    if (!aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
+                        console.log("NOT IN aCurrentLocalConceptGraphSlugs: "+nxtConcept_slug)
+                    }
+                    nextConceptHTML += " />";
+
+                    nextConceptHTML += "<div style='display:inline-block;' ";
+                    nextConceptHTML += " data-conceptslug='"+nxtConcept_slug+"' ";
+                    // nextConceptHTML += " class='checkBoxForConceptToDownload' ";
+                    nextConceptHTML += " >";
+                    nextConceptHTML += nxtConcept_slug;
+                    nextConceptHTML += "</div>";
+                    if (aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
+                        nextConceptHTML += "<div style='display:inline-block;margin-left:5px;color:#BFBFBF' > already present locally; no need for download</div>";
+                    }
+                nextConceptHTML += "</div>";
+                jQuery("#conceptsAvailableForDownloadInnerContainer").append(nextConceptHTML)
+
+            }
+            jQuery("#checkAllButton").click(function(){
+                jQuery(".checkBoxForConceptToDownload").prop("checked",true)
+            })
+            jQuery("#uncheckAllButton").click(function(){
+                jQuery(".checkBoxForConceptToDownload").prop("checked",false)
+            })
+            jQuery(".checkBoxForConceptToDownload").click(function(){
+                var conceptSlug = jQuery(this).data("conceptslug")
+                var isChecked = jQuery("#checkBoxForConceptToDownload_"+conceptSlug).prop("checked")
+                console.log("clicked conceptSlug: "+conceptSlug+"; isChecked: "+isChecked)
+            })
+        }
+        jQuery("#toggleConceptsListButton").click(async function(){
+            var currStatus = jQuery(this).data("status")
+            console.log("toggleConceptsListButton clicked; status: "+currStatus)
+            if (currStatus=="closed") {
+                jQuery("#conceptsAvailableForDownloadOuterContainer").animate({
+                    height: "300px",
+                    padding: "10px",
+                    borderWidth:"1px",
+                    marginBottom:"10px"
+                },500);
+                jQuery(this).data("status","open")
+            }
+            if (currStatus=="open") {
+                jQuery("#conceptsAvailableForDownloadOuterContainer").animate({
+                    height: "0px",
+                    padding: "0px",
+                    borderWidth:"0px",
+                    marginBottom:"0px"
+                },500);
+                jQuery(this).data("status","closed")
+            }
+        })
     }
     render() {
         return (
@@ -303,10 +376,20 @@ export default class ManageConceptGraphDownload extends React.Component {
                         <div style={{fontSize:"10px"}}>
                         populate /words/ from node at end of pCGs
                         </div>
-                        <div id="importConceptsButton" className="doSomethingButton" >import each concept word from conceptGraphData.aConcepts</div>
+                        <div id="toggleConceptsListButton" data-status="closed" className="doSomethingButton" >+</div>
+                        <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked concept words only</div>
+                        <div id="importConceptsButton" className="doSomethingButton" >import EVERY concept word from conceptGraphData.aConcepts (will overwrite!)</div>
                         <div id="importSchemasButton" className="doSomethingButton" >import 2 schemas from each concept</div>
                         <div id="importAdditionalSchemasButton" className="doSomethingButton" >import any additional schemas from conceptGraphData.aAdditionalSchemas</div>
                         <div id="importAllWordsButton" className="doSomethingButton" >cycle through all schemas; import all words</div>
+
+                        <div id="conceptsAvailableForDownloadOuterContainer" style={{fontSize:"10px",border:"0px dashed grey",padding:"0px",marginBottom:"0px",height:"0px",overflow:"scroll"}}>
+                            <center>concepts listed in local schema - available for download</center>
+                            <div id="checkAllButton" className="doSomethingButton_small" >check all</div>
+                            <div id="uncheckAllButton" className="doSomethingButton_small" >uncheck all</div>
+                            <div id="conceptsAvailableForDownloadInnerContainer" >
+                            </div>
+                        </div>
 
                         <div style={{fontSize:"10px",border:"1px dashed grey",padding:"10px",marginBottom:"10px",height:"600px"}}>
                             <center>current MFS file structure for the active concept graph</center>
