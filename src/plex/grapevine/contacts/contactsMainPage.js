@@ -23,7 +23,7 @@ const fetchPeerDataFromOtherPeer = async (peerID,sourcePeerID) => {
                 var ipfsPathA = "/grapevineData/users/"+peerID+"/";
                 var ipfsPathB = "/grapevineData/users/"+peerID+"/userProfile.txt";
                 // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sUserData), {create: true, flush: true});
-                await updateUserContactInfo(peerID,sUserData)
+                var success = await updateUserContactInfo(peerID,sUserData)
                 // await MiscIpfsFunctions.ipfs.files.mkdir(ipfsPathA,{"parents":true});
                 // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sUserData, {create: true, flush: true});
             }
@@ -79,13 +79,14 @@ const updateUserContactInfo = async (cid,sUserData) => {
     await MiscIpfsFunctions.ipfs.files.mkdir(pathA,{"parents":true});
     await MiscIpfsFunctions.ipfs.files.write(pathB,new TextEncoder().encode(sUserData), {create: true, flush: true});
 
-    await MiscFunctions.timeout(100)
-    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    // await MiscFunctions.timeout(100)
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/', { timeout:2000 });
     var stats_str = JSON.stringify(stats);
     var thisPeerData_cid = stats.cid.string;
     console.log("qwerty publishing thisPeerData_cid: " + thisPeerData_cid + "; sUserData: "+sUserData)
     var options_publish = { key: 'self' }
     var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+    return true
 }
 
 const addArchivedPeerToUserList = async (myPeerID,cid,grouping) => {
@@ -125,7 +126,7 @@ const addArchivedPeerToUserList = async (myPeerID,cid,grouping) => {
 }
 
 const addPeerToUserList = async (myPeerID,cid,grouping) => {
-
+    console.log("addPeerToUserList A")
     var ipfsPath = "/ipns/"+cid+"/grapevineData/userProfileData/myProfile.txt";
     // var ipfsPathB = "/ipns/"+cid+"/grapevineData/userProfileData";
 
@@ -146,12 +147,15 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
 
     jQuery("#usersListContainer").append(userHTML)
 
+    console.log("addPeerToUserList B")
+
     // modify DOM element with image and username (or just cid if username not available)
     try {
-        for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
+        console.log("addPeerToUserList C ipfsPath: "+ipfsPath)
+        for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath, { timeout: 2000 } )) {
             var userData = new TextDecoder("utf-8").decode(chunk);
-
             var oUserData = JSON.parse(userData);
+            console.log("addPeerToUserList C")
             if (typeof oUserData == "object") {
                 var sUserData = JSON.stringify(oUserData,null,4);
                 // console.log("sUserData: "+sUserData)
@@ -200,7 +204,7 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
                 jQuery("#contactsPageUsernameContainer_"+cid).css("font-size","22px")
 
                 // if contact info is discovered from an active node (from the other users' own node), save it to my local mutable files
-                await updateUserContactInfo(cid,sUserData)
+                var success = await updateUserContactInfo(cid,sUserData)
                 return true;
 
             } else {
@@ -218,7 +222,7 @@ const addPeerToUserList = async (myPeerID,cid,grouping) => {
         // img.src = window.URL.createObjectURL(blob)
         return false;
     }
-
+    console.log("addPeerToUserList Z")
 }
 
 export default class GrapevineContactsMainPage extends React.Component {
