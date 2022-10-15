@@ -150,6 +150,11 @@ export const addToConceptGraphExternalRatingsSet = async (aRatingsToAdd) => {
             console.log("addToConceptGraphExternalRatingsSet_; already known! nextRating_slug: "+nextRating_slug)
         }
         */
+        if (isRatingInActiveConceptGraph) {
+            // if a word with this slug already exists in the local concept graph, then need to determine which one is more recent and keep that one
+            var oRating_alreadyInCG = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextRating_slug)
+            // need to add a timestamp variable in ratingsData !!!
+        }
         if (!isRatingInActiveConceptGraph) {
             // obtain the slug for this; determine whether the slug already exists
             // console.log("addToConceptGraphExternalRatingsSet; need to add! nextRating_ipfsPath: "+nextRating_ipfsPath)
