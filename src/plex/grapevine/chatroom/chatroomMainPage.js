@@ -112,10 +112,9 @@ export default class GrapevineChatroomMainPage extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
-
         const topic = "grapevine";
-        var d = Date.now();
         const receiveMsg = async (msg) => {
+            var whenReceived = Date.now();
             messageNumber++;
             var msg_from = msg.from;
             var msg_data = msg.data;
@@ -141,8 +140,8 @@ export default class GrapevineChatroomMainPage extends React.Component {
                             msg_html += "from: "+msg_from+"<br>";
                             msg_html += "</div>";
 
-                            msg_html += "<div style='display:inline-block;float:right;' class='whenReceivedContainer' data-whenreceived='"+d+"' >";
-                            msg_html += "received: "+ d;
+                            msg_html += "<div style='display:inline-block;float:right;' class='whenReceivedContainer' data-whenreceived='"+whenReceived+"' >";
+                            msg_html += "received: "+ whenReceived;
                             msg_html += "</div>";
 
                             msg_html += "<div style='clear:both;' ></div>";
