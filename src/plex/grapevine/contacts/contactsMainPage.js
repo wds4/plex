@@ -58,6 +58,7 @@ const updateMasterUsersList = async (sMasterUsersList) => {
     // var path = '/grapevineData/users/masterUsersList.txt';
     var ipfsPath = "/grapevineData/users/masterUsersList.txt";
     // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sMasterUsersList));
+    try { await MiscIpfsFunctions.ipfs.files.rm(ipfsPath); } catch (e) {}
     await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(sMasterUsersList), {create: true, flush: true});
     await MiscFunctions.timeout(100)
     // Next: need to fetch the updated cid (thisPeerData_cid) and publish it to the public peerID

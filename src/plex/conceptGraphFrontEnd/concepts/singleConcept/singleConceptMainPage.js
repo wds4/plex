@@ -433,7 +433,7 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
 
                                 <div id="openAllButton" className="doSomethingButton_small" >open all</div>
                                 <div id="closeAllButton" className="doSomethingButton_small" >close all</div>
-                                <div id="fullHierarchyContainer" style={{overflow:"scroll"}} ></div>
+                                <div id="fullHierarchyContainer" style={{overflow:"scroll",fontSize:"10px"}} ></div>
                             </div>
                             <div style={{display:"inline-block",width:"600px",height:"800px",border:"1px dashed grey"}} >
                                 <textarea id="wordRawFileContainer" style={{display:"inline-block",width:"100%",height:"750px"}} >wordRawFileContainer</textarea>
