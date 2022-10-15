@@ -4,6 +4,7 @@ import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as VisjsFunctions from '../../functions/visjsFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as CompScoreCalcFunctions from '../../lib/grapevine/compScoreCalcFunctions.js'
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
@@ -41,7 +42,6 @@ function deleteEdgeFunction() {
 function deleteNodeFunction() {
 
 }
-
 
 // var groupOptions = window.visjs.groupOptions;
 export const groupOptions={
@@ -280,11 +280,14 @@ export const VisNetwork_Grapevine = () => {
             var numNodes = nodes_arr.length;
             if (numNodes==1) {
                 var nodeID = nodes_arr[0];
-                jQuery("#selectedNode_bepm").html(nodeID)
+                var node = nodes.get(nodeID);
+                var username = node.username;
+                jQuery("#usernameContainer").html(username)
+                jQuery("#peerIDContainer").html(nodeID)
             }
         });
         network.current.on("deselectNode",function(params){
-            jQuery("#selectedNode_bepm").html("none")
+            jQuery("#usernameContainer").html("none")
         });
       },
       [domNode, network, data, options]
@@ -330,6 +333,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
         listOfPeerIDs.push(nextUserPeerID)
         var ipfsPath = "/grapevineData/users/"+nextUserPeerID+"/userProfile.txt";
         var nextNode_label = "anon";
+        var nextNode_username = "anon";
         var nextNode_title = nextUserPeerID;
 
         // var pathToImage = "~src/assets/grapevine/users/"+nextUserPeerID+"/avatar.png"
@@ -347,6 +351,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
                 var chunk2 = new TextDecoder("utf-8").decode(chunk);
                 var oUserProfile = JSON.parse(chunk2);
                 console.log("qwerty oUserProfile: "+JSON.stringify(oUserProfile,null,4))
+                nextNode_username = oUserProfile.username;
                 nextNode_label = oUserProfile.username;
                 nextNode_title = oUserProfile.username;
 
@@ -394,6 +399,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
                 id: nextUserPeerID,
                 label: nextNode_label,
                 slug: nextNode_slug,
+                username: nextNode_username,
                 title: nextNode_title,
                 shape: shape,
                 image: pathToImage,
@@ -434,7 +440,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
 
     console.log("makeVisGraph_Grapevine C")
 
-    // aRatingCidsByOthers has been deprecated 
+    // aRatingCidsByOthers has been deprecated
     // var aRatingCids = [...aRatingCidsByMe, ...aRatingCidsByOthers];
     var aRatingCids = aRatingCidsByMe
 
@@ -502,6 +508,40 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
     ReactDOM.render(<VisNetwork_Grapevine clickHandler={console.log('click')} onSelectNode={console.log("onSelectNode") } />,
         document.getElementById("grapevineContainerElem")
     )
+}
+
+var aGrapevineScores = {};
+
+export const runGrapevineCompositeScoreCalculations = (aUserPeerIDs) => {
+    // cycle through each type of composite score, then through each user
+    for (var u=0;u<aUserPeerIDs.length;u++) {
+        var nextPeerID = aUserPeerIDs[u];
+        console.log("runGrapevineCompositeScoreCalculations; nextPeerID: "+nextPeerID)
+        aGrapevineScores[nextPeerID] = {}
+        aGrapevineScores[nextPeerID].compositeScore = MiscFunctions.cloneObj(window.compositeScore);
+        aGrapevineScores[nextPeerID].calcDataRow = {}
+        aGrapevineScores[nextPeerID].calcDataRow.default = MiscFunctions.cloneObj(window.calculationDataRow);
+    }
+}
+
+window.compositeScore = {
+    influence: null,
+    average: null,
+    input: null,
+    certainty: null
+}
+window.calculationDataRow = {
+    rater: null,
+    product: null,
+    rating: null,
+    strat1Coeff: null,
+    weightAdjusted: null,
+    weight: null,
+    raterInfluence: null,
+    ratingConfidence: null,
+    strat2Coeff: null,
+    strat3Coeff: null,
+    attenuationFactor: null
 }
 
 export default class GrapevineVisualizationMainPage extends React.Component {
@@ -613,6 +653,8 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         console.log("aCids: "+JSON.stringify(aCids,null,4))
 
         await makeVisGraph_Grapevine(masterUserList,aCids);
+
+        runGrapevineCompositeScoreCalculations(masterUserList);
     }
     render() {
         return (
@@ -663,8 +705,18 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                             </div>
 
                             <div>
-                                <div style={{border:"1px dashed grey",display:"inline-block",width:"1600px"}}>
-                                    <center>Show Calculations</center>
+                                <div style={{border:"1px solid purple",borderRadius:"5px",padding:"5px",display:"inline-block",width:"1600px",backgroundColor:"yellow"}}>
+                                    <center>Trust Score Calculations</center>
+                                    <div style={{display:"inline-block",textAlign:"left"}} >
+                                        <div>
+                                             <div style={{display:"inline-block"}} >username</div>
+                                             <div style={{display:"inline-block"}}  id="usernameContainer"></div>
+                                         </div>
+                                         <div>
+                                             <div style={{display:"inline-block"}} >peerID</div>
+                                             <div style={{display:"inline-block"}} id="peerIDContainer"></div>
+                                         </div>
+                                    </div>
                                 </div>
                             </div>
                         </center>

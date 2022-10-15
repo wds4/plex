@@ -169,7 +169,7 @@ export const fetchImgFromIPFS_c = async (cid) => {
 
 export const fetchImgFromIPFS_b = async (cid) => {
     if (!cid) {
-        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
+        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
     }
 	try {
     	let bufs = []
@@ -186,7 +186,7 @@ export const fetchImgFromIPFS_b = async (cid) => {
 
 export const fetchImgFromIPFS = async (cid) => {
     if (!cid) {
-        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' //  sample_rorshach.png in private IPFS network, also on iMac desktop
+        cid = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
     }
 	try {
     	let bufs = []

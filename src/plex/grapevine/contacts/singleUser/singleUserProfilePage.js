@@ -42,11 +42,11 @@ const populateFields = async (cid) => {
                 // var cid1 = '/ipfs/QmNma7eG55pEEbnoepvCGXZTt8LJDshY6zZerGj8ZY21iS' // sample_rorshach.png in private IPFS network, also on iMac desktop
                 // var cid2 = '/ipfs/QmWQmayHks3Gf5oV3RRVbEV37gm9j3aCxYcgx4SZfdHiRY' // darth vader
                 // var cid2 = null;
-                MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
+                await MiscIpfsFunctions.fetchImgFromIPFS(imageCid);
 
             } else {
                 var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
-                MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
+                await MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
             }
         }
     } catch (e) {
@@ -54,7 +54,7 @@ const populateFields = async (cid) => {
         console.log("populateFields: user profile not found")
         var stockAvatarCid = MiscIpfsFunctions.addDefaultImage(cid)
         console.log("populateFields: stockAvatarCid: "+stockAvatarCid)
-        MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
+        await MiscIpfsFunctions.fetchImgFromIPFS(stockAvatarCid);
 
         var oUserProfile = await MiscIpfsFunctions.returnUserProfileFromMFS(cid);
         var username = oUserProfile.username;
