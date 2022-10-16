@@ -1091,3 +1091,23 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
+.grapevinePageColA {
+    display:inline-block;
+    width:200px;
+    vertical-align:bottom;
+}
+.grapevinePageSpacer1Col {
+    display:inline-block;
+    width:20px;
+    vertical-align:bottom;
+}
+.grapevinePageSpacer2Col {
+    display:inline-block;
+    width:100px;
+    vertical-align:bottom;
+}
+.grapevinePageColB {
+    display:inline-block;
+    width:100px;
+    vertical-align:bottom;
+}

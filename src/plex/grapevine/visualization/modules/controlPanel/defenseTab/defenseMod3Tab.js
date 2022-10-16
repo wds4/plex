@@ -2,7 +2,7 @@ import React from "react";
 import { Chart } from "react-google-charts";
 import ReactDOM from 'react-dom';
 import { render } from "react-dom";
-import { VictoryPie, VictoryTheme, VictoryChart, VictoryLine, VictoryScatter } from "victory";
+// import { VictoryTheme, VictoryChart, VictoryLine, VictoryScatter } from "victory";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
@@ -73,7 +73,7 @@ const drawMod3Chart = () => {
         );
     };
 
-    render(<Mod3Chart />, document.getElementById("victoryChartContainer"));
+    render(<Mod3Chart />, document.getElementById("defenseMod3ChartContainer"));
 }
 
 export default class DefenseModification3Tab extends React.Component {
@@ -210,7 +210,7 @@ export default class DefenseModification3Tab extends React.Component {
                     </div>
                 </div>
 
-                <div id="victoryChartContainer" style={{width:"500px",height:"200px",backgroundColor:"#CFCFCF",marginTop:"10px"}}></div>
+                <div id="defenseMod3ChartContainer" style={{width:"500px",height:"200px",backgroundColor:"#CFCFCF",marginTop:"10px"}}></div>
 
             </>
         );

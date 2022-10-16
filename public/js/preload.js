@@ -283,6 +283,12 @@ window.grapevine.ratings.schema.slug = "schemaFor_rating";
 window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
 window.grapevine.users = "/grapevineData/users/"
 
+window.grapevine.starterDefaultAttenuationFactor = 90;
+window.grapevine.starterDefaultUserTrustAverageScore = 10;
+window.grapevine.starterDefaultUserTrustConfidence = 20;
+window.grapevine.starterRigor = 20; // ??
+window.grapevine.starterDecoupleRigorConfidence = false // ??
+
 window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
 window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false
 

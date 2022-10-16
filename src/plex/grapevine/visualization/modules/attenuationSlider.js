@@ -12,17 +12,21 @@ export default class AttenuationSliderModule extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            defaultAttenuationFactor: 90
         }
     }
     async componentDidMount() {
         const updateAttenuationFactor = () => {
             var attenuationFactorValue = attenuationSlider.noUiSlider.get();
             var attenuationFactorValue = attenuationFactorValue / 100;
+            this.props.attenuationSliderCallback(attenuationFactorValue);
             jQuery("#attenuationFactorValueContainer").html(attenuationFactorValue)
         }
         var attenuationSlider = document.getElementById('attenuationSlider');
+        // var starterValue = this.state.defaultAttenuationFactor;
+        var starterValue = window.grapevine.starterDefaultAttenuationFactor
         noUiSlider.create(attenuationSlider, {
-            start: 90,
+            start: starterValue,
             step: 1,
             range: {
                 'max': 100,

@@ -12,17 +12,24 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
     constructor(props) {
         super(props);
         this.state = {
+            defaultUserTrustAverageScore: null,
+            defaultUserTrustConfidence: null
         }
     }
+
     async componentDidMount() {
         const updateUsersDefAvScore = () => {
             var usersDefAvScoreValue = usersDefAvScoreSlider.noUiSlider.get();
             var usersDefAvScoreValue = usersDefAvScoreValue / 100;
+            this.props.userTrustAverageScoreSliderCallback(usersDefAvScoreValue);
             jQuery("#usersDefaultAverageScoreValueContainer").html(usersDefAvScoreValue)
         }
         var usersDefAvScoreSlider = document.getElementById('usersDefaultAverageScoreSlider');
+        // var starterValue1 = this.state.defaultUserTrustAverageScore;
+        // var starterValue1 = this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore;
+        var starterValue1 = window.grapevine.starterDefaultUserTrustAverageScore
         noUiSlider.create(usersDefAvScoreSlider, {
-            start: 10,
+            start: starterValue1,
             step: 1,
             range: {
                 'max': 100,
@@ -34,11 +41,15 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
         const updateUsersDefConfidenceScore = () => {
             var usersDefConfidenceValue = usersDefConfidenceSlider.noUiSlider.get();
             var usersDefConfidenceValue = usersDefConfidenceValue / 100;
+            this.props.userTrustConfidenceSliderCallback(usersDefConfidenceValue);
             jQuery("#usersDefaultConfidenceValueContainer").html(usersDefConfidenceValue)
         }
         var usersDefConfidenceSlider = document.getElementById('usersDefaultConfidenceSlider');
+        // var starterValue2 = this.state.defaultUserTrustConfidence;
+        var starterValue2 = window.grapevine.starterDefaultUserTrustConfidence
+        // var starterValue2 = this.props.compScoreDisplayPanelData.defaultUserTrustConfidence;
         noUiSlider.create(usersDefConfidenceSlider, {
-            start: 20,
+            start: starterValue2,
             step: 1,
             range: {
                 'max': 100,
