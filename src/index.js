@@ -78,6 +78,7 @@ import PlexHome from './plex/plexHome.js';
 import PlexSettingsMainPage from './plex/settings/generalPlexSettings.js';
 
 import ConceptGraphFrontEndHome from './plex/conceptGraphFrontEnd/conceptGraphHome.js';
+import ConceptGraphsFrontEndMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/conceptGraphsMainPage.js';
 
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
@@ -375,6 +376,7 @@ ReactDOM.render(
           <Route path="/ConceptGraphHome" exact component={ConceptGraphHome} />
 
           <Route path="/ConceptGraphFrontEndHome" exact component={ConceptGraphFrontEndHome} />
+          <Route path="/ConceptGraphsFrontEndMainPage" exact component={ConceptGraphsFrontEndMainPage} />
 
           <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 

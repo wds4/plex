@@ -637,7 +637,7 @@ const drawScoreCalculationPanel = (peerID) => {
 
 
 
-var aGrapevineScores = {};
+var aGrapevineScores = [];
 
 export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
     var seedUserPeerID = jQuery("#seedUserSelector option:selected").data("peerid")
@@ -656,7 +656,7 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
         aGrapevineScores[c] = {};
         aGrapevineScores[c].compositeScoreNumber = c;
         aGrapevineScores[c].compositeScoreType = nextCSType;
-        aGrapevineScores[c].users = {}
+        aGrapevineScores[c].users = []
         for (var u=0;u<aUserPeerIDs.length;u++) {
             var nextPeerID = aUserPeerIDs[u];
             if (nextPeerID==myPeerID) {
@@ -675,8 +675,8 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.average = 1;
                 aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.influence = 1
             }
-            aGrapevineScores[c].users[u].ratings = {} // all ratings where this user is the ratee
-            aGrapevineScores[c].users[u].inverseRatings = {} // all ratings where this user is the rater
+            aGrapevineScores[c].users[u].ratings = [] // all ratings where this user is the ratee
+            aGrapevineScores[c].users[u].inverseRatings = [] // all ratings where this user is the rater
             // aGrapevineScores[c].users[u].calcDataRow = {}
             // aGrapevineScores[c].users[u].calcDataRow.default = MiscFunctions.cloneObj(window.calculationDataRow);
         }
@@ -731,7 +731,9 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].trustRating = trustRating;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].referenceTrustRating = referenceTrustRating;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].product = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].rating = (trustRating / referenceTrustRating).toFixed(4);
+                if (referenceTrustRating) {
+                    aGrapevineScores[c].users[rateeUserNumber].ratings[numR].rating = (trustRating / referenceTrustRating).toFixed(4);
+                }
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat1Coeff = null;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].weightAdjusted = null;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].weight = null;
@@ -749,7 +751,14 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rateePeerID = rateePeerID;
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].trustRating = trustRating;
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].referenceTrustRating = referenceTrustRating;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (trustRating / referenceTrustRating).toFixed(4);
+                // the "rating" for inverseRating is the reciprocal of the rating for normal rating
+                if (trustRating) {
+                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toFixed(4);
+                }
+                if ((trustRating == 0) && (referenceTrustRating > 0)) {
+                    // technically this would be infinite, but 1000 will suffice
+                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = 1000;
+                }
             }
             // aGrapevineScores[c].users[myUserNumber].ratings
         }
@@ -757,16 +766,41 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
 }
 
 const singleIterationCompositeScoreCalculations = async () => {
-    console.log("singleIterationCompositeScoreCalculations")
+    console.log("singleIterationCompositeScoreCalculations; ")
     for (var c=0;c<aGrapevineScores.length;c++) {
+        // console.log("singleIterationCompositeScoreCalculations; c: "+c)
         var nextCSType = aGrapevineScores[c].compositeScoreType;
         for (var u=0;u<aGrapevineScores[c].users.length;u++) {
             var nextPeerID = aGrapevineScores[c].users[u].peerID;
+            // console.log("singleIterationCompositeScoreCalculations; u: "+u)
             for (var r=0;r<aGrapevineScores[c].users[u].ratings.length;r++) {
-                var nextRatingSlug = aGrapevineScores[c].users[u].ratings[r].ratingSlug
+                console.log("singleIterationCompositeScoreCalculations; work on this step next - 16 Oct 2022")
+                // obtain needed values for calculations
+                var nextRatingSlug = aGrapevineScores[c].users[u].ratings[r].ratingSlug // may not need this
+                var rateeUserNumber = u;
+                var raterUserNumber = aGrapevineScores[c].users[u].ratings[r].raterUserNumber;
+                var raterCurrentInfluence = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
+                var rateeCurrentInfluence = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
+                var ratingConfidence = aGrapevineScores[c].users[u].ratings[r].ratingConfidence;
+
+                // do calculations
+
+                // set new values
+                aGrapevineScores[c].users[u].ratings[r].raterInfluence = raterCurrentInfluence;
             }
             for (var r=0;r<aGrapevineScores[c].users[u].inverseRatings.length;r++) {
+                // obtain needed values for calculations
                 var nextRatingSlug = aGrapevineScores[c].users[u].inverseRatings[r].ratingSlug
+                var raterUserNumber = u;
+                var rateeUserNumber = aGrapevineScores[c].users[u].inverseRatings[r].rateeUserNumber;
+                var raterCurrentInfluence = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
+                var rateeCurrentInfluence = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
+                var ratingConfidence = aGrapevineScores[c].users[u].ratings[r].ratingConfidence;
+
+                // do calculations
+
+                // set new values
+                aGrapevineScores[c].users[u].ratings[r].raterInfluence = rateeCurrentInfluence;
             }
         }
     }
