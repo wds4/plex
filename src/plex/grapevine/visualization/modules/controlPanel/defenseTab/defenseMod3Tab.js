@@ -80,6 +80,7 @@ export default class DefenseModification3Tab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            compScoreDisplayPanelData: this.props.compScoreDisplayPanelData
         }
     }
     async componentDidMount() {
@@ -88,10 +89,12 @@ export default class DefenseModification3Tab extends React.Component {
             var mod3FactorValue = mod3Slider.noUiSlider.get();
             var mod3FactorValue = mod3FactorValue / 100;
             jQuery("#mod3FactorValueContainer").html(mod3FactorValue)
+            this.props.mod3SliderCallback(mod3FactorValue);
         }
         var mod3Slider = document.getElementById('mod3Slider');
+        var starterValueUserMod3Coeff = this.props.compScoreDisplayPanelData.strat3Coeff * 100;
         noUiSlider.create(mod3Slider, {
-            start: 100,
+            start: starterValueUserMod3Coeff,
             step: 1,
             range: {
                 'max': 100,
@@ -106,10 +109,12 @@ export default class DefenseModification3Tab extends React.Component {
             var mod4FactorValue = mod4Slider.noUiSlider.get();
             var mod4FactorValue = mod4FactorValue / 100;
             jQuery("#mod4FactorValueContainer").html(mod4FactorValue)
+            this.props.mod4SliderCallback(mod4FactorValue);
         }
         var mod4Slider = document.getElementById('mod4Slider');
+        var starterValueUserMod4Coeff = this.props.compScoreDisplayPanelData.strat4Coeff * 100;
         noUiSlider.create(mod4Slider, {
-            start: 200,
+            start: starterValueUserMod4Coeff,
             step: 1,
             range: {
                 'max': 500,
@@ -124,10 +129,12 @@ export default class DefenseModification3Tab extends React.Component {
             var mod5FactorValue = mod5Slider.noUiSlider.get();
             var mod5FactorValue = mod5FactorValue / 100;
             jQuery("#mod5FactorValueContainer").html(mod5FactorValue)
+            this.props.mod5SliderCallback(mod5FactorValue);
         }
         var mod5Slider = document.getElementById('mod5Slider');
+        var starterValueUserMod5Coeff = this.props.compScoreDisplayPanelData.strat5Coeff * 100;
         noUiSlider.create(mod5Slider, {
-            start: 500,
+            start: starterValueUserMod5Coeff,
             step: 1,
             range: {
                 'max': 2000,
@@ -136,6 +143,8 @@ export default class DefenseModification3Tab extends React.Component {
         });
         mod5Slider.noUiSlider.on("update",updateMod5Factor)
         mod5Slider.noUiSlider.on("change",drawMod3Chart)
+
+
 
         drawMod3Chart();
     }
@@ -194,9 +203,9 @@ export default class DefenseModification3Tab extends React.Component {
                     <div>
                         <div style={{display:"inline-block",fontSize:"12px"}} >Mod 5 FACTOR</div>
                         <div id="mod5FactorValueContainer" style={{display:"inline-block",marginLeft:"10px",width:"30px",fontSize:"12px"}} >1.00</div>
-                        <div style={{display:"inline-block",marginLeft:"10px",fontSize:"12px"}} >OFF</div>
+                        <div style={{display:"inline-block",marginLeft:"10px",fontSize:"12px"}} >strict</div>
                         <div id="mod5Slider" style={{display:"inline-block",width:"200px",marginLeft:"20px",backgroundColor:"blue"}} ></div>
-                        <div style={{display:"inline-block",marginLeft:"20px",fontSize:"12px"}} >ON</div>
+                        <div style={{display:"inline-block",marginLeft:"20px",fontSize:"12px"}} >loose</div>
                     </div>
 
                     <div style={{fontSize:"12px"}}>

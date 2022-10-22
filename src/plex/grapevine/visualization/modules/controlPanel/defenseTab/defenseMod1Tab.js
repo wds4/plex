@@ -12,6 +12,7 @@ export default class DefenseModification1Tab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            compScoreDisplayPanelData: this.props.compScoreDisplayPanelData
         }
     }
     async componentDidMount() {
@@ -19,10 +20,13 @@ export default class DefenseModification1Tab extends React.Component {
             var mod1FactorValue = mod1Slider.noUiSlider.get();
             var mod1FactorValue = mod1FactorValue / 100;
             jQuery("#mod1FactorValueContainer").html(mod1FactorValue)
+            this.props.mod1SliderCallback(mod1FactorValue);
         }
         var mod1Slider = document.getElementById('mod1Slider');
+        // var starterValue1 = this.state.compScoreDisplayPanelData.strat1Coeff;
+        var starterValueUserMod1Coeff = this.props.compScoreDisplayPanelData.strat1Coeff * 100;
         noUiSlider.create(mod1Slider, {
-            start: 100,
+            start: starterValueUserMod1Coeff,
             step: 1,
             range: {
                 'max': 100,

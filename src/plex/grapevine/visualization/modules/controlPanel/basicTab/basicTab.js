@@ -66,7 +66,7 @@ export default class GrapevineVisualControlPanelBasicTab extends React.Component
     constructor(props) {
         super(props);
         this.state = {
-            defaultRigor: null
+            compScoreDisplayPanelData: this.props.compScoreDisplayPanelData
         }
     }
 
@@ -78,9 +78,10 @@ export default class GrapevineVisualControlPanelBasicTab extends React.Component
             jQuery("#rigorValueContainer").html(rigorValue)
         }
         var rigorSlider = document.getElementById('rigorSlider');
-        var starterValue1 = window.grapevine.starterRigor;
+        // var starterValue1 = window.grapevine.starterRigor;
+        var starterValueRigor = this.props.compScoreDisplayPanelData.rigor * 100;
         noUiSlider.create(rigorSlider, {
-            start: starterValue1,
+            start: starterValueRigor,
             step: 1,
             range: {
                 'max': 100,
@@ -104,7 +105,7 @@ export default class GrapevineVisualControlPanelBasicTab extends React.Component
                                 in a manner so that for an unvetted user, eht Confidence (set by the user) and the Certainty (calculated using the Rigor Equation)
                                 are equal. If Confidence goes up, Rigor goes down, and vice versa.
                             </div>
-                            Decouple Rigor 
+                            Decouple Rigor
                             <select id="decoupleRigorFromConfidenceForDefaultsSelector" >
                                 <option value="couple" >no, leave coupled</option>
                                 <option value="uncouple" >yes, uncouple</option>

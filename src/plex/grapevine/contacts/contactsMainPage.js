@@ -117,7 +117,7 @@ const addArchivedPeerToUserList = async (myPeerID,cid,grouping) => {
     var lastUpdated = oUserProfile.lastUpdated;
     var imageCid = oUserProfile.imageCid;
 
-    var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
+    // var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(imageCid)
     var img = document.getElementById("contactsPageAvatarThumb_"+cid) // the img tag you want it in
     // img.src = window.URL.createObjectURL(blob)
     img.src = "http://localhost:8080/ipfs/"+imageCid;

@@ -22,24 +22,39 @@ export default class CompScoreCalcPanel extends React.Component {
     async componentDidMount() {
         // var aFi = this.props.aF;
         // console.log("aFi: "+aFi)
+        // var imageCid = "QmbRs5wrimekB4ChruzzokihpyrnMDGeFHkYqLkB1F53ho";
+        var imageCid = this.props.oSingleUserGrapevineScores.avatarCid;
+        var img = document.getElementById("showCalculationsAvatarThumb") // the img tag you want it in
+        // img.src = "http://localhost:8080/ipfs/"+imageCid;
+        img.src = "http://localhost:8080/ipfs/"+this.props.oSingleUserGrapevineScores.avatarCid;
 
     }
     render() {
+        var aRatings = this.props.oSingleUserGrapevineScores.ratings;
         const {data} = this.state;
         return (
             <>
                 <div style={{border:"1px solid purple",borderRadius:"5px",padding:"5px",display:"inline-block",width:"1600px",backgroundColor:"yellow",textAlign:"left"}}>
                     <center>Trust Score Calculations</center>
-                    <div style={{display:"inline-block",textAlign:"left"}} >
-                        <div>
-                             <div style={{display:"inline-block"}} >username</div>
-                             <div style={{display:"inline-block"}}  id="usernameContainer"></div>
-                         </div>
-                         <div>
-                             <div style={{display:"inline-block"}} >peerID</div>
-                             <div style={{display:"inline-block"}} id="peerIDContainer"></div>
-                         </div>
-                    </div>
+
+                    <center>
+                        <div style={{display:"inline-block",textAlign:"left"}} >
+                            <div className="contactsPageAvatarContainer" style={{display:"inline-block",width:"50px",height:"50px",backgroundColor:"yellow"}} >
+                                <img id="showCalculationsAvatarThumb" className="contactsPageAvatarThumb" />
+                            </div>
+
+                            <div style={{display:"inline-block"}} >
+                                <div>
+                                    <div style={{display:"inline-block",width:"100px"}} >username</div>
+                                    <div style={{display:"inline-block"}}  id="usernameContainer">{this.props.oSingleUserGrapevineScores.username}</div>
+                                </div>
+                                <div>
+                                    <div style={{display:"inline-block",width:"100px"}} >peerID</div>
+                                    <div style={{display:"inline-block"}} id="peerIDContainer">{this.props.oSingleUserGrapevineScores.peerID}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </center>
 
                     <div style={{border:"1px dashed grey"}} >
                         <center>score results (4 cols)</center>
@@ -47,6 +62,16 @@ export default class CompScoreCalcPanel extends React.Component {
                             <div>
                             </div>
                         </div>
+                    </div>
+
+                    <div style={{border:"1px solid purple"}} >
+                    {this.props.oSingleUserGrapevineScores.ratings.map(oRating => (
+                        <div >
+                            <div
+                            >{oRating.ratingNumber}
+                            </div>
+                        </div>
+                    ))}
                     </div>
 
                     <div style={{border:"1px dashed grey"}} >

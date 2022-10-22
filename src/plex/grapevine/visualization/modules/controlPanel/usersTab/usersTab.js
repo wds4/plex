@@ -12,8 +12,7 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
     constructor(props) {
         super(props);
         this.state = {
-            defaultUserTrustAverageScore: null,
-            defaultUserTrustConfidence: null
+            compScoreDisplayPanelData: this.props.compScoreDisplayPanelData
         }
     }
 
@@ -23,13 +22,22 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
             var usersDefAvScoreValue = usersDefAvScoreValue / 100;
             this.props.userTrustAverageScoreSliderCallback(usersDefAvScoreValue);
             jQuery("#usersDefaultAverageScoreValueContainer").html(usersDefAvScoreValue)
+
+            var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+            compScoreDisplayPanelData_new.defaultUserTrustAverageScore = usersDefAvScoreValue
+            this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+            console.log("usersTab; new usersDefAvScoreValue: "+usersDefAvScoreValue)
         }
         var usersDefAvScoreSlider = document.getElementById('usersDefaultAverageScoreSlider');
-        // var starterValue1 = this.state.defaultUserTrustAverageScore;
-        // var starterValue1 = this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore;
-        var starterValue1 = window.grapevine.starterDefaultUserTrustAverageScore
+        // var starterValue1 = this.state.compScoreDisplayPanelData.defaultUserTrustAverageScore;
+        // var starterValueUserAvgTrust = this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore;
+        var starterValueUserAvgTrust = this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore * 100;
+        // var starterValueUserAvgTrust = this.props.defaultUserTrustAverageScore
+        // var starterValueUserAvgTrust = 0.69
+        console.log("userTab starterValueUserAvgTrust: "+starterValueUserAvgTrust)
+        // var starterValue1 = window.grapevine.starterDefaultUserTrustAverageScore
         noUiSlider.create(usersDefAvScoreSlider, {
-            start: starterValue1,
+            start: starterValueUserAvgTrust,
             step: 1,
             range: {
                 'max': 100,
@@ -45,11 +53,12 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
             jQuery("#usersDefaultConfidenceValueContainer").html(usersDefConfidenceValue)
         }
         var usersDefConfidenceSlider = document.getElementById('usersDefaultConfidenceSlider');
-        // var starterValue2 = this.state.defaultUserTrustConfidence;
-        var starterValue2 = window.grapevine.starterDefaultUserTrustConfidence
+        // var starterValue2 = this.state.compScoreDisplayPanelData.defaultUserTrustConfidence;
+        var starterValueUserTrustConfidence = this.props.compScoreDisplayPanelData.defaultUserTrustConfidence * 100;
+        // var starterValue2 = window.grapevine.starterDefaultUserTrustConfidence
         // var starterValue2 = this.props.compScoreDisplayPanelData.defaultUserTrustConfidence;
         noUiSlider.create(usersDefConfidenceSlider, {
-            start: starterValue2,
+            start: starterValueUserTrustConfidence,
             step: 1,
             range: {
                 'max': 100,
@@ -65,7 +74,7 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
                     <div style={{textAlign:"center"}}>
                         <div style={{display:"inline-block",border:"1px solid black",borderRadius:"5px",width:"300px",padding:"5px"}}>
                             <div style={{fontSize:"14px",marginLeft:"5px"}} >
-                                default avg score for unvetted users:
+                                default avg score state: ={this.state.compScoreDisplayPanelData.defaultUserTrustAverageScore}= props: ={this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore}=  for unvetted users:
                             </div>
                             <div style={{marginTop:"10px"}}>
                                 <div id="usersDefaultAverageScoreValueContainer" style={{display:"inline-block",width:"30px",marginLeft:"10px"}} ></div>

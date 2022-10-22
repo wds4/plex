@@ -170,6 +170,9 @@ const fetchInfluenceTypes = async (pCG0) => {
     return aResult;
 }
 
+var lookupCompositeScoreNumberByType = {};
+
+
 const generateAllCompositeScoreTypes = async () => {
     var aCompositeScoreTypes = [];
     var compositeScoreType = "allInfluenceTypes_allContexts";
@@ -204,6 +207,10 @@ const generateAllCompositeScoreTypes = async () => {
             var compositeScoreType =  nextInfluenceType_influenceTypeSlug + "_" + nextContext_contextSlug
             aCompositeScoreTypes.push(compositeScoreType)
         }
+    }
+    for (var x=0;x<aCompositeScoreTypes.length;x++) {
+        var nextType = aCompositeScoreTypes[x];
+        lookupCompositeScoreNumberByType[nextType] = x;
     }
     return aCompositeScoreTypes;
 }
@@ -257,8 +264,11 @@ const makeContextSelector = () => {
         var nextContext_slug = oNC.slug;
         var oNextContext = window.lookupWordBySlug[nextContext_slug]
         var nextContext_contextName = oNextContext.contextStructuredData_contextData.name;
+        var nextContext_contextSlug = oNextContext.contextStructuredData_contextData.slug;
         selectorHTML += "<option ";
         selectorHTML += " data-contextslug='"+nextContext_slug+"' ";
+        selectorHTML += " data-contextcontextslug='"+nextContext_contextSlug+"' ";
+        selectorHTML += " data-contextcontextname='"+nextContext_contextName+"' ";
         selectorHTML += " >";
         selectorHTML += nextContext_contextName;
         selectorHTML += "</option>";
@@ -267,6 +277,12 @@ const makeContextSelector = () => {
     }
     selectorHTML += "</select>";
     jQuery("#contextSelectorContainer").html(selectorHTML)
+
+    determineCompositeScoreTypeAndNumber()
+    jQuery("#contextSelector").change(function(){
+        determineCompositeScoreTypeAndNumber()
+    })
+
 }
 
 const fetchUsersList = async () => {
@@ -362,6 +378,7 @@ const loadImgURL = async (cid, mime, limit) => {
 }
 
 var lookupUsernameFromPeerID = {};
+var lookupAvatarCidFromPeerID = {};
 
 const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
     console.log("makeVisGraph_Grapevine A")
@@ -405,6 +422,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
                 lookupUsernameFromPeerID[nextUserPeerID] = nextNode_username;
 
                 var nextNode_imageCid = oUserProfile.imageCid;
+                lookupAvatarCidFromPeerID[nextUserPeerID] = nextNode_imageCid
                 pathToImage = "http://localhost:8080/ipfs/"+nextNode_imageCid;
 
                 if (nextNode_label=="drDave") {
@@ -665,6 +683,8 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
             aGrapevineScores[c].users[u] = {}
             aGrapevineScores[c].users[u].userNumber = u;
             aGrapevineScores[c].users[u].peerID = nextPeerID;
+            aGrapevineScores[c].users[u].username = lookupUsernameFromPeerID[nextPeerID];
+            aGrapevineScores[c].users[u].avatarCid = lookupAvatarCidFromPeerID[nextPeerID];
             aGrapevineScores[c].users[u].seedUser = false;
             aGrapevineScores[c].users[u].compositeScoreData = MiscFunctions.cloneObj(window.compositeScoreData);
             if (nextPeerID == seedUserPeerID) {
@@ -676,6 +696,8 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.influence = 1
             }
             aGrapevineScores[c].users[u].ratings = [] // all ratings where this user is the ratee
+            aGrapevineScores[c].users[u].defaultRating = {} // default user rating
+            aGrapevineScores[c].users[u].inheritedRating = {} // inherited user rating (from separate Composite Score)
             aGrapevineScores[c].users[u].inverseRatings = [] // all ratings where this user is the rater
             // aGrapevineScores[c].users[u].calcDataRow = {}
             // aGrapevineScores[c].users[u].calcDataRow.default = MiscFunctions.cloneObj(window.calculationDataRow);
@@ -717,7 +739,6 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
         var oTopic = await ConceptGraphInMfsFunctions.lookupWordBySlug(topicWordSlug)
         var topic_topicSlug = oTopic.contextStructuredData_contextData.slug;
         var compositeScoreType_thisRating = influenceCategory_influenceTypeSlug + "_" +topic_topicSlug;
-        // console.log("setupGrapevineCompositeScoreVars compositeScoreType_thisRating: "+compositeScoreType_thisRating)
         for (var c=0;c<aCompositeScoreTypes.length;c++) {
             var nextCSType = aGrapevineScores[c].compositeScoreType;
             if (nextCSType == compositeScoreType_thisRating) {
@@ -732,7 +753,7 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].referenceTrustRating = referenceTrustRating;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].product = null;
                 if (referenceTrustRating) {
-                    aGrapevineScores[c].users[rateeUserNumber].ratings[numR].rating = (trustRating / referenceTrustRating).toFixed(4);
+                    aGrapevineScores[c].users[rateeUserNumber].ratings[numR].rating = (trustRating / referenceTrustRating).toPrecision(4);
                 }
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat1Coeff = null;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].weightAdjusted = null;
@@ -742,6 +763,7 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat2Coeff = null;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat3Coeff = null;
                 aGrapevineScores[c].users[rateeUserNumber].ratings[numR].attenuationFactor = null;
+                aGrapevineScores[c].users[rateeUserNumber].fooR = {};
 
                 var numIr = aGrapevineScores[c].users[raterUserNumber].inverseRatings.length;
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr] = {}
@@ -751,9 +773,22 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rateePeerID = rateePeerID;
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].trustRating = trustRating;
                 aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].referenceTrustRating = referenceTrustRating;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].product = null;
+                if (trustRating) {
+                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toPrecision(4);
+                }
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].strat1Coeff = null;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].weightAdjusted = null;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].weight = null;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].raterInfluence = null;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].ratingConfidence = ratingConfidence;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].strat2Coeff = null;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].strat3Coeff = null;
+                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].attenuationFactor = null;
+                aGrapevineScores[c].users[raterUserNumber].fooIR = {};
                 // the "rating" for inverseRating is the reciprocal of the rating for normal rating
                 if (trustRating) {
-                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toFixed(4);
+                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toPrecision(4);
                 }
                 if ((trustRating == 0) && (referenceTrustRating > 0)) {
                     // technically this would be infinite, but 1000 will suffice
@@ -765,7 +800,7 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
     }
 }
 
-const singleIterationCompositeScoreCalculations = async () => {
+const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelData) => {
     console.log("singleIterationCompositeScoreCalculations; ")
     for (var c=0;c<aGrapevineScores.length;c++) {
         // console.log("singleIterationCompositeScoreCalculations; c: "+c)
@@ -773,6 +808,25 @@ const singleIterationCompositeScoreCalculations = async () => {
         for (var u=0;u<aGrapevineScores[c].users.length;u++) {
             var nextPeerID = aGrapevineScores[c].users[u].peerID;
             // console.log("singleIterationCompositeScoreCalculations; u: "+u)
+            // var mod1Slider = document.getElementById('mod1Slider');
+            // var mod1FactorValue = mod1Slider.noUiSlider.get();
+            // var mod1FactorValue = mod1FactorValue / 100; // mod1FactorValue same as strat1Coeff
+            // var strat1Coeff = jQuery("#mod1FactorValueContainer").html()
+            // var strat2Coeff = jQuery("#mod2FactorValueContainer").html()
+            // var strat3Coeff = jQuery("#mod3FactorValueContainer").html()
+            // var attenuationFactor = jQuery("#attenuationFactorValueContainer").html()
+
+            var strat1Coeff = compScoreDisplayPanelData.strat1Coeff
+            var strat2Coeff = compScoreDisplayPanelData.strat2Coeff
+            var strat3Coeff = compScoreDisplayPanelData.strat3Coeff
+            var attenuationFactor = compScoreDisplayPanelData.attenuationFactor
+            var rigor = compScoreDisplayPanelData.rigor
+
+            var defaultUserTrustAverageScore = compScoreDisplayPanelData.defaultUserTrustAverageScore
+            var defaultUserTrustConfidence = compScoreDisplayPanelData.defaultUserTrustConfidence
+
+            var sumOfProducts = 0;
+            var sumOfWeights = 0;
             for (var r=0;r<aGrapevineScores[c].users[u].ratings.length;r++) {
                 console.log("singleIterationCompositeScoreCalculations; work on this step next - 16 Oct 2022")
                 // obtain needed values for calculations
@@ -781,13 +835,70 @@ const singleIterationCompositeScoreCalculations = async () => {
                 var raterUserNumber = aGrapevineScores[c].users[u].ratings[r].raterUserNumber;
                 var raterCurrentInfluence = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
                 var rateeCurrentInfluence = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
+                var trustRating = aGrapevineScores[c].users[u].ratings[r].trustRating;
+                var referenceTrustRating = aGrapevineScores[c].users[u].ratings[r].referenceTrustRating;
+                var rating = (trustRating / referenceTrustRating);
                 var ratingConfidence = aGrapevineScores[c].users[u].ratings[r].ratingConfidence;
+                // ratingConfidence should be recorded in oRatings as a percent and should be an integer (e.g. 75%) but converted here to decimal (e.g. 0.75)
+                // But it's possible it was converted to decimal (0.75) at a previous step.
+                // If we consider that percent could be a decimal with very low value (e.g. 0.1%) then I'll need to get rid of this check
+                // and make sure I am keeping track properly of where the switch from pct to decimal happens
+                if (ratingConfidence > 1) {
+                    ratingConfidence = ratingConfidence / 100
+                }
 
                 // do calculations
+                var weight = (attenuationFactor * strat3Coeff * strat2Coeff * ratingConfidence * raterCurrentInfluence);
+                sumOfWeights += weight;
+                console.log("attenuationFactor: "+attenuationFactor)
+                console.log("strat3Coeff: "+strat3Coeff)
+                console.log("strat2Coeff: "+strat2Coeff)
+                console.log("ratingConfidence: "+ratingConfidence)
+                console.log("raterCurrentInfluence: "+raterCurrentInfluence)
+                console.log("weight: "+weight)
+                // NEED TO DO FULL ADJUSTED WEIGHT CALCULATION
+                var weightAdjusted = weight;
+                var product = (weightAdjusted * rating * strat1Coeff);
+                sumOfProducts += product
 
                 // set new values
-                aGrapevineScores[c].users[u].ratings[r].raterInfluence = raterCurrentInfluence;
+                aGrapevineScores[c].users[u].ratings[r].attenuationFactor = attenuationFactor;
+                aGrapevineScores[c].users[u].ratings[r].strat1Coeff = strat1Coeff;
+                aGrapevineScores[c].users[u].ratings[r].strat2Coeff = strat2Coeff;
+                aGrapevineScores[c].users[u].ratings[r].strat3Coeff = strat3Coeff;
+                aGrapevineScores[c].users[u].ratings[r].rating = parseFloat(rating.toPrecision(4));
+                aGrapevineScores[c].users[u].ratings[r].raterInfluence = parseFloat(raterCurrentInfluence.toPrecision(4));
+                aGrapevineScores[c].users[u].ratings[r].weight = parseFloat(weight.toPrecision(4));
+                aGrapevineScores[c].users[u].ratings[r].weightAdjusted = parseFloat(weightAdjusted.toPrecision(4));
+                aGrapevineScores[c].users[u].ratings[r].product = parseFloat(product.toPrecision(4));
+
             }
+            // add Default User Score
+            var attenuationFactor_default = 1
+            var strat1Coeff_default = 1
+            var strat2Coeff_default = 1
+            var strat3Coeff_default = 1
+            var raterCurrentInfluence_default = 1;
+            var rating_default = defaultUserTrustAverageScore / 100;
+            var ratingConfidence_default = defaultUserTrustConfidence / 100;
+            var weight_default = (attenuationFactor_default * strat3Coeff_default * strat2Coeff_default * ratingConfidence_default * raterCurrentInfluence_default);
+            sumOfWeights += weight_default;
+            // NEED TO DO FULL ADJUSTED WEIGHT CALCULATION
+            var weightAdjusted_default = weight_default;
+            var product_default = (weightAdjusted_default * rating_default * strat1Coeff_default);
+            sumOfProducts += product_default
+
+            aGrapevineScores[c].users[u].defaultRating = {}
+            aGrapevineScores[c].users[u].defaultRating.attenuationFactor = attenuationFactor_default;
+            aGrapevineScores[c].users[u].defaultRating.strat1Coeff = strat1Coeff_default;
+            aGrapevineScores[c].users[u].defaultRating.strat2Coeff = strat2Coeff_default;
+            aGrapevineScores[c].users[u].defaultRating.strat3Coeff = strat3Coeff_default;
+            aGrapevineScores[c].users[u].defaultRating.rating = parseFloat(rating_default.toPrecision(4));
+            aGrapevineScores[c].users[u].defaultRating.raterInfluence = parseFloat(raterCurrentInfluence_default.toPrecision(4));
+            aGrapevineScores[c].users[u].defaultRating.weight = parseFloat(weight_default.toPrecision(4));
+            aGrapevineScores[c].users[u].defaultRating.weightAdjusted = parseFloat(weightAdjusted_default.toPrecision(4));
+            aGrapevineScores[c].users[u].defaultRating.product = parseFloat(product_default.toPrecision(4));
+
             for (var r=0;r<aGrapevineScores[c].users[u].inverseRatings.length;r++) {
                 // obtain needed values for calculations
                 var nextRatingSlug = aGrapevineScores[c].users[u].inverseRatings[r].ratingSlug
@@ -795,15 +906,40 @@ const singleIterationCompositeScoreCalculations = async () => {
                 var rateeUserNumber = aGrapevineScores[c].users[u].inverseRatings[r].rateeUserNumber;
                 var raterCurrentInfluence = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
                 var rateeCurrentInfluence = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
-                var ratingConfidence = aGrapevineScores[c].users[u].ratings[r].ratingConfidence;
+                var ratingConfidence = aGrapevineScores[c].users[u].inverseRatings[r].ratingConfidence;
 
                 // do calculations
 
                 // set new values
-                aGrapevineScores[c].users[u].ratings[r].raterInfluence = rateeCurrentInfluence;
+                aGrapevineScores[c].users[u].inverseRatings[r].attenuationFactor = attenuationFactor;
+                aGrapevineScores[c].users[u].inverseRatings[r].strat1Coeff = strat1Coeff;
+                aGrapevineScores[c].users[u].inverseRatings[r].strat2Coeff = strat2Coeff;
+                aGrapevineScores[c].users[u].inverseRatings[r].strat3Coeff = strat3Coeff;
+                aGrapevineScores[c].users[u].inverseRatings[r].rateeInfluence = rateeCurrentInfluence;
             }
+
+            var average = sumOfProducts / sumOfWeights
+            var certainty = convertInputToCertainty(sumOfWeights,rigor)
+            var influence = average * certainty
+            aGrapevineScores[c].users[u].compositeScoreData.numberOfRatings = aGrapevineScores[c].users[u].ratings.length
+            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
+            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.input = parseFloat(sumOfWeights.toPrecision(4));
+            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
+            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.certainty = parseFloat(certainty.toPrecision(4));
+            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
+            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
         }
     }
+    console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
+}
+
+const convertInputToCertainty = (input,rigor) => {
+    var rigority = - Math.log(rigor)
+    var fooB = - input * rigority
+    var fooA = Math.exp(fooB);
+    var certainty = (1 - fooA)
+    return certainty;
+
 }
 const runGrapevineCompositeScoreCalculations = async () => {
     // set up a loop to call singleIterationCompositeScoreCalculations repeatedly
@@ -811,7 +947,7 @@ const runGrapevineCompositeScoreCalculations = async () => {
 
 var defCon = window.grapevine.starterDefaultUserTrustConfidence / 100
 var defAvg = window.grapevine.starterDefaultUserTrustAverageScore / 100
-var defInf = defCon * defAvg;
+var defInf = parseFloat((defCon * defAvg).toPrecision(4));
 window.compositeScoreData = {
     seedUser: false,
     selectedUser: false,
@@ -872,16 +1008,33 @@ const createSeedUserSelector = async (masterUserList,myPeerID) => {
 
     jQuery("#seedUserSelectorContainer").html(selectorHTML)
 }
+
+const determineCompositeScoreTypeAndNumber = () => {
+    var influenceType_slug = jQuery("#influenceTypeSelector option:selected").data("influencetypeslug")
+    var context_contextSlug = jQuery("#contextSelector option:selected").data("contextcontextslug")
+
+    var cST = influenceType_slug+"_"+context_contextSlug;
+    var cSN = lookupCompositeScoreNumberByType[cST];
+
+    jQuery("#compositeScoreTypeContainer").html(cST)
+    jQuery("#compositeScoreNumberContainer").html(cSN)
+}
+
 export default class GrapevineVisualizationMainPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data: null,
             compScoreDisplayPanelData: {
-                attenuationFactor: null,
-                rigor: null,
-                defaultUserTrustAverageScore: null,
-                defaultUserTrustConfidence: null
+                attenuationFactor: window.grapevine.starterDefaultAttenuationFactor / 100,
+                rigor: window.grapevine.starterRigor / 100,
+                defaultUserTrustAverageScore: window.grapevine.starterDefaultUserTrustAverageScore / 100,
+                defaultUserTrustConfidence: window.grapevine.starterDefaultUserTrustConfidence / 100,
+                strat1Coeff: window.grapevine.starterStrat1Coeff / 100,
+                strat2Coeff: window.grapevine.starterStrat2Coeff / 100,
+                strat3Coeff: window.grapevine.starterStrat3Coeff / 100,
+                strat4Coeff: window.grapevine.starterStrat4Coeff / 100,
+                strat5Coeff: window.grapevine.starterStrat5Coeff / 100,
             },
             topLevelTrustCalculations: {
                 defaultUserTrustScoreData: {
@@ -889,8 +1042,219 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                 }
             },
             contactLinks: [],
+            oSingleUserGrapevineScores: {
+                 "userNumber": 0,
+                 "peerID": "12D3KooWJpiTmrQGWG9oThj6MAMhMmm756htH2Co1TT6LsPsBWki",
+                 "username": "drDave",
+                 "avatarCid": "QmbRs5wrimekB4ChruzzokihpyrnMDGeFHkYqLkB1F53ho",
+                 "seedUser": false,
+                 "compositeScoreData": {
+                     "seedUser": false,
+                     "selectedUser": false,
+                     "numberOfRatings": 1,
+                     "radiusMultiplier": 1,
+                     "standardCalculations": {
+                         "sumOfProducts": 0.01283,
+                         "certainty": 0.01806,
+                         "input": 0.01784,
+                         "inputWithoutStrat2": null,
+                         "average": 0.7193,
+                         "influence": 0.01299,
+                         "rigor": 0.36
+                     },
+                     "notIncludingDefaults": {
+                         "sumOfProducts": 0,
+                         "certainty": 0,
+                         "input": 0,
+                         "inputWithoutStrat2": 0,
+                         "average": 0,
+                         "influence": 0
+                     },
+                     "lastUpdated": null
+                 },
+                 "ratings": [
+                     {
+                         "ratingNumber": 5,
+                         "ratingSlug": "ratingOf_PsBWki_by_XaXtKQ_acxsu9",
+                         "raterUserNumber": 2,
+                         "raterPeerID": "QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ",
+                         "trustRating": "100.00",
+                         "referenceTrustRating": "100.00",
+                         "product": 0.01283,
+                         "rating": 1,
+                         "strat1Coeff": 0.81,
+                         "weightAdjusted": 0.01584,
+                         "weight": 0.01584,
+                         "raterInfluence": 0.02,
+                         "ratingConfidence": "88.00",
+                         "strat2Coeff": 1,
+                         "strat3Coeff": 1,
+                         "attenuationFactor": 0.9
+                     },
+                     {
+                         "ratingNumber": 6,
+                         "ratingSlug": "ratingOf_PsBWki_by_XaXtKQ_acxsu9",
+                         "raterUserNumber": 2,
+                         "raterPeerID": "QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ",
+                         "trustRating": "100.00",
+                         "referenceTrustRating": "100.00",
+                         "product": 0.01283,
+                         "rating": 1,
+                         "strat1Coeff": 0.81,
+                         "weightAdjusted": 0.01584,
+                         "weight": 0.01584,
+                         "raterInfluence": 0.02,
+                         "ratingConfidence": "88.00",
+                         "strat2Coeff": 1,
+                         "strat3Coeff": 1,
+                         "attenuationFactor": 0.9
+                     }
+                 ],
+                 "defaultRating": {
+                     "attenuationFactor": 1,
+                     "strat1Coeff": 1,
+                     "strat2Coeff": 1,
+                     "strat3Coeff": 1,
+                     "rating": 0.001,
+                     "raterInfluence": 1,
+                     "weight": 0.002,
+                     "weightAdjusted": 0.002,
+                     "product": 0.000002
+                 },
+                 "inheritedRating": {},
+                 "inverseRatings": [
+                     {
+                         "ratingNumber": 3,
+                         "ratingSlug": "ratingOf_XaXtKQ_by_PsBWki_4sbkq1",
+                         "rateeUserNumber": 2,
+                         "rateePeerID": "QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ",
+                         "trustRating": "100.00",
+                         "referenceTrustRating": "100.00",
+                         "product": null,
+                         "rating": "1.000",
+                         "strat1Coeff": 0.81,
+                         "weightAdjusted": null,
+                         "weight": null,
+                         "raterInfluence": null,
+                         "ratingConfidence": "100.00",
+                         "strat2Coeff": 1,
+                         "strat3Coeff": 1,
+                         "attenuationFactor": 0.9,
+                         "rateeInfluence": 0.02
+                     },
+                     {
+                         "ratingNumber": 4,
+                         "ratingSlug": "ratingOf_wsCR4a_by_PsBWki_cG4pji",
+                         "rateeUserNumber": 8,
+                         "rateePeerID": "12D3KooWAqYKPfgBzFWo8BtvQCebzZkgTGVhRsJMEkPKTWwsCR4a",
+                         "trustRating": "0.00",
+                         "referenceTrustRating": "100.00",
+                         "product": null,
+                         "rating": 1000,
+                         "strat1Coeff": 0.81,
+                         "weightAdjusted": null,
+                         "weight": null,
+                         "raterInfluence": null,
+                         "ratingConfidence": "20.00",
+                         "strat2Coeff": 1,
+                         "strat3Coeff": 1,
+                         "attenuationFactor": 0.9,
+                         "rateeInfluence": 0.02
+                     }
+                 ]
+            },
+
+
+
+            aSingleUserGrapevineScores2: {
+               "userNumber": 0,
+               "peerID": "QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ",
+               "seedUser": false,
+               "compositeScoreData": {
+                   "seedUser": false,
+                   "selectedUser": false,
+                   "numberOfRatings": 0,
+                   "radiusMultiplier": 1,
+                   "standardCalculations": {
+                       "sumOfProducts": null,
+                       "certainty": 0.2,
+                       "input": null,
+                       "inputWithoutStrat2": null,
+                       "average": 0.1,
+                       "influence": 0.020000000000000004
+                   },
+                   "notIncludingDefaults": {
+                       "sumOfProducts": 0,
+                       "certainty": 0,
+                       "input": 0,
+                       "inputWithoutStrat2": 0,
+                       "average": 0,
+                       "influence": 0
+                   },
+                   "lastUpdated": null
+               },
+               "ratings": [
+                   {
+                       "ratingNumber": 3,
+                       "ratingSlug": "ratingOf_XaXtKQ_by_PsBWki_4sbkq1",
+                       "raterUserNumber": 1,
+                       "raterPeerID": "12D3KooWJpiTmrQGWG9oThj6MAMhMmm756htH2Co1TT6LsPsBWki",
+                       "trustRating": "100.00",
+                       "referenceTrustRating": "100.00",
+                       "product": null,
+                       "rating": "1.0000",
+                       "strat1Coeff": null,
+                       "weightAdjusted": null,
+                       "weight": null,
+                       "raterInfluence": null,
+                       "ratingConfidence": "100.00",
+                       "strat2Coeff": null,
+                       "strat3Coeff": null,
+                       "attenuationFactor": null
+                   }
+               ],
+               "inverseRatings": [
+                   {
+                       "ratingNumber": 5,
+                       "ratingSlug": "ratingOf_PsBWki_by_XaXtKQ_acxsu9",
+                       "rateeUserNumber": 1,
+                       "rateePeerID": "12D3KooWJpiTmrQGWG9oThj6MAMhMmm756htH2Co1TT6LsPsBWki",
+                       "trustRating": "100.00",
+                       "referenceTrustRating": "100.00",
+                       "rating": "1.0000"
+                   },
+                   {
+                       "ratingNumber": 6,
+                       "ratingSlug": "ratingOf_wsCR4a_by_XaXtKQ_3QH1pb",
+                       "rateeUserNumber": 8,
+                       "rateePeerID": "12D3KooWAqYKPfgBzFWo8BtvQCebzZkgTGVhRsJMEkPKTWwsCR4a",
+                       "trustRating": "0.00",
+                       "referenceTrustRating": "100.00",
+                       "rating": 1000
+                   },
+                   {
+                       "ratingNumber": 7,
+                       "ratingSlug": "ratingOf_YHwGyr_by_XaXtKQ_J6v7Vw",
+                       "rateeUserNumber": 9,
+                       "rateePeerID": "12D3KooWBpwn2pRkgYg4BnasbS4oL54ytH7WB3UmPkGtzGYHwGyr",
+                       "trustRating": "100.00",
+                       "referenceTrustRating": "100.00",
+                       "rating": "1.0000"
+                   },
+                   {
+                       "ratingNumber": 8,
+                       "ratingSlug": "ratingOf_A7zkpr_by_XaXtKQ_AvbXJ6",
+                       "rateeUserNumber": 15,
+                       "rateePeerID": "12D3KooWFUmSjUKTB6ATZJRhKyDU4rFp16Mu4eBvqtZPXKA7zkpr",
+                       "trustRating": "0.00",
+                       "referenceTrustRating": "100.00",
+                       "rating": 1000
+                   }
+               ]
+            }
         }
     }
+
     handleAttenuationSliderCallback = (newAttenuationFactor) =>{
         // this.setState({data: newAttenuationFactor})
         var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
@@ -899,11 +1263,11 @@ export default class GrapevineVisualizationMainPage extends React.Component {
     }
 
     handleUserTrustAverageScoreCallback = (newUserTrustAverageScore) =>{
-        // console.log("main page: newUserTrustAverageScore: "+newUserTrustAverageScore)
+        console.log("main page: newUserTrustAverageScore: "+newUserTrustAverageScore)
         var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
         compScoreDisplayPanelData_new.defaultUserTrustAverageScore = newUserTrustAverageScore
         this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
-
+        console.log("main page B: newUserTrustAverageScore: "+newUserTrustAverageScore)
     }
 
     handleUserTrustConfidenceCallback = (newUserTrustConfidence) =>{
@@ -920,11 +1284,81 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
     }
 
+    handleMod1Callback = (newMod1Factor) =>{
+        console.log("grapevineVisualization page; newMod1Factor: "+newMod1Factor)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.strat1Coeff = newMod1Factor
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    }
+
+    handleMod2Callback = (newMod2Factor) =>{
+        console.log("grapevineVisualization page; newMod2Factor: "+newMod2Factor)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.strat2Coeff = newMod2Factor
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    }
+
+    handleMod3Callback = (newMod3Factor) =>{
+        console.log("grapevineVisualization page; newMod3Factor: "+newMod3Factor)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.strat3Coeff = newMod3Factor
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    }
+
+    handleMod4Callback = (newMod4Factor) =>{
+        console.log("grapevineVisualization page; newMod4Factor: "+newMod4Factor)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.strat4Coeff = newMod4Factor
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    }
+
+    handleMod5Callback = (newMod5Factor) =>{
+        console.log("grapevineVisualization page; newMod5Factor: "+newMod5Factor)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.strat5Coeff = newMod5Factor
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    }
+
+    changeUserTrustScoreCalculationPage = () =>{
+        console.log("changeUserTrustScoreCalculationPage")
+        // console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
+
+        var oSingleUserGrapevineScores_new = this.state.oSingleUserGrapevineScores
+        oSingleUserGrapevineScores_new = MiscFunctions.cloneObj(aGrapevineScores[9].users[0])
+        console.log("oSingleUserGrapevineScores_new: "+JSON.stringify(oSingleUserGrapevineScores_new,null,4))
+        // oSingleUserGrapevineScores_new.avatarCid = "QmeZB53kw8XD318LKRTDS2BJDpHWKuBz4Dv47yNwbc2uof"
+        // oSingleUserGrapevineScores_new.avatarCid = newAvatarCid
+        // oSingleUserGrapevineScores_new.username = "dude"
+
+        this.setState({oSingleUserGrapevineScores: oSingleUserGrapevineScores_new})
+
+        var imageCid = this.state.oSingleUserGrapevineScores.avatarCid;
+        var img = document.getElementById("showCalculationsAvatarThumb") // the img tag you want it in
+        img.src = "http://localhost:8080/ipfs/"+imageCid;
+        //  img.src = "http://localhost:8080/ipfs/"+newAvatarCid;
+    }
+
     async componentDidMount() {
         // var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
         // compScoreDisplayPanelData_new.attenuationFactor = 0.2
         // this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
+
+        /*
+        var oSingleUserGrapevineScores_new = this.state.oSingleUserGrapevineScores
+        oSingleUserGrapevineScores_new.avatarCid = "QmeZB53kw8XD318LKRTDS2BJDpHWKuBz4Dv47yNwbc2uof"
+        oSingleUserGrapevineScores_new.username = "dude"
+        this.setState({oSingleUserGrapevineScores: oSingleUserGrapevineScores_new})
+        */
+        jQuery("#testSomethingButton").click(async function(foo = this.changeUserTrustScoreCalculationPage){
+            console.log("testSomethingButton")
+            var newAvCid = "QmeZB53kw8XD318LKRTDS2BJDpHWKuBz4Dv47yNwbc2uof";
+            foo();
+            // this.changeUserTrustScoreCalculationPage();
+            console.log("changeUserTrustScoreCalculationPage")
+        })
+
+
         aCompositeScoreTypes = await generateAllCompositeScoreTypes()
         console.log("aCompositeScoreTypes: "+JSON.stringify(aCompositeScoreTypes,null,4))
 
@@ -1033,11 +1467,15 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
         await setupGrapevineCompositeScoreVars(masterUserList);
 
+        var compScoreDisplayPanelData = this.state.compScoreDisplayPanelData
+
         await runGrapevineCompositeScoreCalculations();
         jQuery("#singleIterationButton").click(async function(){
             console.log("singleIterationButton")
-            await singleIterationCompositeScoreCalculations()
+            await singleIterationCompositeScoreCalculations(compScoreDisplayPanelData)
         })
+
+        // console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
     }
     render() {
         return (
@@ -1047,11 +1485,24 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                     <div className="mainPanel" >
                         <Masthead />
                         <div class="h2">Grapevine Visualization Main Page</div>
+                        <div className="doSomethingButton" id="testSomethingButton" >change</div>
+                        <button onClick={this.changeUserTrustScoreCalculationPage}>
+                           Click me!
+                        </button>
+
+                        <div style={{display:"inline-block"}} >compositeScoreType:</div>
+                        <div id="compositeScoreTypeContainer" style={{display:"inline-block"}} ></div>
+
+                        <div style={{display:"inline-block"}} >compositeScoreNumber:</div>
+                        <div id="compositeScoreNumberContainer" style={{display:"inline-block"}} ></div>
+
                         <center>
                             <div>
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"500px",height:"100px"}}>
                                     <div id="seedUserSelectorContainer">seedUserSelectorContainer</div>
-                                    <AttenuationSlider  attenuationSliderCallback = {this.handleAttenuationSliderCallback} />
+                                    <AttenuationSlider
+                                        attenuationSliderCallback = {this.handleAttenuationSliderCallback}
+                                    />
                                 </div>
 
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"300px",height:"100px"}}>
@@ -1088,13 +1539,22 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                                     </center>
                                     <ControlPanel
                                         compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
+                                        defaultUserTrustAverageScore={this.state.compScoreDisplayPanelData.defaultUserTrustAverageScore}
                                         userTrustAverageScoreSliderCallback = {this.handleUserTrustAverageScoreCallback}
                                         userTrustConfidenceSliderCallback = {this.handleUserTrustConfidenceCallback}
                                         rigorSliderCallback = {this.handleRigorCallback}
+                                        mod1SliderCallback = {this.handleMod1Callback}
+                                        mod2SliderCallback = {this.handleMod2Callback}
+                                        mod3SliderCallback = {this.handleMod3Callback}
+                                        mod4SliderCallback = {this.handleMod4Callback}
+                                        mod5SliderCallback = {this.handleMod5Callback}
                                     />
                                 </div>
                             </div>
-                            <CompScoreCalcPanel compScoreDisplayPanelData={this.state.compScoreDisplayPanelData} />
+                            <CompScoreCalcPanel
+                                compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
+                                oSingleUserGrapevineScores={this.state.oSingleUserGrapevineScores}
+                            />
                         </center>
                     </div>
                 </fieldset>

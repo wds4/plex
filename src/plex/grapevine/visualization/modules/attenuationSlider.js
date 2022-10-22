@@ -12,7 +12,7 @@ export default class AttenuationSliderModule extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            defaultAttenuationFactor: 90
+            compScoreDisplayPanelData: this.props.compScoreDisplayPanelData
         }
     }
     async componentDidMount() {

@@ -13,6 +13,7 @@ export default class DefenseModification2Tab extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            compScoreDisplayPanelData: this.props.compScoreDisplayPanelData
         }
     }
     async componentDidMount() {
@@ -20,10 +21,12 @@ export default class DefenseModification2Tab extends React.Component {
             var mod2FactorValue = mod2Slider.noUiSlider.get();
             var mod2FactorValue = mod2FactorValue / 100;
             jQuery("#mod2FactorValueContainer").html(mod2FactorValue)
+            this.props.mod2SliderCallback(mod2FactorValue);
         }
         var mod2Slider = document.getElementById('mod2Slider');
+        var starterValueUserMod2Coeff = this.props.compScoreDisplayPanelData.strat2Coeff * 100;
         noUiSlider.create(mod2Slider, {
-            start: 100,
+            start: starterValueUserMod2Coeff,
             step: 1,
             range: {
                 'max': 100,
@@ -45,7 +48,7 @@ export default class DefenseModification2Tab extends React.Component {
                     <div id="mod2Slider" style={{display:"inline-block",width:"200px",marginLeft:"20px",backgroundColor:"blue"}} ></div>
                     <div style={{display:"inline-block",marginLeft:"20px",fontSize:"12px"}} >ON</div>
                 </div>
-                
+
                 <div style={{fontSize:"12px"}}>
                     <div style={{textAlign:"left",marginTop:"10px",fontStyle:"italic"}}>
                         Problem: What if Malicious User #1 and Malicious User #2 use the grapevine trust system so that each rates the other with trust scores much greater than 1?
