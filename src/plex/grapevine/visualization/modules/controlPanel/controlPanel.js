@@ -125,8 +125,6 @@ export default class GrapevineVisualControlPanel extends React.Component {
                     </TabList>
 
                     <TabPanel>
-                        defaultUserTrustAverageScore state: {this.state.compScoreDisplayPanelData.defaultUserTrustAverageScore}
-                        defaultUserTrustAverageScore props: {this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore}
                         <UsersTab
                             compScoreDisplayPanelData={this.props.compScoreDisplayPanelData}
                             defaultUserTrustAverageScore={this.props.defaultUserTrustAverageScore}

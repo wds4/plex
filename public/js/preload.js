@@ -284,22 +284,22 @@ window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
 window.grapevine.users = "/grapevineData/users/"
 
 window.grapevine.starterDefaultAttenuationFactor = 90;
-window.grapevine.starterDefaultUserTrustAverageScore = 10;
-window.grapevine.starterDefaultUserTrustConfidence = 20;
-window.grapevine.starterRigor = 36; // ??
+window.grapevine.starterDefaultUserTrustAverageScore = 50;
+window.grapevine.starterDefaultUserTrustConfidence = 40;
+window.grapevine.starterRigor = 25; // ?? 25 / 100
 window.grapevine.starterDecoupleRigorConfidence = false // ??
-window.grapevine.starterStrat1Coeff = 81; // ??
-window.grapevine.starterStrat2Coeff = 100; // ??
-window.grapevine.starterStrat3Coeff = 100; // ??
-window.grapevine.starterStrat4Coeff = 200; // ??
-window.grapevine.starterStrat5Coeff = 500; // ??
+window.grapevine.starterStrat1Coeff = 15; // ?? 10 / 100
+window.grapevine.starterStrat2Coeff = 10; // ?? 100 / 100
+window.grapevine.starterStrat3Coeff = 100; // ?? 100 / 100
+window.grapevine.starterStrat4Coeff = 200; // ?? 200 / 500
+window.grapevine.starterStrat5Coeff = 500; // ?? 500 / 2000
+// visualization
+window.grapevine.defaultNodeSize = 30;
 
 window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
 window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false
 
 window.testVarA = "defined in public/js/preload.js"
-
-
 
 window.oAutomatedImportData = {};
 window.oAutomatedImportData.running=false;

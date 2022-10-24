@@ -565,12 +565,6 @@ export function reorganizeSchema_propertySchema() {
         }
     }
 
-
-
-
-
-
-
     /*
     // initialize some stuff to zero
     var numPropertyDescendantsOfThisNode_arr = [];
@@ -5357,7 +5351,7 @@ export default class AddANewConcept extends React.Component {
         <fieldset className="JSONSchemaContainer" id="panelE" style={{display:"none"}} data-visibility="invisible" >
             <EditPropertyList />
         </fieldset>
-        
+
         <fieldset className="JSONSchemaContainer" id="panelF" style={{display:"none"}} data-visibility="invisible" >
             <EditJSONSchema />
         </fieldset>

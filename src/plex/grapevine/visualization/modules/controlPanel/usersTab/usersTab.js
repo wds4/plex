@@ -74,7 +74,7 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
                     <div style={{textAlign:"center"}}>
                         <div style={{display:"inline-block",border:"1px solid black",borderRadius:"5px",width:"300px",padding:"5px"}}>
                             <div style={{fontSize:"14px",marginLeft:"5px"}} >
-                                default avg score state: ={this.state.compScoreDisplayPanelData.defaultUserTrustAverageScore}= props: ={this.props.compScoreDisplayPanelData.defaultUserTrustAverageScore}=  for unvetted users:
+                                default avg score for unvetted users:
                             </div>
                             <div style={{marginTop:"10px"}}>
                                 <div id="usersDefaultAverageScoreValueContainer" style={{display:"inline-block",width:"30px",marginLeft:"10px"}} ></div>

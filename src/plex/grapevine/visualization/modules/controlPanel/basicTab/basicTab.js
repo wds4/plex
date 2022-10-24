@@ -8,7 +8,7 @@ import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.min.css";
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 
 const drawRigorChart = () => {
     const options = {

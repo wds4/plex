@@ -45,9 +45,9 @@ export default class DefenseModification1Tab extends React.Component {
                 <div>
                     <div style={{display:"inline-block",fontSize:"12px"}} >Mod 1 FACTOR</div>
                     <div id="mod1FactorValueContainer" style={{display:"inline-block",marginLeft:"10px",width:"30px",fontSize:"12px"}} >1.00</div>
-                    <div style={{display:"inline-block",marginLeft:"10px",fontSize:"12px"}} >OFF</div>
+                    <div style={{display:"inline-block",marginLeft:"10px",fontSize:"12px"}} >OFF (ref = avg user)</div>
                     <div id="mod1Slider" style={{display:"inline-block",width:"200px",marginLeft:"20px",backgroundColor:"blue"}} ></div>
-                    <div style={{display:"inline-block",marginLeft:"20px",fontSize:"12px"}} >ON</div>
+                    <div style={{display:"inline-block",marginLeft:"20px",fontSize:"12px"}} >ON (ref = rater)</div>
                 </div>
 
                 <div style={{fontSize:"12px"}}>

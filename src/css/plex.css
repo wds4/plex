@@ -1111,3 +1111,12 @@
     width:100px;
     vertical-align:bottom;
 }
+.calculationRowsHeaderContainer {
+    background-color:#4f4f4f;
+    color:white;
+
+    font-size:12px;
+}
+.calculationRowContainer {
+    font-size:10px;
+}

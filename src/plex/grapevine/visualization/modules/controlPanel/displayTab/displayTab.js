@@ -15,12 +15,13 @@ export default class GrapevineVisualControlPanelDisplayTab extends React.Compone
         }
     }
     async componentDidMount() {
-
+        
     }
     render() {
         return (
             <>
                 <center>Display Tab</center>
+
             </>
         );
     }

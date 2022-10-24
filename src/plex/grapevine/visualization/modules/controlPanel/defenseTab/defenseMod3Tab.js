@@ -144,8 +144,6 @@ export default class DefenseModification3Tab extends React.Component {
         mod5Slider.noUiSlider.on("update",updateMod5Factor)
         mod5Slider.noUiSlider.on("change",drawMod3Chart)
 
-
-
         drawMod3Chart();
     }
     render() {
