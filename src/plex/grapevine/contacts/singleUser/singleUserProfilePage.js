@@ -140,6 +140,24 @@ export default class SingleUserProfile extends React.Component {
             var subsetUniqueIdentifier = null; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
             await ConceptGraphInMfsFunctions.addSpecificInstanceToConceptGraphMfs(conceptUniqueIdentifier,subsetUniqueIdentifier,oNewWord)
         })
+        jQuery(".profilePageBarTab").click(function(){
+            var contentDescription = jQuery(this).data("contentdescription")
+            // console.log("bottomPanelContainer; contentDescription: "+contentDescription)
+            jQuery(".bottomPanelContainer").css("display","none")
+            jQuery(".profilePageBarTab").css("text-decoration-line","none")
+            jQuery(".profilePageBarTab").css("color","grey")
+
+            jQuery("#bottomPanelContainer_"+contentDescription).css("display","block")
+            jQuery("#profilePageBarTab_"+contentDescription).css("text-decoration-line","underline")
+            jQuery("#profilePageBarTab_"+contentDescription).css("color","black")
+        })
+        jQuery("#moreRatingPresetsButton").click(function(){
+            jQuery(".bottomPanelContainer").css("display","none")
+            jQuery(".profilePageBarTab").css("text-decoration-line","none")
+            jQuery(".profilePageBarTab").css("color","grey")
+
+            jQuery("#bottomPanelContainer_ratingPresets").css("display","block")
+        })
     }
     render() {
         // var path = "/SingleUserLeaveRating/QmWpLB32UFkrVTDHwstrf8wdFSen5kbrs1TGEzu8XaXtKQ"+cid;
@@ -149,69 +167,128 @@ export default class SingleUserProfile extends React.Component {
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <div className="mainPanel" >
+                    <div className="mainPanel" style={{border:"1px solid grey"}}>
                         <Masthead />
                         <center>
-                            <div style={{border:"1px dashed grey",width:"1210px",textAlign:"left"}}>
-                                <div style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"440px",position:"relative"}}>
-                                    <div id="avatarContainer" style={{display:"inline-block",border:"1px dashed grey",width:"400px",height:"400px"}}>
-                                        <img id="avatarBox" className="mainProfilePageAvatarBox" />
-                                    </div>
-                                    <div style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",position:"absolute",bottom:"5px",left:"5px"}}>
-                                        <div>
-                                            <div style={{display:"inline-block",fontSize:"9px"}}>peerID (cid): </div>
-                                            <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
-                                        </div>
-
-                                        <div>
-                                            <div style={{display:"inline-block",fontSize:"9px"}}>image cid: </div>
-                                            <div id="imageCidContainer" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
+                            <div style={{border:"1px solid grey",width:"1210px"}}>
+                                <div style={{width:"100%",textAlign:"left"}}>
+                                    <div style={{display:"inline-block",width:"400px",height:"400px",position:"relative"}}>
+                                        <div id="avatarContainer" style={{display:"inline-block",width:"400px",height:"400px"}}>
+                                            <img id="avatarBox" className="mainProfilePageAvatarBox" />
                                         </div>
                                     </div>
+
+                                    <div style={{display:"inline-block",width:"800px",height:"400px",position:"relative"}}>
+                                        <div id="usernameContainer" style={{display:"inline-block",width:"100%",padding:"10px",fontSize:"28px",textAlign:"left",overflow:"scroll"}}>
+                                        </div>
+
+                                        <div id="locationContainer" style={{display:"inline-block",width:"100%",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll",color:"grey"}}>
+                                        </div>
+
+                                        <div style={{marginLeft:"10px"}} >
+                                            <div>
+                                                <div style={{display:"inline-block",fontSize:"9px"}}>peerID (cid): </div>
+                                                <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
+                                            </div>
+                                            <div style={{display:"none"}}>
+                                                <div style={{display:"inline-block",fontSize:"9px"}}>image cid: </div>
+                                                <div id="imageCidContainer" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="aboutContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"100%",height:"200px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
+                                        </div>
+
+                                        <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Follow</NavLink>
+                                        <div id="moreRatingPresetsButton" >more rating presets</div>
+
+                                    </div>
                                 </div>
 
-                                <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"440px",position:"relative"}}>
-                                    <div id="usernameContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"70px",padding:"10px",fontSize:"28px",textAlign:"left",overflow:"scroll"}}>
+                                <div style={{width:"1210px",height:"500px",textAlign:"left"}}>
+                                    <div style={{width:"1210px",textAlign:"left"}}>
+                                        <div className="profilePageBarTab" id="profilePageBarTab_about" data-contentdescription="about" >
+                                            <center>About</center>
+                                        </div>
+                                        <div className="profilePageBarTab" id="profilePageBarTab_posts" data-contentdescription="posts" >
+                                            <center>Posts</center>
+                                        </div>
+                                        <div className="profilePageBarTab" id="profilePageBarTab_grapevine" data-contentdescription="grapevine" >
+                                            <center>Grapevine</center>
+                                        </div>
+                                        <div className="profilePageBarTab" id="profilePageBarTab_ratings" data-contentdescription="ratings" >
+                                            <center>Ratings</center>
+                                        </div>
+                                        <div className="profilePageBarTab" id="profilePageBarTab_scores" data-contentdescription="scores" >
+                                            <center>Scores</center>
+                                        </div>
                                     </div>
+                                    <div style={{width:"1210px",height:"350px",textAlign:"left",overflow:"scroll"}}>
+                                        <div data-contentdescription="about" id="bottomPanelContainer_about" className="bottomPanelContainer" >
+                                            About
+                                            <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} >Rate this user (JSON Schema Form) (?deprecating)</NavLink>
+                                            <div id="saveUserToMutableFileSystemConceptGraphButton" className="doSomethingButton">save/update user file to Concept Graph on MFS (deprecating?)</div>
+                                        </div>
+                                        <div data-contentdescription="posts" id="bottomPanelContainer_posts" className="bottomPanelContainer" >
+                                            Posts
+                                        </div>
+                                        <div data-contentdescription="grapevine" id="bottomPanelContainer_grapevine" className="bottomPanelContainer" >
+                                            Grapevine
+                                        </div>
+                                        <div data-contentdescription="ratings" id="bottomPanelContainer_ratings" className="bottomPanelContainer" >
+                                            Ratings
+                                        </div>
+                                        <div data-contentdescription="scores" id="bottomPanelContainer_scores" className="bottomPanelContainer" >
+                                            Scores
+                                        </div>
+                                        <div data-contentdescription="ratingPresets" id="bottomPanelContainer_ratingPresets" className="bottomPanelContainer" >
+                                            <div >
+                                                <div className="ratingPresetsPanel_colA" >
+                                                    Attention:
+                                                </div>
+                                                <div className="ratingPresetsPanel_colB" >
+                                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Follow</NavLink>
+                                                </div>
+                                                <div className="ratingPresetsPanel_colC" >
+                                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Ignore</NavLink>
+                                                </div>
+                                                <div className="ratingPresetsPanel_colD" >
+                                                default
+                                                </div>
+                                            </div>
+                                            <div >
+                                                <div className="ratingPresetsPanel_colA" >
+                                                    manage ontology:
+                                                </div>
+                                                <div className="ratingPresetsPanel_colB" >
+                                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >trust</NavLink>
+                                                </div>
+                                                <div className="ratingPresetsPanel_colC" >
+                                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >don't trust</NavLink>
+                                                </div>
+                                                <div className="ratingPresetsPanel_colD" >
+                                                default
+                                                </div>
+                                            </div>
+                                            <div >
+                                                <div className="ratingPresetsPanel_colA" >
+                                                    believe:
+                                                </div>
+                                                <div className="ratingPresetsPanel_colB" >
+                                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Believe</NavLink>
+                                                </div>
+                                                <div className="ratingPresetsPanel_colC" >
+                                                    <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >don't believe</NavLink>
+                                                </div>
+                                                <div className="ratingPresetsPanel_colD" >
+                                                default
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    <div id="locationContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"70px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll",color:"grey"}}>
                                     </div>
-
-                                    <div id="aboutContainer" style={{display:"inline-block",border:"1px dashed grey",width:"100%",height:"150px",padding:"10px",fontSize:"18px",textAlign:"left",overflow:"scroll"}}>
-                                    </div>
-
-                                    <div>
-                                        <NavLink className="rateSomeoneButton" activeClassName="active" to={path2} >Trust Rating of this user (custom form)</NavLink>
-                                        <NavLink className="rateSomeoneButton" activeClassName="active" to={path1} style={{float:"right"} }>Rate this user (JSON Schema Form) (?deprecating)</NavLink>
-                                        <div style={{clear:"both"}} ></div>
-                                    </div>
-                                    <div id="saveUserToMutableFileSystemConceptGraphButton" className="doSomethingButton">save/update user file to Concept Graph on MFS</div>
-
-
-
                                 </div>
                             </div>
-
-                            <div style={{border:"1px dashed grey",width:"1210px",height:"400px",textAlign:"left"}}>
-                                <div style={{border:"1px dashed grey",width:"1210px",height:"50px",textAlign:"left"}}>
-                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"300px",height:"50px",textAlign:"left"}}>
-                                        <center>About</center>
-                                    </div>
-                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"300px",height:"50px",textAlign:"left"}}>
-                                        <center>Posts</center>
-                                    </div>
-                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"75px",height:"50px",textAlign:"left"}}>
-                                        <center>Grapevine</center>
-                                    </div>
-                                    <div style={{display:"inline-block",border:"1px dashed grey",width:"300px",height:"50px",textAlign:"left"}}>
-                                        <center>Scores</center>
-                                    </div>
-                                </div>
-                                <div style={{border:"1px dashed grey",width:"1210px",height:"350px",textAlign:"left",overflow:"scroll"}}>
-
-                                </div>
-                            </div>
-
                         </center>
 
                     </div>

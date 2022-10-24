@@ -1120,3 +1120,44 @@
 .calculationRowContainer {
     font-size:10px;
 }
+.profilePageBarTab {
+    display:inline-block;
+    background-color:#DFDFDF;
+    width:20%;
+    height:30px;
+    padding:3px;
+    text-align:left;
+    color:grey;
+    text-decoration-thickness:3px;
+}
+.profilePageBarTab:hover {
+    color:black;
+}
+.bottomPanelContainer {
+    display:none;
+    padding:10px;
+}
+#moreRatingPresetsButton {
+    display:inline-block;
+    fontSize:18px;
+    padding:5px;
+}
+#moreRatingPresetsButton:hover {
+    color:purple;
+}
+.ratingPresetsPanel_colA {
+    display:inline-block;
+    width:150px;
+}
+.ratingPresetsPanel_colB {
+    display:inline-block;
+    width:150px;
+}
+.ratingPresetsPanel_colC {
+    display:inline-block;
+    width:150px;
+}
+.ratingPresetsPanel_colD {
+    display:inline-block;
+    width:150px;
+}

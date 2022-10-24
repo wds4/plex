@@ -8,8 +8,8 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
         <div className="leftNav2Panel_NeuroCore" >
             <center>Concept Graphs</center>
             <br/>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/'>Show All Concept Graphs (table)</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/'>Make New Concept Graph</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndTable'>Show All Concept Graphs (table)</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndMakeNewConceptGraph'>Make New Concept Graph</NavLink>
 
         </div>
 

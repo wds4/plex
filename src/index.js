@@ -79,6 +79,8 @@ import PlexSettingsMainPage from './plex/settings/generalPlexSettings.js';
 
 import ConceptGraphFrontEndHome from './plex/conceptGraphFrontEnd/conceptGraphHome.js';
 import ConceptGraphsFrontEndMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/conceptGraphsMainPage.js';
+import ConceptGraphsFrontEndMakeNewConceptGraph from './plex/conceptGraphFrontEnd/conceptGraphs/makeNewConceptGraphPage.js';
+import ConceptGraphsFrontEndTable from './plex/conceptGraphFrontEnd/conceptGraphs/conceptGraphsTable.js';
 
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
@@ -112,7 +114,7 @@ import EBook1Home from './plex/eBooks/eBook1/eBook1Home.js';
 
 import ConceptGraphSettingsMainPage from './plex/conceptGraph/settings/generalSettings.js';
 import ProfileMainPage from './plex/grapevine/profile/profileMainPage.js';
-import PlexAppsNavPage from './plex/conceptGraph/plexAppsNavPage.js';
+import PlexAppsNavPage from './plex/plexAppsNavPage.js';
 import HelloWorldMainPage from './plex/settings/helloWorld/helloWorldMain.js';
 import HelloWorldMarkdown from './plex/settings/helloWorld/helloWorldMarkdown.js';
 import HelloWorldNoUiSlider from './plex/settings/helloWorld/helloWorldNoUiSlider.js';
@@ -377,6 +379,8 @@ ReactDOM.render(
 
           <Route path="/ConceptGraphFrontEndHome" exact component={ConceptGraphFrontEndHome} />
           <Route path="/ConceptGraphsFrontEndMainPage" exact component={ConceptGraphsFrontEndMainPage} />
+          <Route path="/ConceptGraphsFrontEndMakeNewConceptGraph" exact component={ConceptGraphsFrontEndMakeNewConceptGraph} />
+          <Route path="/ConceptGraphsFrontEndTable" exact component={ConceptGraphsFrontEndTable} />
 
           <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 

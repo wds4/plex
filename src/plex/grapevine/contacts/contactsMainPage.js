@@ -28,27 +28,6 @@ const fetchPeerDataFromOtherPeer = async (peerID,sourcePeerID) => {
                 // await MiscIpfsFunctions.ipfs.files.write(ipfsPath,sUserData, {create: true, flush: true});
             }
         }
-        /*
-        var chunks = []
-        for await (const chunk2 of MiscIpfsFunctions.ipfs.files.read(ipfsPathSource)) {
-            chunks.push(chunk2)
-            console.info("chunk2: "+chunk2)
-            var chunk3 = new TextDecoder("utf-8").decode(chunk2);
-            console.info("chunk3: "+chunk3)
-            try {
-                var chunk4 = JSON.parse(chunk3);
-                if (typeof chunk4 == "object") {
-                    var ipfsPath = "/grapevineData/users/"+peerID+"/userProfile.txt";
-                    await MiscIpfsFunctions.ipfs.files.write(ipfsPath,new TextEncoder().encode(chunk3), {create: true, flush: true});
-                    return true
-                } else {
-                    return false
-                }
-            } catch (e) {
-                return false
-            }
-        }
-        */
     } catch (e) {
         return false;
     }
