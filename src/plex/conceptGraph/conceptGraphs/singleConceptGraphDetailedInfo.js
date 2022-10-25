@@ -1,5 +1,5 @@
 import React from "react";
-import ConceptGraphMasthead from '../../mastheads/conceptGraphMasthead.js';
+import Masthead from '../../mastheads/conceptGraphMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/singleConceptGraph_leftNav2.js';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
@@ -89,6 +89,7 @@ const populateConceptGraphFields_from_thisConceptGraphTable = async (oMainConcep
     jQuery("#currConceptGraphMainSchemaTitleField").val(conceptGraphMainSchemaTitle);
     jQuery("#currConceptGraphMainSchemaNameField").val(conceptGraphMainSchemaName);
 }
+
 const populateConceptGraphFields_from_thisConceptGraphTable_depr = async (conceptGraphTableName,cgMainSchemaSlug) => {
     var sql = " SELECT * FROM "+conceptGraphTableName+" WHERE slug='"+cgMainSchemaSlug+"' ";
     console.log("sql: "+sql)
@@ -394,7 +395,6 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
 
         var amIStewardOfThisConceptGraph = await ConceptGraphInMfsFunctions.checkWordWhetherIAmSteward(oConceptGraph)
 
-
         if (amIStewardOfThisConceptGraph) {
             oConceptGraph = await updateConceptGraphSchemaData(oConceptGraph,amIStewardOfThisConceptGraph);
         }
@@ -406,17 +406,6 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
         await populateConceptGraphFields_from_myConceptGraphs(conceptGraphSqlID);
 
         await populateConceptGraphFields_from_thisConceptGraphTable(oConceptGraph);
-
-        /*
-        setTimeout( async function(){
-
-        },1000);
-
-        setTimeout( async function(){
-            // populateConceptGraphFields_from_thisConceptGraphTable(conceptGraphTableName,conceptGraphMainSchemaSlug);
-
-        },2000);
-        */
 
         jQuery("#updateConceptGraphButton").click(async function(){
             var sWord = jQuery("#rightColumnTextarea").val();
@@ -441,7 +430,7 @@ export default class SingleConceptGraphDetailedInfo extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" style={{backgroundColor:"#CFCFCF"}} >
-                        <ConceptGraphMasthead />
+                        <Masthead />
                         <div class="h2">Show / Edit Concept Graph Detailed Info</div>
                         <div class="h3" >{window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].title}</div>
                         <div style={{marginTop:"20px"}}>

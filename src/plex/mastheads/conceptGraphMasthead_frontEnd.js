@@ -15,7 +15,9 @@ export default class ConceptGraphMasthead extends React.Component {
         super(props);
         this.state = {
             currentConceptGraphSqlID: window.currentConceptGraphSqlID,
-            currentConceptSqlID: window.currentConceptSqlID
+            currentConceptSqlID: window.currentConceptSqlID,
+            viewingFrontEndConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+            viewingFrontEndConceptTitle: window.frontEndConceptGraph.viewingConcept.title
         }
     }
     async componentDidMount() {
@@ -157,10 +159,23 @@ export default class ConceptGraphMasthead extends React.Component {
                   <div style={{clear:"both"}}></div>
               </div>
               <div className="landingPageSubBanner" >
+                    <div style={{display:"inline-block",float:"left"}} >
+                        <div style={{display:"inline-block",marginRight:"10px"}} >Front End: </div>
+                        <NavLink id="goToNeuroCore3CurrentConceptGraphMainPageButton" class="mastheadBarNavButton" style={{display:"inline-block"}} to="/ConceptGraphsFrontEndSingleConceptGraphMainPage/current" >
+                            <div style={{display:"inline-block",color:"grey"}} >Concept Graph Title:</div>
+                            <div style={{display:"inline-block",marginLeft:"5px"}} >{this.state.viewingFrontEndConceptGraphTitle}</div>
+                        </NavLink>
+
+                        <NavLink class="mastheadBarNavButton" style={{display:"inline-block",marginLeft:"10px"}} to="/ConceptGraphsFrontEnd_SingleConceptMainPage/current" >
+                            <div style={{display:"inline-block",color:"grey"}} >Concept Title:</div>
+                            <div style={{display:"inline-block",marginLeft:"5px"}} >{this.state.viewingFrontEndConceptTitle}</div>
+                        </NavLink>
+                    </div>
+
                     <div style={{display:"inline-block",float:"right"}} >
-                          <NavLink id="goToNeuroCore3CurrentConceptGraphMainPageButton" class="mastheadBarNavButton" style={{display:"inline-block"}} to="/ConceptGraphFrontEndHome" >
-                              <div style={{display:"inline-block"}} >Concept Graph Back End: </div>
-                              <div style={{display:"inline-block",marginLeft:"20px"}} id="conceptGraphTitleContainer_masthead" >conceptGraphTitleContainer_masthead</div>
+                          <div style={{display:"inline-block",marginRight:"10px"}} >Back End: </div>
+                          <NavLink id="goToCurrentConceptGraphMainPageButton" class="mastheadBarNavButton" style={{display:"inline-block"}} to="/EditExistingConceptGraphPage/current" >
+                              <div style={{display:"inline-block"}} id="conceptGraphTitleContainer_masthead" >conceptGraphTitleContainer_masthead</div>
                               <div style={{display:"inline-block",marginLeft:"5px"}} >[ ID: {this.state.currentConceptGraphSqlID} ]</div>
                           </NavLink>
 

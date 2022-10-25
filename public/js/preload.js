@@ -280,6 +280,16 @@ window.ipfs.pCGncs = null; // ncs = neuroCore subject; default: pCGncs = pCG0
 // window.ipfs.neuroCore.engine.pCG = window.ipfs.pCGnce
 // window.ipfs.neuroCore.subject.pCG = window.ipfs.pCGncs
 
+window.frontEndConceptGraph = {};
+window.frontEndConceptGraph.viewingConceptGraph = {};
+window.frontEndConceptGraph.viewingConceptGraph.slug = null;
+window.frontEndConceptGraph.viewingConceptGraph.title = null;
+window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph = null;
+window.frontEndConceptGraph.viewingConcept = {};
+window.frontEndConceptGraph.viewingConcept.slug = null;
+window.frontEndConceptGraph.viewingConcept.title = null;
+window.frontEndConceptGraph.viewingConcept.ipns = null;
+
 // The following file system is established by ConceptGraphInMfsFunctions.establishMfsDirectories which is called by the landing page ( src/plex/plexHome.js ) unless it has already been done successfully
 window.grapevine = {};
 window.grapevine.ratings = {};

@@ -263,9 +263,17 @@ export default class AllConceptsInMFS extends React.Component {
                     <div className="mainPanel" style={{backgroundColor:"#CFCFCF"}} >
                         <Masthead />
                         <div class="h2">All Concepts (corresponding to this Concept Graph) from the Mutable File System</div>
+
                         <div style={{fontSize:"12px",border:"1px solid black",padding:"5px"}} >
                             <div id="toggleDeveloperElementsButton" className="doSomethingButton" data-status="hidden" >show developer elements</div>
                             All concepts found in the Mutable File System that correspond to this Concept Graph.
+                            <div style={{fontSize:"12px",padding:"5px",backgroundColor:"orange"}} >
+                                October 2022: This pathway through the Mutable File System is likely to be deprecated. (See Show Developer Elements for MFS path.)
+                                Reasons:
+                                <li>We need the MFS to hold multiple Concept Graphs, not just one.</li>
+                                <li>This system being deprecated uses the original (foreign-node-controlled) ipns for the mainConceptGraphSystem as the file name; but this file gets a new ipns when it is imported.</li>
+                                <li>Concept Graphs will now be placed under an invisible filename for privacy.</li>
+                            </div>
                         </div>
 
                         <div id="developerElementsContainer" style={{height:"0px",overflow:"scroll"}}  >

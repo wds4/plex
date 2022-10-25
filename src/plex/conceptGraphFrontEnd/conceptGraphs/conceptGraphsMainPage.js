@@ -13,7 +13,7 @@ export default class ConceptGraphsFrontEndMainPage extends React.Component {
         this.state = {}
     }
     async componentDidMount() {
-        jQuery(".mainPanel").css("width","calc(100% - 100px)");
+        jQuery(".mainPanel").css("width","calc(100% - 300px)");
     }
     render() {
         return (

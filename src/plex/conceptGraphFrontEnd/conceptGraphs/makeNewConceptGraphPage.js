@@ -2,43 +2,36 @@ import React from "react";
 import Masthead from '../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/cgFe_conceptGraphsMainPage_leftNav2.js';
+import * as MiscFunctions from '../../functions/miscFunctions.js';
 import sendAsync from '../../renderer.js';
 
 const jQuery = require("jquery");
 
-const makeNewConceptGraph = async () => {
-    console.log("makeNewConceptGraph")
-    var commandHTML = "";
-    var newConceptGraphSlug = jQuery("#newConceptGraphSlugField").val();
-    var newConceptGraphTitle = jQuery("#newConceptGraphTitleField").val();
-    var newConceptGraphTableName = jQuery("#newConceptGraphTableNameField").val();
-    var newConceptGraphMainSchemaSlug = jQuery("#newConceptGraphMainSchemaSlugField").val();
-    var newConceptGraphDescription = jQuery("#newConceptGraphDescriptionField").val();
+const generateNewConceptGraph = async () => {
+    var oNewConceptGraph = await MiscFunctions.createNewWordByTemplate("conceptGraph");
+    var newConceptGraphSlugField = jQuery("#newConceptGraphSlugField").val();
+    var newConceptGraphNameField = jQuery("#newConceptGraphNameField").val();
+    var newConceptGraphTitleField = jQuery("#newConceptGraphTitleField").val();
+    var newConceptGraphDescriptionField = jQuery("#newConceptGraphDescriptionField").val();
 
-    commandHTML += "INSERT OR IGNORE INTO myConceptGraphs";
-    commandHTML += " (slug, title, tableName, mainSchema_slug, description) ";
-    commandHTML += " VALUES(";
-    commandHTML += " '"+newConceptGraphSlug+"', ";
-    commandHTML += " '"+newConceptGraphTitle+"', ";
-    commandHTML += " '"+newConceptGraphTableName+"', ";
-    commandHTML += " '"+newConceptGraphMainSchemaSlug+"', ";
-    commandHTML += " '"+newConceptGraphDescription+"' ";
-    commandHTML += " )";
+    var newConceptGraphMainSchemaSlugField = jQuery("#newConceptGraphMainSchemaSlugField").val();
 
-    console.log("makeNewConceptGraph commandHTML: "+commandHTML)
+    oNewConceptGraph.wordData.slug = newConceptGraphMainSchemaSlugField;
+    oNewConceptGraph.conceptGraphData.slug = newConceptGraphSlugField;
+    oNewConceptGraph.conceptGraphData.name = newConceptGraphNameField;
+    oNewConceptGraph.conceptGraphData.title = newConceptGraphTitleField;
+    oNewConceptGraph.conceptGraphData.description = newConceptGraphDescriptionField;
 
-    jQuery("#sqlCommandContainer").html(commandHTML);
-    jQuery("#sqlCommandContainer").val(commandHTML);
+    jQuery("#newConceptGraphRawFileField").val(JSON.stringify(oNewConceptGraph,null,4))
+}
 
-    var sql = commandHTML;
-    console.log("sql: "+sql)
+const saveNewConceptGraph = async () => {
 
-    sendAsync(sql).then((result) => {
-        var sResult = JSON.stringify(result,null,4)
-        jQuery("#sqlResultContainer_mNWTP").html(sResult)
-        jQuery("#sqlResultContainer_mNWTP").val(sResult)
-        console.log("sResult: "+sResult)
-    })
+    var newConceptGraphRawFileField = jQuery("#newConceptGraphRawFileField").val();
+    var oNewConceptGraph = JSON.parse(newConceptGraphRawFileField)
+    var newConceptGraph_ipns = oNewConceptGraph.metaData.ipns;
+
+
 }
 
 export default class MakeNewConceptGraphPage extends React.Component {
@@ -46,10 +39,24 @@ export default class MakeNewConceptGraphPage extends React.Component {
         super(props);
         this.state = {}
     }
-    componentDidMount() {
+    async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        jQuery("#makeNewConceptGraphButton").click(function(){
-            makeNewConceptGraph();
+        jQuery("#newConceptGraphNameField").change(function(){
+            var newConceptGraphNameField = jQuery(this).val()
+            var newConceptGraphSlug = MiscFunctions.convertNameToSlug(newConceptGraphNameField)
+            var newConceptGraphTitle = MiscFunctions.convertNameToTitle(newConceptGraphNameField)
+            jQuery("#newConceptGraphSlugField").val(newConceptGraphSlug);
+            jQuery("#newConceptGraphTitleField").val(newConceptGraphTitle);
+        })
+        jQuery("#generateNewConceptGraphButton").click( async function(){
+            await generateNewConceptGraph()
+        })
+        jQuery("#saveNewConceptGraphButton").click( async function(){
+            await saveNewConceptGraph()
+        })
+        jQuery("#generateAndSaveNewConceptGraphButton").click( async function(){
+            // await generateNewConceptGraph()
+            // await saveNewConceptGraph()
         })
     }
     render() {
@@ -64,11 +71,20 @@ export default class MakeNewConceptGraphPage extends React.Component {
 
                         <div style={{marginTop:"50px"}}>
                             <div className="makeNewLeftPanel">
+                            name
+                            </div>
+                            <textarea id="newConceptGraphNameField" className="makeNewRightPanel">
+                            </textarea>
+                            e.g. animal kingdom
+
+                            <br/>
+
+                            <div className="makeNewLeftPanel">
                             slug
                             </div>
                             <textarea id="newConceptGraphSlugField" className="makeNewRightPanel">
                             </textarea>
-                            foo
+                            e.g. animalKingdom
 
                             <br/>
 
@@ -77,25 +93,7 @@ export default class MakeNewConceptGraphPage extends React.Component {
                             </div>
                             <textarea id="newConceptGraphTitleField" className="makeNewRightPanel">
                             </textarea>
-                            Concept Graph: Foo
-
-                            <br/>
-
-                            <div className="makeNewLeftPanel">
-                            tableName
-                            </div>
-                            <textarea id="newConceptGraphTableNameField" className="makeNewRightPanel">
-                            </textarea>
-                            myConceptGraph_foo
-
-                            <br/>
-
-                            <div className="makeNewLeftPanel">
-                            mainSchema_slug
-                            </div>
-                            <textarea id="newConceptGraphMainSchemaSlugField" className="makeNewRightPanel">
-                            </textarea>
-                            mainSchemaForConceptGraph
+                            e.g. Animal Kingdom
 
                             <br/>
 
@@ -106,15 +104,30 @@ export default class MakeNewConceptGraphPage extends React.Component {
                             </textarea>
                             lorem ipsum
 
+                            <br/>
+
+                            <div className="makeNewLeftPanel">
+                            slug
+                            </div>
+                            <textarea id="newConceptGraphMainSchemaSlugField" className="makeNewRightPanel" style={{backgroundColor:"#DFDFDF"}} >
+                            mainSchemaForConceptGraph
+                            </textarea>
+                            mainSchemaForConceptGraph
+
                             <br/><br/>
 
-                            <div id="makeNewConceptGraphButton" className="doSomethingButton" style={{marginLeft:"320px"}}>make new Concept Graph</div>
+                            <div id="generateNewConceptGraphButton" className="doSomethingButton" style={{marginLeft:"320px"}}>step 1: generate new Concept Graph file</div>
+                            <br/>
+                            <div id="saveNewConceptGraphButton" className="doSomethingButton" style={{marginLeft:"320px"}}>step 2: save new file into MFS</div>
+                            <br/>
+                            <div id="generateAndSaveNewConceptGraphButton" className="doSomethingButton" style={{marginLeft:"320px"}}>steps 1 and 2</div>
 
-                            <div style={{display:"none"}}>
-                                <div id="sqlCommandContainer" >sqlCommandContainer</div>
-                                <br/>
-                                <div id="sqlResultContainer_mNWTP" >sqlResultContainer_mNWTP</div>
-                            </div>
+                            <br/><br/>
+
+                            <div className="makeNewLeftPanel" >rawFile</div>
+                            <textarea id="newConceptGraphRawFileField" className="makeNewRightPanel" style={{height:"500px",fontSize:"12px"}} >
+                            </textarea>
+
                         </div>
 
                     </div>

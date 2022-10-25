@@ -82,6 +82,9 @@ import ConceptGraphsFrontEndMainPage from './plex/conceptGraphFrontEnd/conceptGr
 import ConceptGraphsFrontEndMakeNewConceptGraph from './plex/conceptGraphFrontEnd/conceptGraphs/makeNewConceptGraphPage.js';
 import ConceptGraphsFrontEndTable from './plex/conceptGraphFrontEnd/conceptGraphs/conceptGraphsTable.js';
 
+import ConceptGraphsFrontEndSingleConceptGraphMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/singleConceptGraphMainPage.js';
+import ConceptGraphsFrontEndSingleConceptGraphDetailedInfo from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/singleConceptGraphDetailedInfo.js';
+
 import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
 import CrowdscreenedGroupsHome from './plex/crowdscreenedGroups/crowdscreenedGroupsHome.js';
@@ -134,19 +137,18 @@ import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.
 import HelloWorldReadFile from './plex/settings/helloWorld/helloWorldReadFile.js';
 import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUploadImageToIPFS.js';
 
-import ConceptGraphsFrontEnd_WordsMainPage from './plex/conceptGraphFrontEnd/words/wordsMainPage.js';
+import ConceptGraphsFrontEnd_WordsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/words/wordsMainPage.js';
+import ConceptGraphsFrontEnd_TableOfWords from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/words/tableOfWords/tableOfWords.js';
+import ConceptGraphsFrontEnd_SingleWordMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/words/singleWord/singleWordMainPage.js';
 
-import ConceptGraphsFrontEnd_TableOfWords from './plex/conceptGraphFrontEnd/words/tableOfWords/tableOfWords.js';
-import ConceptGraphsFrontEnd_SingleWordMainPage from './plex/conceptGraphFrontEnd/words/singleWord/singleWordMainPage.js';
-
-import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/concepts/conceptsMainPage.js';
 import ConceptGraphsFrontEnd_ManageDownload from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageConceptGraphDownload.js';
 import ConceptGraphsFrontEnd_ManageMainConceptGraphSchema from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/manageMainConceptGraphSchema.js';
 import ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/downloadConceptGraphFromExternalSource.js';
 import ConceptGraphsFrontEnd_UpdateIPNSs from './plex/conceptGraphFrontEnd/manageConceptGraphDownload/updateIpnsInSchemaDataAndConceptData.js';
 
-import ConceptGraphsFrontEnd_TableOfConcepts from './plex/conceptGraphFrontEnd/concepts/tableOfConcepts/tableOfConcepts.js';
-import ConceptGraphsFrontEnd_SingleConceptMainPage from './plex/conceptGraphFrontEnd/concepts/singleConcept/singleConceptMainPage.js';
+import ConceptGraphsFrontEnd_ConceptsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/conceptsMainPage.js';
+import ConceptGraphsFrontEnd_TableOfConcepts from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/tableOfConcepts/tableOfConcepts.js';
+import ConceptGraphsFrontEnd_SingleConceptMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/singleConceptMainPage.js';
 
 import ConceptGraphsMainPage from './plex/conceptGraph/conceptGraphs/conceptGraphsMainPage.js';
 import MakeNewConceptGraphPage from './plex/conceptGraph/conceptGraphs/makeNewConceptGraphPage.js';
@@ -381,6 +383,8 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEndMainPage" exact component={ConceptGraphsFrontEndMainPage} />
           <Route path="/ConceptGraphsFrontEndMakeNewConceptGraph" exact component={ConceptGraphsFrontEndMakeNewConceptGraph} />
           <Route path="/ConceptGraphsFrontEndTable" exact component={ConceptGraphsFrontEndTable} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptGraphMainPage/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEndSingleConceptGraphMainPage} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptGraphDetailedInfo/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEndSingleConceptGraphDetailedInfo} />
 
           <Route path="/PlexSettingsMainPage" exact component={PlexSettingsMainPage} />
 
@@ -446,18 +450,18 @@ ReactDOM.render(
           <Route path="/HelloWorldReadFile" exact component={HelloWorldReadFile} />
           <Route path="/HelloWorldUploadImageToIPFS" exact component={HelloWorldUploadImageToIPFS} />
 
-          <Route path="/ConceptGraphsFrontEnd_WordsMainPage" exact component={ConceptGraphsFrontEnd_WordsMainPage} />
+          <Route path="/ConceptGraphsFrontEnd_WordsMainPage/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEnd_WordsMainPage} />
 
-          <Route path="/ConceptGraphsFrontEnd_TableOfWords" exact component={ConceptGraphsFrontEnd_TableOfWords} />
+          <Route path="/ConceptGraphsFrontEnd_TableOfWords/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEnd_TableOfWords} />
           <Route path="/ConceptGraphsFrontEnd_SingleWordMainPage/:wordslug" exact component={ConceptGraphsFrontEnd_SingleWordMainPage} />
 
-          <Route path="/ConceptGraphsFrontEnd_ConceptsMainPage" exact component={ConceptGraphsFrontEnd_ConceptsMainPage} />
+          <Route path="/ConceptGraphsFrontEnd_ConceptsMainPage/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEnd_ConceptsMainPage} />
           <Route path="/ConceptGraphsFrontEnd_ManageDownload" exact component={ConceptGraphsFrontEnd_ManageDownload} />
           <Route path="/ConceptGraphsFrontEnd_ManageMainConceptGraphSchema" exact component={ConceptGraphsFrontEnd_ManageMainConceptGraphSchema} />
           <Route path="/ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource" exact component={ConceptGraphsFrontEnd_DownloadConceptGraphFromExternalSource} />
           <Route path="/ConceptGraphsFrontEnd_UpdateIPNSs" exact component={ConceptGraphsFrontEnd_UpdateIPNSs} />
 
-          <Route path="/ConceptGraphsFrontEnd_TableOfConcepts" exact component={ConceptGraphsFrontEnd_TableOfConcepts} />
+          <Route path="/ConceptGraphsFrontEnd_TableOfConcepts/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEnd_TableOfConcepts} />
           <Route path="/ConceptGraphsFrontEnd_SingleConceptMainPage/:conceptslug" exact component={ConceptGraphsFrontEnd_SingleConceptMainPage} />
 
           <Route path="/ConceptGraphsMainPage" exact component={ConceptGraphsMainPage} />

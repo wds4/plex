@@ -6,15 +6,23 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
     return (
       <>
         <div className="leftNav2Panel_NeuroCore" >
-            <center>Concepts in the MFS</center>
-            <br/>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_ConceptsMainPage'>Concepts</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_TableOfConcepts'>Table of Concepts</NavLink>
+            <div className="leftNavBarBackBox" >
+                <center>back</center>
+                <NavLink className="leftNav2BackButton" activeClassName="active" to='/ConceptGraphsFrontEndMainPage'>All Concept Graphs</NavLink>
+                <NavLink className="leftNav2BackButton" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptGraphMainPage/current'>Current Concept Graph</NavLink>
+                <NavLink className="leftNav2BackButton" activeClassName="active" to='/ConceptGraphsFrontEnd_ConceptsMainPage/current'>All Concepts</NavLink>
+            </div>
 
-            <br/><br/>
+            <div className="leftNavBarConceptGraphTitle" >
+            {window.frontEndConceptGraph.viewingConceptGraph.title}
+            </div>
+
+            <div className="leftNavBarConceptTitle" >
+            {window.frontEndConceptGraph.viewingConcept.title}
+            </div>
 
             <center>Single Concept</center>
-
+            <br/>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_SingleConceptMainPage/current'>Current Concept Main Page</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/'>Full MFS directory for this concept</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/'>Sets & s.i Tree</NavLink>
