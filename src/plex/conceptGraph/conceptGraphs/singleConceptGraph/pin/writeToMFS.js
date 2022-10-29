@@ -48,6 +48,7 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
             var elapsedTime = 0;
             console.log("publishAllWordsButton clicked")
             for (var w=0;w<aWords.length;w++) {
+            // for (var w=1335;w<1355;w++) {
                 currentTime = Date.now();
                 aCurrentTimes[w] = currentTime;
 
@@ -90,21 +91,24 @@ export default class SingleConceptGraphPinToIPFS extends React.Component {
                     var oNextWord = window.lookupWordBySlug[nn_perSchema_Slug];
                     var nn_perNode_Ipns = oNextWord.metaData.ipns;
                     oNextNodeInfo.ipns = nn_perNode_Ipns;
-                    if ( (!oNextNodeInfo.hasOwnProperty("schemaData")) && (!oNextNodeInfo.hasOwnProperty("conceptData")) ) {
-                        var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nn_perNode_Ipns)
-                        nn_ipfs = nn_ipfs.replace("/ipfs/","")
-                        oNextNodeInfo.ipfs = nn_ipfs
-                    }
-                    if (!aReAddedNodeSlugs.includes(nn_perSchema_Slug)) {
-                        aNodes_updated.push(oNextNodeInfo)
-                        aReAddedNodeSlugs.push(nn_perSchema_Slug)
-                        console.log("qwerty adding oNextNodeInfo: "+JSON.stringify(oNextNodeInfo,null,4));
-                    } else {
-                        console.log("qwerty this node has already been added: "+nn_perSchema_Slug);
-                    }
-                    if (nn_perNode_Ipns != nn_perSchema_Ipns) {
-                        console.log("qwerty node "+n+"; replacing ipns for slug: "+nn_perSchema_Slug+"; nn_perNode_Ipns: "+nn_perNode_Ipns+"; nn_perSchema_Ipns: "+nn_perSchema_Ipns)
-                    }
+                    try {
+                        if ( (!oNextNodeInfo.hasOwnProperty("schemaData")) && (!oNextNodeInfo.hasOwnProperty("conceptData")) ) {
+                            console.log("qwerty nn_perNode_Ipns: "+nn_perNode_Ipns)
+                            var nn_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+nn_perNode_Ipns)
+                            nn_ipfs = nn_ipfs.replace("/ipfs/","")
+                            oNextNodeInfo.ipfs = nn_ipfs
+                        }
+                        if (!aReAddedNodeSlugs.includes(nn_perSchema_Slug)) {
+                            aNodes_updated.push(oNextNodeInfo)
+                            aReAddedNodeSlugs.push(nn_perSchema_Slug)
+                            console.log("qwerty adding oNextNodeInfo: "+JSON.stringify(oNextNodeInfo,null,4));
+                        } else {
+                            console.log("qwerty this node has already been added: "+nn_perSchema_Slug);
+                        }
+                        if (nn_perNode_Ipns != nn_perSchema_Ipns) {
+                            console.log("qwerty node "+n+"; replacing ipns for slug: "+nn_perSchema_Slug+"; nn_perNode_Ipns: "+nn_perNode_Ipns+"; nn_perSchema_Ipns: "+nn_perSchema_Ipns)
+                        }
+                    } catch (e) {}
                 }
                 oNextSchema.schemaData.nodes = aNodes_updated;
                 var oNextSchemaUpdated = await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oNextSchema);

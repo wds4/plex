@@ -221,16 +221,18 @@ const updateConceptGraphSchemaData = async (oConceptGraph,amIStewardOfThisConcep
                 numConceptsRepublished++;
                 concept_ipfs = concept_ipfs.replace("/ipfs/","");
                 */
-                concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
-                concept_ipfs = concept_ipfs.replace("/ipfs/","");
-                var oConceptBlurb = {}
-                oConceptBlurb.slug = slug;
-                oConceptBlurb.ipns = concept_ipns;
-                oConceptBlurb.ipfs = concept_ipfs;
-                oConceptBlurb.stewardPeerID = myPeerID;
-                oConceptBlurb.stewardUsername = myUsername;
-                oConceptBlurb.lastUpdated = currentTime;
-                oConceptGraph.conceptGraphData.aConcepts.push(oConceptBlurb)
+                try {
+                    concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
+                    concept_ipfs = concept_ipfs.replace("/ipfs/","");
+                    var oConceptBlurb = {}
+                    oConceptBlurb.slug = slug;
+                    oConceptBlurb.ipns = concept_ipns;
+                    oConceptBlurb.ipfs = concept_ipfs;
+                    oConceptBlurb.stewardPeerID = myPeerID;
+                    oConceptBlurb.stewardUsername = myUsername;
+                    oConceptBlurb.lastUpdated = currentTime;
+                    oConceptGraph.conceptGraphData.aConcepts.push(oConceptBlurb)
+                } catch (e) { console.log("error: "+e)}
             }
         }
         if (jQuery.inArray("property",aWordTypes) > -1) {
