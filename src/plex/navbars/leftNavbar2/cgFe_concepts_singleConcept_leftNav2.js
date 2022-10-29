@@ -26,7 +26,7 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEnd_SingleConceptMainPage/current'>Current Concept Main Page</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSetsMainPage/current'>Sets</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSpecificInstancesMainPage/current'>Specific Instances</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/current'>Concept Updates</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/current'>Update Proposals</NavLink>
         </div>
 
       </>

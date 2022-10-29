@@ -28,12 +28,16 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
                 {window.frontEndConceptGraph.viewingConcept.title}
                 </div>
 
-                <center>Updates</center>
+                <center>Update Proposals</center>
 
-                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/current'>Updates Control Panel</NavLink>
+                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/current'>Main Page</NavLink>
                 <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms/current'>List of Equivalences (Synonyms)</NavLink>
-                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates/current'>List of Updates</NavLink>
-                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewUpdate/current'>Make new Update</NavLink>
+                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates/current'>List of Update Proposals</NavLink>
+
+                <center>Make New Update Proposal</center>
+                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewConceptUpdate/current'>Concept</NavLink>
+                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewMainSchemaUpdate/current'>Main Schema</NavLink>
+                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewPropertySchemaUpdate/current'>Property Schema</NavLink>
 
             </div>
 

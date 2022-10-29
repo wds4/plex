@@ -162,7 +162,10 @@ import ConceptGraphsFrontEndSpecificInstancesMainPage from './plex/conceptGraphF
 import ConceptGraphsFrontEndSingleConceptUpdatesMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/singleConceptUpdatesMainPage.js';
 import ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listOfSynonyms.js';
 import ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listOfUpdates.js';
-import ConceptGraphsFrontEndSingleConceptUpdatesMakeNewUpdate from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/makeNewUpdate.js';
+
+import ConceptGraphsFrontEndSingleConceptUpdatesMakeNewConceptUpdate from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/makeNewUpdate/conceptUpdate.js';
+import ConceptGraphsFrontEndSingleConceptUpdatesMakeNewMainSchemaUpdate from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/makeNewUpdate/mainSchemaUpdate.js';
+import ConceptGraphsFrontEndSingleConceptUpdatesMakeNewPropertySchemaUpdate from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/makeNewUpdate/propertySchemaUpdate.js';
 
 import ConceptGraphsMainPage from './plex/conceptGraph/conceptGraphs/conceptGraphsMainPage.js';
 import MakeNewConceptGraphPage from './plex/conceptGraph/conceptGraphs/makeNewConceptGraphPage.js';
@@ -491,7 +494,10 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMainPage} />
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms} />
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates} />
-          <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewUpdate/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMakeNewUpdate} />
+
+          <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewConceptUpdate/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMakeNewConceptUpdate} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewMainSchemaUpdate/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMakeNewMainSchemaUpdate} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewPropertySchemaUpdate/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMakeNewPropertySchemaUpdate} />
 
           <Route path="/ConceptGraphsMainPage" exact component={ConceptGraphsMainPage} />
           <Route path="/EditExistingConceptGraphPage/:conceptgraphsqlid" exact component={EditExistingConceptGraphPage} />
