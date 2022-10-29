@@ -11,7 +11,11 @@ const jQuery = require("jquery");
 export default class SingleConceptGraphFrontEndMainPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+            viewingConceptGraphSlug: window.frontEndConceptGraph.viewingConceptGraph.slug,
+            viewingConceptGraphIPNS: window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
@@ -32,15 +36,20 @@ export default class SingleConceptGraphFrontEndMainPage extends React.Component 
         window.frontEndConceptGraph.viewingConceptGraph.title = cgTitle;
         window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph = ipnsForMainSchemaForConceptGraph;
 
+        this.setState({
+            viewingConceptGraphTitle: cgTitle,
+            viewingConceptGraphSlug: cgSlug,
+            viewingConceptGraphIPNS:ipnsForMainSchemaForConceptGraph
+        })
     }
     render() {
         return (
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Single Concept Graph Main Page (front end)</div>
                     </div>
                 </fieldset>

@@ -5,7 +5,7 @@ import LeftNavbar1 from './navbars/leftNavbar1/plex_leftNav1';
 import * as ConceptGraphInMfsFunctions from './lib/ipfs/conceptGraphInMfsFunctions.js'
 import * as MiscIpfsFunctions from './lib/ipfs/miscIpfsFunctions.js'
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 
 export default class PlexHome extends React.Component {
     constructor(props) {

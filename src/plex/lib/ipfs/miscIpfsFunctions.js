@@ -15,6 +15,30 @@ export const ipfs = IpfsHttpClient({
 //
 ////////////////////////////////////////////////////////////////////////////
 
+export const returnMyPeerID = async () => {
+    var oIpfsID = await ipfs.id();
+    var myPeerID = oIpfsID.id;
+    return myPeerID
+}
+
+export const returnMyUsername = async () => {
+    var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
+    var chunks = []
+    try {
+        for await (const chunk of ipfs.files.read(ipfsPath)) {
+            var sResult1 = new TextDecoder("utf-8").decode(chunk);
+            chunks.push(sResult1)
+        }
+        var sResult = chunks.join("")
+        var oMyUserData = JSON.parse(sResult)
+        if (typeof oMyUserData == "object") {
+            var myUsername = oMyUserData.username;
+            return myUsername;
+        }
+    } catch (e) {}
+    return false;
+}
+
 export const fetchIpnsFromKeynameIfExists = async (keyname) => {
     // returns ipns if keyname exists; returns false if does not exist
     var ipns = false;
@@ -211,6 +235,7 @@ export const ipfsShowKeys = async () => {
     }
     return outputHTML;
 }
+
 export const ipfsShowPins = async () => {
     var output1HTML = "";
     var numPins = 0;

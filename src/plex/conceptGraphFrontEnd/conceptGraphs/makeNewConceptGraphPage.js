@@ -3,6 +3,7 @@ import Masthead from '../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/cgFe_conceptGraphsMainPage_leftNav2.js';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
+import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import sendAsync from '../../renderer.js';
 
 const jQuery = require("jquery");
@@ -16,28 +17,49 @@ const generateNewConceptGraph = async () => {
 
     var newConceptGraphMainSchemaSlugField = jQuery("#newConceptGraphMainSchemaSlugField").val();
 
+    var myPeerID = await MiscIpfsFunctions.returnMyPeerID();
+    var myUsername = await MiscIpfsFunctions.returnMyUsername();
+
+    var mCG = "myConceptGraph_"+newConceptGraphSlugField
+
     oNewConceptGraph.wordData.slug = newConceptGraphMainSchemaSlugField;
     oNewConceptGraph.conceptGraphData.slug = newConceptGraphSlugField;
     oNewConceptGraph.conceptGraphData.name = newConceptGraphNameField;
     oNewConceptGraph.conceptGraphData.title = newConceptGraphTitleField;
     oNewConceptGraph.conceptGraphData.description = newConceptGraphDescriptionField;
+    oNewConceptGraph.globalDynamicData.myConceptGraphs = [mCG]
+    oNewConceptGraph.metaData.stewardPeerID = myPeerID;
+    oNewConceptGraph.metaData.stewardUsername = myUsername;
+    oNewConceptGraph.metaData.lastUpdate = Date.now();
 
     jQuery("#newConceptGraphRawFileField").val(JSON.stringify(oNewConceptGraph,null,4))
 }
 
 const saveNewConceptGraph = async () => {
-
     var newConceptGraphRawFileField = jQuery("#newConceptGraphRawFileField").val();
     var oNewConceptGraph = JSON.parse(newConceptGraphRawFileField)
     var newConceptGraph_ipns = oNewConceptGraph.metaData.ipns;
+    var newConceptGraph_slug = oNewConceptGraph.wordData.slug; // should be mainSchemaForConceptGraph
 
+    var pCGb = window.ipfs.pCGb;
+    var path = pCGb + newConceptGraph_ipns + "/words/" + newConceptGraph_slug + "/";
+    var pathToFile = path + "node.txt";
 
+    console.log("saveNewConceptGraph; path: "+path)
+    console.log("saveNewConceptGraph; pathToFile: "+pathToFile)
+
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(path,{parents:true}) } catch (e) {}
+    var fileToWrite = JSON.stringify(oNewConceptGraph,null,4)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
 }
 
 export default class MakeNewConceptGraphPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
@@ -55,8 +77,8 @@ export default class MakeNewConceptGraphPage extends React.Component {
             await saveNewConceptGraph()
         })
         jQuery("#generateAndSaveNewConceptGraphButton").click( async function(){
-            // await generateNewConceptGraph()
-            // await saveNewConceptGraph()
+            await generateNewConceptGraph()
+            await saveNewConceptGraph()
         })
     }
     render() {
@@ -66,7 +88,7 @@ export default class MakeNewConceptGraphPage extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Make New Concept Graph</div>
 
                         <div style={{marginTop:"50px"}}>
@@ -125,7 +147,7 @@ export default class MakeNewConceptGraphPage extends React.Component {
                             <br/><br/>
 
                             <div className="makeNewLeftPanel" >rawFile</div>
-                            <textarea id="newConceptGraphRawFileField" className="makeNewRightPanel" style={{height:"500px",fontSize:"12px"}} >
+                            <textarea id="newConceptGraphRawFileField" className="makeNewRightPanel" style={{height:"500px",width:"800px",fontSize:"12px"}} >
                             </textarea>
 
                         </div>

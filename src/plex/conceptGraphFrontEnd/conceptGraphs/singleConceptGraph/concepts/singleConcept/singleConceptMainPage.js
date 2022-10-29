@@ -29,7 +29,7 @@ const processClickedToggleButton = (node_slug) => {
 }
 
 const loadConceptData = async (cid) => {
-    console.log("loadConceptData; cid: "+ typeof cid)
+    // console.log("loadConceptData; cid: "+ typeof cid)
     for await (const chunk2 of MiscIpfsFunctions.ipfs.cat(cid)) {
         var chunk3 = new TextDecoder("utf-8").decode(chunk2);
         try {
@@ -46,13 +46,15 @@ const loadConceptData = async (cid) => {
     }
 }
 
-const generateNodeHTML = async (nextNode_slug,lookupChildTypes,isTopLevel) => {
+export const generateNodeHTML = async (nextNode_slug,lookupChildTypes,isTopLevel) => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     var propertyPath = jQuery("#propertyPathContainer").html()
 
     var aChildren = lookupChildTypes[nextNode_slug]
     var numChildren = aChildren.length;
+    // console.log("numChildren: "+numChildren)
 
-    var oNextNode = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextNode_slug);
+    var oNextNode = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nextNode_slug);
     if (oNextNode.hasOwnProperty(propertyPath)) {
         var nextNode_name = oNextNode[propertyPath].name;
     }
@@ -100,17 +102,17 @@ var oNodeRole = {};
 
 var aAllSets = [];
 
-const generateConceptFullHierarchy = async (oConcept) => {
+export const generateConceptFullHierarchy = async (oConcept) => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     var propertyPath = jQuery("#propertyPathContainer").html()
     jQuery("#fullHierarchyContainer").html("")
-    // var superset_slug = oConcept.conceptData.nodes.superset.slug;
-    // var oSuperset = await ConceptGraphInMfsFunctions.lookupWordBySlug(superset_slug)
 
     var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
-    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(mainSchema_slug)
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug)
     // console.log("mainSchema_slug: "+mainSchema_slug+"; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
     var aNodes = oMainSchema.schemaData.nodes;
     var aRels = oMainSchema.schemaData.relationships;
+    // console.log("generateConceptFullHierarchy; aRels: "+JSON.stringify(aRels,null,4))
     var lookupChildTypes = {};
     var lookupParentTypes = {};
     for (var n=0;n<aNodes.length;n++) {
@@ -125,10 +127,11 @@ const generateConceptFullHierarchy = async (oConcept) => {
     for (var r=0;r<aRels.length;r++) {
         var oNextRel = aRels[r];
         var relType = oNextRel.relationshipType.slug;
+        // console.log("r: "+r+"; relType: "+relType)
         var nF_slug = oNextRel.nodeFrom.slug;
         var nT_slug = oNextRel.nodeTo.slug;
-        var oNF = await ConceptGraphInMfsFunctions.lookupWordBySlug(nF_slug)
-        var oNT = await ConceptGraphInMfsFunctions.lookupWordBySlug(nT_slug)
+        var oNF = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nF_slug)
+        var oNT = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nT_slug)
 
         var isSpecificInstance_nF = false;
         if ( oNF.hasOwnProperty(propertyPath) ) {
@@ -163,8 +166,10 @@ const generateConceptFullHierarchy = async (oConcept) => {
                 }
             }
         }
+        // console.log("qwerty singleConceptMainPage; isSpecificInstance_nF: "+isSpecificInstance_nF+"; isSet_nT: "+isSet_nT)
         if ((isSpecificInstance_nF) && (isSet_nT)) {
             if (relType="isASpecificInstanceOf") {
+                // console.log("r: "+r+"; isASpecificInstanceOf a")
                 oNodeRole[nF_slug] = "specificInstance"
                 oNodeRole[nT_slug] = "set"
                 if (!aAllSets.includes(nT_slug)) {
@@ -174,9 +179,11 @@ const generateConceptFullHierarchy = async (oConcept) => {
                 var parentNode_slug = oNextRel.nodeTo.slug;
                 if (!lookupChildTypes[parentNode_slug].includes(childNode_slug)) {
                     lookupChildTypes[parentNode_slug].push(childNode_slug)
+                    // console.log("r: "+r+"; isASpecificInstanceOf b")
                 }
                 if (!lookupParentTypes[childNode_slug].includes(parentNode_slug)) {
                     lookupParentTypes[childNode_slug].push(parentNode_slug)
+                    // console.log("r: "+r+"; isASpecificInstanceOf c")
                 }
             }
         }
@@ -185,7 +192,7 @@ const generateConceptFullHierarchy = async (oConcept) => {
     var aTopLevelTypes = [];
     for (var n=0;n<aNodes.length;n++) {
         var nextNode_slug = aNodes[n].slug;
-        var oNxtNde = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextNode_slug)
+        var oNxtNde = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nextNode_slug)
         var isMainPropertiesSet_nxtNode = false;
         var isSet_nxtNde = false;
         if ( oNxtNde.hasOwnProperty("setData") || oNxtNde.hasOwnProperty("supersetData") ) {
@@ -201,9 +208,10 @@ const generateConceptFullHierarchy = async (oConcept) => {
             aTopLevelTypes.push(nextNode_slug);
         }
     }
-    console.log("aTopLevelTypes: "+JSON.stringify(aTopLevelTypes,null,4))
+    // console.log("aTopLevelTypes: "+JSON.stringify(aTopLevelTypes,null,4))
     for (var n=0;n<aTopLevelTypes.length;n++) {
         var nextNode_slug = aTopLevelTypes[n];
+        console.log("lookupChildTypes: "+JSON.stringify(lookupChildTypes,null,4))
         var nextNodeHTML = await generateNodeHTML(nextNode_slug,lookupChildTypes,true)
         jQuery("#fullHierarchyContainer").append(nextNodeHTML)
     }
@@ -227,31 +235,33 @@ const addSpecialWord = (oSpecialWord,specialWordType) => {
 }
 
 const generateConceptSpecialWordsList = async (oConcept) => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+
     jQuery("#specialWordsContainer").html("")
 
     var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
-    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(mainSchema_slug)
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug)
 
     var superset_slug = oConcept.conceptData.nodes.superset.slug;
-    var oSuperset = await ConceptGraphInMfsFunctions.lookupWordBySlug(superset_slug)
+    var oSuperset = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,superset_slug)
 
     var jsonSchema_slug = oConcept.conceptData.nodes.JSONSchema.slug;
-    var oJsonSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(jsonSchema_slug)
+    var oJsonSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,jsonSchema_slug)
 
     var propertySchema_slug = oConcept.conceptData.nodes.propertySchema.slug;
-    var oPropertySchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(propertySchema_slug)
+    var oPropertySchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,propertySchema_slug)
 
     var primaryProperty_slug = oConcept.conceptData.nodes.primaryProperty.slug;
-    var oPrimaryProperty = await ConceptGraphInMfsFunctions.lookupWordBySlug(primaryProperty_slug)
+    var oPrimaryProperty = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,primaryProperty_slug)
 
     var concept_slug = oConcept.conceptData.nodes.concept.slug;
-    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_slug)
+    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug)
 
     var properties_slug = oConcept.conceptData.nodes.properties.slug;
-    var oProperties = await ConceptGraphInMfsFunctions.lookupWordBySlug(properties_slug)
+    var oProperties = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,properties_slug)
 
     var wordType_slug = oConcept.conceptData.nodes.wordType.slug;
-    var oWordType = await ConceptGraphInMfsFunctions.lookupWordBySlug(wordType_slug)
+    var oWordType = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,wordType_slug)
 
     addSpecialWord(oConcept,"concept")
     addSpecialWord(oWordType,"wordType")
@@ -266,10 +276,12 @@ const generateConceptSpecialWordsList = async (oConcept) => {
 // cycle through every word in MFS; if word is of that concept's type (hasOwnProperty: [concept]Data), then delete it
 //
 const removeAllSpecificInstancesFromLocalMFS = async (concept_wordSlug) => {
-    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_wordSlug)
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+
+    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_wordSlug)
     var propertyPath = oConcept.conceptData.propertyPath;
     console.log("removeAllSpecificInstancesFromLocalMFS; propertyPath: "+propertyPath)
-    var path = window.ipfs.neuroCore.engine.pCGw
+    var path = window.ipfs.neuroCore.subject.pCGw
     for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
         var fileName = file.name;
         var fileType = file.type;
@@ -289,22 +301,22 @@ const removeAllSpecificInstancesFromLocalMFS = async (concept_wordSlug) => {
     }
 }
 
-
-
 const removeAllSpecificInstancesFromAllSets = async (concept_wordSlug) => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     for (var r=0;r<aAllSets.length;r++) {
         var nextSet_slug = aAllSets[r];
         console.log("removeAllSpecificInstancesFromAllSets; nextSet_slug: "+nextSet_slug)
-        var oNextSet = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextSet_slug)
+        var oNextSet = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nextSet_slug)
         oNextSet.globalDynamicData.specificInstances = [];
         oNextSet.globalDynamicData.directSpecificInstances = [];
-        await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oNextSet);
+        await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(viewingConceptGraph_ipns,oNextSet);
     }
 }
 const removeAllSpecificInstancesFromMainSchema = async (concept_wordSlug) => {
-    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_wordSlug)
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_wordSlug)
     var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
-    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(mainSchema_slug)
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug)
     // console.log("removeAllSpecificInstancesFromMainSchema; oMainSchema start: "+JSON.stringify(oMainSchema,null,4))
     var aRels = oMainSchema.schemaData.relationships;
     var aNodes = oMainSchema.schemaData.nodes;
@@ -338,13 +350,15 @@ const removeAllSpecificInstancesFromMainSchema = async (concept_wordSlug) => {
     oMainSchema.schemaData.nodes = aNodesUpdated;
     oMainSchema.schemaData.relationships = aRelsUpdated;
     // console.log("removeAllSpecificInstancesFromMainSchema; oMainSchema finish: "+JSON.stringify(oMainSchema,null,4))
-    await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oMainSchema);
+    await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(viewingConceptGraph_ipns,oMainSchema);
 }
 
 export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
@@ -353,8 +367,9 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
             conceptSlug = window.frontEndConceptGraph.viewingConcept.slug
         }
         window.frontEndConceptGraph.viewingConcept.slug = conceptSlug;
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
 
-        var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(conceptSlug)
+        var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,conceptSlug)
         var concept_conceptTitle = oConcept.conceptData.title;
         var concept_ipns = oConcept.metaData.ipns;
         window.frontEndConceptGraph.viewingConcept.title = concept_conceptTitle;
@@ -377,16 +392,17 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
             jQuery("#wordRawFileContainer").val();
             var slug = jQuery(this).data("slug");
             console.log("show in wordRawFileContainer slug: "+slug)
-            var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug)
+            var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug)
             jQuery("#wordRawFileContainer").val(JSON.stringify(oWord,null,4));
         });
         jQuery(".nodeNameContainer").click(async function(){
             jQuery("#wordRawFileContainer").val();
             var slug = jQuery(this).data("slug");
             console.log("show in wordRawFileContainer slug: "+slug)
-            var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug)
+            var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug)
             jQuery("#wordRawFileContainer").val(JSON.stringify(oWord,null,4));
         });
+
         jQuery("#openAllButton").click(async function(){
             jQuery(".childrenNodesContainer").css("display","block")
             jQuery(".toggleChildrenOfTypesButton").data("status","open")
@@ -399,7 +415,7 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
             var sWord = jQuery("#wordRawFileContainer").val();
             console.log("updateThisWordButton; sWord: "+sWord)
             var oWord = JSON.parse(sWord)
-            await ConceptGraphInMfsFunctions.addWordToActiveMfsConceptGraph(oWord)
+            await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oWord)
         });
         jQuery("#showPrevSourceVersionButton").click(async function(){
             var sWord = jQuery("#wordRawFileContainer").val();
@@ -423,9 +439,9 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">
                             <div id="conceptTitleContainer" style={{display:"inline-block",marginRight:"20px"}}>conceptTitleContainer</div>
                         </div>
@@ -439,6 +455,7 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
 
                                 <center>concept structural components</center>
                                 <div id="specialWordsContainer" style={{marginBottom:"20px",fontSize:"12px"}} ></div>
+
                                 <center>Sets and Specific Instances of this concept</center>
 
                                 <div id="openAllButton" className="doSomethingButton_small" >open all</div>

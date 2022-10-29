@@ -266,14 +266,20 @@ window.ipfs.mfsDirectoriesEstablished = false;
 
 window.ipfs.neuroCore.engine.pCG = null; // eg: pCG0 = /plex/conceptGraphs/1cnx1ekjkv/k2k4r8m51oham1hg0lqrdryt2bjs4vzvmbe9r2geijux4nmqbqeq1r67/
 window.ipfs.neuroCore.subject.pCG = null
+window.ipfs.pCG = "/plex/conceptGraphs/";
+window.ipfs.pCGpub = "/plex/conceptGraphs/publicConceptGraphsDirectory/node.txt";
 window.ipfs.pCGb = null; // b=base; default path to all operational concept graphs in this node; includes 10-character directory which should be unknown to other nodes
 window.ipfs.pCGs = null; // s=schema; path to the active mainSchemaForConceptGraph file
 window.ipfs.pCG0 = null; // 0=most important; path to "active" concept graph. can also have: window.ipfs.pCG1, 2, 3, etc and switch between them
 window.ipfs.pCGw = null; // w=word; path to all words in active concept graph pCG0 + word/
+window.ipfs.pCGd = null; // d=directory; path to the directory of all concept graphs as well as roles played
+// pCG = /plex/conceptGraphs/
+// pCGpub = /plex/conceptGraphs/publicConceptGraphDirectory/node.txt
 // pCGb = /plex/conceptGraphs/abcde12345/
-// pCGs = pCGb + "mainSchemaForConceptGraph/node.txt"
+// pCGs = pCGb + "mainSchemaForConceptGraph/node.txt" // might deprecate this location for this file; instead use conceptGraphsDirectory to find the active concept graph ipns
 // pCGs = pCGb + [ipns hash] + "/"
 // pCGw = pCGs + "/words"
+// pCGd = pCGb + "conceptGraphsDirectory/node.txt";
 window.ipfs.pCGnce = null; // nce = neuroCore engine; default: pCGnce = pCG0
 window.ipfs.pCGncs = null; // ncs = neuroCore subject; default: pCGncs = pCG0
 // convention: same info in two places; ought to pick just one
@@ -289,6 +295,12 @@ window.frontEndConceptGraph.viewingConcept = {};
 window.frontEndConceptGraph.viewingConcept.slug = null;
 window.frontEndConceptGraph.viewingConcept.title = null;
 window.frontEndConceptGraph.viewingConcept.ipns = null;
+
+window.frontEndConceptGraph.neuroCore = {};
+window.frontEndConceptGraph.neuroCore.subject = {};
+window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph = null;
+window.frontEndConceptGraph.neuroCore.engine = {};
+window.frontEndConceptGraph.neuroCore.engine.ipnsForMainSchemaForConceptGraph = null;
 
 // The following file system is established by ConceptGraphInMfsFunctions.establishMfsDirectories which is called by the landing page ( src/plex/plexHome.js ) unless it has already been done successfully
 window.grapevine = {};

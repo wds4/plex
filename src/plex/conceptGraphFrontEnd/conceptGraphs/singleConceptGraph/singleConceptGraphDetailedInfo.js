@@ -9,6 +9,7 @@ import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfs
 const jQuery = require("jquery");
 
 const populateFields_from_oMainSchemaForConceptGraph = async (oMainConceptGraphSchema) => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     jQuery("#rightColumnTextarea").val("loading ...");
     jQuery("#currConceptGraphMainSchemaSlugField").html("loading ...");
     jQuery("#currConceptGraphMainSchemaTitleField").val("loading ...");
@@ -61,9 +62,10 @@ const populateFields_from_oMainSchemaForConceptGraph = async (oMainConceptGraphS
             nextSchemaHTML += "<br>";
             jQuery("#schemasListContainer").append(nextSchemaHTML)
         }
-        jQuery(".singleWordWrapper").click(function(){
+        jQuery(".singleWordWrapper").click(async function(){
             var clickedSlug = jQuery(this).data("slug");
-            var oClickedWord = window.lookupWordBySlug[clickedSlug];
+            // var oClickedWord = window.lookupWordBySlug[clickedSlug];
+            var oClickedWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,clickedSlug)
             var sClickedWord = JSON.stringify(oClickedWord,null,4)
             jQuery("#rightColumnTextarea").val(sClickedWord);
             jQuery(".singleWordWrapper").css("backgroundColor","#CFCFCF")
@@ -85,7 +87,9 @@ const populateFields_from_wordsInMFS = async (ipnsForMainSchemaForConceptGraph) 
 export default class SingleConceptGraphFrontEndDetailedInfo extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
@@ -110,15 +114,22 @@ export default class SingleConceptGraphFrontEndDetailedInfo extends React.Compon
 
         await populateFields_from_wordsInMFS(ipnsForMainSchemaForConceptGraph);
 
+        jQuery("#updateConceptGraphButton").click(async function(){
+            console.log("updateConceptGraphButton clicked")
+            var sUpdatedWord = jQuery("#rightColumnTextarea").val()
+            var oUpdatedWord = JSON.parse(sUpdatedWord)
+            await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(ipnsForMainSchemaForConceptGraph,oUpdatedWord)
+        })
+
     }
     render() {
         return (
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Single Concept Graph Detailed Info (front end)</div>
                         <div class="h3" >{window.frontEndConceptGraph.viewingConceptGraph.title}</div>
                         <div style={{marginTop:"20px"}}>
@@ -277,7 +288,7 @@ export default class SingleConceptGraphFrontEndDetailedInfo extends React.Compon
                                 </textarea>
                                 <br/>
                                 <div>
-                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Send above to SQL and (if I am steward) to IPFS: </div>
+                                    <div style={{display:"inline-block",verticalAlign:"middle"}} >Update in MFS (at least one other node must be online for this to work!): </div>
                                     <div id="updateConceptGraphButton" className="doSomethingButton_small">UPDATE</div>
                                 </div>
                             </div>

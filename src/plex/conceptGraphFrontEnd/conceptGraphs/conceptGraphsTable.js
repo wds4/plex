@@ -34,25 +34,11 @@ function makeConceptGraphTable(cgDataSet) {
     });
 }
 
-const returnListOfConceptGraphsInMFS = async (pCGb) => {
-    var aConceptGraphs = [];
-    try {
-        for await (const file of MiscIpfsFunctions.ipfs.files.ls(pCGb)) {
-            var fileName = file.name;
-            var fileType = file.type;
-            var fileCid = file.cid;
-            if ( (fileType=="directory") && (fileName != "mainSchemaForConceptGraph" ) ) {
-                aConceptGraphs.push(fileName);
-            }
-        }
-    } catch (e) {}
-    return aConceptGraphs;
-}
-
 export default class ConceptGraphsFrontEndTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
             conceptGraphLinks: []
         }
     }
@@ -61,7 +47,7 @@ export default class ConceptGraphsFrontEndTable extends React.Component {
 
         var pCGb = window.ipfs.pCGb;
         jQuery("#pCGbContainer").html(pCGb)
-        var aConceptGraphs = await returnListOfConceptGraphsInMFS(pCGb);
+        var aConceptGraphs = await ConceptGraphInMfsFunctions.returnListOfConceptGraphsInMFS(pCGb);
         console.log("aConceptGraphs: "+JSON.stringify(aConceptGraphs,null,4))
 
         var cgDataSet = [];
@@ -126,13 +112,12 @@ export default class ConceptGraphsFrontEndTable extends React.Component {
                     <LeftNavbar1 />
                     <LeftNavbar2 />
                     <div className="mainPanel" style={{backgroundColor:"#BFBFBF"}} >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Table of Concept Graphs (front end)</div>
 
                         <div style={{border:"1px solid orange",padding:"10px",fontSize:"10px",backgroundColor:"#DFDFDF"}}>
                             All front end concept graphs are stored in the Mutable File System along the following path:
                             <div id="pCGbContainer" >pCGb container</div>
-                            <div>The 10-character folder is unique to each node and should be known only to that node (? how secure - ? if need to chmod to make sure director is invisible + inaccessible).</div>
                             <div>This table is obtained using ipfs.files.ls to find all directories at the end of the above pathway.</div>
                         </div>
 

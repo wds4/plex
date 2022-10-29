@@ -2286,27 +2286,29 @@ aAuxiliaryPatternData.push(oAuxiliaryPatternData)
                     oNewRel.nodeTo.slug = desiredParentSet_slug;
                     // now add the newRel to schema for concept, wordType, superset, etc
                     var oSchema = NeuroCoreFunctions.fetchNewestRawFile(parentSchema_slug,oRFL)
-                    oSchema = MiscFunctions.updateSchemaWithNewRel(oSchema,oNewRel,oRFL.current)
-                    oRFL.updated[parentSchema_slug] = oSchema;
+                    if (oSchema) {
+                        oSchema = MiscFunctions.updateSchemaWithNewRel(oSchema,oNewRel,oRFL.current)
+                        oRFL.updated[parentSchema_slug] = oSchema;
 
-                    auxAssistedQueue = true;
-                    oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
-                    oAuxiliaryPatternData.patternName = "P.a.s1r.05";
-                    oAuxiliaryPatternData.domains.aNodesFrom = [ node_slug ];
-                    oAuxiliaryPatternData.domains.aNodesTo = [ desiredParentSet_slug ];
-                    aAuxiliaryPatternData.push(oAuxiliaryPatternData)
+                        auxAssistedQueue = true;
+                        oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
+                        oAuxiliaryPatternData.patternName = "P.a.s1r.05";
+                        oAuxiliaryPatternData.domains.aNodesFrom = [ node_slug ];
+                        oAuxiliaryPatternData.domains.aNodesTo = [ desiredParentSet_slug ];
+                        aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                    oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
-                    oAuxiliaryPatternData.patternName = "P.a.s1r.07";
-                    oAuxiliaryPatternData.domains.aNodesFrom = [ desiredParentSet_slug ];
-                    oAuxiliaryPatternData.domains.aNodesTo = "_ANY_";
-                    aAuxiliaryPatternData.push(oAuxiliaryPatternData)
+                        oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
+                        oAuxiliaryPatternData.patternName = "P.a.s1r.07";
+                        oAuxiliaryPatternData.domains.aNodesFrom = [ desiredParentSet_slug ];
+                        oAuxiliaryPatternData.domains.aNodesTo = "_ANY_";
+                        aAuxiliaryPatternData.push(oAuxiliaryPatternData)
 
-                    oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
-                    oAuxiliaryPatternData.patternName = "P.a.s1r.08";
-                    oAuxiliaryPatternData.domains.aNodesFrom = [ desiredParentSet_slug ];
-                    oAuxiliaryPatternData.domains.aNodesTo = "_ANY_";
-                    aAuxiliaryPatternData.push(oAuxiliaryPatternData)
+                        oAuxiliaryPatternData = MiscFunctions.cloneObj(oAPD_s1r);
+                        oAuxiliaryPatternData.patternName = "P.a.s1r.08";
+                        oAuxiliaryPatternData.domains.aNodesFrom = [ desiredParentSet_slug ];
+                        oAuxiliaryPatternData.domains.aNodesTo = "_ANY_";
+                        aAuxiliaryPatternData.push(oAuxiliaryPatternData)
+                    }
                 }
 
             } catch (err) {
@@ -3721,7 +3723,9 @@ oRFL.updated[nT_slug] = oNodeTo;
                 await MiscFunctions.createOrUpdateWordInAllTables(oWord_new)
             }
             if (whichNeuroCore=="NeuroCore3") {
-                await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+                // await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+                var neuroCoreSubject_ipns = window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph
+                await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(neuroCoreSubject_ipns,oWord_new)
                 window.ipfs.neuroCore.subject.oRFL.current[nextNew_slug] = oWord_new
             }
             oRFL.current[nextNew_slug] = oWord_new;
@@ -3812,7 +3816,9 @@ oRFL.updated[nT_slug] = oNodeTo;
                     await MiscFunctions.createOrUpdateWordInAllTables(oWord_updated)
                 }
                 if (whichNeuroCore=="NeuroCore3") {
-                    await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_updated)
+                    // await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_updated)
+                    var neuroCoreSubject_ipns = window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph
+                    await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(neuroCoreSubject_ipns,oWord_updated)
                     window.ipfs.neuroCore.subject.oRFL.current[nextUpdate_slug] = oWord_updated
                 }
                 oRFL.current[nextUpdate_slug] = oWord_updated;

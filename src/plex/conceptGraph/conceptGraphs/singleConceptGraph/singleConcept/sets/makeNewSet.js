@@ -5,7 +5,7 @@ import LeftNavbar2 from '../../../../../navbars/leftNavbar2/singleConcept_sets_l
 import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
 import sendAsync from '../../../../../renderer.js';
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 
 const saveNewSet = async () => {
     console.log("saveNewSet")

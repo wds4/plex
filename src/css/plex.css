@@ -1161,3 +1161,76 @@
     display:inline-block;
     width:150px;
 }
+.conceptGraphsPageLeftPanel {
+    display:inline-block;
+    text-align:right;
+    width:300px;
+}
+.conceptGraphsPageRightPanel {
+    display:inline-block;
+    text-align:left;
+    margin-left:10px;
+    width:400px;
+}
+.conceptGraphsPageDescriptionPanel {
+    display:inline-block;
+    text-align:left;
+    margin-left:10px;
+    width:600px;
+    font-size:12px;
+}
+.conceptGraphsPageBox {
+    margin-bottom:10px;
+    font-size:12px;
+}
+.activeToggleButton {
+    display:inline-block;
+    border:1px solid grey;
+    padding:0px 2px 0px 2px;
+    margin-left:5px;
+}
+.nc3EngineToggleButton {
+    display:inline-block;
+    border:1px solid grey;
+    padding:0px 2px 0px 2px;
+    margin-left:5px;
+}
+.nc3SubjectToggleButton {
+    display:inline-block;
+    border:1px solid grey;
+    padding:0px 2px 0px 2px;
+    margin-left:5px;
+}
+.publicToggleButton {
+    display:inline-block;
+    border:1px solid grey;
+    padding:0px 2px 0px 2px;
+    margin-left:5px;
+}
+.updateSchemaNavBarButton {
+    display:inline-block;
+    text-align:center;
+    background-color:#DFDFDF;
+    padding:3px 10px 3px 10px;
+    margin-left:5px;
+}
+.updateSchemaNavBarButton:hover {
+    background-color:yellow;
+}
+.updateSchemaContentBox {
+    display:none;
+}
+.addUpdateLeftPanel {
+    display:inline-block;
+    text-align:right;
+    width:100px;
+    margin-left:10px;
+}
+.addUpdateRightPanel {
+    display:inline-block;
+    text-align:left;
+    margin-left:10px;
+    padding:5px;
+    width:400px;
+    background-color:#DFDFDF;
+}

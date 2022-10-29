@@ -8,7 +8,9 @@ const jQuery = require("jquery");
 export default class ConceptGraphsFrontEndConceptsMainPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+        }
     }
     componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
@@ -18,9 +20,9 @@ export default class ConceptGraphsFrontEndConceptsMainPage extends React.Compone
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Concepts Main Page</div>
                     </div>
                 </fieldset>

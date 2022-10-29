@@ -298,7 +298,9 @@ const makeNewWord = async (slugToCreate,newUniqueID,whichNeuroCore) => {
     }
     if (whichNeuroCore=="NeuroCore3") {
         var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[newUniqueID].new;
-        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        // var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        var neuroCoreSubject_ipns = window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph
+        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(neuroCoreSubject_ipns,oWord_new)
         window.ipfs.neuroCore.subject.oRFL.current[slugToCreate] = oWord_new;
         window.ipfs.neuroCore.subject.oRFL.new[slugToCreate] = oWord_new;
         return fooResult;
@@ -316,7 +318,9 @@ const updateWord = async (slugToUpdate,updateUniqueID,whichNeuroCore) => {
         // NEED TO COMPLETE
         var oWord_old = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].old;
         var oWord_new = window.ipfs.neuroCore.engine.oRecordOfUpdates[updateUniqueID].new;
-        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        // var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS(oWord_new)
+        var neuroCoreSubject_ipns = window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph
+        var fooResult = await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(neuroCoreSubject_ipns,oWord_new)
         return fooResult;
     }
 }

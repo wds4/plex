@@ -172,7 +172,7 @@ export default class MakeNewSpecificInstance extends React.Component {
         var oConcept = window.lookupWordBySlug[currentConcept_slug];
         var jsonSchema_slug = oConcept.conceptData.nodes.JSONSchema.slug;
         var oJSONSchema = window.lookupWordBySlug[jsonSchema_slug];
-        var oBlankForm = {}; 
+        var oBlankForm = {};
         return (
             <>
                 <fieldset className="mainBody" >

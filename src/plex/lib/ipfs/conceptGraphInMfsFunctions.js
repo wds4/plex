@@ -10,6 +10,21 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+export const returnListOfConceptGraphsInMFS = async (pCGb) => {
+    var aConceptGraphs = [];
+    try {
+        for await (const file of MiscIpfsFunctions.ipfs.files.ls(pCGb)) {
+            var fileName = file.name;
+            var fileType = file.type;
+            var fileCid = file.cid;
+            if ( (fileType=="directory") && (fileName != "mainSchemaForConceptGraph" ) && (fileName != "conceptGraphsDirectory" ) ) {
+                aConceptGraphs.push(fileName);
+            }
+        }
+    } catch (e) {}
+    return aConceptGraphs;
+}
+
 export const areMfsDirectoriesEstablished = async () => {
     var oIpfsID = await MiscIpfsFunctions.ipfs.id();
     var myPeerID = oIpfsID.id;
@@ -55,6 +70,7 @@ export const establishMfsDirectories = async () => {
     var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
     var pCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/"
 
+    try { await ipfs.files.mkdir("/plex/conceptGraphs/publicConceptGraphsDirectory/") } catch (e) { console.log("error: "+e) }
     try { await ipfs.files.mkdir(pCG0) } catch (e) { console.log("error: "+e) }
     try { await ipfs.files.mkdir(pCG0+"words/") } catch (e) { console.log("error: "+e) }
     // each of the other core wordTypes for concept graphs
@@ -78,10 +94,15 @@ export const establishMfsDirectories = async () => {
 
 export const loadNeuroCore3ConceptGraph = async (foo) => {
     console.log("loadNeuroCore3ConceptGraph")
+
+    // var pCGb = window.ipfs.pCGb;
+    // var path = pCGb + "conceptGraphsDirectory/node.txt";
+    // ???? var ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns, = await fetchObjectByLocalMutableFileSystemPath(path)
+
     // window.ipfs.neuroCore = {};
     // window.ipfs.neuroCore.engine = {};
     // var oWinIpfs = MiscFunctions.cloneObj(window.ipfs)
-    console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
+    // console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
     window.ipfs.neuroCore.engine.oRFL = {};
     window.ipfs.neuroCore.engine.oRFL.current = {};
     window.ipfs.neuroCore.engine.oRFL.updated = {};
@@ -107,6 +128,7 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
             window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
             // window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
             console.log("loadNeuroCore3ConceptGraph neuroCore.engine; nextWord_slug: "+nextWord_slug)
+            /*
             if (oNextWord.hasOwnProperty("schemaData")) {
                 var aNextSchemaRels = oNextWord.schemaData.relationships;
                 for (var z=0;z < aNextSchemaRels.length;z++ ) {
@@ -114,9 +136,11 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
                     window.ipfs.neuroCore.subject.allConceptGraphRelationships.push(oNextRel)
                 }
             }
+            */
         }
     }
     var path = window.ipfs.neuroCore.subject.pCGw
+    console.log("path = window.ipfs.neuroCore.subject.pCGw = "+path)
     for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
         var fileName = file.name;
         var fileType = file.type;
@@ -127,7 +151,14 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
             var nextWord_slug = oNextWord.wordData.slug;
             // window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
             window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
-            console.log("loadNeuroCore3ConceptGraph neuroCore.subject; nextWord_slug: "+nextWord_slug)
+            // console.log("loadNeuroCore3ConceptGraph neuroCore.subject; nextWord_slug: "+nextWord_slug+"; oNextWord: "+JSON.stringify(oNextWord,null,4))
+            if (oNextWord.hasOwnProperty("schemaData")) {
+                var aNextSchemaRels = oNextWord.schemaData.relationships;
+                for (var z=0;z < aNextSchemaRels.length;z++ ) {
+                    var oNextRel = aNextSchemaRels[z];
+                    window.ipfs.neuroCore.subject.allConceptGraphRelationships.push(oNextRel)
+                }
+            }
         }
     }
 
@@ -333,6 +364,7 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
 // Similar in function to addOrUpdateWordInLocalConceptGraph
 // Except: this word is either generated locally or updating a word that already exists locally
 // Therefore: no need to run convertExternalNodeToLocalWord(oNode)
+// THIS FUNCTION ASSUMES "ACTIVE" CONCEPT GRAPH
 export const createOrUpdateWordInMFS = async (oWord) => {
     // console.log("createOrUpdateWordInMFS! adding oWord: " + JSON.stringify(oWord,null,4))
     var pCGw = window.ipfs.pCGw;
@@ -352,6 +384,37 @@ export const createOrUpdateWordInMFS = async (oWord) => {
         window.ipfs.neuroCore.subject.oRFL.current[word_slug] = oWord
     }
     if (window.ipfs.neuroCore.engine.pCGw == window.ipfs.pCGw) {
+        // console.log("createOrUpdateWordInMFS! yes nc engine == active ")
+        window.ipfs.neuroCore.engine.oRFL.current[word_slug] = oWord
+    }
+    window.ipfs.updatesSinceLastRefresh = true;
+    return oWord
+}
+
+// functions: _specifyConceptGraph
+// same as createOrUpdateWordInMFS, except the concept graph must be specified by its IPNS (the directory of the concept graph,
+// which is the ipns of its mainSchemaForConceptGraph) -- it is not assumed to be the "active" concept graph
+export const createOrUpdateWordInMFS_specifyConceptGraph = async (ipns,oWord) => {
+    // console.log("createOrUpdateWordInMFS! adding oWord: " + JSON.stringify(oWord,null,4))
+    var pCGb = window.ipfs.pCGb;
+    var pCGw = pCGb + ipns + "/words/";
+    var word_slug = oWord.wordData.slug;
+    var path = pCGw+word_slug+"/";
+    try { await MiscIpfsFunctions.ipfs.files.mkdir(path,{parents:true}) } catch (e) {}
+    var pathToFile = path + "node.txt";
+    console.log("createOrUpdateWordInMFS_specifyConceptGraph! pathToFile: " + pathToFile)
+    var fileToWrite = JSON.stringify(oWord,null,4)
+    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+    var oWord = await publishWordToIpfs(oWord)
+    // console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.subject.pCGw: "+window.ipfs.neuroCore.subject.pCGw)
+    // console.log("createOrUpdateWordInMFS! window.ipfs.neuroCore.engine.pCGw: "+window.ipfs.neuroCore.engine.pCGw)
+    // console.log("createOrUpdateWordInMFS! window.ipfs.pCGw: "+window.ipfs.pCGw)
+    if (window.ipfs.neuroCore.subject.pCGw == pCGw) {
+        // console.log("createOrUpdateWordInMFS! yes nc subject == active ")
+        window.ipfs.neuroCore.subject.oRFL.current[word_slug] = oWord
+    }
+    if (window.ipfs.neuroCore.engine.pCGw == pCGw) {
         // console.log("createOrUpdateWordInMFS! yes nc engine == active ")
         window.ipfs.neuroCore.engine.oRFL.current[word_slug] = oWord
     }
@@ -440,6 +503,7 @@ export const loadActiveIpfsConceptGraph = async () => {
     // var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
     var pCG0 = pCGb + mainSchema_local_ipns+"/";
     var pCGw = pCG0 + "words/";
+    var pCGd = pCGb + "conceptGraphsDirectory/node.txt"
 
     window.ipfs.myPeerID = myPeerID;
     window.ipfs.myUsername = myUsername
@@ -451,17 +515,68 @@ export const loadActiveIpfsConceptGraph = async () => {
     window.ipfs.activeConceptGraph.ipns = ipns_forActiveCGPathDir;
     window.ipfs.activeConceptGraph.ipns10 = ipns10_forActiveCGPathDir;
     window.ipfs.activeConceptGraph.mainSchema_local_ipns = mainSchema_local_ipns;
+    window.ipfs.pCG = "/plex/conceptGraphs/";
+    window.ipfs.pCGpub = "/plex/conceptGraphs/publicConceptGraphsDirectory/node.txt";
     window.ipfs.pCGb = pCGb;
     window.ipfs.pCGs = pCGs;
     window.ipfs.pCG0 = pCG0;
     window.ipfs.pCGw = pCGw; // path to every word in the active concept graph
+    window.ipfs.pCGd = pCGd;
 
     window.ipfs.neuroCore.engine.pCG0 = pCG0;
     window.ipfs.neuroCore.engine.pCGw = pCGw;
-    // window.ipfs.pCGnce = pCG0;
+
     window.ipfs.neuroCore.subject.pCG0 = pCG0;
     window.ipfs.neuroCore.subject.pCGw = pCGw;
-    // window.ipfs.pCGncs = pCG0;
+
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+    // 26 Oct 2022: read conceptGraphsDirectory to determine neuroCore.engine and .subject paths
+    var pCGb = window.ipfs.pCGb;
+    var path = pCGb + "conceptGraphsDirectory/node.txt";
+    var oConceptGraphsDirectory = await fetchObjectByLocalMutableFileSystemPath(path)
+    var neuroCore3Engine_cgSlug = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.neuroCore3Engine;
+    var neuroCore3Subject_cgSlug = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.neuroCore3Subject;
+    var aLocalConceptGraphs = oConceptGraphsDirectory.conceptGraphsDirectoryData.localConceptGraphs
+
+    var viewing_cgSlug = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.oViewing.conceptGraph;
+    var viewing_conceptSlug = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.oViewing.concept;
+
+    window.frontEndConceptGraph.viewingConceptGraph.slug = viewing_cgSlug;
+    window.frontEndConceptGraph.viewingConcept.slug = viewing_conceptSlug;
+
+    for (var a=0;a<aLocalConceptGraphs.length;a++) {
+        var oCG = aLocalConceptGraphs[a];
+        var cgSlug = oCG.conceptGraphSlug
+        var cgTitle = oCG.conceptGraphTitle
+        var ipns = oCG.ipns
+        if (cgSlug==neuroCore3Engine_cgSlug) {
+            var mainSchema_ncEngine_ipns = ipns
+            window.frontEndConceptGraph.neuroCore.engine.ipnsForMainSchemaForConceptGraph = ipns;
+        }
+        if (cgSlug==neuroCore3Subject_cgSlug) {
+            var mainSchema_ncSubject_ipns = ipns
+            window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph = ipns
+        }
+        if (cgSlug==viewing_cgSlug) {
+            window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph = ipns
+            window.frontEndConceptGraph.viewingConceptGraph.title = cgTitle;
+        }
+    }
+
+    var pCG0 = pCGb + mainSchema_ncEngine_ipns+"/";
+    var pCGw = pCG0 + "words/";
+
+    window.ipfs.neuroCore.engine.pCG0 = pCG0;
+    window.ipfs.neuroCore.engine.pCGw = pCGw;
+
+    var pCG0 = pCGb + mainSchema_ncSubject_ipns+"/";
+    var pCGw = pCG0 + "words/";
+
+    window.ipfs.neuroCore.subject.pCG0 = pCG0;
+    window.ipfs.neuroCore.subject.pCGw = pCGw;
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
 
     console.log("window.ipfs: "+JSON.stringify(window.ipfs,null,4))
 }
@@ -501,6 +616,43 @@ export const addWordToActiveMfsConceptGraph = async (oWord) => {
     var res = await MiscIpfsFunctions.ipfs.name.publish(cid, options_publish)
     */
 
+
+    // Future: Need to evaluate res first before returning true
+    return true;
+}
+
+// modified from addWordToActiveMfsConceptGraph
+// added requirement to specify ipns of concept graph
+export const addWordToMfsConceptGraph_specifyConceptGraph = async (ipns,oWord) => {
+    var amISteward = checkWordWhetherIAmSteward(oWord)
+    if (!amISteward) {
+        return false;
+    }
+    console.log("addWordToMfsConceptGraph_specifyConceptGraph; amISteward: "+amISteward)
+
+    // ?? may want to make this step optional??
+    var oWord = await publishWordToIpfs(oWord)
+
+    var slug = oWord.wordData.slug;
+    // var keyname = oWord.metaData.keyname;
+    var sWord = JSON.stringify(oWord,null,4)
+    var fileToWrite_encoded = new TextEncoder().encode(sWord)
+
+    var pCGb = window.ipfs.pCGb;
+    var pCGw = pCGb + ipns + "/words/";
+    // var word_slug = oWord.wordData.slug;
+    // var path = pCGw+word_slug+"/";
+
+    var path1 = pCGw + slug + "/";
+    var path2 = pCGw + slug + "/node.txt";
+
+    // var pCG0 = window.ipfs.pCG0;
+    // var path1 = pCG0 + "words/" + slug + "/";
+    // var path2 = pCG0 + "words/" + slug + "/node.txt";
+
+    await MiscIpfsFunctions.ipfs.files.mkdir(path1,{parents:true});
+    try { await MiscIpfsFunctions.ipfs.files.rm(path2) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(path2, fileToWrite_encoded, {create: true, flush: true})
 
     // Future: Need to evaluate res first before returning true
     return true;
@@ -565,8 +717,19 @@ export const lookupWordBySlug = async (slug) => {
     return oWord;
 }
 
+export const lookupWordBySlug_specifyConceptGraph = async (ipns,slug) => {
+    // var pCG0 = window.ipfs.pCG0;
+    // var mfsPath = pCG0 + "words/" + slug + "/node.txt";
+    var pCGb = window.ipfs.pCGb;
+    var pCGw = pCGb + ipns + "/words/";
+    var mfsPath = pCGw + slug + "/node.txt";
+    // console.log("mfsPath: "+mfsPath)
+    var oWord = await fetchObjectByLocalMutableFileSystemPath(mfsPath)
+    return oWord;
+}
+
 export const fetchObjectByLocalMutableFileSystemPath = async (path) => {
-    // console.log("fetchObjectByLocalMutableFileSystemPath; path:")
+    console.log("fetchObjectByLocalMutableFileSystemPath; path: "+path)
     // var chunks = []
     try {
         var chunks1 = []

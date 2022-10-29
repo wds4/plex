@@ -7,7 +7,7 @@ import * as MiscFunctions from '../../../../functions/miscFunctions.js';
 import sendAsync from '../../../../renderer.js';
 
 const jQuery = require("jquery");
-jQuery.DataTable = require("datatables.net");
+// jQuery.DataTable = require("datatables.net");
 
 export default class MakeNewConcept extends React.Component {
     constructor(props) {

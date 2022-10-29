@@ -34,6 +34,7 @@ export default class AllConceptsTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
             conceptLinks: [],
             conceptLinks2: []
         }
@@ -43,15 +44,23 @@ export default class AllConceptsTable extends React.Component {
         var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
         var viewingConceptGraph_slug = window.frontEndConceptGraph.viewingConceptGraph.slug;
         var viewingConceptGraph_title = window.frontEndConceptGraph.viewingConceptGraph.title;
+        console.log("viewingConceptGraph_ipns: "+viewingConceptGraph_ipns)
 
         // 25 Oct 2022:
         // need to redo the below to view the actively viewing concept graph (above) as opposed to the "active" concept graph
         // Plan to make it so that more than one concept graph can be "active" at any given time.
         // But only one concept graph will be the "viewing" concept graph at any given time, and will be present in the banner at the bottom of the masthead
 
-        var conceptGraphMainSchema_slug = window.ipfs.activeConceptGraph.slug;
+        var pCGb = window.ipfs.pCGb;
+        var path = pCGb + viewingConceptGraph_ipns + "/words/mainSchemaForConceptGraph/node.txt";
 
-        var oConceptGraphMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(conceptGraphMainSchema_slug);
+        console.log("AllConceptsTable path: "+path)
+
+        // var conceptGraphMainSchema_slug = window.ipfs.activeConceptGraph.slug;
+
+        // var oConceptGraphMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(conceptGraphMainSchema_slug);
+
+        var oConceptGraphMainSchema = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
 
         var aConceptList = oConceptGraphMainSchema.conceptGraphData.concepts;
 
@@ -60,7 +69,7 @@ export default class AllConceptsTable extends React.Component {
         for (var c=0;c<aConceptList.length;c++) {
             var concept_slug = aConceptList[c];
             // var oConcept = window.lookupWordBySlug[concept_slug];
-            var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(concept_slug);
+            var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug);
             var concept_name = oConcept.conceptData.name.singular;
             var concept_ipns = oConcept.metaData.ipns;
             // var concept_slug = oConcept.wordData.slug;
@@ -69,7 +78,6 @@ export default class AllConceptsTable extends React.Component {
             var nextRow_id = window.lookupSqlIDBySlug[concept_slug];
             var nextRow_old_button = "<div data-sqlid="+nextRow_id+" class='doSomethingButton_small nextRowEditButton_old' style=margin-right:5px; >VIEW / EDIT (back-end)</div>";
             var nextRow_button = "<div data-sqlid="+nextRow_id+" data-slug="+concept_slug+" data-ipns="+concept_ipns+" class='doSomethingButton_small nextRowEditButton' style=margin-right:5px; >VIEW / EDIT</div>";
-            // var nextRow_id_html = nextRow_old_button + nextRow_button + nextRow_id;
             var nextRow_id_html = nextRow_old_button + nextRow_button;
 
             var aNextPattern = [
@@ -113,12 +121,12 @@ export default class AllConceptsTable extends React.Component {
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" style={{backgroundColor:"#CFCFCF"}} >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">All Concepts</div>
                         <div style={{marginLeft:"20px"}} >
-                            This list of concepts is generated from the conceptGraphMainSchema at: conceptGraphData.concepts. If incomplete or incorrect, may need to run neuroCore to edit the list.
+                            This list of concepts is generated from the mainSchemaForConceptGraph at: conceptGraphData.concepts. If incomplete or incorrect, may need to run neuroCore to edit the list.
                         </div>
 
                         <div style={{display:"none"}} >

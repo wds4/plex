@@ -17,7 +17,8 @@ export default class ConceptGraphMasthead extends React.Component {
             currentConceptGraphSqlID: window.currentConceptGraphSqlID,
             currentConceptSqlID: window.currentConceptSqlID,
             viewingFrontEndConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
-            viewingFrontEndConceptTitle: window.frontEndConceptGraph.viewingConcept.title
+            viewingFrontEndConceptTitle: window.frontEndConceptGraph.viewingConcept.title,
+            viewingFrontEndConceptSlug: window.frontEndConceptGraph.viewingConcept.slug
         }
     }
     async componentDidMount() {
@@ -163,12 +164,12 @@ export default class ConceptGraphMasthead extends React.Component {
                         <div style={{display:"inline-block",marginRight:"10px"}} >Front End: </div>
                         <NavLink id="goToNeuroCore3CurrentConceptGraphMainPageButton" class="mastheadBarNavButton" style={{display:"inline-block"}} to="/ConceptGraphsFrontEndSingleConceptGraphMainPage/current" >
                             <div style={{display:"inline-block",color:"grey"}} >Concept Graph Title:</div>
-                            <div style={{display:"inline-block",marginLeft:"5px"}} >{this.state.viewingFrontEndConceptGraphTitle}</div>
+                            <div style={{display:"inline-block",marginLeft:"5px"}} >{this.props.viewingConceptGraphTitle}</div>
                         </NavLink>
 
                         <NavLink class="mastheadBarNavButton" style={{display:"inline-block",marginLeft:"10px"}} to="/ConceptGraphsFrontEnd_SingleConceptMainPage/current" >
                             <div style={{display:"inline-block",color:"grey"}} >Concept Title:</div>
-                            <div style={{display:"inline-block",marginLeft:"5px"}} >{this.state.viewingFrontEndConceptTitle}</div>
+                            <div style={{display:"inline-block",marginLeft:"5px"}} >{this.state.viewingFrontEndConceptSlug}</div>
                         </NavLink>
                     </div>
 

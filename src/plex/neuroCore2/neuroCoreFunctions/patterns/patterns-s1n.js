@@ -22,11 +22,17 @@ const ajv = new Ajv({
 export const checkSingleS1nPattern = async (node_slug,patternName,whichNeuroCore) => {
     var oCheckSingleS1nPatternOutput = {};
     var isPatternPresent = false;
-    console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug)
+    console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug+"; whichNeuroCore: "+whichNeuroCore)
     // var patternName = oNextPattern.patternName;
 
     // var oNode = oRawFileLookup[node_slug];
-    var oNode = window.neuroCore.subject.oRFL.current[node_slug];
+    if (whichNeuroCore=="NeuroCore2") {
+        var oNode = window.neuroCore.subject.oRFL.current[node_slug];
+    }
+    if (whichNeuroCore=="NeuroCore3") {
+        var oNode = window.ipfs.neuroCore.subject.oRFL.current[node_slug];
+    }
+    console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug+"; oNode: "+JSON.stringify(oNode,null,4))
     var oAuxiliaryData = {};
     oAuxiliaryData.node = node_slug;
     var oExtraAuxiliaryData = {};
@@ -97,7 +103,13 @@ if (oNode.hasOwnProperty("conceptData")) {
                     // ? look to see whether this has already been tested and passed; metaData.neuroCore.parentJSONSchemaValidations[nextPJSchema_slug]
                     // if not, then use ajv to test validation
                     var nextPJSchema_slug = aParentJSONSchemaSequence[a];
-                    var oParent = window.neuroCore.subject.oRFL.current[nextPJSchema_slug];
+
+                    if (whichNeuroCore=="NeuroCore2") {
+                        var oParent = window.neuroCore.subject.oRFL.current[nextPJSchema_slug];
+                    }
+                    if (whichNeuroCore=="NeuroCore3") {
+                        var oParent = window.ipfs.neuroCore.subject.oRFL.current[nextPJSchema_slug];
+                    }
                     delete oParent["$id"];
                     var validate = ajv.compile(oParent);
                     var valid = validate(oNode);
@@ -577,11 +589,17 @@ if (oNode.hasOwnProperty("conceptData")) {
             break;
         case "P.c.c1n.conceptWithoutSchema":
             try {
+                console.log("try P.c.c1n.conceptWithoutSchema; node_slug: " + node_slug + "; oNode: " + JSON.stringify(oNode,null,4))
                 if (oNode.hasOwnProperty("conceptData")) {
+                    console.log("tried P.c.c1n.conceptWithoutSchema; node_slug: " + node_slug + " has conceptData! ")
                     var schemaSlug = oNode.conceptData.nodes.schema.slug;
+                    console.log("tried P.c.c1n.conceptWithoutSchema; node_slug: " + node_slug + " has conceptData! schemaSlug: "+schemaSlug)
                     if (!schemaSlug) {
                         isPatternPresent = true;
+                        console.log("found P.c.c1n.conceptWithoutSchema; node_slug: " + node_slug + "; oNode: " + JSON.stringify(oNode,null,4))
                     }
+                } else {
+                    console.log("tried P.c.c1n.conceptWithoutSchema; node_slug: " + node_slug + " does not have conceptData. ")
                 }
             } catch (err) {
                 console.log("javaScriptError with pattern p_c_c1n_conceptwithoutschema; err: "+err);

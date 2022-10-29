@@ -6,7 +6,7 @@ import LeftNavbar2 from '../../../navbars/leftNavbar2/singleConceptGraph_words_l
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import sendAsync from '../../../renderer.js';
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 jQuery.DataTable = require("datatables.net");
 
 function makeThisPageTable(tableName,wordDataSet) {
