@@ -29,7 +29,7 @@ export const areMfsDirectoriesEstablished = async () => {
     var oIpfsID = await MiscIpfsFunctions.ipfs.id();
     var myPeerID = oIpfsID.id;
     var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-    var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+    var ipns_forActiveCGPathDir = await returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
     var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
     var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
     var oMainSchemaForConceptGraphLocal = await fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
@@ -62,7 +62,7 @@ export const establishMfsDirectories = async () => {
     var oIpfsID = await MiscIpfsFunctions.ipfs.id();
     var myPeerID = oIpfsID.id;
     var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-    var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+    var ipns_forActiveCGPathDir = await returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
     var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
     var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
     var oMainSchemaForConceptGraphLocal = await fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
@@ -442,20 +442,20 @@ export const addOrUpdateWordInLocalConceptGraph = async (pCG0,ipns) => {
 // where [activePathDir] is derived from the last 10 characters of the IPNS generated using keyname:
 // plex_pathToActiveConceptGraph_[last 10 digits of local peerID]
 // This function returns the IPNS; if IPNS not yet generated, it will generate it and then return it
-export const returnIPNSForActiveCGPathDir = async (keyname_forActiveCGPathDir) => {
+export const returnIPNSForCompleteCGPathDir = async (keyname_forActiveCGPathDir) => {
     // keyname generated from myPeerID like this:
     // var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
 
     var ipns_forActiveCGPathDir = null;
     var aKeys = await MiscIpfsFunctions.ipfs.key.list()
-    console.log("returnIPNSForActiveCGPathDir-- numKeys: "+aKeys.length)
+    console.log("returnIPNSForCompleteCGPathDir-- numKeys: "+aKeys.length)
     var foundMatch = false;
     for (var k=0;k<aKeys.length;k++) {
         var oNext = aKeys[k];
         var name = oNext.name;
         var ipfs = oNext.id;
         if (name==keyname_forActiveCGPathDir) {
-            console.log("returnIPNSForActiveCGPathDir -- match: oNext: "+JSON.stringify(oNext,null,4))
+            console.log("returnIPNSForCompleteCGPathDir -- match: oNext: "+JSON.stringify(oNext,null,4))
             foundMatch = true;
             ipns_forActiveCGPathDir = ipfs;
         }
@@ -465,7 +465,7 @@ export const returnIPNSForActiveCGPathDir = async (keyname_forActiveCGPathDir) =
             type: 'rsa',
             size: 2048
         })
-        console.log("returnIPNSForActiveCGPathDir -- make new key: generatedKey_obj: "+JSON.stringify(generatedKey_obj,null,4))
+        console.log("returnIPNSForCompleteCGPathDir -- make new key: generatedKey_obj: "+JSON.stringify(generatedKey_obj,null,4))
         var ipns_forActiveCGPathDir = generatedKey_obj["id"];
         var generatedKey_name = generatedKey_obj["name"];
     }
@@ -493,7 +493,7 @@ export const loadActiveIpfsConceptGraph = async () => {
     }
 
     var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-    var ipns_forActiveCGPathDir = await returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+    var ipns_forActiveCGPathDir = await returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
     var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
     var pCGb = "/plex/conceptGraphs/" + ipns10_forActiveCGPathDir + "/";
     // var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt"

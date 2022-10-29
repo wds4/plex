@@ -46,20 +46,25 @@ const reportMutableFilesTree = async (pCG0,path) => {
 export default class ManageConceptGraphDownload extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
         var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-        var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+        var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
         var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
         jQuery("#dirForPathToActiveConceptGraphContainer1").html(ipns10_forActiveCGPathDir)
         jQuery("#dirForPathToActiveConceptGraphContainer2").html(ipns10_forActiveCGPathDir)
 
-        var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+        // var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+        var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+viewingConceptGraph_ipns+"/words/mainSchemaForConceptGraph/node.txt";
         var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
         var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
         jQuery("#conceptGraphRootPathContainer").html(mainSchema_local_ipns)
@@ -68,14 +73,15 @@ export default class ManageConceptGraphDownload extends React.Component {
 
         jQuery("#pathToThisConceptGraphContainer").html(pCG0)
 
-        var pCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/"
+        var pCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+viewingConceptGraph_ipns+"/words/mainSchemaForConceptGraph/"
+        console.log("pCG: "+pCG)
         for await (const file of MiscIpfsFunctions.ipfs.files.ls(pCG)) {
             var fileName = file.name;
             var fileType = file.type;
             var fileCid = file.cid;
             if (fileName=="node.txt") {
                 var path = pCG + "node.txt";
-                var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/";
+                var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+viewingConceptGraph_ipns+"/words/mainSchemaForConceptGraph/";
                 pCGs += "<div class=ipfsMutableFilesFileContainer style='display:inline-block;background-color:orange;' id='localMainSchemaForConceptGraphButton' ";
                 pCGs += " data-filename='"+fileName+"' ";
                 pCGs += " data-path='"+path+"' ";
@@ -307,11 +313,13 @@ export default class ManageConceptGraphDownload extends React.Component {
             for (var c=0;c<aAvailableConcepts.length;c++) {
                 var oNxtCncpt = aAvailableConcepts[c]
                 var nxtConcept_slug = oNxtCncpt.slug;
+                var nxtConcept_ipns = oNxtCncpt.ipns;
                 var nextConceptHTML = "";
                 nextConceptHTML += "<div>";
                     nextConceptHTML += "<input type='checkbox' style='display:inline-block;margin-right:5px;' ";
                     nextConceptHTML += " id='checkBoxForConceptToDownload_"+nxtConcept_slug+"' ";
                     nextConceptHTML += " data-conceptslug='"+nxtConcept_slug+"' ";
+                    nextConceptHTML += " data-conceptipns='"+nxtConcept_ipns+"' ";
                     nextConceptHTML += " class='checkBoxForConceptToDownload' ";
                     if (aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
                         nextConceptHTML += " disabled ";
@@ -370,15 +378,55 @@ export default class ManageConceptGraphDownload extends React.Component {
                 jQuery(this).data("status","closed")
             }
         })
+        jQuery("#importCheckedConceptsButton").click(async function(){
+            console.log("importCheckedConceptsButton clicked")
+            var aConceptsToImport = [];
+            var aConceptsToImport_ipns = [];
+            jQuery(".checkBoxForConceptToDownload").each(function(i,obj){
+                var isThisChecked = jQuery(this).prop("checked")
+                var conSlug = jQuery(this).data("conceptslug")
+                var conIpns = jQuery(this).data("conceptipns")
+                console.log("conSlug: "+conSlug+"; conIpns: "+conIpns+"; isThisChecked: "+isThisChecked)
+                if (isThisChecked) {
+                    aConceptsToImport.push(conSlug)
+                    aConceptsToImport_ipns.push(conIpns)
+                }
+            })
+            console.log("aConceptsToImport_ipns: "+JSON.stringify(aConceptsToImport_ipns,null,4))
+            for (var c=0;c<aConceptsToImport_ipns.length;c++) {
+                var ipns = aConceptsToImport_ipns[c]
+                var slug = aConceptsToImport[c]
+                var ipfsPath = "/ipns/"+ipns;
+                var path = pCG0+"words/"+slug+"/";
+                console.log("path: "+path)
+
+                try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+                var pathToFile = path + "node.txt";
+                var oNode = await ConceptGraphInMfsFunctions.fetchObjectByIPNS(ipns)
+                var oNodeLocal = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNode);
+                var fileToWrite = JSON.stringify(oNodeLocal,null,4)
+                try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+                try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+
+            }
+        })
+
+        jQuery("#importSchemasOfCheckedConceptsButton").click(async function(){
+            console.log("importSchemasOfCheckedConceptsButton clicked")
+        })
+
+        jQuery("#importWordsOfSchemasOfCheckedConceptsButton").click(async function(){
+            console.log("importWordsOfSchemasOfCheckedConceptsButton clicked")
+        })
     }
     render() {
         return (
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Download Concept Graph from External Source</div>
 
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"10px",marginTop:"20px"}} >
@@ -408,7 +456,9 @@ export default class ManageConceptGraphDownload extends React.Component {
                         populate /words/ from node at end of pCGs
                         </div>
                         <div id="toggleConceptsListButton" data-status="closed" className="doSomethingButton" >+</div>
-                        <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked (and enabled) concept words only (incomplete)</div>
+                        <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked concept words only</div>
+                        <div id="importSchemasOfCheckedConceptsButton" className="doSomethingButton" >import schemas from checked concepts only (incomplete)</div>
+                        <div id="importWordsOfSchemasOfCheckedConceptsButton" className="doSomethingButton" >import words of schemas from checked concepts only (incomplete)</div>
                         <br/>
                         <div id="importConceptsButton" className="doSomethingButton" >a. import EVERY concept word from conceptGraphData.aConcepts (will overwrite!)</div>
                         <div id="importSchemasButton" className="doSomethingButton" >b. import both schemas from each concept (will overwrite!)</div>

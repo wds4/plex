@@ -13,7 +13,9 @@ const jQuery = require("jquery");
 export default class ManageConceptGraphUpdateIPNSs extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
@@ -178,9 +180,9 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Active Concept Graph: Update IPNS for each Word in SchemaData and ConceptData</div>
                         <div style={{width:"1200px",marginTop:"20px",fontSize:"10px"}} >
                         After downloading a concept graph from an external source, every word will have a new IPNS which is locally controlled.

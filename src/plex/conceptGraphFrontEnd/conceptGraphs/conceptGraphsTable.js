@@ -57,13 +57,23 @@ export default class ConceptGraphsFrontEndTable extends React.Component {
             var ipnsForMainSchemaForConceptGraph = nextDirectory;
             console.log("aConceptGraphs nextDirectory: "+nextDirectory)
             var path = pCGb + nextDirectory + "/words/mainSchemaForConceptGraph/node.txt"
+            console.log("path: "+path)
             var oMainSchemaForConceptGraph = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
-            console.log("oMainSchemaForConceptGraph: "+JSON.stringify(oMainSchemaForConceptGraph,null,4))
-            var cgSlug = oMainSchemaForConceptGraph.conceptGraphData.slug;
-            var cgTitle = oMainSchemaForConceptGraph.conceptGraphData.title;
-            var cgDescription = oMainSchemaForConceptGraph.conceptGraphData.description;
-            var aConcepts = oMainSchemaForConceptGraph.conceptGraphData.aConcepts;
-            var numConcepts = aConcepts.length;
+            // console.log("oMainSchemaForConceptGraph: "+JSON.stringify(oMainSchemaForConceptGraph,null,4))
+            if (oMainSchemaForConceptGraph) {
+                var cgSlug = oMainSchemaForConceptGraph.conceptGraphData.slug;
+                var cgTitle = oMainSchemaForConceptGraph.conceptGraphData.title;
+                var cgDescription = oMainSchemaForConceptGraph.conceptGraphData.description;
+                var aConcepts = oMainSchemaForConceptGraph.conceptGraphData.aConcepts;
+                var numConcepts = aConcepts.length;
+            }
+            if (!oMainSchemaForConceptGraph) {
+                var cgSlug = "?";
+                var cgTitle = "?";
+                var cgDescription = "?";
+                var aConcepts = "?";
+                var numConcepts = "?";
+            }
 
             var button_html = "";
             button_html += "<div class='doSomethingButton_small viewSingleConceptGraphButton' ";

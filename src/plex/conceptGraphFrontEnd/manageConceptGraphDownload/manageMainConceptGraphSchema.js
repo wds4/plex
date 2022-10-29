@@ -12,21 +12,26 @@ const jQuery = require("jquery");
 export default class ManageConceptGraphDownload extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
         var oIpfsID = await MiscIpfsFunctions.ipfs.id();
         var myPeerID = oIpfsID.id;
 
-        var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-        jQuery("#keynameForPathToActiveConceptGraphContainer").html(keyname_forActiveCGPathDir)
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+        jQuery("#ipnsForViewingMainSchemaForConceptGraphContainer").html(viewingConceptGraph_ipns)
 
-        var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
-        jQuery("#ipnsForPathToActiveConceptGraphContainer").html(ipns_forActiveCGPathDir)
-        var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+        var keyname_forCompleteCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
+        jQuery("#keynameForPathToCompleteConceptGraphContainer").html(keyname_forCompleteCGPathDir)
 
-        var isIpns10DirPresent = await ConceptGraphInMfsFunctions.isIpns10DirPresent(ipns10_forActiveCGPathDir);
+        var ipns_forCompleteCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForCompleteCGPathDir(keyname_forCompleteCGPathDir)
+        jQuery("#ipnsForPathToCompleteConceptGraphContainer").html(ipns_forCompleteCGPathDir)
+        var ipns10_forCompleteCGPathDir = ipns_forCompleteCGPathDir.slice(-10);
+
+        var isIpns10DirPresent = await ConceptGraphInMfsFunctions.isIpns10DirPresent(ipns10_forCompleteCGPathDir);
         if (isIpns10DirPresent) {
             var resultHTML = "YES";
             jQuery("#isDirectory1PresentContainer").css("backgroundColor","green")
@@ -37,14 +42,14 @@ export default class ManageConceptGraphDownload extends React.Component {
         }
         jQuery("#isDirectory1PresentContainer").html(resultHTML)
 
-        jQuery("#dirForPathToActiveConceptGraphContainer1").html(ipns10_forActiveCGPathDir)
-        jQuery("#dirForPathToActiveConceptGraphContainer2").html(ipns10_forActiveCGPathDir)
-        jQuery("#dirForPathToActiveConceptGraphContainer3").html(ipns10_forActiveCGPathDir)
+        jQuery("#dirForPathToCompleteConceptGraphContainer1").html(ipns10_forCompleteCGPathDir)
+        jQuery("#dirForPathToCompleteConceptGraphContainer2").html(ipns10_forCompleteCGPathDir)
+        jQuery("#dirForPathToCompleteConceptGraphContainer3").html(ipns10_forCompleteCGPathDir)
 
         jQuery("#storeSeedMSFCGButton").click(async function(){
             console.log("storeSeedMSFCGButton clicked")
             var mainSchema_external_ipns = window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS
-            var newIPNS = await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(mainSchema_external_ipns,ipns10_forActiveCGPathDir)
+            var newIPNS = await ConceptGraphInMfsFunctions.addConceptGraphSeedToMFS(mainSchema_external_ipns,ipns10_forCompleteCGPathDir)
         })
 
         // var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
@@ -56,13 +61,14 @@ export default class ManageConceptGraphDownload extends React.Component {
         console.log("mainSchema_external_ipns: "+mainSchema_external_ipns)
         jQuery("#mainSchemaSeedIPNSContainer").html(mainSchema_external_ipns)
 
-        var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
+        var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forCompleteCGPathDir+"/"+viewingConceptGraph_ipns+"/words/mainSchemaForConceptGraph/node.txt";
+        // console.log("pathToLocalMSFCG: "+pathToLocalMSFCG)
         var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
         var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
         jQuery("#mainSchemaSeed_local_IPNSContainer").html(mainSchema_local_ipns)
         jQuery("#conceptGraphRootPathContainer").html(mainSchema_local_ipns)
 
-        var isCgDirPresent = await ConceptGraphInMfsFunctions.isActiveConceptGraphDirPresent(ipns10_forActiveCGPathDir,mainSchema_local_ipns);
+        var isCgDirPresent = await ConceptGraphInMfsFunctions.isActiveConceptGraphDirPresent(ipns10_forCompleteCGPathDir,mainSchema_local_ipns);
         if (isCgDirPresent) {
             var resultHTML = "YES";
             jQuery("#isDirectory2PresentContainer").css("backgroundColor","green")
@@ -78,31 +84,31 @@ export default class ManageConceptGraphDownload extends React.Component {
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Manage mainSchemaForConceptGraph</div>
 
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"12px",marginTop:"20px"}} >
                             <div style={{color:"purple"}} >Directory Generation (10 characters, unknown to other nodes)</div>
 
                             <div>
-                                <div style={{display:"inline-block",width:"300px"}} >
+                                <div style={{display:"inline-block",width:"200px"}} >
                                 keyname:
                                 </div>
-                                <div id="keynameForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
-                                keynameForPathToActiveConceptGraphContainer
+                                <div id="keynameForPathToCompleteConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"500px"}} >
+                                keynameForPathToCompleteConceptGraphContainer
                                 </div>
                                 <div style={{display:"inline-block",marginLeft:"20px",backgroundColor:"#EFEFEF"}} >
                                 (derived from my peerID)
                                 </div>
                             </div>
                             <div>
-                                <div style={{display:"inline-block",width:"300px"}} >
+                                <div style={{display:"inline-block",width:"200px"}} >
                                 IPNS:
                                 </div>
-                                <div id="ipnsForPathToActiveConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
-                                ipnsForPathToActiveConceptGraphContainer
+                                <div id="ipnsForPathToCompleteConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"500px"}} >
+                                ipnsForPathToCompleteConceptGraphContainer
                                 </div>
                                 <div style={{display:"inline-block",marginLeft:"20px",backgroundColor:"#EFEFEF"}} >
                                 (derived from above keyname)
@@ -110,13 +116,13 @@ export default class ManageConceptGraphDownload extends React.Component {
                             </div>
 
                             <div>
-                                <div style={{display:"inline-block",width:"300px"}} >
+                                <div style={{display:"inline-block",width:"200px"}} >
                                 dir:
                                 </div>
-                                <div style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"400px"}} >
+                                <div style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"500px"}} >
                                     /plex/conceptGraphs/
-                                    <div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block"}} >
-                                    dirForPathToActiveConceptGraphContainer1
+                                    <div id="dirForPathToCompleteConceptGraphContainer1" style={{display:"inline-block"}} >
+                                    dirForPathToCompleteConceptGraphContainer1
                                     </div>
                                 </div>
                                 <div style={{display:"inline-block",marginLeft:"20px"}} >
@@ -124,6 +130,18 @@ export default class ManageConceptGraphDownload extends React.Component {
                                 </div>
                                 <div id="isDirectory1PresentContainer" style={{display:"inline-block",marginLeft:"20px",backgroundColor:"red",width:"45px",textAlign:"center",color:"white"}} >
                                 ?
+                                </div>
+                            </div>
+
+                            <div>
+                                <div style={{display:"inline-block",width:"200px"}} >
+                                IPNS-viewing:
+                                </div>
+                                <div id="ipnsForViewingMainSchemaForConceptGraphContainer" style={{display:"inline-block",backgroundColor:"#DFDFDF",width:"500px"}} >
+                                ipnsForViewingMainSchemaForConceptGraphContainer
+                                </div>
+                                <div style={{display:"inline-block",marginLeft:"20px",backgroundColor:"#EFEFEF"}} >
+                                (the IPNS of mainSchemaForConceptGraph currently being viewed / edited)
                                 </div>
                             </div>
 
@@ -152,7 +170,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                             The old IPNS, author (if known), and keyname will be recorded.
                             </div>
                             <div >
-                            pCGs = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer2" style={{display:"inline-block"}} ></div>/mainSchemaForConceptGraph/node.txt
+                            pCGs = /plex/conceptGraphs/<div id="dirForPathToCompleteConceptGraphContainer2" style={{display:"inline-block"}} ></div>/mainSchemaForConceptGraph/node.txt
                             <br/>
                             pCGs is the path to the active "seed" node (with locally-controlled keyname and IPNS) for the Concept Graph.
                             </div>
@@ -175,7 +193,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                             </div>
                             Root path via Mutable File System to the entirety of the CURRENTLY ACTIVE concept graph:
                             <div >
-                            pGC0 = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer3" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer" style={{display:"inline-block"}} ></div>/
+                            pGC0 = /plex/conceptGraphs/<div id="dirForPathToCompleteConceptGraphContainer3" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer" style={{display:"inline-block"}} ></div>/
 
                             <div style={{display:"inline-block",marginLeft:"20px",width:"100px"}} >
                             directory exist?

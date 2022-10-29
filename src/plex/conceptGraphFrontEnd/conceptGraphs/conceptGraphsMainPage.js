@@ -23,7 +23,7 @@ export default class ConceptGraphsFrontEndMainPage extends React.Component {
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
-                    <LeftNavbar2 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
                         <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Concept Graphs Main Page (front end)</div>

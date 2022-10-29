@@ -5,7 +5,7 @@ import LeftNavbar1 from './navbars/leftNavbar1/plex_leftNav1';
 import * as ConceptGraphInMfsFunctions from './lib/ipfs/conceptGraphInMfsFunctions.js'
 import * as MiscIpfsFunctions from './lib/ipfs/miscIpfsFunctions.js'
 
-const jQuery = require("jquery"); 
+const jQuery = require("jquery");
 
 export default class PlexHome extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ export default class PlexHome extends React.Component {
             var oIpfsID = await MiscIpfsFunctions.ipfs.id();
             var myPeerID = oIpfsID.id;
             var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
-            var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForActiveCGPathDir(keyname_forActiveCGPathDir)
+            var ipns_forActiveCGPathDir = await ConceptGraphInMfsFunctions.returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
             var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
             var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt";
             var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)

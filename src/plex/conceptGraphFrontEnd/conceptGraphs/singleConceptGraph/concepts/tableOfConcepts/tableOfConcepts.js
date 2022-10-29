@@ -70,8 +70,14 @@ export default class AllConceptsTable extends React.Component {
             var concept_slug = aConceptList[c];
             // var oConcept = window.lookupWordBySlug[concept_slug];
             var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug);
-            var concept_name = oConcept.conceptData.name.singular;
-            var concept_ipns = oConcept.metaData.ipns;
+            if (oConcept) {
+                var concept_name = oConcept.conceptData.name.singular;
+                var concept_ipns = oConcept.metaData.ipns;
+            }
+            if (!oConcept) {
+                var concept_name = "? ("+concept_slug+")";
+                var concept_ipns = "?";
+            }
             // var concept_slug = oConcept.wordData.slug;
 
             var r = 0;
