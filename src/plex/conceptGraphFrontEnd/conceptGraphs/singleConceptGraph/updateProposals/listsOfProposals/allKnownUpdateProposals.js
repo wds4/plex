@@ -115,6 +115,8 @@ const saveThisPublicRawFile = async () => {
     var fileToWrite = JSON.stringify(oPublicDirectory,null,4)
     try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
     try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+
+    await ConceptGraphInMfsFunctions.publishEntireLocalMfsToIpfs();
 }
 
 const loadExistingPublicFile = async () => {

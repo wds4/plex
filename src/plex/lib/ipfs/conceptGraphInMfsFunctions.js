@@ -10,6 +10,17 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+// This function republishes the entire local MFS to the IPFS which makes my file structure
+// accessible to other nodes.
+// Future: input path and only publish that particular directory (to avoid publishing local hidden concept graphs)
+export const publishEntireLocalMfsToIpfs = async () => {
+    var stats = await MiscIpfsFunctions.ipfs.files.stat('/');
+    var stats_str = JSON.stringify(stats);
+    var thisPeerData_cid = stats.cid.string;
+    console.log("thisPeerData_cid: " + thisPeerData_cid)
+    var options_publish = { key: 'self' }
+    var res = await MiscIpfsFunctions.ipfs.name.publish(thisPeerData_cid, options_publish)
+}
 // return array of objects with contact information
 // obtain list from /grapevineData/users/
 export const fetchUserlistFromGrapevineMFS = async () => {
