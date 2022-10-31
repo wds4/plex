@@ -27,7 +27,7 @@ export default class ConceptGraphsFrontEndExternalUpdateProposals extends React.
         for (var u=0;u<aMasterUsersList.length;u++) {
             var peerID = aMasterUsersList[u];
             path = "/ipns/"+peerID+"/plex/conceptGraphs/public/updateProposals/node.txt";
-            var updateProposals =  await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path);
+            var updateProposals =  await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(path);
             if (!updateProposals) { updateProposals = {};  }
             console.log("peerID: "+peerID+"; updateProposals: "+JSON.stringify(updateProposals,null,4))
         }
