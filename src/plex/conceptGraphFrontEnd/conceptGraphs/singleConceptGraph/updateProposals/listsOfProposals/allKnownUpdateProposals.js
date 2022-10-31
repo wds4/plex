@@ -10,10 +10,10 @@ const jQuery = require("jquery");
 
 var oUP = {
     "updateProposals": {
-        "endogenous": [
+        "internal": [
 
         ],
-        "exogenous": [
+        "external": [
 
         ]
     }
@@ -79,7 +79,7 @@ async function makeThisPageTable(wordDataSet) {
 
                     var sPublicDirectory = jQuery("#publicDirectoryContainer").val();
                     var oPublicDirectory = JSON.parse(sPublicDirectory)
-                    oPublicDirectory.updateProposals.endogenous.push(oUpdateProposal)
+                    oPublicDirectory.updateProposals.internal.push(oUpdateProposal)
 
                     jQuery("#publicDirectoryContainer").val(JSON.stringify(oPublicDirectory,null,4));
 
