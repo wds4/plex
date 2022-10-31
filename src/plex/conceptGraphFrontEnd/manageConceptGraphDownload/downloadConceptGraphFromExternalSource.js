@@ -67,7 +67,8 @@ export default class ManageConceptGraphDownload extends React.Component {
         var pathToLocalMSFCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+viewingConceptGraph_ipns+"/words/mainSchemaForConceptGraph/node.txt";
         var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(pathToLocalMSFCG)
         var mainSchema_local_ipns = oMainSchemaForConceptGraphLocal.metaData.ipns;
-        jQuery("#conceptGraphRootPathContainer").html(mainSchema_local_ipns)
+        jQuery("#conceptGraphRootPathContainer1").html(mainSchema_local_ipns)
+        jQuery("#conceptGraphRootPathContainer2").html(mainSchema_local_ipns)
 
         var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
 
@@ -306,7 +307,8 @@ export default class ManageConceptGraphDownload extends React.Component {
         */
 
         // populate list of concepts available for download in conceptsAvailableForDownloadOuterContainer
-        var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(window.ipfs.pCGs)
+        var path = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+viewingConceptGraph_ipns+"/words/mainSchemaForConceptGraph/node.txt";
+        var oMainSchemaForConceptGraphLocal = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
         console.log("oMainSchemaForConceptGraphLocal; window.ipfs.pCGs: "+window.ipfs.pCGs+"; oMainSchemaForConceptGraphLocal: "+JSON.stringify(oMainSchemaForConceptGraphLocal,null,4))
         if (oMainSchemaForConceptGraphLocal) {
             var aAvailableConcepts = oMainSchemaForConceptGraphLocal.conceptGraphData.aConcepts;
@@ -322,7 +324,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                     nextConceptHTML += " data-conceptipns='"+nxtConcept_ipns+"' ";
                     nextConceptHTML += " class='checkBoxForConceptToDownload' ";
                     if (aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
-                        // nextConceptHTML += " disabled ";
+                        nextConceptHTML += " disabled ";
                         console.log("YES IN aCurrentLocalConceptGraphSlugs: "+nxtConcept_slug)
                     }
                     if (!aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
@@ -534,11 +536,11 @@ export default class ManageConceptGraphDownload extends React.Component {
                         <div style={{border:"1px dashed grey",padding:"5px",fontSize:"10px",marginTop:"20px"}} >
 
                             <div >
-                            pCGs = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block"}} ></div>/mainSchemaForConceptGraph/node.txt
+                            pCGs = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer1" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer1" style={{display:"inline-block"}} ></div>/words/mainSchemaForConceptGraph/node.txt
                             </div>
 
                             <div >
-                            pGC0 = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer2" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer" style={{display:"inline-block"}} ></div>/
+                            pGC0 = /plex/conceptGraphs/<div id="dirForPathToActiveConceptGraphContainer2" style={{display:"inline-block"}} ></div>/<div id="conceptGraphRootPathContainer2" style={{display:"inline-block"}} ></div>/
                             </div>
 
                             <div >
