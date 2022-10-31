@@ -10,6 +10,14 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+// return array of objects with contact information
+// obtain list from /grapevineData/users/
+export const fetchUserlistFromGrapevineMFS = async () => {
+    var oUserlist = []
+
+    return oUserlist;
+}
+
 // add new word to MFS
 // new word will be added to IPFS
 // new word will be added to MFS
