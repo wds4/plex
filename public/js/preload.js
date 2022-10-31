@@ -267,7 +267,7 @@ window.ipfs.mfsDirectoriesEstablished = false;
 window.ipfs.neuroCore.engine.pCG = null; // eg: pCG0 = /plex/conceptGraphs/1cnx1ekjkv/k2k4r8m51oham1hg0lqrdryt2bjs4vzvmbe9r2geijux4nmqbqeq1r67/
 window.ipfs.neuroCore.subject.pCG = null
 window.ipfs.pCG = "/plex/conceptGraphs/";
-window.ipfs.pCGpub = "/plex/conceptGraphs/publicConceptGraphsDirectory/node.txt";
+window.ipfs.pCGpub = "/plex/conceptGraphs/public/publicConceptGraphsDirectory/node.txt";
 window.ipfs.pCGb = null; // b=base; default path to all operational concept graphs in this node; includes 10-character directory which should be unknown to other nodes
 window.ipfs.pCGs = null; // s=schema; path to the active mainSchemaForConceptGraph file
 window.ipfs.pCG0 = null; // 0=most important; path to "active" concept graph. can also have: window.ipfs.pCG1, 2, 3, etc and switch between them

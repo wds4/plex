@@ -19,7 +19,11 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
-        var pCGw = window.ipfs.pCGw;
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+        var pCGb = window.ipfs.pCGb;
+        var pCGw = pCGb + viewingConceptGraph_ipns + "/words/";
+
+        // var pCGw = window.ipfs.pCGw;
         var aWords = [];
         var aSchemas = [];
         var aConcepts = [];
@@ -27,27 +31,37 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
         for await (const file of MiscIpfsFunctions.ipfs.files.ls(pCGw)) {
             if (file.type=="directory") {
                 var slug = file.name;
-                aWords.push(slug);
-                jQuery("#numWordsContainer").html(aWords.length)
-                // console.log("ManageConceptGraphUpdateIPNSs; slug: "+slug)
-                var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug);
-                newIpnsLookup[slug] = oWord.metaData.ipns;
-                if (oWord.hasOwnProperty("schemaData")) {
-                    aSchemas.push(slug)
-                    jQuery("#numSchemasContainer").html(aSchemas.length)
-                }
-                if (oWord.hasOwnProperty("conceptData")) {
-                    aConcepts.push(slug)
-                    jQuery("#numConceptsContainer").html(aConcepts.length)
-                }
-                // var pathToNode = pCGw + file.name + "/node.txt";
-                // const nextNodeCid = await ipfs.resolve(pathToNode);
+                console.log("slug: "+slug)
+                // if (slug != "mainSchemaForConceptGraph") {
+                    aWords.push(slug);
+                    jQuery("#numWordsContainer").html(aWords.length)
+                    // console.log("ManageConceptGraphUpdateIPNSs; slug: "+slug)
+                    var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug);
+                    if (!oWord) {
+                        console.log("!oWord!: "+slug)
+                    }
+                    newIpnsLookup[slug] = oWord.metaData.ipns;
+                    if (oWord.hasOwnProperty("schemaData")) {
+                        console.log("oWord hasOwnProperty schemaData - slug:" + slug)
+                        aSchemas.push(slug)
+                        jQuery("#numSchemasContainer").html(aSchemas.length)
+                    } else {
+                        console.log("oWord does NOT hasOwnProperty schemaData - slug:" + slug)
+                    }
+                    if (oWord.hasOwnProperty("conceptData")) {
+                        aConcepts.push(slug)
+                        jQuery("#numConceptsContainer").html(aConcepts.length)
+                    }
+                    // var pathToNode = pCGw + file.name + "/node.txt";
+                    // const nextNodeCid = await ipfs.resolve(pathToNode);
+                // }
             }
         }
         jQuery("#numWordsContainer").html(aWords.length)
         jQuery("#numSchemasContainer").html(aSchemas.length)
         jQuery("#numConceptsContainer").html(aConcepts.length)
-
+        var aWords2not1 = [];
+        var numDuplicatedWords = 0;
         jQuery("#runBasicCheckButton").click( async function(){
             var aWords2 = []; // all the words in each schemaData
             var aIPNS2 = []; // all the IPNS hashes in each schemaData
@@ -56,17 +70,38 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
             for (var s=0;s<aSchemas.length;s++) {
                 var slug = aSchemas[s];
                 console.log("oSchema slug: "+slug)
-                var oSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug);
+                var oSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug);
                 var sSchemaOld = JSON.stringify(oSchema)
                 /*
                 if (s==0) {
                     console.log("oSchema old: "+JSON.stringify(oSchema,null,4))
                 }
                 */
+
                 var aNodes = oSchema.schemaData.nodes;
+                jQuery("#wordsIn2Not1Container").html("")
+
                 for (var n=0;n<aNodes.length;n++) {
                     var oNodeData = aNodes[n];
                     var nSlug = oNodeData.slug;
+                    if (!aWords.includes(nSlug)) {
+                        aWords2not1.push(nSlug)
+                        var nHTML = "";
+                        nHTML += "<div>=";
+                        nHTML += nSlug;
+                        nHTML += "=</div>";
+                        jQuery("#wordsIn2Not1Container").append(nHTML)
+                    }
+                    if (aWords2.includes(nSlug)) {
+                        var nHTML = "";
+                        nHTML += "<div>-";
+                        nHTML += nSlug;
+                        nHTML += "-</div>";
+                        console.log("schemaDuplicate; nSlug: "+nSlug+"numDuplicatedWords: "+numDuplicatedWords)
+                        jQuery("#schemaDuplicatesContainer").append(nHTML)
+                        numDuplicatedWords ++;
+                        jQuery("#numDuplicatedWordsContainer").html(numDuplicatedWords)
+                    }
                     if (!aWords2.includes(nSlug)) {
                         aWords2.push(nSlug)
                         jQuery("#numWords2Container").html(aWords2.length)
@@ -93,13 +128,16 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
                     oSchema.metaData.lastUpdate = currentTime;
                     numSchemasUpdated++;
                     jQuery("#numSchemasUpdatedContainer").html(numSchemasUpdated)
-                    // console.log("updating schema: oSchema: "+JSON.stringify(oSchema,null,4))
-                    await ConceptGraphInMfsFunctions.addWordToActiveMfsConceptGraph(oSchema)
+                    console.log("updating schema: oSchema: "+JSON.stringify(oSchema,null,4))
+                    await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oSchema)
+                }
+                if (sSchemaOld == sSchemaNew) {
+                    console.log("sSchemaOld == sSchemaNewoSchema: slug: "+slug)
                 }
             }
             for (var c=0;c<aConcepts.length;c++) {
                 var slug = aConcepts[c];
-                var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug);
+                var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug);
                 var sConceptOld = JSON.stringify(oConcept)
                 /*
                 if (c==0) {
@@ -148,7 +186,7 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
                     oConcept.metaData.lastUpdate = currentTime;
                     numConceptsUpdated++;
                     jQuery("#numConceptsUpdatedContainer").html(numConceptsUpdated)
-                    await ConceptGraphInMfsFunctions.addWordToActiveMfsConceptGraph(oConcept)
+                    await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oConcept)
                 }
                 if (c==0) {
                     console.log("oConcept new: "+JSON.stringify(oConcept,null,4))
@@ -173,6 +211,13 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
             }
             jQuery("#numSchemasUpdatedContainer").html(numSchemasUpdated)
             jQuery("#numConceptsUpdatedContainer").html(numConceptsUpdated)
+
+            for (var x=0;x<aWords2.length;x++) {
+                var slug2 = aWords2[x];
+                if (!aWords.includes(slug2)) {
+                    console.log("FOUNDONE!: slug2: "+slug2)
+                }
+            }
         })
     }
     render() {
@@ -238,6 +283,20 @@ export default class ManageConceptGraphUpdateIPNSs extends React.Component {
                             <div>
                                 <div className="leftColStyleH" >number concepts updated</div>
                                 <div className="rightColStyleH" id="numConceptsUpdatedContainer" ></div>
+                            </div>
+
+                            <div>
+                                <div className="leftColStyleH" >number duplicate words in schemas</div>
+                                <div className="rightColStyleH" id="numDuplicatedWordsContainer" ></div>
+                            </div>
+
+                            <div>
+                                <div className="leftColStyleH" >words in schema but not MFS:</div>
+                                <div className="rightColStyleH" id="wordsIn2Not1Container" ></div>
+                            </div>
+                            <div>
+                                <div className="leftColStyleH" >words in schema more than once:</div>
+                                <div className="rightColStyleH" id="schemaDuplicatesContainer" ></div>
                             </div>
                         </div>
 

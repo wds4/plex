@@ -18,6 +18,7 @@ export const ipfs = IpfsHttpClient({
 export const returnMyPeerID = async () => {
     var oIpfsID = await ipfs.id();
     var myPeerID = oIpfsID.id;
+    // console.log("returnMyPeerID; myPeerID: "+myPeerID)
     return myPeerID
 }
 

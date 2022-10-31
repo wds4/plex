@@ -22,7 +22,7 @@ const ajv = new Ajv({
 export const checkSingleS1nPattern = async (node_slug,patternName,whichNeuroCore) => {
     var oCheckSingleS1nPatternOutput = {};
     var isPatternPresent = false;
-    console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug+"; whichNeuroCore: "+whichNeuroCore)
+    // console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug+"; whichNeuroCore: "+whichNeuroCore)
     // var patternName = oNextPattern.patternName;
 
     // var oNode = oRawFileLookup[node_slug];
@@ -32,7 +32,7 @@ export const checkSingleS1nPattern = async (node_slug,patternName,whichNeuroCore
     if (whichNeuroCore=="NeuroCore3") {
         var oNode = window.ipfs.neuroCore.subject.oRFL.current[node_slug];
     }
-    console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug+"; oNode: "+JSON.stringify(oNode,null,4))
+    // console.log("checkSingleS1nPattern; patternName: "+patternName+"; node_slug: "+node_slug+"; oNode: "+JSON.stringify(oNode,null,4))
     var oAuxiliaryData = {};
     oAuxiliaryData.node = node_slug;
     var oExtraAuxiliaryData = {};

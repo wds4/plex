@@ -10,6 +10,50 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+// add new word to MFS
+// new word will be added to IPFS
+// new word will be added to MFS
+// mainSchema for concept will be updated in MFS and in IPFS
+// create new word OR update if word already exists in this concept graph (as determined by slug)
+// ipns designates which concept graph in question (assume private concept graph location)
+// oWord is the word to add or update
+// concept_slug: the concept which will receive this word as a specific instance
+// aSets: optional; array of sets by slug; add relationship to make new word isASpecificInstanceOf each slug in aSets
+// if aSets is empty or null, add relationship to make new word isASpecificInstanceOf the superset of that concept
+// This is a redo of addSpecificInstanceToConceptGraphMfs2 which assumes old file structure of MFS (??)
+export const addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph = async (ipns,oWord,concept_slug,aSets) => {
+    var word_slug = oWord.wordData.slug;
+    var oConcept = await lookupWordBySlug_specifyConceptGraph(ipns,concept_slug);
+    var superset_slug = oConcept.conceptData.nodes.superset.slug;
+    var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
+    var oMainSchema = await lookupWordBySlug_specifyConceptGraph(ipns,mainSchema_slug);
+    if (!aSets) {
+        var aSets = [];
+    }
+    if (aSets.length == 0) {
+        aSets.push(superset_slug)
+    }
+    for (var s=0;s<aSets.length;s++) {
+        var set_slug = aSets[s];
+        var oSet = await lookupWordBySlug_specifyConceptGraph(ipns,set_slug);
+        var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
+        oNewRel.nodeFrom.slug = word_slug;
+        oNewRel.relationshipType.slug = "isASpecificInstanceOf";
+        oNewRel.nodeTo.slug = set_slug;
+
+        console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oNewRel: "+JSON.stringify(oNewRel,null,4))
+
+        var oMiniWordLookup = {};
+        oMiniWordLookup[word_slug] = oWord;
+        oMiniWordLookup[set_slug] = oSet;
+        oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+        console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
+    }
+
+    addWordToMfsConceptGraph_specifyConceptGraph(ipns,oWord);
+    addWordToMfsConceptGraph_specifyConceptGraph(ipns,oMainSchema);
+}
+
 export const returnListOfConceptGraphsInMFS = async (pCGb) => {
     var aConceptGraphs = [];
     try {
@@ -50,6 +94,8 @@ export const areMfsDirectoriesEstablished = async () => {
         var stats10 = await ipfs.files.stat(pCG0 + "supersets/")
         var stats11 = await ipfs.files.stat(pCG0 + "sets/")
         var stats12 = await ipfs.files.stat(pCG0 + "properties/")
+        var stats13 = await ipfs.files.stat("/plex/conceptGraphs/public/publicConceptGraphsDirectory/")
+        var stats14 = await ipfs.files.stat("/plex/conceptGraphs/public/updateProposals/")
         // if no error is thrown, all three paths must exist, so return true; otherwise return false
         return true;
     } catch (e) { return false; }
@@ -70,7 +116,11 @@ export const establishMfsDirectories = async () => {
     var pCG0 = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/"+mainSchema_local_ipns+"/";
     var pCG = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/"
 
-    try { await ipfs.files.mkdir("/plex/conceptGraphs/publicConceptGraphsDirectory/") } catch (e) { console.log("error: "+e) }
+    // files related to the concept graph that are intended for public consumption
+    try { await ipfs.files.mkdir("/plex/conceptGraphs/public/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir("/plex/conceptGraphs/public/publicConceptGraphsDirectory/") } catch (e) { console.log("error: "+e) }
+    try { await ipfs.files.mkdir("/plex/conceptGraphs/public/updateProposals/") } catch (e) { console.log("error: "+e) }
+
     try { await ipfs.files.mkdir(pCG0) } catch (e) { console.log("error: "+e) }
     try { await ipfs.files.mkdir(pCG0+"words/") } catch (e) { console.log("error: "+e) }
     // each of the other core wordTypes for concept graphs
@@ -516,7 +566,7 @@ export const loadActiveIpfsConceptGraph = async () => {
     window.ipfs.activeConceptGraph.ipns10 = ipns10_forActiveCGPathDir;
     window.ipfs.activeConceptGraph.mainSchema_local_ipns = mainSchema_local_ipns;
     window.ipfs.pCG = "/plex/conceptGraphs/";
-    window.ipfs.pCGpub = "/plex/conceptGraphs/publicConceptGraphsDirectory/node.txt";
+    window.ipfs.pCGpub = "/plex/conceptGraphs/public/publicConceptGraphsDirectory/node.txt";
     window.ipfs.pCGb = pCGb;
     window.ipfs.pCGs = pCGs;
     window.ipfs.pCG0 = pCG0;
@@ -623,6 +673,7 @@ export const addWordToActiveMfsConceptGraph = async (oWord) => {
 
 // modified from addWordToActiveMfsConceptGraph
 // added requirement to specify ipns of concept graph
+// ???? same as createOrUpdateWordInMFS_specifyConceptGraph except doesn't update window.ipfs variables ????
 export const addWordToMfsConceptGraph_specifyConceptGraph = async (ipns,oWord) => {
     var amISteward = checkWordWhetherIAmSteward(oWord)
     if (!amISteward) {
@@ -723,7 +774,7 @@ export const lookupWordBySlug_specifyConceptGraph = async (ipns,slug) => {
     var pCGb = window.ipfs.pCGb;
     var pCGw = pCGb + ipns + "/words/";
     var mfsPath = pCGw + slug + "/node.txt";
-    // console.log("mfsPath: "+mfsPath)
+    console.log("mfsPath: "+mfsPath)
     var oWord = await fetchObjectByLocalMutableFileSystemPath(mfsPath)
     return oWord;
 }
@@ -778,16 +829,38 @@ export const fetchFromMutableFileSystem = async (conceptUniqueIdentifier,subsetU
 
     return aCids;
 }
+
+export const convertWordIpnsToCid = async (ipns) => {
+    var pathToNode = "/ipns/" + ipns
+    var cid = await ipfs.resolve(pathToNode);
+    console.log("convertWordIpnsToCid; ipns: "+ipns+"; cid: "+cid)
+    return cid;
+}
+
 export const convertSlugToCid = async (slug) => {
     // var oWord = await lookupWordBySlug(slug)
     // var ipns = oWord.metaData.ipns;
     var pCGw = window.ipfs.pCGw;
     var myPeerID = window.ipfs.myPeerID;
     var pathToNode = "/ipns/"+myPeerID + "/" + pCGw + slug + "/node.txt";
-    var cid = await ipfs.resolve(pathToNode);
+    var cid1 = await ipfs.resolve(pathToNode);
+    var cid = cid1.replace("/ipfs/","");
     console.log("convertSlugToCid; slug: "+slug+"; cid: "+cid)
     return cid;
 }
+
+export const convertSlugToCid_specifyConceptGraph = async (ipns,slug) => {
+    var myPeerID = window.ipfs.myPeerID;
+    var pCGb = window.ipfs.pCGb;
+    var pCGw = pCGb + ipns + "/words/";
+    var path = "/ipns/" + myPeerID + pCGw+slug+"/";
+    var pathToNode = path + "node.txt";
+    var cid1 = await ipfs.resolve(pathToNode);
+    var cid = cid1.replace("/ipfs/","");
+    console.log("convertSlugToCid_specifyConceptGraph; slug: "+slug+"; cid: "+cid)
+    return cid;
+}
+
 // returns an array of cids pointing to specific instances of a given a concept and a subset
 export const fetchArrayOfSpecificInstanceCidsFromMfs = async (subsetUniqueID) => {
     // for now, assume subsetUniqueID is its slug; in future, it could be IPNS or some other unique ID (like name)

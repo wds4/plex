@@ -169,10 +169,13 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData,wh
     }
     for (var r=0;r<aRels.length;r++) {
         var oNextRel = aRels[r];
-        // console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
+        console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
         var nF_slug = oNextRel.nodeFrom.slug;
         var rT_slug = oNextRel.relationshipType.slug;
         var nT_slug = oNextRel.nodeTo.slug;
+
+        var nF_exists = true;
+        var nT_exists = true;
 
         var crit1 = false; // does rT match?
         var crit2 = false; // does nF wordType match?
@@ -209,11 +212,17 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData,wh
 
         // var oNodeFrom = window.lookupWordBySlug[nF_slug];
         var oNodeFrom = window.ipfs.neuroCore.subject.oRFL.current[nF_slug];
-        // console.log("qwertyy; nF_slug: "+nF_slug+"; oNodeFrom: "+JSON.stringify(oNodeFrom,null,4))
-        var nF_wordTypes = oNodeFrom.wordData.wordTypes;
-        if (nF_wordTypes.includes(wT_from)) {
-            crit2 = true;
-            // console.log("crit2 true!")
+        if (!oNodeFrom) {
+            console.log("ERROR: oNodeFrom is undefined from nF_slug: "+nF_slug)
+            nF_exists = false;
+        }
+        if (oNodeFrom) {
+            // console.log("qwertyy; nF_slug: "+nF_slug+"; oNodeFrom: "+JSON.stringify(oNodeFrom,null,4))
+            var nF_wordTypes = oNodeFrom.wordData.wordTypes;
+            if (nF_wordTypes.includes(wT_from)) {
+                crit2 = true;
+                // console.log("crit2 true!")
+            }
         }
         if (wT_from=="ANY") {
             crit2 = true;
@@ -222,10 +231,17 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData,wh
 
         // var oNodeTo = window.lookupWordBySlug[nT_slug];
         var oNodeTo = window.ipfs.neuroCore.subject.oRFL.current[nT_slug];
-        var nT_wordTypes = oNodeTo.wordData.wordTypes;
-        if (nT_wordTypes.includes(wT_to)) {
-            crit3 = true;
-            // console.log("crit3 true!")
+        if (!oNodeTo) {
+            console.log("ERROR: oNodeTo is undefined from nT_slug: "+nT_slug)
+            nT_exists = false;
+        }
+        if (oNodeTo) {
+            // console.log("qwertyy; nT_slug: "+nT_slug+"; oNodeTo: "+JSON.stringify(oNodeTo,null,4))
+            var nT_wordTypes = oNodeTo.wordData.wordTypes;
+            if (nT_wordTypes.includes(wT_to)) {
+                crit3 = true;
+                // console.log("crit3 true!")
+            }
         }
         if (wT_to=="ANY") {
             crit3 = true;
@@ -233,27 +249,29 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData,wh
         }
         // console.log("qwerty nF_slug: "+nF_slug+"; rT_slug: "+rT_slug+"; nT_slug: "+nT_slug+"; crit1: "+crit1+"; crit2: "+crit2+"; crit3: "+crit3+"; crit4: "+crit4+"; crit5: "+crit5)
         var doesPatternMatch = false;
-        if ( (crit1) && (crit2) && (crit3) && (crit4) && (crit5) ) {
-            var doesPatternMatch = true;
-            for (var z=0;z<aActions.length;z++) {
-                var nextAction = aActions[z];
+        if ( (nF_exists) && (nT_exists) ) {
+            if ( (crit1) && (crit2) && (crit3) && (crit4) && (crit5) ) {
+                var doesPatternMatch = true;
+                for (var z=0;z<aActions.length;z++) {
+                    var nextAction = aActions[z];
 
-                var oNextAction = {}
-                oNextAction.actionSlug = nextAction;
-                oNextAction.r = r;
-                oNextAction.oAuxiliaryData = {};
-                oNextAction.oAuxiliaryData.relationship = oNextRel;
-                var sNextAction = JSON.stringify(oNextAction,null,4)
+                    var oNextAction = {}
+                    oNextAction.actionSlug = nextAction;
+                    oNextAction.r = r;
+                    oNextAction.oAuxiliaryData = {};
+                    oNextAction.oAuxiliaryData.relationship = oNextRel;
+                    var sNextAction = JSON.stringify(oNextAction,null,4)
 
-                var actionListHTML = "";
-                actionListHTML += "<div style=margin:0px;padding:0px; >";
-                actionListHTML += "<textarea id='action_"+nextAction+"_"+r+"' class='activeNeuroCore3ActionBox' style='display:inline-block;width:390px;height:100px;border:1px solid black;margin:0px;' ";
-                actionListHTML += "";
-                actionListHTML += " >";
-                actionListHTML += sNextAction;
-                actionListHTML += "</textarea>";
-                actionListHTML += "</div>";
-                jQuery("#actions_nc3_active_container").append(actionListHTML);
+                    var actionListHTML = "";
+                    actionListHTML += "<div style=margin:0px;padding:0px; >";
+                    actionListHTML += "<textarea id='action_"+nextAction+"_"+r+"' class='activeNeuroCore3ActionBox' style='display:inline-block;width:390px;height:100px;border:1px solid black;margin:0px;' ";
+                    actionListHTML += "";
+                    actionListHTML += " >";
+                    actionListHTML += sNextAction;
+                    actionListHTML += "</textarea>";
+                    actionListHTML += "</div>";
+                    jQuery("#actions_nc3_active_container").append(actionListHTML);
+                }
             }
         }
     }

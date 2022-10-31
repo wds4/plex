@@ -371,8 +371,10 @@ export default class ConceptGraphsFrontEnd_SingleConceptMainPage extends React.C
 
         var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,conceptSlug)
         var concept_conceptTitle = oConcept.conceptData.title;
+        var concept_conceptName = oConcept.conceptData.name;
         var concept_ipns = oConcept.metaData.ipns;
         window.frontEndConceptGraph.viewingConcept.title = concept_conceptTitle;
+        window.frontEndConceptGraph.viewingConcept.name = concept_conceptName;
         window.frontEndConceptGraph.viewingConcept.ipns = concept_ipns;
 
         var propertyPath = oConcept.conceptData.propertyPath;

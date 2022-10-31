@@ -322,7 +322,7 @@ export default class ManageConceptGraphDownload extends React.Component {
                     nextConceptHTML += " data-conceptipns='"+nxtConcept_ipns+"' ";
                     nextConceptHTML += " class='checkBoxForConceptToDownload' ";
                     if (aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
-                        nextConceptHTML += " disabled ";
+                        // nextConceptHTML += " disabled ";
                         console.log("YES IN aCurrentLocalConceptGraphSlugs: "+nxtConcept_slug)
                     }
                     if (!aCurrentLocalConceptGraphSlugs.includes(nxtConcept_slug)) {
@@ -396,7 +396,7 @@ export default class ManageConceptGraphDownload extends React.Component {
             for (var c=0;c<aConceptsToImport_ipns.length;c++) {
                 var ipns = aConceptsToImport_ipns[c]
                 var slug = aConceptsToImport[c]
-                var ipfsPath = "/ipns/"+ipns;
+                // var ipfsPath = "/ipns/"+ipns;
                 var path = pCG0+"words/"+slug+"/";
                 console.log("path: "+path)
 
@@ -413,10 +413,112 @@ export default class ManageConceptGraphDownload extends React.Component {
 
         jQuery("#importSchemasOfCheckedConceptsButton").click(async function(){
             console.log("importSchemasOfCheckedConceptsButton clicked")
+            var aConceptsToImport = [];
+            var aConceptsToImport_ipns = [];
+            jQuery(".checkBoxForConceptToDownload").each(function(i,obj){
+                var isThisChecked = jQuery(this).prop("checked")
+                var conSlug = jQuery(this).data("conceptslug")
+                var conIpns = jQuery(this).data("conceptipns")
+                // console.log("conSlug: "+conSlug+"; conIpns: "+conIpns+"; isThisChecked: "+isThisChecked)
+                if (isThisChecked) {
+                    aConceptsToImport.push(conSlug)
+                    aConceptsToImport_ipns.push(conIpns)
+                }
+            })
+            // console.log("aConceptsToImport_ipns: "+JSON.stringify(aConceptsToImport_ipns,null,4))
+            for (var c=0;c<aConceptsToImport.length;c++) {
+                var concept_slug = aConceptsToImport[c]
+                var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug)
+                var oMainSchemaData = oConcept.conceptData.nodes.schema;
+                var oPropertySchemaData = oConcept.conceptData.nodes.propertySchema;
+                console.log("oMainSchemaData: "+JSON.stringify(oMainSchemaData,null,4))
+                console.log("oPropertySchemaData: "+JSON.stringify(oPropertySchemaData,null,4))
+
+                var mainSchema_slug = oMainSchemaData.slug;
+                var ipns = oMainSchemaData.ipns;
+                var path = pCG0+"words/"+mainSchema_slug+"/";
+                try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+                var pathToFile = path + "node.txt";
+                var oNode = await ConceptGraphInMfsFunctions.fetchObjectByIPNS(ipns)
+                var oNodeLocal = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNode);
+                var fileToWrite = JSON.stringify(oNodeLocal,null,4)
+                try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+                try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+
+                var propertySchema_slug = oPropertySchemaData.slug;
+                var ipns = oPropertySchemaData.ipns;
+                var path = pCG0+"words/"+propertySchema_slug+"/";
+                console.log("importSchemasOfCheckedConceptsButton propertySchema_slug: "+propertySchema_slug+"; path: "+path+"; ipns: "+ipns)
+                try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+                var pathToFile = path + "node.txt";
+                var oNode = await ConceptGraphInMfsFunctions.fetchObjectByIPNS(ipns)
+                var oNodeLocal = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNode);
+                var fileToWrite = JSON.stringify(oNodeLocal,null,4)
+                try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+                try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+
+            }
         })
 
         jQuery("#importWordsOfSchemasOfCheckedConceptsButton").click(async function(){
             console.log("importWordsOfSchemasOfCheckedConceptsButton clicked")
+            console.log("pCG0: "+pCG0)
+            var aConceptsToImport = [];
+            var aConceptsToImport_ipns = [];
+            jQuery(".checkBoxForConceptToDownload").each(function(i,obj){
+                var isThisChecked = jQuery(this).prop("checked")
+                var conSlug = jQuery(this).data("conceptslug")
+                var conIpns = jQuery(this).data("conceptipns")
+                // console.log("conSlug: "+conSlug+"; conIpns: "+conIpns+"; isThisChecked: "+isThisChecked)
+                if (isThisChecked) {
+                    aConceptsToImport.push(conSlug)
+                    aConceptsToImport_ipns.push(conIpns)
+                }
+            })
+            console.log("aConceptsToImport_ipns: "+JSON.stringify(aConceptsToImport_ipns,null,4))
+            for (var c=0;c<aConceptsToImport.length;c++) {
+                var concept_slug = aConceptsToImport[c];
+                console.log("concept_slug: "+concept_slug)
+                var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug)
+                var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
+                var propertySchema_slug = oConcept.conceptData.nodes.propertySchema.slug;
+                var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug)
+                var oPropertySchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,propertySchema_slug)
+
+                var aNodes = oMainSchema.schemaData.nodes;
+                for (var n=0;n<aNodes.length;n++) {
+                    var oNextNodeInfo = aNodes[n];
+                    var ipns = oNextNodeInfo.ipns;
+                    var slug = oNextNodeInfo.slug;
+                    console.log("nextNode_slug: "+slug+"; nextNode_ipns: "+ipns)
+                    var path = pCG0+"words/"+slug+"/";
+                    try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+                    var pathToFile = path + "node.txt";
+                    var oNode = await ConceptGraphInMfsFunctions.fetchObjectByIPNS(ipns)
+                    var oNodeLocal = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNode);
+                    var fileToWrite = JSON.stringify(oNodeLocal,null,4)
+                    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+                    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+                }
+
+                var aNodes = oPropertySchema.schemaData.nodes;
+                for (var n=0;n<aNodes.length;n++) {
+                    var oNextNodeInfo = aNodes[n];
+                    var ipns = oNextNodeInfo.ipns;
+                    var slug = oNextNodeInfo.slug;
+                    console.log("nextNode_slug: "+slug+"; nextNode_ipns: "+ipns)
+                    var path = pCG0+"words/"+slug+"/";
+                    try { await MiscIpfsFunctions.ipfs.files.mkdir(path) } catch (e) {}
+                    var pathToFile = path + "node.txt";
+                    var oNode = await ConceptGraphInMfsFunctions.fetchObjectByIPNS(ipns)
+                    var oNodeLocal = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oNode);
+                    var fileToWrite = JSON.stringify(oNodeLocal,null,4)
+                    try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+                    try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+                }
+
+
+            }
         })
     }
     render() {
@@ -457,8 +559,8 @@ export default class ManageConceptGraphDownload extends React.Component {
                         </div>
                         <div id="toggleConceptsListButton" data-status="closed" className="doSomethingButton" >+</div>
                         <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked concept words only</div>
-                        <div id="importSchemasOfCheckedConceptsButton" className="doSomethingButton" >import schemas from checked concepts only (incomplete)</div>
-                        <div id="importWordsOfSchemasOfCheckedConceptsButton" className="doSomethingButton" >import words of schemas from checked concepts only (incomplete)</div>
+                        <div id="importSchemasOfCheckedConceptsButton" className="doSomethingButton" >import schemas from checked concepts only</div>
+                        <div id="importWordsOfSchemasOfCheckedConceptsButton" className="doSomethingButton" >import words of schemas from checked concepts only</div>
                         <br/>
                         <div id="importConceptsButton" className="doSomethingButton" >a. import EVERY concept word from conceptGraphData.aConcepts (will overwrite!)</div>
                         <div id="importSchemasButton" className="doSomethingButton" >b. import both schemas from each concept (will overwrite!)</div>
