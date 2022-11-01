@@ -22,8 +22,8 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleW
             var path = "/ipns/"+ipns;
             // console.log("path: "+path)
             var oWord = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(path);
-            console.log("fetchWordButton; ipns: "+ipns+"; oWord: "+JSON.stringify(oWord,null,4))
-
+            // console.log("fetchWordButton; ipns: "+ipns+"; oWord: "+JSON.stringify(oWord,null,4))
+            jQuery("#importedWordContainer").val(JSON.stringify(oWord,null,4))
         })
     }
     render() {
@@ -36,16 +36,16 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleW
                         <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Manual import single word into this Concept Graph from external source based on its IPNS</div>
 
-                        <div style={{border:"1px solid green",display:"inline-block",width:"600px",height:"800px"}} >
+                        <div style={{border:"1px solid green",display:"inline-block",width:"600px",height:"850px"}} >
                             <center>import word into currently-viewing Concept Graph</center>
                             <div id="conceptSelector" >conceptSelector</div>
                             <div id="setRadioButtons" >setRadioButtons</div>
                         </div>
 
-                        <div style={{border:"1px solid green",display:"inline-block",width:"600px",height:"800px"}} >
+                        <div style={{border:"1px solid green",display:"inline-block",width:"600px",height:"850px"}} >
                             <center>import using IPNS into textarea</center>
                             Enter IPNS: <div id="fetchWordButton" className="doSomethingButton" >fetch</div>
-                            <textarea id="ipnsContainer" style={{display:"inline-block",width:"95%",height:"40px"}} >
+                            <textarea id="ipnsContainer" style={{display:"inline-block",width:"95%",height:"30px"}} >
                             </textarea>
 
                             <textarea id="importedWordContainer" style={{display:"inline-block",width:"95%",height:"700px"}} >
