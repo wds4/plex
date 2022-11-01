@@ -157,6 +157,9 @@ import ConceptGraphsFrontEndSingleConceptGraphListsOfUpdateProposals from './ple
 import ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdateProposals from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/updateProposals/listsOfProposals/allKnownUpdateProposals.js';
 import ConceptGraphsFrontEndExternalUpdateProposals from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/updateProposals/listsOfProposals/searchForExternalProposals.js';
 
+import ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/manualImports/mainPage.js';
+import ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/manualImports/singleWordFromIpns.js';
+
 import ConceptGraphsFrontEndSingleSet from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/sets/singleSet.js';
 import ConceptGraphsFrontEndMakeNewSet from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/sets/makeNewSet.js';
 import ConceptGraphsFrontEndSetsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/sets/setsMainPage.js';
@@ -494,6 +497,9 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEndSingleConceptGraphListsOfUpdateProposals/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphListsOfUpdateProposals} />
           <Route path="/ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdateProposals/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdateProposals} />
           <Route path="/ConceptGraphsFrontEndExternalUpdateProposals/:conceptslug" exact component={ConceptGraphsFrontEndExternalUpdateProposals} />
+
+          <Route path="/ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns} />
 
           <Route path="/ConceptGraphsFrontEndSingleSet/:conceptslug" exact component={ConceptGraphsFrontEndSingleSet} />
           <Route path="/ConceptGraphsFrontEndMakeNewSet/:conceptslug" exact component={ConceptGraphsFrontEndMakeNewSet} />
