@@ -84,6 +84,7 @@ async function makeThisPageTable(wordDataSet) {
             expansionHTML += "<div>";
 
             expansionHTML += "<div data-status='pre' data-slug='"+word_slug+"' id='toggleTextareaButton_"+word_slug+"' class=doSomethingButton  >toggle edit box</div>";
+            expansionHTML += "<div data-status='pre' data-slug='"+word_slug+"' id='publishToIpfsButton_"+word_slug+"' class=doSomethingButton  >publish to IPFS</div>";
             expansionHTML += "<div id='update_"+word_slug+"' data-slug='"+word_slug+"' class=doSomethingButton style=display:none; >UPDATE</div>";
 
             expansionHTML += "<textarea id='textarea_"+word_slug+"' style=width:700px;height:800px;display:none; >";
@@ -99,6 +100,12 @@ async function makeThisPageTable(wordDataSet) {
             row.child( expansionHTML ).show();
             tr.addClass('shown');
 
+            jQuery("#publishToIpfsButton_"+word_slug).click(async function(){
+                var slug = jQuery(this).data("slug");
+                var sWord = jQuery("#textarea_"+slug).val();
+                var oWord = JSON.parse(sWord);
+                await ConceptGraphInMfsFunctions.publishWordToIpfs(oWord);
+            })
             jQuery("#toggleTextareaButton_"+word_slug).click(function(){
                 var slug = jQuery(this).data("slug");
                 var status = jQuery(this).data("status");
