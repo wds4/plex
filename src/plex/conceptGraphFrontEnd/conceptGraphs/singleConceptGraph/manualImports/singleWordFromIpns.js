@@ -10,31 +10,38 @@ const jQuery = require("jquery");
 const updateMainSchema = async () => {
     var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     console.log("updateMainSchema")
-    var sWord = jQuery("#importedWordContainer").val()
-    var word_slug = oWord.wordData.slug
+    var sWord = jQuery("#importedWordContainer2").val()
     var oWord = JSON.parse(sWord)
+    var word_slug = oWord.wordData.slug
 
     var sMainSchema = jQuery("#mainSchemaContainer1").val()
     var oMainSchema = JSON.parse(sMainSchema)
 
+    var aSetSlugs = [];
     jQuery(".setCheckbox").each(async function(i,obj){
         var set_slug = jQuery(this).data("slug")
-        var ipns = jQuery(this).data("ipns")
         var isChecked = jQuery(this).prop("checked")
-        var oSet = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,set_slug);
         console.log("set_slug: "+set_slug+"; isChecked: "+isChecked)
         if (isChecked) {
-            var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
-            oNewRel.nodeFrom.slug = word_slug;
-            oNewRel.relationshipType.slug = "isASpecificInstanceOf";
-            oNewRel.nodeTo.slug = set_slug;
-
-            var oMiniWordLookup = {};
-            oMiniWordLookup[word_slug] = oWord;
-            oMiniWordLookup[set_slug] = oSet;
-            oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+            aSetSlugs.push(set_slug)
         }
     })
+
+    for (var s=0;s<aSetSlugs.length;s++) {
+        var set_slug = aSetSlugs[s];
+        var oSet = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,set_slug);
+        var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
+        oNewRel.nodeFrom.slug = word_slug;
+        oNewRel.relationshipType.slug = "isASpecificInstanceOf";
+        oNewRel.nodeTo.slug = set_slug;
+
+        console.log("oNewRel: "+JSON.stringify(oNewRel,null,4))
+
+        var oMiniWordLookup = {};
+        oMiniWordLookup[word_slug] = oWord;
+        oMiniWordLookup[set_slug] = oSet;
+        oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+    }
 
     jQuery("#mainSchemaContainer2").val(JSON.stringify(oMainSchema,null,4))
 }
@@ -131,6 +138,7 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleW
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
 
         await makeConceptSelector();
 
@@ -141,7 +149,26 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleW
             // console.log("path: "+path)
             var oWord = await ConceptGraphInMfsFunctions.fetchObjectByCatIpfsPath(path);
             // console.log("fetchWordButton; ipns: "+ipns+"; oWord: "+JSON.stringify(oWord,null,4))
-            jQuery("#importedWordContainer").val(JSON.stringify(oWord,null,4))
+            jQuery("#importedWordContainer1").val(JSON.stringify(oWord,null,4))
+        })
+
+        jQuery("#convertToLocalButton").click(async function(){
+            var sWord = jQuery("#importedWordContainer1").val()
+            var oWord = JSON.parse(sWord)
+            var oWordLocal = await ConceptGraphInMfsFunctions.convertExternalNodeToLocalWord(oWord);
+            jQuery("#importedWordContainer2").val(JSON.stringify(oWordLocal,null,4))
+        })
+
+        jQuery("#importButton").click(async function(){
+            var sWord = jQuery("#importedWordContainer2").val()
+            var oWord = JSON.parse(sWord)
+
+            var sMainSchema = jQuery("#mainSchemaContainer2").val()
+            var oMainSchema = JSON.parse(sMainSchema)
+
+            await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oWord);
+            await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oMainSchema);
+
         })
     }
     render() {
@@ -160,7 +187,7 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleW
                             <div id="setCheckboxesContainer" >setCheckboxesContainer</div>
 
                             <div style={{fontSize:"12px",padding:"10px"}}>
-                            Import the word on the right into the currently-viewing-concept graph; add to appropriate spot in the MFS;
+                            Import the word on the right (bottom, converted to local) into the currently-viewing-concept graph; add to appropriate spot in the MFS;
                             and update mainSchema for the above concept to make the new word a specific instance of the checkmarked sets.
                             </div>
                             <div className="doSomethingButton" id="importButton" >Import</div>
@@ -176,10 +203,14 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleW
                         <div style={{border:"1px solid green",display:"inline-block",width:"600px",height:"850px"}} >
                             <center>import using IPNS into textarea</center>
                             Enter IPNS: <div id="fetchWordButton" className="doSomethingButton" >fetch</div>
+                            <div id="convertToLocalButton" className="doSomethingButton" >convert to local</div>
                             <textarea id="ipnsContainer" style={{display:"inline-block",width:"95%",height:"30px"}} >
                             </textarea>
-
-                            <textarea id="importedWordContainer" style={{display:"inline-block",width:"95%",height:"700px"}} >
+                            original:
+                            <textarea id="importedWordContainer1" style={{display:"inline-block",width:"95%",height:"300px"}} >
+                            </textarea>
+                            converted to local:
+                            <textarea id="importedWordContainer2" style={{display:"inline-block",width:"95%",height:"300px"}} >
                             </textarea>
                         </div>
                     </div>

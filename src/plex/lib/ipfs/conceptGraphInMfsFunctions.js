@@ -69,8 +69,8 @@ export const addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph = as
         console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
     }
 
-    addWordToMfsConceptGraph_specifyConceptGraph(ipns,oWord);
-    addWordToMfsConceptGraph_specifyConceptGraph(ipns,oMainSchema);
+    await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oWord);
+    await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oMainSchema);
 }
 
 export const returnListOfConceptGraphsInMFS = async (pCGb) => {
