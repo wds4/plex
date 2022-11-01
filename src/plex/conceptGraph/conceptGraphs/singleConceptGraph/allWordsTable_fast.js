@@ -4,9 +4,10 @@ import ConceptGraphMasthead from '../../../mastheads/conceptGraphMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../../navbars/leftNavbar2/singleConceptGraph_words_leftNav2.js';
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 import sendAsync from '../../../renderer.js';
 
-const jQuery = require("jquery"); 
+const jQuery = require("jquery");
 jQuery.DataTable = require("datatables.net");
 
 function makeThisPageTable(tableName,wordDataSet) {
@@ -80,6 +81,7 @@ function makeThisPageTable(tableName,wordDataSet) {
             var expansionHTML = "";
             expansionHTML += "<div>";
             expansionHTML += "<div data-status='pre' data-slug='"+slug+"' id='toggleTextareaButton_"+sqlID+"' data-sqlid='"+sqlID+"' class=doSomethingButton  >toggle edit box</div>";
+            expansionHTML += "<div data-status='pre' data-slug='"+slug+"' id='publishToIpfsButton_"+sqlID+"' data-sqlid='"+sqlID+"' class=doSomethingButton  >publish to IPFS</div>";
             expansionHTML += "<div id='update_"+sqlID+"' data-slug='"+slug+"' class=doSomethingButton style=display:none; >UPDATE</div>";
             expansionHTML += "<div id='deleteBySqlID_"+sqlID+"' data-slug='"+slug+"' data-sqlid='"+sqlID+"' class=doSomethingButton style=display:none; >DELETE based on SQL ID: "+sqlID+"</div>";
 
@@ -95,6 +97,13 @@ function makeThisPageTable(tableName,wordDataSet) {
 
             row.child( expansionHTML ).show();
             tr.addClass('shown');
+            jQuery("#publishToIpfsButton_"+sqlID).click(async function(){
+                var slug = jQuery(this).data("slug");
+                var sWord = jQuery("#textarea_"+sqlID).val();
+                var oWord = JSON.parse(sWord);
+                await ConceptGraphInMfsFunctions.publishWordToIpfs(oWord);
+                // alert("clicked; slug: "+slug+"; sWord: "+sWord)
+            })
             jQuery("#toggleTextareaButton_"+sqlID).click(function(){
                 var slug = jQuery(this).data("slug");
                 // var sqlID = jQuery(this).data("sqlid");
