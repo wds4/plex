@@ -10,7 +10,7 @@ const jQuery = require("jquery");
 
 var oUP = {
     "updateProposals": {
-        "internal": [
+        "local": [
 
         ],
         "external": [
@@ -79,7 +79,7 @@ async function makeThisPageTable(wordDataSet) {
 
                     var sPublicDirectory = jQuery("#publicDirectoryContainer").val();
                     var oPublicDirectory = JSON.parse(sPublicDirectory)
-                    oPublicDirectory.updateProposals.internal.push(oUpdateProposal)
+                    oPublicDirectory.updateProposals.local.push(oUpdateProposal)
 
                     jQuery("#publicDirectoryContainer").val(JSON.stringify(oPublicDirectory,null,4));
 
@@ -89,7 +89,71 @@ async function makeThisPageTable(wordDataSet) {
     });
     // Add event listener for opening and closing details
     jQuery('#table_updateProposals tbody').on('click', 'td.details-control', async function () {
+        // console.log("clicked icon");
+        var tr = jQuery(this).parents('tr');
+        var row = dtable.row( tr );
+        // console.log("row: "+row);
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
 
+        else {
+            var d=row.data();
+            var word_slug = d[3];
+            var pCGb = window.ipfs.pCGb;
+            var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+            var path = pCGb + viewingConceptGraph_ipns + "/words/";
+            var wordPath = path + word_slug + "/node.txt"
+            var oWord = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(wordPath)
+            var word_ipns = oWord.metaData.ipns;
+            var sWord = JSON.stringify(oWord,null,4)
+
+            var expansionHTML = "";
+            expansionHTML += "<div>";
+
+            expansionHTML += "<div data-status='pre' data-slug='"+word_slug+"' id='toggleTextareaButton_"+word_slug+"' class=doSomethingButton  >toggle edit box</div>";
+            expansionHTML += "<div id='update_"+word_slug+"' data-slug='"+word_slug+"' class=doSomethingButton style=display:none; >UPDATE</div>";
+
+            expansionHTML += "<textarea id='textarea_"+word_slug+"' style=width:700px;height:800px;display:none; >";
+            expansionHTML += sWord;
+            expansionHTML += "</textarea>";
+
+            expansionHTML += "<pre id='pre_"+word_slug+"' style='width:1000px;,overflow:scroll;' >";
+            expansionHTML += sWord;
+            expansionHTML += "</pre>";
+
+            expansionHTML += "</div>";
+
+            row.child( expansionHTML ).show();
+            tr.addClass('shown');
+
+            jQuery("#toggleTextareaButton_"+word_slug).click(function(){
+                var slug = jQuery(this).data("slug");
+                var status = jQuery(this).data("status");
+                // alert("clicked; slug: "+slug+"; status: "+status)
+                if (status=="pre") {
+                    jQuery(this).data("status","textarea");
+                    jQuery("#textarea_"+slug).css("display","block")
+                    jQuery("#update_"+slug).css("display","inline-block")
+                    jQuery("#pre_"+slug).css("display","none")
+                }
+                if (status=="textarea") {
+                    jQuery(this).data("status","pre");
+                    jQuery("#textarea_"+slug).css("display","none")
+                    jQuery("#update_"+slug).css("display","none")
+                    jQuery("#pre_"+slug).css("display","block")
+                }
+            })
+            jQuery("#update_"+word_slug).click(function(){
+                var slug = jQuery(this).data("slug");
+                var sWord = jQuery("#textarea_"+slug).val();
+                var oWord = JSON.parse(sWord);
+                var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph
+                ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(viewingConceptGraph_ipns,oWord);
+            })
+        }
     });
 }
 
@@ -208,6 +272,10 @@ export default class ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdatePropos
                         <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">All Known Update Proposals for this Concept Graph</div>
 
+                        <div style={{fontSize:"12px"}}>
+                        All update proposals that are recorded as specific instances of the superset of conceptFor_updateProposal in the viewing concept graph.
+                        </div>
+
                         <div className="tableContainer" style={{marginTop:"20px",marginLeft:"20px"}} >
                             <table id="table_updateProposals" className="display" style={{color:"black",width:"95%"}} >
                                 <thead>
@@ -241,7 +309,6 @@ export default class ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdatePropos
                             <textarea id="publicDirectoryContainer" style={{width:"95%",height:"500px",fontSize:"12px"}} >
                             </textarea>
                         </div>
-
                     </div>
                 </fieldset>
             </>
