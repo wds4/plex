@@ -26,7 +26,7 @@ async function makeThisPageTable(wordDataSet) {
                 "data":           null,
                 "defaultContent": ''
             },
-            { },
+            { visible: false },
             { },
             { },
             { },
@@ -187,7 +187,7 @@ export default class AllWordsTable extends React.Component {
             var aNextWord = [
                 "",
                 w,
-                nextRow_button,
+                w + " " + nextRow_button,
                 word_slug,
                 word_name,
                 sWordTypes,
@@ -218,7 +218,7 @@ export default class AllWordsTable extends React.Component {
                         <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle}  />
                         <div class="h2">All Words</div>
 
-                        <div className="tableContainer" style={{marginTop:"20px",marginLeft:"20px"}} >
+                        <div className="tableContainer" style={{marginTop:"20px",marginLeft:"20px", width:"1350px",overflow:"scroll"}} >
                             <table id="table_words" className="display" style={{color:"black",width:"95%"}} >
                                 <thead>
                                     <tr>
