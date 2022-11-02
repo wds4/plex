@@ -98,14 +98,14 @@ export default class AllConceptsTable extends React.Component {
             // create links to individual view / edit existing wordType page
             var oConceptData = {};
             oConceptData.pathname = "/ConceptGraphsFrontEnd_SingleConceptMainPage/"+concept_slug;
-            oConceptData.conceptsqlid = 'linkFrom_'+concept_slug;
+            oConceptData.link = 'linkFrom_'+concept_slug;
             oConceptData.conceptslug = concept_slug;
             this.state.conceptLinks.push(oConceptData)
 
             // Links to back end concept page (stored in SQL, not MFS)
             var oConceptData2 = {};
             oConceptData2.pathname = "/SingleConceptGeneralInfo/"+nextRow_id;
-            oConceptData2.conceptsqlid = 'linkOldFrom_'+nextRow_id;
+            oConceptData2.link = 'linkOldFrom_'+nextRow_id;
             oConceptData2.conceptslug = concept_slug;
             this.state.conceptLinks2.push(oConceptData2)
 
@@ -138,7 +138,7 @@ export default class AllConceptsTable extends React.Component {
                         <div style={{display:"none"}} >
                         {this.state.conceptLinks.map(link => (
                             <div >
-                                <Link id={link.conceptsqlid} class='navButton'
+                                <Link id={link.link} class='navButton'
                                   to={link.pathname}
                                 >{link.conceptname}
                                 </Link>
@@ -149,7 +149,7 @@ export default class AllConceptsTable extends React.Component {
                         <div style={{display:"none"}} >
                         {this.state.conceptLinks2.map(link => (
                             <div >
-                                <Link id={link.conceptsqlid} class='navButton'
+                                <Link id={link.link} class='navButton'
                                   to={link.pathname}
                                 >{link.conceptname}
                                 </Link>

@@ -14,7 +14,7 @@ import ContextSelectors from './contextSelectors.js'
 // import Nouislider from "nouislider-react";
 import noUiSlider from "nouislider";
 // import "nouislider/distribute/nouislider.css";
-import oFormData from '../../ratings/json/prefilledRatings/trustRatingTemplate.json';
+import oBlankRatingTemplate from '../../ratings/json/prefilledRatings/trustRatingTemplate.json';
 
 const jQuery = require("jquery");
 
@@ -117,7 +117,7 @@ const populateRatingRawFile = async (cid) => {
     var rateeUsername = jQuery("#usernameContainer").html();
 
     console.log("populateRatingRawFile; cid: "+cid)
-    var oRating = MiscFunctions.cloneObj(oFormData)
+    var oRating = MiscFunctions.cloneObj(oBlankRatingTemplate)
     oRating.ratingData.rateeData.userData.username = rateeUsername
     oRating.ratingData.rateeData.userData.peerID = cid;
     oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceData.userData.peerID = cid;

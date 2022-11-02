@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Masthead from '../../../../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../../../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 import LeftNavbar2 from '../../../../../navbars/leftNavbar2/cgFe_singleConceptGraph_listsOfUpdates_leftNav2';
@@ -59,7 +60,8 @@ async function makeThisPageTable(wordDataSet) {
             try {
                 jQuery(".nextRowEditButton").click(function(){
                     var ipns = jQuery(this).data("ipns");
-                    // jQuery("#linkFrom_"+sqlid).get(0).click();
+                    var slug = jQuery(this).data("slug");
+                    jQuery("#linkFrom_"+slug).get(0).click();
                 })
                 jQuery(".nextRowPublishButton").click(async function(){
                     var ipns = jQuery(this).data("ipns");
@@ -198,6 +200,7 @@ export default class ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdatePropos
         super(props);
         this.state = {
             viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+            wordLinks: []
         }
     }
     async componentDidMount() {
@@ -239,6 +242,16 @@ export default class ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdatePropos
                 author
             ];
             updateProposalDataSet.push(aNextWord);
+
+            // create links to individual view / edit existing wordType page
+            var oUpdateProposalData = {};
+            oUpdateProposalData.pathname = "/ConceptGraphsFrontEndSingleConceptGraphSingleUpdateProposalMainPage/"+slug;
+            oUpdateProposalData.link = 'linkFrom_'+slug;
+            oUpdateProposalData.updateproposalslug = slug;
+            this.state.wordLinks.push(oUpdateProposalData)
+
+            this.forceUpdate();
+
         }
         makeThisPageTable(updateProposalDataSet);
 
@@ -274,6 +287,17 @@ export default class ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdatePropos
 
                         <div style={{fontSize:"12px"}}>
                         All update proposals that are recorded as specific instances of the superset of conceptFor_updateProposal in the viewing concept graph.
+                        </div>
+
+                        <div >
+                        {this.state.wordLinks.map(link => (
+                            <div >
+                                <Link id={link.link} class='navButton'
+                                  to={link.pathname}
+                                >{link.updateproposalslug}
+                                </Link>
+                            </div>
+                        ))}
                         </div>
 
                         <div className="tableContainer" style={{marginTop:"20px",marginLeft:"20px"}} >

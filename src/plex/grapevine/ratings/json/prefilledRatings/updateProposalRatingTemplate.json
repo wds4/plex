@@ -1,0 +1,104 @@
+{
+    "wordData": {
+        "slug": "",
+        "title": "",
+        "name": "",
+        "description": "",
+        "wordType": "rating",
+        "wordTypes": [
+            "word",
+            "rating"
+        ],
+        "governingConcepts": []
+    },
+    "ratingData": {
+        "slug": "",
+        "name": "",
+        "title": "",
+        "raterData": {
+            "raterEntityType": "user",
+            "userData": {
+                "peerID": null,
+                "username": null,
+                "ipns": null
+            }
+        },
+        "rateeData": {
+            "rateeEntityType": "user",
+            "userData": {
+                "peerID": null,
+                "username": null,
+                "ipns": null
+            }
+        },
+        "ratingTemplateData": {
+            "ratingTemplateName": "generic user trust",
+            "ratingTemplateIPNS": "k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj",
+            "ratingTemplateWordSlug": "ratingTemplate_genericUserTrust_1l4lqj",
+            "ratingTemplateTitle": "Generic User Trust"
+        },
+        "ratingFieldsetData": {
+            "ratingFieldsetNames": [
+                "trust fieldset",
+                "confidence fieldset",
+                "comments fieldset"
+            ],
+            "commentsFieldsetData": {
+                "comments": ""
+            },
+            "confidenceFieldsetData": {
+                "confidence": 1
+            },
+            "trustFieldsetData": {
+                "trustRating": 1,
+                "referenceTrustRating": 1,
+                "referenceData": {
+                    "referenceEntityType": "user",
+                    "userData": {
+                        "peerID": null,
+                        "username": null,
+                        "ipns": null
+                    }
+                },
+                "contextData": {
+                    "transitivity": true,
+                    "influenceCategoryData": {
+                        "influenceCategoryName": "",
+                        "influenceCategoryIPNS": "",
+                        "influenceCategoryWordSlug": ""
+                    },
+                    "topicData": {
+                        "topicName": "",
+                        "topicIPNS": "",
+                        "topicWordSlug": ""
+                    },
+                    "contextGraphData": {
+                        "contextGraphName": null,
+                        "contextGraphIPNS": "",
+                        "contextGraphWordSlug": ""
+                    }
+                }
+            }
+        }
+    },
+    "globalDynamicData": {
+        "myDictionaries": [],
+        "myConceptGraphs": [],
+        "specificInstanceOf": [],
+        "specificInstances": [],
+        "sets": [],
+        "valenceData": {
+            "valenceL1": [],
+            "parentJSONSchemaSequence": []
+        }
+    },
+    "metaData": {
+        "ipns": "",
+        "keyname": null,
+        "lastUpdate": null,
+        "neuroCore": {
+            "initialProcessing": false,
+            "lastUpdate": null
+        }
+    }
+}
