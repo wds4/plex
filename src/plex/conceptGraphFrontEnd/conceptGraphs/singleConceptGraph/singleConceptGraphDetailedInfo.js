@@ -2,6 +2,7 @@ import React from 'react';
 import Masthead from '../../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 import LeftNavbar2 from '../../../navbars/leftNavbar2/cgFe_singleConceptGraph_leftNav2';
+import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 // import * as MiscFunctions from '../../../functions/miscFunctions.js';
 // import * as InitDOMFunctions from '../../../functions/transferSqlToDOM.js';
@@ -64,11 +65,10 @@ const populateFields_from_oMainSchemaForConceptGraph = async (oMainConceptGraphS
         }
         jQuery(".singleWordWrapper").click(async function(){
             var clickedSlug = jQuery(this).data("slug");
-            // var oClickedWord = window.lookupWordBySlug[clickedSlug];
             var oClickedWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,clickedSlug)
             var sClickedWord = JSON.stringify(oClickedWord,null,4)
             jQuery("#rightColumnTextarea").val(sClickedWord);
-            jQuery(".singleWordWrapper").css("backgroundColor","#CFCFCF")
+            jQuery(".singleWordWrapper").css("backgroundColor","#DFDFDF")
             jQuery(this).css("backgroundColor","orange")
         });
     }
@@ -82,6 +82,139 @@ const populateFields_from_wordsInMFS = async (ipnsForMainSchemaForConceptGraph) 
     var pCGb = window.ipfs.pCGb;
     var path = pCGb + ipnsForMainSchemaForConceptGraph + "/words/";
     console.log("populateFields_from_wordsInMFS; path: "+path)
+}
+
+const returnListOfWordsInThisConceptGraphInMFS = async (path) => {
+    var aWords = [];
+    try {
+        for await (const file of MiscIpfsFunctions.ipfs.files.ls(path)) {
+            var fileName = file.name;
+            var fileType = file.type;
+            var fileCid = file.cid;
+            // if ( (fileType=="directory") && (fileName != "mainSchemaForConceptGraph" ) ) {
+            if (fileType=="directory") {
+                aWords.push(fileName);
+            }
+        }
+    } catch (e) {}
+    return aWords;
+}
+
+const updateConceptGraphSchemaData = async (oConceptGraph,amIStewardOfThisConceptGraph) => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    var pCGb = window.ipfs.pCGb;
+    var path = pCGb + viewingConceptGraph_ipns + "/words/";
+    var aWords = await returnListOfWordsInThisConceptGraphInMFS(path);
+
+    if (amIStewardOfThisConceptGraph) {
+        oConceptGraph.conceptGraphData.aConcepts = []
+        // oConceptGraph.conceptGraphData.aAdditionalSchemas = []
+    }
+
+    var numConceptsRepublished = 0;
+    for (var w=0;w<aWords.length;w++) {
+        var slug = aWords[w];
+        var oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug)
+        var aWordTypes = oWord.wordData.wordTypes;
+        if (amIStewardOfThisConceptGraph) {
+            if (jQuery.inArray("concept",aWordTypes) > -1) {
+                var concept_ipns = oWord.metaData.ipns;
+                var concept_ipfs = null;
+                var myPeerID = jQuery("#myCidMastheadContainer").html()
+                var myUsername = jQuery("#myUsernameMastheadContainer").html()
+                var currentTime = Date.now();
+                /*
+                // takes a while to do this step; ought to perform on a separate page
+                await ConceptGraphInMfsFunctions.republishWordToIpfsAndSqlIfSteward(oWord);
+                numConceptsRepublished++;
+                concept_ipfs = concept_ipfs.replace("/ipfs/","");
+                */
+                try {
+                    concept_ipfs = await MiscIpfsFunctions.ipfs.resolve("/ipns/"+concept_ipns)
+                    concept_ipfs = concept_ipfs.replace("/ipfs/","");
+                    var oConceptBlurb = {}
+                    oConceptBlurb.slug = slug;
+                    oConceptBlurb.ipns = concept_ipns;
+                    oConceptBlurb.ipfs = concept_ipfs;
+                    oConceptBlurb.stewardPeerID = myPeerID;
+                    oConceptBlurb.stewardUsername = myUsername;
+                    oConceptBlurb.lastUpdated = currentTime;
+                    oConceptGraph.conceptGraphData.aConcepts.push(oConceptBlurb)
+                } catch (e) { console.log("error: "+e)}
+            }
+        }
+        if (jQuery.inArray("property",aWordTypes) > -1) {
+            // console.log("slug: "+slug)
+            var nextWordHTML = "";
+            nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
+            nextWordHTML += " data-slug='"+slug+"' ";
+            nextWordHTML += " >";
+            nextWordHTML += slug;
+            nextWordHTML += "</div>";
+            nextWordHTML += "<br>";
+
+            var aPropertyTypes = oWord.propertyData.types
+            if (jQuery.inArray("primaryProperty",aPropertyTypes) > -1) {
+                jQuery("#primaryPropertiesListContainer").append(nextWordHTML)
+            } else {
+                jQuery("#notPrimaryPropertiesListContainer").append(nextWordHTML)
+            }
+        }
+        if (jQuery.inArray("wordType",aWordTypes) > -1) {
+            // console.log("slug: "+slug)
+            var nextWordHTML = "";
+            nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
+            nextWordHTML += " data-slug='"+slug+"' ";
+            nextWordHTML += " >";
+            nextWordHTML += slug;
+            nextWordHTML += "</div>";
+            nextWordHTML += "<br>";
+            jQuery("#wordTypesListContainer").append(nextWordHTML)
+        }
+        if (jQuery.inArray("set",aWordTypes) > -1) {
+            // console.log("slug: "+slug)
+            var nextWordHTML = "";
+            nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
+            nextWordHTML += " data-slug='"+slug+"' ";
+            nextWordHTML += " >";
+            nextWordHTML += slug;
+            nextWordHTML += "</div>";
+            nextWordHTML += "<br>";
+            jQuery("#setsListContainer").append(nextWordHTML)
+        }
+        if (jQuery.inArray("superset",aWordTypes) > -1) {
+            // console.log("slug: "+slug)
+            var nextWordHTML = "";
+            nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
+            nextWordHTML += " data-slug='"+slug+"' ";
+            nextWordHTML += " >";
+            nextWordHTML += slug;
+            nextWordHTML += "</div>";
+            nextWordHTML += "<br>";
+            jQuery("#supersetsListContainer").append(nextWordHTML)
+        }
+        if (jQuery.inArray("JSONSchema",aWordTypes) > -1) {
+            // console.log("slug: "+slug)
+            var nextWordHTML = "";
+            nextWordHTML += "<div style=display:inline-block; class=singleWordWrapper2 ";
+            nextWordHTML += " data-slug='"+slug+"' ";
+            nextWordHTML += " >";
+            nextWordHTML += slug;
+            nextWordHTML += "</div>";
+            nextWordHTML += "<br>";
+            jQuery("#JSONSchemasListContainer").append(nextWordHTML)
+        }
+    }
+    jQuery(".singleWordWrapper2").click(async function(){
+        var clickedSlug = jQuery(this).data("slug");
+        var oClickedWord = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,clickedSlug)
+        var sClickedWord = JSON.stringify(oClickedWord,null,4)
+        jQuery("#rightColumnTextarea").val(sClickedWord);
+        jQuery(".singleWordWrapper2").css("backgroundColor","#DFDFDF")
+        jQuery(this).css("backgroundColor","orange")
+    });
+
+    return oConceptGraph;
 }
 
 export default class SingleConceptGraphFrontEndDetailedInfo extends React.Component {
@@ -110,6 +243,10 @@ export default class SingleConceptGraphFrontEndDetailedInfo extends React.Compon
         window.frontEndConceptGraph.viewingConceptGraph.title = cgTitle;
         window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph = ipnsForMainSchemaForConceptGraph;
 
+        // probably will deprecate this boolean on this page
+        var amIStewardOfThisConceptGraph = true;
+        oMainSchemaForConceptGraph = await updateConceptGraphSchemaData(oMainSchemaForConceptGraph,amIStewardOfThisConceptGraph);
+
         await populateFields_from_oMainSchemaForConceptGraph(oMainSchemaForConceptGraph);
 
         await populateFields_from_wordsInMFS(ipnsForMainSchemaForConceptGraph);
@@ -120,7 +257,14 @@ export default class SingleConceptGraphFrontEndDetailedInfo extends React.Compon
             var oUpdatedWord = JSON.parse(sUpdatedWord)
             await ConceptGraphInMfsFunctions.createOrUpdateWordInMFS_specifyConceptGraph(ipnsForMainSchemaForConceptGraph,oUpdatedWord)
         })
-
+        jQuery(".showButton").click(function(){
+            jQuery(".showButton").css("backgroundColor","grey")
+            jQuery(this).css("backgroundColor","green")
+            var elemIdToShow = jQuery(this).data("elemidtoshow");
+            console.log("showButton; elemIdToShow: "+elemIdToShow)
+            jQuery(".showSomethingBox").css("display","none")
+            jQuery("#"+elemIdToShow).css("display","block")
+        })
     }
     render() {
         return (
