@@ -1072,6 +1072,36 @@ export const addConceptGraphSeedToMFS_old = async (oMainSchema) => {
     console.log("addConceptGraphSeedToMFS cid: "+oStat.cid.toV1().toString('base16'))
 }
 
+
+export const publishWordToMfsAndIpfs_specifyConceptGraph = async (ipns,oWord) => {
+    var amISteward = checkWordWhetherIAmSteward(oWord)
+    if (!amISteward) {
+        return false;
+    }
+    console.log("addWordToMfsConceptGraph_specifyConceptGraph; amISteward: "+amISteward)
+
+    var oWord = await publishWordToIpfs(oWord)
+
+    var slug = oWord.wordData.slug;
+    // var keyname = oWord.metaData.keyname;
+    var sWord = JSON.stringify(oWord,null,4)
+    var fileToWrite_encoded = new TextEncoder().encode(sWord)
+
+    var pCGb = window.ipfs.pCGb;
+    var pCGw = pCGb + ipns + "/words/";
+
+    var path1 = pCGw + slug + "/";
+    var path2 = pCGw + slug + "/node.txt";
+
+    await MiscIpfsFunctions.ipfs.files.mkdir(path1,{parents:true});
+    try { await MiscIpfsFunctions.ipfs.files.rm(path2) } catch (e) {}
+    await MiscIpfsFunctions.ipfs.files.write(path2, fileToWrite_encoded, {create: true, flush: true})
+
+    // Future: Need to evaluate res first before returning true
+    return true;
+}
+
+
 // similar to publishFileToMFS, except:
 // the input file oFile is an object
 export const publishObjectToMFS = async (oFile,pathToFile) => {

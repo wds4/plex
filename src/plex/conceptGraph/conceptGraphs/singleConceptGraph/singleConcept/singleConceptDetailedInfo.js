@@ -4,6 +4,7 @@ import ConceptGraphMasthead from '../../../../mastheads/conceptGraphMasthead.js'
 import LeftNavbar1 from '../../../../navbars/leftNavbar1/conceptGraph_leftNav1';
 import LeftNavbar2 from '../../../../navbars/leftNavbar2/singleConcept_leftNav2.js';
 import * as MiscFunctions from '../../../../functions/miscFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import sendAsync from '../../../../renderer.js';
 
 const jQuery = require("jquery");
@@ -12,7 +13,6 @@ jQuery.DataTable = require("datatables.net");
 const populateConceptFields = async (currentConceptGraphTableName,wordsqlid) => {
     var sql = " SELECT * FROM "+currentConceptGraphTableName+" WHERE id='"+wordsqlid+"' ";
     console.log("sql: "+sql)
-
 
     sendAsync(sql).then(async (result) => {
         var oConceptData = result[0];
@@ -301,6 +301,98 @@ const populateConceptFields = async (currentConceptGraphTableName,wordsqlid) => 
     })
 }
 
+export const republishConcept_specifyConceptGraph = async (viewingConceptGraph_ipns,oConcept) => {
+    console.log("republishConcept; oConcept: "+JSON.stringify(oConcept,null,4))
+    // var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    if (!viewingConceptGraph_ipns) {
+        console.log("cannot republishConcept; the concept graph location in MFS is unspecified! ")
+    }
+    if (viewingConceptGraph_ipns) {
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oConcept)
+    }
+}
+export const republishConceptWords_specifyConceptGraph = async (viewingConceptGraph_ipns,oConcept) => {
+    console.log("republishConceptWords")
+    // var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    if (!viewingConceptGraph_ipns) {
+        console.log("cannot republishConceptWords; the concept graph location in MFS is unspecified! ")
+    }
+    if (viewingConceptGraph_ipns) {
+        var schema_slug = oConcept.conceptData.nodes.schema.slug;
+        var jsonSchema_slug = oConcept.conceptData.nodes.JSONSchema.slug;
+        var propertySchema_slug = oConcept.conceptData.nodes.propertySchema.slug;
+        var wordType_slug = oConcept.conceptData.nodes.wordType.slug;
+        var superset_slug = oConcept.conceptData.nodes.superset.slug;
+        var primaryProperty_slug = oConcept.conceptData.nodes.primaryProperty.slug;
+        var properties_slug = oConcept.conceptData.nodes.properties.slug;
+
+        var oSchema = window.lookupWordBySlug[schema_slug];
+        var oJSONSchema = window.lookupWordBySlug[jsonSchema_slug];
+        var oPropertySchema = window.lookupWordBySlug[propertySchema_slug];
+        var oWordType = window.lookupWordBySlug[wordType_slug];
+        var oSuperset = window.lookupWordBySlug[superset_slug];
+        var oPrimaryProperty = window.lookupWordBySlug[primaryProperty_slug];
+        var oProperties = window.lookupWordBySlug[properties_slug];
+
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oConcept)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oSchema)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oJSONSchema)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oPropertySchema)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oWordType)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oSuperset)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oPrimaryProperty)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oProperties)
+    }
+}
+export const republishSchemas_specifyConceptGraph = async (viewingConceptGraph_ipns,oConcept) => {
+    console.log("republishSchemas")
+    // var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    if (!viewingConceptGraph_ipns) {
+        console.log("cannot republishSchemas; the concept graph location in MFS is unspecified! ")
+    }
+    if (viewingConceptGraph_ipns) {
+        var schema_slug = oConcept.conceptData.nodes.schema.slug;
+        var propertySchema_slug = oConcept.conceptData.nodes.propertySchema.slug;
+
+        var oSchema = window.lookupWordBySlug[schema_slug];
+        var oPropertySchema = window.lookupWordBySlug[propertySchema_slug];
+
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oSchema)
+        var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oPropertySchema)
+    }
+}
+export const republishSchemasWords_specifyConceptGraph = async (viewingConceptGraph_ipns,oConcept) => {
+    console.log("republishSchemasWords")
+    // var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    if (!viewingConceptGraph_ipns) {
+        console.log("cannot republishSchemasWords; the concept graph location in MFS is unspecified! ")
+    }
+    if (viewingConceptGraph_ipns) {
+        var schema_slug = oConcept.conceptData.nodes.schema.slug;
+        var propertySchema_slug = oConcept.conceptData.nodes.propertySchema.slug;
+
+        var oSchema = window.lookupWordBySlug[schema_slug];
+        var oPropertySchema = window.lookupWordBySlug[propertySchema_slug];
+
+        var aMainSchemaWords = oSchema.schemaData.nodes
+        var aPropertySchemaWords = oPropertySchema.schemaData.nodes
+
+        for (var w=0;w<aMainSchemaWords.length;w++) {
+            var oNxtWord = aMainSchemaWords[w];
+            var word_slug = oNxtWord.slug;
+            var oWord = window.lookupWordBySlug[word_slug];
+            var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oWord)
+        }
+
+        for (var w=0;w<aPropertySchemaWords.length;w++) {
+            var oNxtWord = aPropertySchemaWords[w];
+            var word_slug = oNxtWord.slug;
+            var oWord = window.lookupWordBySlug[word_slug];
+            var fooResult = await ConceptGraphInMfsFunctions.publishWordToMfsAndIpfs_specifyConceptGraph(viewingConceptGraph_ipns,oWord)
+        }
+    }
+}
+
 export default class SingleConceptDetailedInfo extends React.Component {
     constructor(props) {
         super(props);
@@ -308,7 +400,7 @@ export default class SingleConceptDetailedInfo extends React.Component {
             conceptSqlID: null
         }
     }
-    componentDidMount() {
+    async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
         var conceptSqlID = this.props.match.params.conceptsqlid
@@ -322,6 +414,8 @@ export default class SingleConceptDetailedInfo extends React.Component {
 
         var currentConceptGraphTableID = window.currentConceptGraphSqlID;
         var currentConceptGraphTableName = window.aLookupConceptGraphInfoBySqlID[currentConceptGraphTableID].tableName;
+        var currentConceptSlug = window.aLookupConceptInfoBySqlID[conceptSqlID].slug
+        var oConcept = window.lookupWordBySlug[currentConceptSlug];
 
         populateConceptFields(currentConceptGraphTableName,conceptSqlID);
 
@@ -390,6 +484,22 @@ export default class SingleConceptDetailedInfo extends React.Component {
             var oWord = JSON.parse(sWord);
             MiscFunctions.createOrUpdateWordInAllTables(oWord);
         });
+
+        ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+        jQuery("#republishConceptButton").click(async function(){
+            await republishConcept_specifyConceptGraph(viewingConceptGraph_ipns,oConcept);
+        })
+        jQuery("#republishConceptWordsButton").click(async function(){
+            await republishConceptWords_specifyConceptGraph(viewingConceptGraph_ipns,oConcept);
+        })
+        jQuery("#republishSchemasButton").click(async function(){
+            await republishSchemas_specifyConceptGraph(viewingConceptGraph_ipns,oConcept);
+        })
+        jQuery("#republishSchemasWordsButton").click(async function(){
+            await republishSchemasWords_specifyConceptGraph(viewingConceptGraph_ipns,oConcept);
+        })
     }
     render() {
         return (
@@ -588,6 +698,12 @@ export default class SingleConceptDetailedInfo extends React.Component {
                                 </textarea>
 
                                 <div className="doSomethingButton" id="updateWordButton">UPDATE</div>
+
+                                <div>(re)publish to MFS and IPFS the words for:</div>
+                                <div id="republishConceptButton" className="doSomethingButton">concept</div>
+                                <div id="republishConceptWordsButton" className="doSomethingButton">all words in concept</div>
+                                <div id="republishSchemasButton" className="doSomethingButton">main schema & property schema</div>
+                                <div id="republishSchemasWordsButton" className="doSomethingButton">all words in both schemas</div>
 
                                 <br/>
 
