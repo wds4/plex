@@ -2,6 +2,8 @@ import React from "react";
 import Masthead from '../../../../mastheads/conceptGraphMasthead_frontEnd.js';
 import LeftNavbar1 from '../../../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
 import LeftNavbar2 from '../../../../navbars/leftNavbar2/cgFe_singleConceptGraph_manualImports_leftNav2';
+import * as MiscFunctions from '../../../../functions/miscFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 
 const jQuery = require("jquery");
 
@@ -12,7 +14,7 @@ export default class ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPag
             viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
         }
     }
-    componentDidMount() {
+    async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
     }
     render() {

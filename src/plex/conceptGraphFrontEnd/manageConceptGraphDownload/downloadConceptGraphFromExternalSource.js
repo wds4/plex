@@ -409,7 +409,6 @@ export default class ManageConceptGraphDownload extends React.Component {
                 var fileToWrite = JSON.stringify(oNodeLocal,null,4)
                 try { await MiscIpfsFunctions.ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
                 try { await MiscIpfsFunctions.ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
-
             }
         })
 
@@ -557,9 +556,8 @@ export default class ManageConceptGraphDownload extends React.Component {
                         </div>
                         <div id="populateStarterDirectoryButton" className="doSomethingButton" >build skeleton directory for this concept graph</div>
                         <div style={{fontSize:"10px"}}>
-                        populate /words/ from node at end of pCGs
+                        <div id="toggleConceptsListButton" data-status="closed" className="doSomethingButton_small" >+</div> show & populate /words/ from node at end of pCGs
                         </div>
-                        <div id="toggleConceptsListButton" data-status="closed" className="doSomethingButton" >+</div>
                         <div id="importCheckedConceptsButton" className="doSomethingButton" >import checked concept words only</div>
                         <div id="importSchemasOfCheckedConceptsButton" className="doSomethingButton" >import schemas from checked concepts only</div>
                         <div id="importWordsOfSchemasOfCheckedConceptsButton" className="doSomethingButton" >import words of schemas from checked concepts only</div>

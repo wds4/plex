@@ -159,6 +159,7 @@ import ConceptGraphsFrontEndExternalUpdateProposals from './plex/conceptGraphFro
 
 import ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/manualImports/mainPage.js';
 import ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/manualImports/singleWordFromIpns.js';
+import ConceptGraphsFrontEndSingleConceptGraphManualImportsLinkedConceptGraph from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/manualImports/fromLinkedConceptGraph.js';
 
 import ConceptGraphsFrontEndSingleSet from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/sets/singleSet.js';
 import ConceptGraphsFrontEndMakeNewSet from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/sets/makeNewSet.js';
@@ -500,6 +501,7 @@ ReactDOM.render(
 
           <Route path="/ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage} />
           <Route path="/ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptGraphManualImportsLinkedConceptGraph/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptGraphManualImportsLinkedConceptGraph} />
 
           <Route path="/ConceptGraphsFrontEndSingleSet/:conceptslug" exact component={ConceptGraphsFrontEndSingleSet} />
           <Route path="/ConceptGraphsFrontEndMakeNewSet/:conceptslug" exact component={ConceptGraphsFrontEndMakeNewSet} />

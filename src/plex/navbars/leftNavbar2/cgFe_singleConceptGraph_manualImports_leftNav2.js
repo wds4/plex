@@ -26,6 +26,7 @@ export default class LeftNavbar2_ConceptGraphs extends React.Component {
                 <br/>
                 <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptGraphManualImportsMainPage/current'>Manual Imports</NavLink>
                 <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptGraphManualImportsSingleWordByIpns/current'>import single word from ipns</NavLink>
+                <NavLink className="leftNav2Button" activeClassName="active" to='/ConceptGraphsFrontEndSingleConceptGraphManualImportsLinkedConceptGraph/current'>import from linked concept graph</NavLink>
 
             </div>
 

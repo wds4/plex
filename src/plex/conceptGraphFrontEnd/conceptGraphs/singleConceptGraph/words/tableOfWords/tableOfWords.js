@@ -177,33 +177,38 @@ export default class AllWordsTable extends React.Component {
             var word_slug = aWords[w];
             var wordPath = path + word_slug + "/node.txt"
             var oWord = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(wordPath)
-            var word_ipns = oWord.metaData.ipns;
-            var word_name = oWord.wordData.name;
-            var aWordTypes = oWord.wordData.wordTypes;
-            var sWordTypes = JSON.stringify(aWordTypes);
+            if (!oWord) {
+                console.log("NULL WORD for wordPath: "+wordPath)
+            }
+            if (oWord) {
+                var word_ipns = oWord.metaData.ipns;
+                var word_name = oWord.wordData.name;
+                var aWordTypes = oWord.wordData.wordTypes;
+                var sWordTypes = JSON.stringify(aWordTypes);
 
-            var nextRow_button = "<div data-slug="+word_slug+" data-ipns="+word_ipns+" class='doSomethingButton_small nextRowEditButton' style=margin-right:5px; >VIEW / EDIT</div>";
+                var nextRow_button = "<div data-slug="+word_slug+" data-ipns="+word_ipns+" class='doSomethingButton_small nextRowEditButton' style=margin-right:5px; >VIEW / EDIT</div>";
 
-            var aNextWord = [
-                "",
-                w,
-                w + " " + nextRow_button,
-                word_slug,
-                word_name,
-                sWordTypes,
-                word_ipns
-            ];
-            wordDataSet.push(aNextWord);
+                var aNextWord = [
+                    "",
+                    w,
+                    w + " " + nextRow_button,
+                    word_slug,
+                    word_name,
+                    sWordTypes,
+                    word_ipns
+                ];
+                wordDataSet.push(aNextWord);
 
-            /*
-            var oWordData = {};
-            oWordData.pathname = "/ConceptGraphsFrontEnd_SingleWordMainPage/"+word_slug;
-            oWordData.conceptsqlid = 'linkFrom_'+word_slug;
-            oWordData.conceptslug = word_slug;
-            this.state.conceptLinks.push(oWordData)
+                /*
+                var oWordData = {};
+                oWordData.pathname = "/ConceptGraphsFrontEnd_SingleWordMainPage/"+word_slug;
+                oWordData.conceptsqlid = 'linkFrom_'+word_slug;
+                oWordData.conceptslug = word_slug;
+                this.state.conceptLinks.push(oWordData)
 
-            this.forceUpdate();
-            */
+                this.forceUpdate();
+                */
+            }
         }
         makeThisPageTable(wordDataSet);
 

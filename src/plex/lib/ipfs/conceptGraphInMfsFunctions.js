@@ -193,9 +193,11 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
         if (fileType=="directory") {
             var nextWord_path = path + fileName + "/node.txt";
             var oNextWord = await fetchObjectByLocalMutableFileSystemPath(nextWord_path)
-            var nextWord_slug = oNextWord.wordData.slug;
-            window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
-            // window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
+            var nextWord_slug = null;
+            if (oNextWord) {
+                nextWord_slug = oNextWord.wordData.slug;
+                window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
+            }
             console.log("loadNeuroCore3ConceptGraph neuroCore.engine; nextWord_slug: "+nextWord_slug)
             /*
             if (oNextWord.hasOwnProperty("schemaData")) {
@@ -217,10 +219,11 @@ export const loadNeuroCore3ConceptGraph = async (foo) => {
         if (fileType=="directory") {
             var nextWord_path = path + fileName + "/node.txt";
             var oNextWord = await fetchObjectByLocalMutableFileSystemPath(nextWord_path)
-            var nextWord_slug = oNextWord.wordData.slug;
-            // window.ipfs.neuroCore.engine.oRFL.current[nextWord_slug] = oNextWord;
-            window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
-            // console.log("loadNeuroCore3ConceptGraph neuroCore.subject; nextWord_slug: "+nextWord_slug+"; oNextWord: "+JSON.stringify(oNextWord,null,4))
+            var nextWord_slug = null;
+            if (oNextWord) {
+                nextWord_slug = oNextWord.wordData.slug;
+                window.ipfs.neuroCore.subject.oRFL.current[nextWord_slug] = oNextWord;
+            }
             if (oNextWord.hasOwnProperty("schemaData")) {
                 var aNextSchemaRels = oNextWord.schemaData.relationships;
                 for (var z=0;z < aNextSchemaRels.length;z++ ) {

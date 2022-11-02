@@ -5,7 +5,7 @@ import LeftNavbar2 from '../../../../navbars/leftNavbar2/cgFe_singleConceptGraph
 import * as MiscFunctions from '../../../../functions/miscFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 
 const updateMainSchema = async () => {
     var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
