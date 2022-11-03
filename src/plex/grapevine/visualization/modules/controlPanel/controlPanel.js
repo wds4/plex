@@ -104,6 +104,7 @@ export default class GrapevineVisualControlPanel extends React.Component {
     }
 
     async componentDidMount() {
+        /*
         var attenuationSlider = document.getElementById('attenuationSlider');
         noUiSlider.create(attenuationSlider, {
             start: 90,
@@ -112,6 +113,7 @@ export default class GrapevineVisualControlPanel extends React.Component {
                 "min": 0
             }
         });
+        */
     }
     render() {
         return (

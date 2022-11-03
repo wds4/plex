@@ -614,6 +614,11 @@ export const loadActiveIpfsConceptGraph = async () => {
     var viewing_cgSlug = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.oViewing.conceptGraph;
     var viewing_conceptSlug = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.oViewing.concept;
 
+    // need to decide whether to allow more than one active concept graph at a time or not
+    // For now, defining window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph (below) as if there can be only one
+    // but aActive is an array that can contain more than one.
+    var aActive = oConceptGraphsDirectory.conceptGraphsDirectoryData.specialRoles.active;
+
     window.frontEndConceptGraph.viewingConceptGraph.slug = viewing_cgSlug;
     window.frontEndConceptGraph.viewingConcept.slug = viewing_conceptSlug;
 
@@ -633,6 +638,13 @@ export const loadActiveIpfsConceptGraph = async () => {
         if (cgSlug==viewing_cgSlug) {
             window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph = ipns
             window.frontEndConceptGraph.viewingConceptGraph.title = cgTitle;
+            window.frontEndConceptGraph.viewingConceptGraph.slug = cgSlug;
+        }
+        if (aActive.includes(cgSlug)) {
+            console.log("window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph = ipns: "+ipns)
+            window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph = ipns
+            window.frontEndConceptGraph.activeConceptGraph.title = cgTitle;
+            window.frontEndConceptGraph.activeConceptGraph.slug = cgSlug;
         }
     }
 
@@ -783,9 +795,12 @@ export const addSpecificInstanceToConceptGraphMfs2 = async (aSubsetUniqueIdentif
 
 // This function should be used extensively to look up words from the local MFS active concept graph using the word's slug (wordData.slug).
 export const lookupWordBySlug = async (slug) => {
-    var pCG0 = window.ipfs.pCG0;
-    var mfsPath = pCG0 + "words/" + slug + "/node.txt";
-    // console.log("mfsPath: "+mfsPath)
+    // var pCG0 = window.ipfs.pCG0;
+    // var mfsPath = pCG0 + "words/" + slug + "/node.txt";
+    var pCGb = window.ipfs.pCGb
+    var ipns = window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph
+    var mfsPath = pCGb + ipns + "/words/" + slug + "/node.txt";
+    console.log("lookupWordBySlug mfsPath: "+mfsPath)
     var oWord = await fetchObjectByLocalMutableFileSystemPath(mfsPath)
     return oWord;
 }
@@ -862,9 +877,17 @@ export const convertWordIpnsToCid = async (ipns) => {
 export const convertSlugToCid = async (slug) => {
     // var oWord = await lookupWordBySlug(slug)
     // var ipns = oWord.metaData.ipns;
+    /*
     var pCGw = window.ipfs.pCGw;
     var myPeerID = window.ipfs.myPeerID;
-    var pathToNode = "/ipns/"+myPeerID + "/" + pCGw + slug + "/node.txt";
+    var pathToNode = "/ipns/"+myPeerID + pCGw + slug + "/node.txt";
+    */
+    var myPeerID = window.ipfs.myPeerID;
+    var pCGb = window.ipfs.pCGb
+    var ipns = window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph
+    var pathToNode = "/ipns/"+ myPeerID + pCGb + ipns + "/words/" + slug + "/node.txt";
+
+    console.log("convertSlugToCid pathToNode: "+pathToNode)
     var cid1 = await ipfs.resolve(pathToNode);
     var cid = cid1.replace("/ipfs/","");
     console.log("convertSlugToCid; slug: "+slug+"; cid: "+cid)

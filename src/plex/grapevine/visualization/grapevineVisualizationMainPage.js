@@ -295,7 +295,7 @@ const determineCompositeScoreInheritance = async () => {
     oCompositeScoreTypeInheritanceLookup["allInfluenceTypes_allContexts"].children = [];
     var supersetIt_slug = "supersetFor_influenceType";
     var oSuperset_iT = await ConceptGraphInMfsFunctions.lookupWordBySlug(supersetIt_slug)
-    // console.log("determineCompositeScoreInheritance; oSuperset_iT: "+JSON.stringify(oSuperset_iT,null,4))
+    console.log("determineCompositeScoreInheritance; oSuperset_iT: "+JSON.stringify(oSuperset_iT,null,4))
     var aInfluenceTypes = oSuperset_iT.globalDynamicData.specificInstances;
     for (var z=0;z<aInfluenceTypes.length;z++) {
         var iT_slug = aInfluenceTypes[z];
@@ -609,10 +609,11 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
             var title = "title";
             var label = "label";
             var opacity = 0.5;
-            var raterPeerID = oRating.ratingData.raterData.userData.peerID;
-            var rateePeerID = oRating.ratingData.rateeData.userData.peerID;
+
             var aRatingFieldsetNames = oRating.ratingData.ratingFieldsetData.ratingFieldsetNames;
             if (aRatingFieldsetNames.includes("trust fieldset")) {
+                var raterPeerID = oRating.ratingData.raterData.userData.peerID;
+                var rateePeerID = oRating.ratingData.rateeData.userData.peerID;
                 var ratingTemplateTitle = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
                 var trustRating = oRating.ratingData.ratingFieldsetData.trustFieldsetData.trustRating;
                 var referenceTrustRating = oRating.ratingData.ratingFieldsetData.trustFieldsetData.referenceTrustRating;
@@ -725,7 +726,20 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
     var aSetLocalGen = oSetLocalGen.globalDynamicData.specificInstances;
     var aSetExternalGen = oSetExternalGen.globalDynamicData.specificInstances;
 
-    var aAllRatings = aSetLocalGen.concat(aSetExternalGen)
+    var aAllRatings_pre = aSetLocalGen.concat(aSetExternalGen)
+    // cycle through aAllRatings_pre and keep only those such that ratingTemplateIPNS = k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj
+    // ("ratingTemplateTitle": "Generic User Trust")
+    var aAllRatings = [];
+    for (var r=0;r<aAllRatings_pre.length;r++) {
+        var nextRatingSlug = aAllRatings_pre[r];
+        // lookupRatingNumberBySlug[nextRatingSlug] = r
+        var oRating = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextRatingSlug)
+        var ratingTemplateIPNS = oRating.ratingData.ratingTemplateData.ratingTemplateIPNS;
+        if (ratingTemplateIPNS=="k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj") {
+            aAllRatings.push(nextRatingSlug)
+        }
+    }
+
     var lookupRatingNumberBySlug = {};
     for (var r=0;r<aAllRatings.length;r++) {
         var nextRatingSlug = aAllRatings[r];
@@ -1666,7 +1680,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         jQuery("#calculateScoresSingleIterationButton").click(async function(){
             await singleIterationCompositeScoreCalculations(compScoreDisplayPanelData)
         })
-        // console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
+        console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
     }
     render() {
         return (

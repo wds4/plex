@@ -287,6 +287,11 @@ window.ipfs.pCGncs = null; // ncs = neuroCore subject; default: pCGncs = pCG0
 // window.ipfs.neuroCore.subject.pCG = window.ipfs.pCGncs
 
 window.frontEndConceptGraph = {};
+window.frontEndConceptGraph.activeConceptGraph = {};
+window.frontEndConceptGraph.activeConceptGraph.slug = null;
+window.frontEndConceptGraph.activeConceptGraph.title = null;
+window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph = null;
+
 window.frontEndConceptGraph.viewingConceptGraph = {};
 window.frontEndConceptGraph.viewingConceptGraph.slug = null;
 window.frontEndConceptGraph.viewingConceptGraph.title = null;
