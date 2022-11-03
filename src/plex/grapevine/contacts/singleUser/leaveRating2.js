@@ -191,8 +191,9 @@ const populateRatingRawFile = async (cid) => {
 
     var rTT = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
 
-    // Question: whether to overwrite old rating file vs create a new one and "invalidate" the old one
-    // For now: overwrite, so files don't get out of hand if user makes frequent updates
+    // Question: if a user decides to change a rating,
+    // whether to overwrite the old rating file or create a new one and "invalidate" the old one?
+    // For now: overwrite, using the same slug name and ipns, so files don't get out of hand if user makes frequent updates
     // Solution: Make a unique identifier which is a hash that takes inputs:
     // rateeEntityType (always user, for now)
     // rater peerID (assumes the rater entity type is a user)
