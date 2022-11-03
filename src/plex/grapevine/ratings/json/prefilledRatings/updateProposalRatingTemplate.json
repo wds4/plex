@@ -15,31 +15,35 @@
         "slug": "",
         "name": "",
         "title": "",
+        "submissionTime": null,
         "raterData": {
             "raterEntityType": "user",
             "userData": {
                 "peerID": null,
-                "username": null,
-                "ipns": null
+                "username": null
             }
         },
         "rateeData": {
-            "rateeEntityType": "user",
-            "userData": {
-                "peerID": null,
-                "username": null,
-                "ipns": null
+            "rateeEntityType": "updateProposal",
+            "updateProposalData": {
+                "type": null,
+                "slug": null,
+                "ipns": null,
+                "author": {
+                    "peerID": null,
+                    "username": null
+                }
             }
         },
         "ratingTemplateData": {
-            "ratingTemplateName": "generic user trust",
-            "ratingTemplateIPNS": "k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj",
-            "ratingTemplateWordSlug": "ratingTemplate_genericUserTrust_1l4lqj",
-            "ratingTemplateTitle": "Generic User Trust"
+            "ratingTemplateName": "rate update proposal",
+            "ratingTemplateIPNS": "k2k4r8o7bep3q0qlwtcn23jph7p09ppww9xohtwzeo60gyan9206xhm0",
+            "ratingTemplateWordSlug": "ratingTemplate_rateUpdateProposal_06xhm0",
+            "ratingTemplateTitle": "Rate Update Proposal"
         },
         "ratingFieldsetData": {
             "ratingFieldsetNames": [
-                "trust fieldset",
+                "boolean verdict fieldset",
                 "confidence fieldset",
                 "comments fieldset"
             ],
@@ -47,37 +51,12 @@
                 "comments": ""
             },
             "confidenceFieldsetData": {
+                "description": "on a scale from 0 (no confidence) to 100 (full confidence)",
                 "confidence": 1
             },
-            "trustFieldsetData": {
-                "trustRating": 1,
-                "referenceTrustRating": 1,
-                "referenceData": {
-                    "referenceEntityType": "user",
-                    "userData": {
-                        "peerID": null,
-                        "username": null,
-                        "ipns": null
-                    }
-                },
-                "contextData": {
-                    "transitivity": true,
-                    "influenceCategoryData": {
-                        "influenceCategoryName": "",
-                        "influenceCategoryIPNS": "",
-                        "influenceCategoryWordSlug": ""
-                    },
-                    "topicData": {
-                        "topicName": "",
-                        "topicIPNS": "",
-                        "topicWordSlug": ""
-                    },
-                    "contextGraphData": {
-                        "contextGraphName": null,
-                        "contextGraphIPNS": "",
-                        "contextGraphWordSlug": ""
-                    }
-                }
+            "booleanVerdictFieldsetData": {
+                "description": "true means approve, endorse, thumbs up, yes; false means reject, disapprove, thumbs down, no",
+                "verdict": false
             }
         }
     },
@@ -93,12 +72,42 @@
         }
     },
     "metaData": {
-        "ipns": "",
+        "ipns": null,
+        "oIPNS": {
+            "fullInternalExpansion": null,
+            "minimal": null
+        },
         "keyname": null,
         "lastUpdate": null,
+        "signatures": [
+            {
+                "path": null,
+                "ipfs": null,
+                "peerID": null,
+                "username": null,
+                "signature": null,
+                "whenSigned": null,
+                "signatureType": null
+            }
+        ],
+        "stewards": {
+            "current": {
+                "peerID": null,
+                "username": null
+            },
+            "previous": {
+                "peerID": null,
+                "username": null,
+                "ipns": null,
+                "slug": null,
+                "keyname": null,
+                "lastUpdate": null
+            }
+        },
         "neuroCore": {
             "initialProcessing": false,
-            "lastUpdate": null
+            "lastUpdate": null,
+            "processedAsSpecificInstance": false
         }
     }
 }

@@ -10,13 +10,96 @@ import oBlankRatingTemplate from '../../../../../grapevine/ratings/json/prefille
 
 const jQuery = require("jquery");
 
-const populateRatingRawFile = async (updateProposalSlug) => {
-    console.log("populateRatingRawFile; updateProposalSlug: "+updateProposalSlug)
+const makeKeynameAndIpnsForNewRating = async () => {
+    var newWordType = "updateProposalRating";
+    var randomNonce = Math.floor(Math.random() * 1000);
+    var currentTime = Date.now();
+    var newKeyname = "plexWord_"+newWordType+"_"+currentTime+"_"+randomNonce;
+    var oGeneratedKey = await MiscIpfsFunctions.ipfs.key.gen(newKeyname, {
+        type: 'rsa',
+        size: 2048
+    })
+
+    // var newWord_ipns = oGeneratedKey["id"];
+    // var generatedKey_name = oGeneratedKey["name"];
+    // console.log("generatedKey_obj id: "+newWord_ipns+"; name: "+generatedKey_name);
+    // newWord_obj.metaData.ipns = newWord_ipns;
+    // newWord_obj.metaData.keyname = newKeyname;
+
+    return oGeneratedKey;
+}
+
+const populateRatingRawFile = async (oUpdateProposal) => {
+
+    var currentTime = Date.now();
     var oRating = MiscFunctions.cloneObj(oBlankRatingTemplate)
+
+    var myPeerID = await MiscIpfsFunctions.returnMyPeerID();
+    var myUsername = await MiscIpfsFunctions.returnMyUsername();
+    oRating.ratingData.raterData.userData.username = myUsername;
+    oRating.ratingData.raterData.userData.peerID = myPeerID;
+    var raterPeerIdLast6 = myPeerID.slice(myPeerID.length-6);
+
+    var up_slug = oUpdateProposal.wordData.slug;
+    var up_ipns = oUpdateProposal.updateProposalData.ipns;
+    oRating.ratingData.rateeData.updateProposalData.type = oUpdateProposal.updateProposalData.type;
+    oRating.ratingData.rateeData.updateProposalData.slug = up_slug;
+    oRating.ratingData.rateeData.updateProposalData.ipns = up_ipns;
+    oRating.ratingData.rateeData.updateProposalData.author.peerID = oUpdateProposal.updateProposalData.author.peerID;
+    oRating.ratingData.rateeData.updateProposalData.author.username = oUpdateProposal.updateProposalData.author.username;
+
+    var comments = jQuery("#commentsRawFile").val();
+    oRating.ratingData.ratingFieldsetData.commentsFieldsetData.comments = comments;
+
+    var cSlider = document.getElementById('confidenceSlider');
+    var confidenceValue = cSlider.noUiSlider.get();
+    oRating.ratingData.ratingFieldsetData.confidenceFieldsetData.confidence = confidenceValue;
+
+    var verdict_true = jQuery("#verdict_true").prop("checked")
+    var verdict_false = jQuery("#verdict_false").prop("checked")
+    var verdict = null;
+    if ( (verdict_true) && (!verdict_false) ) {
+        verdict = true;
+    }
+    if ( (!verdict_true) && (verdict_false) ) {
+        verdict = false;
+    }
+    oRating.ratingData.ratingFieldsetData.booleanVerdictFieldsetData.verdict = verdict
 
     var cSlider = document.getElementById('confidenceSlider');
     var confidenceValue = cSlider.noUiSlider.get();
     oRating.ratingData.ratingFieldsetData.confidenceFieldsetData.confidence = confidenceValue
+
+    oRating.metaData.keyname = jQuery("#newRatingKeyname").html()
+    oRating.metaData.ipns = jQuery("#newRatingIPNS").html()
+    oRating.metaData.lastUpdate = currentTime;
+
+    var rTT = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
+
+    var ratingTemplateIPNS = oRating.ratingData.ratingTemplateData.ratingTemplateIPNS;
+    var stuffToDigest = myPeerID + up_ipns + ratingTemplateIPNS;
+    const addResult = await MiscIpfsFunctions.ipfs.add(stuffToDigest)
+    var ratingUniqueIdentifier = addResult.path;
+    console.log("ratingUniqueIdentifier: "+ratingUniqueIdentifier)
+
+    var up_inps_Last6 = up_ipns.slice(up_ipns.length-6);
+    var rating_wordSlug = "ratingOf_"+up_inps_Last6+"_by_"+raterPeerIdLast6+"_"+ratingUniqueIdentifier.slice(-6);
+    var rating_wordName = "rating of "+up_slug+" by "+myUsername+" using "+rTT;
+    var rating_wordTitle = "Rating of "+up_slug+" by "+myUsername+" using "+rTT;
+    var rating_wordDescription = "rating of "+up_slug+" ("+up_ipns+") by "+myUsername+" ("+myPeerID+") using "+rTT
+    rating_wordDescription += "Authored at time "+currentTime+".";
+
+    oRating.wordData.slug = rating_wordSlug;
+    oRating.wordData.name = rating_wordName;
+    oRating.wordData.title = rating_wordTitle;
+    oRating.wordData.description = rating_wordDescription;
+
+    oRating.ratingData.slug = rating_wordSlug;
+    oRating.ratingData.name = rating_wordName;
+    oRating.ratingData.title = rating_wordTitle;
+    oRating.ratingData.description = rating_wordDescription;
+
+    oRating.ratingData.submissionTime = currentTime
 
     jQuery("#newRatingRawFile").val(JSON.stringify(oRating,null,4))
 }
@@ -40,7 +123,7 @@ export default class ConceptGraphsFrontEndSingleConceptGraphSingleUpdateProposal
         jQuery("#updateProposalRawFileContainer").val(JSON.stringify(oUpdateProposal,null,4))
 
         const callPopulateRatingRawFile = () => {
-            populateRatingRawFile(updateProposalSlug)
+            populateRatingRawFile(oUpdateProposal)
         }
 
         var cSlider = document.getElementById('confidenceSlider');
@@ -67,6 +150,22 @@ export default class ConceptGraphsFrontEndSingleConceptGraphSingleUpdateProposal
         jQuery(".verdictRadioButton").change(function(){
             callPopulateRatingRawFile()
         })
+
+        var oGeneratedKey = await makeKeynameAndIpnsForNewRating()
+        jQuery("#newRatingKeyname").html(oGeneratedKey["name"])
+        jQuery("#newRatingIPNS").html(oGeneratedKey["id"])
+
+        jQuery("#submitThisRatingButton").click(async function(){
+            console.log("submitThisRatingButton clicked")
+            var sNewRating = jQuery("#newRatingRawFile").val()
+            var oNewRating = JSON.parse(sNewRating)
+            var conceptFor_rating = "conceptFor_rating";
+            var subsetUniqueIdentifier = "setFor_ratings_authoredLocally"; // adding to subsets not yet implemented in addSpecificInstanceToConceptGraphMfs; currently adds only to superset
+            var aSetUniqueIdentifiers = []
+            aSetUniqueIdentifiers.push(subsetUniqueIdentifier)
+            // await ConceptGraphInMfsFunctions.publishWordToIpfs(oNewRating) // this step is now taken care of by addSpecificInstanceToConceptGraphMfs
+            await ConceptGraphInMfsFunctions.addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph(viewingConceptGraph_ipns,oNewRating,conceptFor_rating,aSetUniqueIdentifiers)
+        })
     }
     render() {
         return (
@@ -89,10 +188,10 @@ export default class ConceptGraphsFrontEndSingleConceptGraphSingleUpdateProposal
                                 <div style={{width:"400px",display:"inline-block"}} >
                                     <div id="verdictRadioButtonsContainer" >
                                         <div>
-                                            <input name="verdictRadioButton" class="verdictRadioButton" value="true" type="radio" />Approve
+                                            <input name="verdictRadioButton" class="verdictRadioButton" value="true" id="verdict_true" type="radio" />Approve
                                         </div>
                                         <div>
-                                            <input name="verdictRadioButton" class="verdictRadioButton" value="false" type="radio" />Disapprove
+                                            <input name="verdictRadioButton" class="verdictRadioButton" value="false" id="verdict_false" type="radio" />Disapprove
                                         </div>
                                     </div>
 
@@ -100,6 +199,15 @@ export default class ConceptGraphsFrontEndSingleConceptGraphSingleUpdateProposal
                                         Comments:
                                         <textarea id="commentsRawFile" style={{width:"95%",height:"100px"}} ></textarea>
                                     </div>
+
+                                    <div>
+                                        <div className="rateSomeoneButton" id="submitThisRatingButton" >Submit this rating</div>
+                                        <div style={{display:"inline-block"}}>
+                                            <div id="newRatingKeyname">newRatingKeyname</div>
+                                            <div id="newRatingIPNS">newRatingIPNS</div>
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <div style={{textAlign:"center",width:"150px",display:"inline-block"}} >
                                     <div style={{height:"50px"}}>Confidence</div>

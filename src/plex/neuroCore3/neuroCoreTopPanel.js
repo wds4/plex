@@ -169,7 +169,7 @@ const executeSingleNeuroCore3Pattern_s1r = (patternSlug,oAuxiliaryPatternData,wh
     }
     for (var r=0;r<aRels.length;r++) {
         var oNextRel = aRels[r];
-        console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
+        // console.log("qwertyy; oNextRel: "+JSON.stringify(oNextRel,null,4))
         var nF_slug = oNextRel.nodeFrom.slug;
         var rT_slug = oNextRel.relationshipType.slug;
         var nT_slug = oNextRel.nodeTo.slug;
