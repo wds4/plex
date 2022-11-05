@@ -251,8 +251,8 @@ export default class ConceptGraphsFrontEndSingleConceptGraphAllKnownUpdatePropos
             this.state.wordLinks.push(oUpdateProposalData)
 
             this.forceUpdate();
-
         }
+
         makeThisPageTable(updateProposalDataSet);
 
         ////////////////////////////////////////////////////////////////////////

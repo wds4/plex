@@ -174,6 +174,7 @@ import ConceptGraphsFrontEndSpecificInstancesMainPage from './plex/conceptGraphF
 import ConceptGraphsFrontEndSingleConceptUpdatesMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/singleConceptUpdatesMainPage.js';
 import ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listOfSynonyms.js';
 import ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listOfUpdates.js';
+import ConceptGraphsFrontEndSingleConceptUpdatesControlPanel from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/singleConceptUpdatesControlPanel.js';
 
 import ConceptGraphsFrontEndSingleConceptUpdatesListsOfUpdates from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listsOfUpdates/mainPage.js';
 
@@ -520,6 +521,7 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMainPage} />
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms} />
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesListsOfUpdates/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesListsOfUpdates} />
+          <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesControlPanel/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesControlPanel} />
 
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewConceptUpdate/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMakeNewConceptUpdate} />
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMakeNewMainSchemaUpdate/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMakeNewMainSchemaUpdate} />

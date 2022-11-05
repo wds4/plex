@@ -31,7 +31,8 @@ async function makeThisPageTable(wordDataSet) {
             { },
             { },
             { },
-            { }
+            { },
+            { visible: false }
         ],
         "dom": '<"pull-left"f><"pull-right"l>tip',
         initComplete: function () {
@@ -185,6 +186,7 @@ export default class AllWordsTable extends React.Component {
                 var word_name = oWord.wordData.name;
                 var aWordTypes = oWord.wordData.wordTypes;
                 var sWordTypes = JSON.stringify(aWordTypes);
+                var sWord = JSON.stringify(oWord)
 
                 var nextRow_button = "<div data-slug="+word_slug+" data-ipns="+word_ipns+" class='doSomethingButton_small nextRowEditButton' style=margin-right:5px; >VIEW / EDIT</div>";
 
@@ -195,7 +197,8 @@ export default class AllWordsTable extends React.Component {
                     word_slug,
                     word_name,
                     sWordTypes,
-                    word_ipns
+                    word_ipns,
+                    sWord
                 ];
                 wordDataSet.push(aNextWord);
 
@@ -234,6 +237,7 @@ export default class AllWordsTable extends React.Component {
                                         <th>name</th>
                                         <th>wordTypes</th>
                                         <th>IPNS/IPFS</th>
+                                        <th>full word</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
@@ -245,6 +249,7 @@ export default class AllWordsTable extends React.Component {
                                         <th>name</th>
                                         <th>wordTypes</th>
                                         <th>IPNS/IPFS</th>
+                                        <th>full word</th>
                                     </tr>
                                 </tfoot>
                             </table>
