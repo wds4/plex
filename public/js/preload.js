@@ -326,6 +326,8 @@ window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
 window.grapevine.users = "/grapevineData/users/"
 
 window.grapevine.starterDefaultAttenuationFactor = 90;
+window.grapevine.starterDefaultUpdateProposalVerdictAverageScore = 0;
+window.grapevine.starterDefaultUpdateProposalVerdictConfidence = 40;
 window.grapevine.starterDefaultUserTrustAverageScore = 50;
 window.grapevine.starterDefaultUserTrustConfidence = 40;
 window.grapevine.starterRigor = 25; // ?? 25 / 100

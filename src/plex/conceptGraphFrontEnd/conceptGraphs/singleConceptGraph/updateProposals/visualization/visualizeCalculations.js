@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef }  from "react";
 import ReactDOM from 'react-dom';
-import * as MiscFunctions from '../../functions/miscFunctions.js';
-import * as VisjsFunctions from '../../functions/visjsFunctions.js';
-import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
-import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js'
-import * as CompScoreCalcFunctions from '../../lib/grapevine/compScoreCalcFunctions.js'
-import Masthead from '../../mastheads/grapevineMasthead.js';
-import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
-import * as VisStyleConstants from '../../lib/visjs/visjs-style';
+import Masthead from '../../../../../mastheads/conceptGraphMasthead_frontEnd.js';
+import LeftNavbar1 from '../../../../../navbars/leftNavbar1/conceptGraphFront_leftNav1';
+import LeftNavbar2 from '../../../../../navbars/leftNavbar2/cgFe_singleConceptGraph_updates_leftNav2';
+import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
+import * as VisjsFunctions from '../../../../../functions/visjsFunctions.js';
+import * as MiscIpfsFunctions from '../../../../../lib/ipfs/miscIpfsFunctions.js'
+import * as ConceptGraphInMfsFunctions from '../../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as CompScoreCalcFunctions from '../../../../../lib/grapevine/compScoreCalcFunctions.js'
+import * as VisStyleConstants from '../../../../../lib/visjs/visjs-style';
 import AttenuationSlider from './modules/attenuationSlider.js'
 import ControlPanel from './modules/controlPanel/controlPanel.js'
-import CompScoreCalcPanel from './compScoreCalcPanel.js'
+import CompUserTrustScoreCalcPanel from './compUserTrustScoreCalcPanel.js'
+import CompUpdateProposalVerdictScoreCalcPanel from './compUpdateProposalVerdictScoreCalcPanel.js'
 
 const electronFs = window.require('fs');
 
@@ -23,11 +25,14 @@ function ScoresCalculationTimer() {
     useEffect(() => {
         setTimeout(() => {
             var foo = jQuery("#scoresCalculationTimer").data("status")
-            // console.log("ScoresCalculationTimer; count: "+count+"; foo: "+foo)
             if (foo=="run") {
-                jQuery("#calculateScoresSingleIterationButton").get(0).click()
+                jQuery("#calculateUserTrustScoresSingleIterationButton").get(0).click()
+                jQuery("#calculateUpdateProposalVerdictScoresSingleIterationButton").get(0).click()
                 if (count%5 == 0) {
                     jQuery("#changeUserCalcsDisplayButton").get(0).click()
+                }
+                if (count%5 == 1) {
+                    jQuery("#changeUpdateProposalCalcsDisplayButton").get(0).click()
                 }
             }
             setCount((count) => count + 1);
@@ -202,19 +207,34 @@ const fetchInfluenceTypes = async (pCG0) => {
     return aResult;
 }
 
-var lookupCompositeScoreNumberByType = {};
+var lookupCompositeUserTrustScoreNumberByType = {};
+var lookupCompositeUpdateProposalVerdictScoreNumberByType = {};
 
+const generateAllCompositeUpdateProposalVerdictScoreTypes = async () => {
+    var aCompositeUpdateProposalVerdictScoreTypes = [];
+    var compositeScoreType = "standardAverage";
+    aCompositeUpdateProposalVerdictScoreTypes.push(compositeScoreType)
 
-const generateAllCompositeScoreTypes = async () => {
-    var aCompositeScoreTypes = [];
+    for (var x=0;x<aCompositeUpdateProposalVerdictScoreTypes.length;x++) {
+        var nextType = aCompositeUpdateProposalVerdictScoreTypes[x];
+        lookupCompositeUpdateProposalVerdictScoreNumberByType[nextType] = x;
+    }
+    return aCompositeUpdateProposalVerdictScoreTypes;
+}
+
+const generateAllCompositeUserTrustScoreTypes = async () => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    var aCompositeUserTrustScoreTypes = [];
     var compositeScoreType = "allInfluenceTypes_allContexts";
-    aCompositeScoreTypes.push(compositeScoreType)
+    aCompositeUserTrustScoreTypes.push(compositeScoreType)
 
     console.log("makeInfluenceTypeSelector")
     // THIS IS THE OLD WAY TO LOOK UP WORDS ON THE CONCEPT GRAPH
     // NEED TO UPDATE THIS here and elsewhere on this page
-    var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
-    var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+    // var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
+    var mainSchema_slug = "mainSchemaForConceptGraph";
+    // var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug);
     // var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug[mainSchema_slug]
     var mainSchema_ipns = oMainSchema.metaData.ipns;
     var pCG = "/plex/conceptGraphs/";
@@ -224,33 +244,36 @@ const generateAllCompositeScoreTypes = async () => {
     for (var i=0;i<aInfluenceTypes.length;i++) {
         var oNextInfluenceType = aInfluenceTypes[i];
         var nextInfluenceType_influenceTypeSlug = oNextInfluenceType.influenceTypeData.slug;
-        // var compositeScoreType =  nextInfluenceType_influenceTypeSlug + "_allContexts"
-        // aCompositeScoreTypes.push(compositeScoreType)
 
         var nextInfluenceType_associatedContextGraph_slug = oNextInfluenceType.influenceTypeData.contextGraph.slug;
-        var oContextGraph = window.lookupWordBySlug[nextInfluenceType_associatedContextGraph_slug]
+        // var oContextGraph = window.lookupWordBySlug[nextInfluenceType_associatedContextGraph_slug]
+        var oContextGraph = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nextInfluenceType_associatedContextGraph_slug);
         var aContexts = oContextGraph.schemaData.nodes;
         for (var z=0;z<aContexts.length;z++) {
             var oNC = aContexts[z];
             var nextContext_slug = oNC.slug;
-            var oNextContext = window.lookupWordBySlug[nextContext_slug]
+            // var oNextContext = window.lookupWordBySlug[nextContext_slug]
+            var oNextContext = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nextContext_slug);
             var nextContext_contextSlug = oNextContext.contextStructuredData_contextData.slug;
 
             var compositeScoreType =  nextInfluenceType_influenceTypeSlug + "_" + nextContext_contextSlug
-            aCompositeScoreTypes.push(compositeScoreType)
+            aCompositeUserTrustScoreTypes.push(compositeScoreType)
         }
     }
-    for (var x=0;x<aCompositeScoreTypes.length;x++) {
-        var nextType = aCompositeScoreTypes[x];
-        lookupCompositeScoreNumberByType[nextType] = x;
+    for (var x=0;x<aCompositeUserTrustScoreTypes.length;x++) {
+        var nextType = aCompositeUserTrustScoreTypes[x];
+        lookupCompositeUserTrustScoreNumberByType[nextType] = x;
     }
-    return aCompositeScoreTypes;
+    return aCompositeUserTrustScoreTypes;
 }
 
 const makeInfluenceTypeSelector = async () => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     console.log("makeInfluenceTypeSelector")
-    var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
-    var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+    // var mainSchema_slug = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug
+    var mainSchema_slug = "mainSchemaForConceptGraph";
+    // var oMainSchema = window.lookupWordBySlug[mainSchema_slug]
+    var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug);
     var mainSchema_ipns = oMainSchema.metaData.ipns;
     var pCG = "/plex/conceptGraphs/";
     var pCG0_old = pCG + mainSchema_ipns + "/";
@@ -265,7 +288,6 @@ const makeInfluenceTypeSelector = async () => {
         var nextInfluenceType_name = oNextInfluenceType.influenceTypeData.name;
         var nextInfluenceType_title = oNextInfluenceType.influenceTypeData.title;
         var nextInfluenceType_slug = oNextInfluenceType.influenceTypeData.slug;
-        // console.log("oNextInfluenceType: "+JSON.stringify(oNextInfluenceType,null,4))
         var nextInfluenceType_associatedContextGraph_slug = oNextInfluenceType.influenceTypeData.contextGraph.slug;
         selectorHTML += "<option ";
         selectorHTML += " data-contextgraphslug='"+nextInfluenceType_associatedContextGraph_slug+"' ";
@@ -349,19 +371,22 @@ const determineCompositeScoreInheritance = async () => {
     console.log("determineCompositeScoreInheritance; oCompositeScoreTypeInheritanceLookup: "+JSON.stringify(oCompositeScoreTypeInheritanceLookup,null,4))
 }
 
-const makeContextSelector = () => {
+const makeContextSelector = async () => {
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     var selectorHTML = "";
     selectorHTML += "<select id='contextSelector' >";
 
     var contextGraph_slug = jQuery("#influenceTypeSelector option:selected").data("contextgraphslug")
     var influenceType_slug = jQuery("#influenceTypeSelector option:selected").data("influencetypeslug")
 
-    var oContextGraph = window.lookupWordBySlug[contextGraph_slug]
+    // var oContextGraph = window.lookupWordBySlug[contextGraph_slug]
+    var oContextGraph = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,contextGraph_slug);
     var aContexts = oContextGraph.schemaData.nodes;
     for (var z=0;z<aContexts.length;z++) {
         var oNC = aContexts[z];
         var nextContext_slug = oNC.slug;
-        var oNextContext = window.lookupWordBySlug[nextContext_slug]
+        // var oNextContext = window.lookupWordBySlug[nextContext_slug]
+        var oNextContext = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nextContext_slug);
         var nextContext_contextName = oNextContext.contextStructuredData_contextData.name;
         var nextContext_contextSlug = oNextContext.contextStructuredData_contextData.slug;
         selectorHTML += "<option ";
@@ -441,11 +466,26 @@ export const VisNetwork_Grapevine = () => {
             if (numNodes==1) {
                 var nodeID = nodes_arr[0];
                 var node = nodes.get(nodeID);
-                var username = node.username;
-                jQuery("#usernameContainer").html(username)
-                jQuery("#peerIDContainer").html(nodeID)
-                jQuery("#changeUserCalcsDisplayButton").get(0).click()
-                // drawScoreCalculationPanel(nodeID)
+                var wordType = node.wordType;
+
+                console.log("selectNode; wordType: "+wordType)
+                if (wordType == "user") {
+                    var username = node.username;
+                    jQuery("#usernameContainer").html(username)
+                    jQuery("#peerIDContainer").html(nodeID)
+                    jQuery("#changeUserCalcsDisplayButton").get(0).click()
+                    jQuery("#compUserTrustScoreCalcPanelContainer").css("display","block")
+                    jQuery("#compUpdateProposalVerdictScoreCalcPanelContainer").css("display","none")
+                }
+                if (wordType == "updateProposal") {
+                    var upSlug = node.slug;
+                    var upIpns = node.ipns;
+                    jQuery("#upSlugContainer").html(upSlug)
+                    jQuery("#upIpnsContainer").html(upIpns)
+                    jQuery("#changeUpdateProposalCalcsDisplayButton").get(0).click()
+                    jQuery("#compUserTrustScoreCalcPanelContainer").css("display","none")
+                    jQuery("#compUpdateProposalVerdictScoreCalcPanelContainer").css("display","block")
+                }
             }
         });
         network.current.on("deselectNode",function(params){
@@ -482,18 +522,71 @@ var lookupUsernameFromPeerID = {};
 var lookupAvatarCidFromPeerID = {};
 var aVisualizedRatingSlugs = []; // an array of all rating slugs shown in the graph; used for updating edge opacity
 
-const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
-    console.log("makeVisGraph_Grapevine A")
+const makeVisGraph_updateProposalScoring = async (updateProposalList,userList,aRatingCidsByMe) => {
+    console.log("makeVisGraph_updateProposalScoring; updateProposalList: "+JSON.stringify(updateProposalList,null,4))
+    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
     const oIpfsID = await MiscIpfsFunctions.ipfs.id();
     const myPeerID = oIpfsID.id;
     var nodes_arr = [];
     var nodes_slugs_arr = [];
     var edges_arr = [];
+    var showNode = true;
+    var listOfPeerIDs = [];
+
+    ////////////// UPDATE PROPOSALS //////////////
+    var shape_up = "hexagon";
+    var physics_up = false;
+    var borderWidth_up = 3;
+    var size_up = 25;
+    var borderColor_up = "#000000";
+    var numUP = updateProposalList.length;
+    for (var u=0;u<updateProposalList.length;u++) {
+        var nexUP_slug = updateProposalList[u]
+        var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,nexUP_slug);
+        var ipns_up = oUP.updateProposalData.ipns;
+        var author_username = oUP.updateProposalData.author.username;
+
+        var nextNode_label = nexUP_slug;
+        var nextNode_slug = nexUP_slug;
+        var nextNode_username = author_username;
+        var nextNode_title = nexUP_slug + "\n" + ipns_up;
+        var nextNode_wordType = "updateProposal"
+        var x_up = 300;
+        var y_up = 500 * (u / numUP);
+
+        var showNode = true;
+        if (showNode) {
+            var nextNode_vis_obj = {
+                id: ipns_up,
+                ipns: ipns_up,
+                label: nextNode_label,
+                slug: nextNode_slug,
+                username: nextNode_username,
+                title: nextNode_title,
+                shape: shape_up,
+                group: nextNode_wordType,
+                wordType: nextNode_wordType,
+                conceptRole: null,
+                physics: physics_up,
+                x: x_up,
+                y: y_up,
+                borderWidth: borderWidth_up,
+                size: size_up,
+                color: {
+                    color:"#FFFFFF",
+                    border: borderColor_up
+                }
+            }
+            // console.log("qwerty_showNode: nextNode_slug: "+nextNode_slug+"; nextNode_vis_obj: "+JSON.stringify(nextNode_vis_obj,null,4))
+            nodes_arr = MiscFunctions.pushObjIfNotAlreadyThere(nodes_arr,nextNode_vis_obj)
+            nodes_slugs_arr = MiscFunctions.pushIfNotAlreadyThere(nodes_slugs_arr,nextNode_slug)
+        }
+    }
+
+    ////////////// USERS //////////////
     var physics = true;
     var nextNode_wordType = "user";
     var nextNode_conceptRole = "user"
-    var showNode = true;
-    var listOfPeerIDs = [];
     for (var u=0;u<userList.length;u++) {
         var nextUserPeerID = userList[u];
         listOfPeerIDs.push(nextUserPeerID)
@@ -501,6 +594,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
         var nextNode_label = "anon";
         var nextNode_username = "anon";
         var nextNode_title = nextUserPeerID;
+        var nextNode_wordType = "user";
 
         // var pathToImage = "~src/assets/grapevine/users/"+nextUserPeerID+"/avatar.png"
         // var pathToImage = "/grapevine/assets/users/12D3KooWDijvW15ZekGqSTFjkTJ8pTq5Hjm1UdJihq9fDMzeM6Cs/avatar.png"
@@ -576,6 +670,7 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
                 brokenImage: "/grapevine/assets/missingAvatar.png",
                 group: nextNode_wordType,
                 conceptRole: nextNode_conceptRole,
+                wordType: nextNode_wordType,
                 physics: physics,
                 borderWidth: borderWidth,
                 size: size,
@@ -654,8 +749,6 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
         }
     }
 
-    console.log("makeVisGraph_Grapevine D")
-
     nodes = new DataSet(nodes_arr);
     edges = new DataSet(edges_arr);
     data = {
@@ -667,54 +760,40 @@ const makeVisGraph_Grapevine = async (userList,aRatingCidsByMe) => {
     )
 }
 
-var aGrapevineScores = [];
+var aUserTrustScores = [];
+var aUpdateProposalVerdictScores = [];
 
 var lookupUserNumberByPeerID = {};
+var lookupUpdateProposalNumberBySlug = {};
 
-export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
-    var seedUserPeerID = jQuery("#seedUserSelector option:selected").data("peerid")
-    for (var u=0;u<aUserPeerIDs.length;u++) {
-        var nextPeerID = aUserPeerIDs[u];
-        lookupUserNumberByPeerID[nextPeerID] = u
+export const setupGrapevineCompositeScoreVars_updateProposal = async (aUpdateProposalSlugs) => {
+    for (var u=0;u<aUpdateProposalSlugs.length;u++) {
+        var nextSlug = aUpdateProposalSlugs[u];
+        lookupUpdateProposalNumberBySlug[nextSlug] = u
     }
-    var oIpfsID = await MiscIpfsFunctions.ipfs.id();
-    var myPeerID = oIpfsID.id;
-    // cycle through each type of composite score, then through each user
-    // initialize data object
-    var myUserNumber = null;
-    for (var c=0;c<aCompositeScoreTypes.length;c++) {
-        var nextCSType = aCompositeScoreTypes[c];
-        aGrapevineScores[c] = {};
-        aGrapevineScores[c].compositeScoreNumber = c;
-        aGrapevineScores[c].compositeScoreType = nextCSType;
-        aGrapevineScores[c].users = []
-        for (var u=0;u<aUserPeerIDs.length;u++) {
-            var nextPeerID = aUserPeerIDs[u];
-            if (nextPeerID==myPeerID) {
-                myUserNumber = u;
-            }
-            aGrapevineScores[c].users[u] = {}
-            aGrapevineScores[c].users[u].userNumber = u;
-            aGrapevineScores[c].users[u].peerID = nextPeerID;
-            aGrapevineScores[c].users[u].username = lookupUsernameFromPeerID[nextPeerID];
-            aGrapevineScores[c].users[u].avatarCid = lookupAvatarCidFromPeerID[nextPeerID];
-            aGrapevineScores[c].users[u].seedUser = false;
-            aGrapevineScores[c].users[u].compositeScoreData = MiscFunctions.cloneObj(window.compositeScoreData);
-            if (nextPeerID == seedUserPeerID) {
-                aGrapevineScores[c].users[u].compositeScoreData.seedUser = true;
-                aGrapevineScores[c].users[u].compositeScoreData.selectedUser = true;
-                aGrapevineScores[c].users[u].compositeScoreData.radiusMultiplier = 1.5;
-                aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.certainty = 100;
-                aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.average = 1;
-                aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.influence = 1
-                aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.input = 1000
-            }
-            aGrapevineScores[c].users[u].ratings = [] // all ratings where this user is the ratee
-            aGrapevineScores[c].users[u].defaultRating = {} // default user rating
-            aGrapevineScores[c].users[u].inheritedRatings = [] // inherited user rating (from separate Composite Score)
-            aGrapevineScores[c].users[u].inverseRatings = [] // all ratings where this user is the rater
-            // aGrapevineScores[c].users[u].calcDataRow = {}
-            // aGrapevineScores[c].users[u].calcDataRow.default = MiscFunctions.cloneObj(window.calculationDataRow);
+    for (var c=0;c<aCompositeUpdateProposalVerdictScoreTypes.length;c++) {
+        var nextCSType = aCompositeUpdateProposalVerdictScoreTypes[c];
+        aUpdateProposalVerdictScores[c] = {};
+        aUpdateProposalVerdictScores[c].compositeScoreNumber = c;
+        aUpdateProposalVerdictScores[c].compositeScoreType = nextCSType; //  "standardAverage";
+        aUpdateProposalVerdictScores[c].updateProposals = [];
+        for (var u=0;u<aUpdateProposalSlugs.length;u++) {
+            var nextUpSlug = aUpdateProposalSlugs[u];
+            var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextUpSlug)
+            var updateProposalIPNS = oUP.updateProposalData.ipns;
+            aUpdateProposalVerdictScores[c].updateProposals[u] = {}
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalNumber = u;
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalSlug = nextUpSlug;
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalIPNS = updateProposalIPNS;
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData = MiscFunctions.cloneObj(window.compositeUpdateProposalVerdictScoreData);
+            aUpdateProposalVerdictScores[c].updateProposals[u].ratings = [] // all ratings where this updateProposal is the ratee
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating = {
+                rating: 0,
+                raterInfluence: 1,
+                weight: 0.02,
+                weightAdjusted: 0.02,
+                product: 0
+            } // default updateProposal rating
         }
     }
 
@@ -732,18 +811,142 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
     var aAllRatings = [];
     for (var r=0;r<aAllRatings_pre.length;r++) {
         var nextRatingSlug = aAllRatings_pre[r];
-        // lookupRatingNumberBySlug[nextRatingSlug] = r
         var oRating = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextRatingSlug)
+        var ratingTemplateWordSlug = oRating.ratingData.ratingTemplateData.ratingTemplateWordSlug;
+        var ratingTemplateTitle = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
         var ratingTemplateIPNS = oRating.ratingData.ratingTemplateData.ratingTemplateIPNS;
-        if (ratingTemplateIPNS=="k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj") {
+        // if (ratingTemplateIPNS=="k2k4r8o7bep3q0qlwtcn23jph7p09ppww9xohtwzeo60gyan9206xhm0") {
+        // if (ratingTemplateWordSlug=="ratingTemplate_rateUpdateProposal_06xhm0") {
+        if (ratingTemplateTitle=="Rate Update Proposal") {
             aAllRatings.push(nextRatingSlug)
         }
     }
 
-    var lookupRatingNumberBySlug = {};
     for (var r=0;r<aAllRatings.length;r++) {
         var nextRatingSlug = aAllRatings[r];
-        lookupRatingNumberBySlug[nextRatingSlug] = r
+        var oRating = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextRatingSlug)
+        var raterPeerID = oRating.ratingData.raterData.userData.peerID;
+        var raterUserNumber = lookupUserNumberByPeerID[raterPeerID];
+        var raterUsername = lookupUsernameFromPeerID[raterPeerID];
+        var raterAvatarCid = lookupAvatarCidFromPeerID[raterPeerID];
+
+        var rateeSlug = oRating.ratingData.rateeData.updateProposalData.slug;
+        var rateeUserNumber = lookupUpdateProposalNumberBySlug[rateeSlug];
+
+        var verdictRating = oRating.ratingData.ratingFieldsetData.booleanVerdictFieldsetData.verdict;
+        var rating = 0;
+        if ( (verdictRating == true) || (verdictRating == "true") ) {
+            rating = 1;
+        }
+        if ( (verdictRating == false) || (verdictRating == "false") ) {
+            rating = -1;
+        }
+        var ratingConfidence = oRating.ratingData.ratingFieldsetData.confidenceFieldsetData.confidence;
+
+        var compositeScoreType_thisRating = "standardAverage";
+        for (var c=0;c<aCompositeUpdateProposalVerdictScoreTypes.length;c++) {
+            var nextCSType = aUpdateProposalVerdictScores[c].compositeScoreType;
+            if (nextCSType == compositeScoreType_thisRating) {
+                console.log("Got a hit! nextCSType: "+nextCSType)
+                var numR = aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings.length;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR] = {}
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].ratingNumber = r;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].ratingSlug = nextRatingSlug;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].raterUserNumber = raterUserNumber;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].raterPeerID = raterPeerID;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].raterUsername = raterUsername;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].raterAvatarCid = raterAvatarCid;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].raterInfluence = null;
+
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].verdictRating = verdictRating;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].rating = rating;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].product = null;
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].ratingAuthorInfluence = 0.5;
+
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].weight = null;
+
+                aUpdateProposalVerdictScores[c].updateProposals[rateeUserNumber].ratings[numR].ratingConfidence = ratingConfidence;
+            }
+        }
+    }
+}
+
+export const setupGrapevineCompositeScoreVars_user = async (aUserPeerIDs) => {
+    var seedUserPeerID = jQuery("#seedUserSelector option:selected").data("peerid")
+    for (var u=0;u<aUserPeerIDs.length;u++) {
+        var nextPeerID = aUserPeerIDs[u];
+        lookupUserNumberByPeerID[nextPeerID] = u
+    }
+    var oIpfsID = await MiscIpfsFunctions.ipfs.id();
+    var myPeerID = oIpfsID.id;
+    // cycle through each type of composite score, then through each user
+    // initialize data object
+    var myUserNumber = null;
+    for (var c=0;c<aCompositeUserTrustScoreTypes.length;c++) {
+        var nextCSType = aCompositeUserTrustScoreTypes[c];
+        aUserTrustScores[c] = {};
+        aUserTrustScores[c].compositeScoreNumber = c;
+        aUserTrustScores[c].compositeScoreType = nextCSType;
+        aUserTrustScores[c].users = []
+        for (var u=0;u<aUserPeerIDs.length;u++) {
+            var nextPeerID = aUserPeerIDs[u];
+            if (nextPeerID==myPeerID) {
+                myUserNumber = u;
+            }
+            aUserTrustScores[c].users[u] = {}
+            aUserTrustScores[c].users[u].userNumber = u;
+            aUserTrustScores[c].users[u].peerID = nextPeerID;
+            aUserTrustScores[c].users[u].username = lookupUsernameFromPeerID[nextPeerID];
+            aUserTrustScores[c].users[u].avatarCid = lookupAvatarCidFromPeerID[nextPeerID];
+            aUserTrustScores[c].users[u].seedUser = false;
+            aUserTrustScores[c].users[u].compositeScoreData = MiscFunctions.cloneObj(window.compositeUserTrustScoreData);
+            if (nextPeerID == seedUserPeerID) {
+                aUserTrustScores[c].users[u].compositeScoreData.seedUser = true;
+                aUserTrustScores[c].users[u].compositeScoreData.selectedUser = true;
+                aUserTrustScores[c].users[u].compositeScoreData.radiusMultiplier = 1.5;
+                aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.certainty = 100;
+                aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.average = 1;
+                aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.influence = 1
+                aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.input = 1000
+            }
+            aUserTrustScores[c].users[u].ratings = [] // all ratings where this user is the ratee
+            aUserTrustScores[c].users[u].defaultRating = {} // default user rating
+            aUserTrustScores[c].users[u].inheritedRatings = [] // inherited user rating (from separate Composite Score)
+            aUserTrustScores[c].users[u].inverseRatings = [] // all ratings where this user is the rater
+            // aUserTrustScores[c].users[u].calcDataRow = {}
+            // aUserTrustScores[c].users[u].calcDataRow.default = MiscFunctions.cloneObj(window.calculationDataRow);
+        }
+    }
+
+    // cycle through each rating and populate .ratingsBySlug and .inverseRatingsBySlug
+    var setFor_ratings_authoredLocally = window.grapevine.ratings.local.set;
+    var setFor_ratings_authoredExternally = window.grapevine.ratings.external.set;
+    var oSetLocalGen = await ConceptGraphInMfsFunctions.lookupWordBySlug(setFor_ratings_authoredLocally)
+    var oSetExternalGen = await ConceptGraphInMfsFunctions.lookupWordBySlug(setFor_ratings_authoredExternally)
+    var aSetLocalGen = oSetLocalGen.globalDynamicData.specificInstances;
+    var aSetExternalGen = oSetExternalGen.globalDynamicData.specificInstances;
+
+    var aAllRatings_pre = aSetLocalGen.concat(aSetExternalGen)
+    // cycle through aAllRatings_pre and keep only those such that ratingTemplateIPNS = k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj
+    // ("ratingTemplateTitle": "Generic User Trust")
+    var aAllRatings = [];
+    for (var r=0;r<aAllRatings_pre.length;r++) {
+        var nextRatingSlug = aAllRatings_pre[r];
+        var oRating = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextRatingSlug)
+        var ratingTemplateWordSlug = oRating.ratingData.ratingTemplateData.ratingTemplateWordSlug;
+        var ratingTemplateTitle = oRating.ratingData.ratingTemplateData.ratingTemplateTitle;
+        var ratingTemplateIPNS = oRating.ratingData.ratingTemplateData.ratingTemplateIPNS;
+        // if (ratingTemplateIPNS=="k2k4r8p570pjb0nx2xcldfq6sphb98vqokpxolmw74j4v8ijgr1l4lqj") {
+        // if (ratingTemplateWordSlug=="ratingTemplate_genericUserTrust_1l4lqj") {
+        if (ratingTemplateTitle=="Generic User Trust") {
+            aAllRatings.push(nextRatingSlug)
+        }
+    }
+
+    // var lookupRatingNumberBySlug = {};
+    for (var r=0;r<aAllRatings.length;r++) {
+        var nextRatingSlug = aAllRatings[r];
+        // lookupRatingNumberBySlug[nextRatingSlug] = r
         var oRating = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextRatingSlug)
         var raterPeerID = oRating.ratingData.raterData.userData.peerID;
         var rateePeerID = oRating.ratingData.rateeData.userData.peerID;
@@ -770,91 +973,182 @@ export const setupGrapevineCompositeScoreVars = async (aUserPeerIDs) => {
         var oTopic = await ConceptGraphInMfsFunctions.lookupWordBySlug(topicWordSlug)
         var topic_topicSlug = oTopic.contextStructuredData_contextData.slug;
         var compositeScoreType_thisRating = influenceCategory_influenceTypeSlug + "_" +topic_topicSlug;
-        for (var c=0;c<aCompositeScoreTypes.length;c++) {
-            var nextCSType = aGrapevineScores[c].compositeScoreType;
+        for (var c=0;c<aCompositeUserTrustScoreTypes.length;c++) {
+            var nextCSType = aUserTrustScores[c].compositeScoreType;
             if (nextCSType == compositeScoreType_thisRating) {
                 console.log("Got a hit! nextCSType: "+nextCSType)
-                var numR = aGrapevineScores[c].users[rateeUserNumber].ratings.length;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR] = {}
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].ratingNumber = r;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].ratingSlug = nextRatingSlug;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].raterUserNumber = raterUserNumber;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].raterPeerID = raterPeerID;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].raterUsername = raterUsername;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].raterAvatarCid = raterAvatarCid;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].trustRating = trustRating;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].referenceTrustRating = referenceTrustRating;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].product = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].ratingAuthorInfluence = 0.5;
+                var numR = aUserTrustScores[c].users[rateeUserNumber].ratings.length;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR] = {}
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].ratingNumber = r;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].ratingSlug = nextRatingSlug;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].raterUserNumber = raterUserNumber;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].raterPeerID = raterPeerID;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].raterUsername = raterUsername;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].raterAvatarCid = raterAvatarCid;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].trustRating = trustRating;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].referenceTrustRating = referenceTrustRating;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].product = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].ratingAuthorInfluence = 0.5;
                 if (referenceTrustRating) {
-                    aGrapevineScores[c].users[rateeUserNumber].ratings[numR].rating = (trustRating / referenceTrustRating).toPrecision(4);
+                    aUserTrustScores[c].users[rateeUserNumber].ratings[numR].rating = (trustRating / referenceTrustRating).toPrecision(4);
                 }
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat1Coeff = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].weightAdjusted = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].weight = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].raterInfluence = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].ratingConfidence = ratingConfidence;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat2Coeff = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].strat3Coeff = null;
-                aGrapevineScores[c].users[rateeUserNumber].ratings[numR].attenuationFactor = null;
-                aGrapevineScores[c].users[rateeUserNumber].fooR = {};
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].strat1Coeff = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].weightAdjusted = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].weight = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].raterInfluence = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].ratingConfidence = ratingConfidence;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].strat2Coeff = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].strat3Coeff = null;
+                aUserTrustScores[c].users[rateeUserNumber].ratings[numR].attenuationFactor = null;
+                aUserTrustScores[c].users[rateeUserNumber].fooR = {};
 
-                var numIr = aGrapevineScores[c].users[raterUserNumber].inverseRatings.length;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr] = {}
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].ratingNumber = r;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].ratingSlug = nextRatingSlug;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rateeUserNumber = rateeUserNumber;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rateePeerID = rateePeerID;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rateeUsername = rateeUsername;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rateeAvatarCid = rateeAvatarCid;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].trustRating = trustRating;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].referenceTrustRating = referenceTrustRating;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].product = null;
+                var numIr = aUserTrustScores[c].users[raterUserNumber].inverseRatings.length;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr] = {}
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].ratingNumber = r;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].ratingSlug = nextRatingSlug;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rateeUserNumber = rateeUserNumber;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rateePeerID = rateePeerID;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rateeUsername = rateeUsername;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rateeAvatarCid = rateeAvatarCid;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].trustRating = trustRating;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].referenceTrustRating = referenceTrustRating;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].product = null;
                 if (trustRating) {
-                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toPrecision(4);
+                    aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toPrecision(4);
                 }
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].strat1Coeff = null;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].weightAdjusted = null;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].weight = null;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].raterInfluence = null;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].ratingConfidence = ratingConfidence;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].strat2Coeff = null;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].strat3Coeff = null;
-                aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].attenuationFactor = null;
-                aGrapevineScores[c].users[raterUserNumber].fooIR = {};
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].strat1Coeff = null;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].weightAdjusted = null;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].weight = null;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].raterInfluence = null;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].ratingConfidence = ratingConfidence;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].strat2Coeff = null;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].strat3Coeff = null;
+                aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].attenuationFactor = null;
+                aUserTrustScores[c].users[raterUserNumber].fooIR = {};
                 // the "rating" for inverseRating is the reciprocal of the rating for normal rating
                 if (trustRating) {
-                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toPrecision(4);
+                    aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rating = (referenceTrustRating / trustRating).toPrecision(4);
                 }
                 if ((trustRating == 0) && (referenceTrustRating > 0)) {
                     // technically this would be infinite, but 1000 will suffice
-                    aGrapevineScores[c].users[raterUserNumber].inverseRatings[numIr].rating = 1000;
+                    aUserTrustScores[c].users[raterUserNumber].inverseRatings[numIr].rating = 1000;
                 }
             }
-            // aGrapevineScores[c].users[myUserNumber].ratings
+            // aUserTrustScores[c].users[myUserNumber].ratings
         }
     }
 }
 
-const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelData) => {
+const singleIterationCompositeUpdateProposalVerdictScoreCalculations = async (compScoreDisplayPanelData) => {
+    // need to replace compositeUserTrustScoreNumberBeingViewedContainer with
+    // a new var for the score being used in this calc (e.g. the one corresponding to ontology, plexOntology)
+    // (will need another set of selectors)
+    var compScoreNumber = jQuery("#compositeUpdateProposalVerdictScoreNumberBeingViewedContainer").html()
+    for (var c=0;c<aUpdateProposalVerdictScores.length;c++) { // as of 4 Nov 2022, length will be 1; the only verdictScore type is "standardAverage"
+        for (var u=0;u<aUpdateProposalVerdictScores[c].updateProposals.length;u++) {
+            var sumOfProducts = 0;
+            var sumOfWeights = 0;
+            var rigor = compScoreDisplayPanelData.rigor
+            var up_ipns = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalIPNS; // may not need this
+            var up_slug = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalSlug; // may not need this
+            for (var r=0;r<aUpdateProposalVerdictScores[c].updateProposals[u].ratings.length;r++) {
+                var nextRatingSlug = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].ratingSlug // may not need this
+                var raterUserNumber = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].raterUserNumber;
 
+                var raterCurrentAverage = aUserTrustScores[compScoreNumber].users[raterUserNumber].compositeScoreData.standardCalculations.average;
+                var raterCurrentInfluence = aUserTrustScores[compScoreNumber].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
+                var ratingConfidence = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].ratingConfidence
+                var rating = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].rating;
+                var ratingConfidence_norm = ratingConfidence / 100;
+
+                var verdictRating = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].verdictRating;
+
+                // do calculations
+                var weight = raterCurrentInfluence * ratingConfidence_norm;
+                var weightAdjusted = weight; // ? no need for adjustment in these rows; default score however will require adjustment
+                var product = weightAdjusted * rating;
+
+                sumOfWeights += weightAdjusted;
+                sumOfProducts += product
+
+                // set new values
+                aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].raterInfluence = parseFloat(raterCurrentInfluence.toPrecision(4));;
+                aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].weight = parseFloat(weight.toPrecision(4));
+                aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].weightAdjusted = parseFloat(weightAdjusted.toPrecision(4));
+                aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].product = parseFloat(product.toPrecision(4));
+                // aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].ratingAuthorInfluence = raterCurrentInfluence;
+
+            }
+
+            // add Default User Score
+            // do calculations
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.true.average = 0;
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.false.average = 0;
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.average = 0;
+
+            var defaultUpdateProposalVerdictAverageScore = compScoreDisplayPanelData.defaultUpdateProposalVerdictAverageScore
+            var defaultUpdateProposalVerdictConfidence = compScoreDisplayPanelData.defaultUpdateProposalVerdictConfidence
+
+            var raterCurrentInfluence_default = 1;
+
+            var rating_default = defaultUpdateProposalVerdictAverageScore;
+            var ratingConfidence_default = defaultUpdateProposalVerdictConfidence;
+
+            var weight_default = (ratingConfidence_default * raterCurrentInfluence_default);
+            var weightAdjusted_default = weight_default - sumOfWeights;
+            if (weightAdjusted_default < 0) { weightAdjusted_default = 0}
+            var sumOfWeightsWithoutDefault = sumOfWeights;
+            sumOfWeights += weightAdjusted_default;
+            var product_default = (weightAdjusted_default * rating_default);
+            sumOfProducts += product_default
+
+            // set new values
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating = {}
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating.rating = parseFloat(rating_default.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating.raterInfluence = parseFloat(raterCurrentInfluence_default.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating.ratingConfidence = parseFloat(ratingConfidence_default.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating.weight = parseFloat(weight_default.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating.weightAdjusted = parseFloat(weightAdjusted_default.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating.product = parseFloat(product_default.toPrecision(4));
+
+            var average = sumOfProducts / sumOfWeights
+            var certainty = convertInputToCertainty(sumOfWeights,rigor)
+            var influence = average * certainty
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.numberOfRatings = aUpdateProposalVerdictScores[c].updateProposals[u].ratings.length
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.input = parseFloat(sumOfWeights.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.inputWithoutDefault = parseFloat(sumOfWeightsWithoutDefault.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.certainty = parseFloat(certainty.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
+
+            /*
+            //
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.numberOfRatings = aUserTrustScores[c].users[u].ratings.length
+             = sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.input = parseFloat(sumOfWeights.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.certainty = parseFloat(certainty.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
+            */
+            var y_up = - average * 500 //
+            // var y_up = 0 //
+            // console.log("nodes.update; up_ipns: "+up_ipns)
+            nodes.update({id:up_ipns,y:y_up});
+        }
+    }
+}
+
+const singleIterationCompositeUserTrustScoreCalculations = async (compScoreDisplayPanelData) => {
     var nodeSizeRepresentation = jQuery("#nodeSizeRepresentationSelector option:selected").data("value")
-    var compScoreNumber = jQuery("#compositeScoreNumberContainer").html()
-    // console.log("singleIterationCompositeScoreCalculations; nodeSizeRepresentation: "+nodeSizeRepresentation)
+    var compScoreNumber = jQuery("#compositeUserTrustScoreNumberBeingViewedContainer").html()
     var seedUserPeerID = jQuery("#seedUserSelector option:selected").data("peerid")
-    for (var c=0;c<aGrapevineScores.length;c++) {
-        // console.log("singleIterationCompositeScoreCalculations; c: "+c)
-        var nextCSType = aGrapevineScores[c].compositeScoreType;
-        for (var u=0;u<aGrapevineScores[c].users.length;u++) {
-            var nextPeerID = aGrapevineScores[c].users[u].peerID;
-            // console.log("singleIterationCompositeScoreCalculations; u: "+u)
-            // var mod1Slider = document.getElementById('mod1Slider');
-            // var mod1FactorValue = mod1Slider.noUiSlider.get();
-            // var mod1FactorValue = mod1FactorValue / 100; // mod1FactorValue same as strat1Coeff
-            // var strat1Coeff = jQuery("#mod1FactorValueContainer").html()
-            // var strat2Coeff = jQuery("#mod2FactorValueContainer").html()
-            // var strat3Coeff = jQuery("#mod3FactorValueContainer").html()
-            // var attenuationFactor = jQuery("#attenuationFactorValueContainer").html()
+    for (var c=0;c<aUserTrustScores.length;c++) {
+        var nextCSType = aUserTrustScores[c].compositeScoreType;
+        for (var u=0;u<aUserTrustScores[c].users.length;u++) {
+            var nextPeerID = aUserTrustScores[c].users[u].peerID;
 
             var strat1Coeff = compScoreDisplayPanelData.strat1Coeff
             var strat1Coeff_inverse = compScoreDisplayPanelData.strat1Coeff
@@ -873,30 +1167,29 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
 
             var sumOfProducts = 0;
             var sumOfWeights = 0;
-            for (var r=0;r<aGrapevineScores[c].users[u].ratings.length;r++) {
-                // console.log("singleIterationCompositeScoreCalculations; work on this step next - 16 Oct 2022")
+            for (var r=0;r<aUserTrustScores[c].users[u].ratings.length;r++) {
                 // obtain needed values for calculations
-                var nextRatingSlug = aGrapevineScores[c].users[u].ratings[r].ratingSlug // may not need this
+                var nextRatingSlug = aUserTrustScores[c].users[u].ratings[r].ratingSlug // may not need this
                 if (aVisualizedRatingSlugs.includes(nextRatingSlug)) {
                     // update opacity of this edge
-                    var nextRatingCurrentOpacity = aGrapevineScores[c].users[u].ratings[r].ratingAuthorInfluence;
+                    var nextRatingCurrentOpacity = aUserTrustScores[c].users[u].ratings[r].ratingAuthorInfluence;
                     // var edgesIDs_arr = edges.getIds();
                     edges.update({id:nextRatingSlug,color: {opacity:nextRatingCurrentOpacity}});
                 }
                 var rateeUserNumber = u;
-                var raterUserNumber = aGrapevineScores[c].users[u].ratings[r].raterUserNumber;
-                var raterCurrentAverage = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.average;
-                var raterCurrentInfluence = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
-                var rateeCurrentInfluence = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
-                var trustRating = aGrapevineScores[c].users[u].ratings[r].trustRating;
-                var referenceTrustRating = aGrapevineScores[c].users[u].ratings[r].referenceTrustRating;
+                var raterUserNumber = aUserTrustScores[c].users[u].ratings[r].raterUserNumber;
+                var raterCurrentAverage = aUserTrustScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.average;
+                var raterCurrentInfluence = aUserTrustScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
+                var rateeCurrentInfluence = aUserTrustScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
+                var trustRating = aUserTrustScores[c].users[u].ratings[r].trustRating;
+                var referenceTrustRating = aUserTrustScores[c].users[u].ratings[r].referenceTrustRating;
                 // var rating = raterCurrentAverage * (trustRating / referenceTrustRating);
                 var rating =  (trustRating / referenceTrustRating);
 
                 var mod1Coeff = raterCurrentAverage * strat1Coeff + 1 * (1 - strat1Coeff)
 
                 var mod3Coeff = convertRatingToMod3Coeff(rating,strat3Coeff,strat4Coeff,strat5Coeff)
-                var ratingConfidence = aGrapevineScores[c].users[u].ratings[r].ratingConfidence;
+                var ratingConfidence = aUserTrustScores[c].users[u].ratings[r].ratingConfidence;
                 // ratingConfidence should be recorded in oRatings as a percent and should be an integer (e.g. 75%) but converted here to decimal (e.g. 0.75)
                 // But it's possible it was converted to decimal (0.75) at a previous step.
                 // If we consider that percent could be a decimal with very low value (e.g. 0.1%) then I'll need to get rid of this check
@@ -918,20 +1211,20 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                 sumOfProducts += product
 
                 // set new values
-                aGrapevineScores[c].users[u].ratings[r].attenuationFactor = attenuationFactor;
-                aGrapevineScores[c].users[u].ratings[r].strat1Coeff = strat1Coeff;
-                aGrapevineScores[c].users[u].ratings[r].strat2Coeff = strat2Coeff_regular;
-                aGrapevineScores[c].users[u].ratings[r].strat3Coeff = strat3Coeff;
-                aGrapevineScores[c].users[u].ratings[r].strat4Coeff = strat4Coeff;
-                aGrapevineScores[c].users[u].ratings[r].strat5Coeff = strat5Coeff;
-                aGrapevineScores[c].users[u].ratings[r].mod1Coeff = parseFloat(mod1Coeff.toPrecision(4));;
-                aGrapevineScores[c].users[u].ratings[r].mod3Coeff = mod3Coeff;
-                aGrapevineScores[c].users[u].ratings[r].rating = parseFloat(rating.toPrecision(4));
-                aGrapevineScores[c].users[u].ratings[r].raterInfluence = parseFloat(raterCurrentInfluence.toPrecision(4));
-                aGrapevineScores[c].users[u].ratings[r].weight = parseFloat(weight.toPrecision(4));
-                aGrapevineScores[c].users[u].ratings[r].weightAdjusted = parseFloat(weightAdjusted.toPrecision(4));
-                aGrapevineScores[c].users[u].ratings[r].product = parseFloat(product.toPrecision(4));
-                aGrapevineScores[c].users[u].ratings[r].ratingAuthorInfluence = raterCurrentInfluence;
+                aUserTrustScores[c].users[u].ratings[r].attenuationFactor = attenuationFactor;
+                aUserTrustScores[c].users[u].ratings[r].strat1Coeff = strat1Coeff;
+                aUserTrustScores[c].users[u].ratings[r].strat2Coeff = strat2Coeff_regular;
+                aUserTrustScores[c].users[u].ratings[r].strat3Coeff = strat3Coeff;
+                aUserTrustScores[c].users[u].ratings[r].strat4Coeff = strat4Coeff;
+                aUserTrustScores[c].users[u].ratings[r].strat5Coeff = strat5Coeff;
+                aUserTrustScores[c].users[u].ratings[r].mod1Coeff = parseFloat(mod1Coeff.toPrecision(4));;
+                aUserTrustScores[c].users[u].ratings[r].mod3Coeff = mod3Coeff;
+                aUserTrustScores[c].users[u].ratings[r].rating = parseFloat(rating.toPrecision(4));
+                aUserTrustScores[c].users[u].ratings[r].raterInfluence = parseFloat(raterCurrentInfluence.toPrecision(4));
+                aUserTrustScores[c].users[u].ratings[r].weight = parseFloat(weight.toPrecision(4));
+                aUserTrustScores[c].users[u].ratings[r].weightAdjusted = parseFloat(weightAdjusted.toPrecision(4));
+                aUserTrustScores[c].users[u].ratings[r].product = parseFloat(product.toPrecision(4));
+                aUserTrustScores[c].users[u].ratings[r].ratingAuthorInfluence = raterCurrentInfluence;
 
             }
             // add Inherited User Score
@@ -942,7 +1235,7 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                 var aParentCSTypes = oCompositeScoreTypeInheritanceLookup[nextCSType].parents;
                 for (var p=0;p<aParentCSTypes.length;p++) {
                     var parentCSType = aParentCSTypes[p];
-                    var parentCSNumber = lookupCompositeScoreNumberByType[parentCSType];
+                    var parentCSNumber = lookupCompositeUserTrustScoreNumberByType[parentCSType];
 
                     var attenuationFactor_inherited = 1
                     var strat1Coeff_inherited = compScoreDisplayPanelData.strat1Coeff
@@ -952,28 +1245,26 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                     // var rating_inherited = defaultUserTrustAverageScore;
                     var rating_inherited = 0.69;
                     try {
-                        rating_inherited = aGrapevineScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.average
+                        rating_inherited = aUserTrustScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.average
                         // rating_inherited = 0.59;
                     } catch(e) {}
                     var ratingConfidence_inherited = defaultUserTrustConfidence;
                     try {
-                        ratingConfidence_inherited = aGrapevineScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.certainty
+                        ratingConfidence_inherited = aUserTrustScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.certainty
                         // rating_inherited = 0.59;
                     } catch(e) {}
 
-                    var raterCurrentAverage_inherited = aGrapevineScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.average;
-
-
+                    var raterCurrentAverage_inherited = aUserTrustScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.average;
 
                     var weight_inherited = (attenuationFactor_inherited * mod3Coeff_inherited * strat2Coeff_inherited * strat1Coeff_inherited * ratingConfidence_inherited * raterCurrentInfluence_inherited);
 
                     try {
-                        weight_inherited = aGrapevineScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.certainty
-                        var weight_inherited_x = aGrapevineScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.input
+                        weight_inherited = aUserTrustScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.certainty
+                        var weight_inherited_x = aUserTrustScores[parentCSNumber].users[u].compositeScoreData.standardCalculations.input
                         if (weight_inherited_x) {
                             weight_inherited = weight_inherited_x;
                         }
-                        console.log("weight_inherited; typeof: "+typeof weight_inherited + " weight_inherited: "+weight_inherited)
+                        // console.log("weight_inherited; typeof: "+typeof weight_inherited + " weight_inherited: "+weight_inherited)
                         // rating_inherited = 0.59;
                     } catch(e) {}
 
@@ -986,20 +1277,20 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                     var product_inherited = (weightAdjusted_inherited * rating_inherited);
                     sumOfProducts += product_inherited
 
-                    aGrapevineScores[c].users[u].inheritedRatings[p] = {};
-                    aGrapevineScores[c].users[u].inheritedRatings[p].parentCompositeScoreNumber = parentCSNumber;
-                    aGrapevineScores[c].users[u].inheritedRatings[p].parentCompositeScoreType = parentCSType;
+                    aUserTrustScores[c].users[u].inheritedRatings[p] = {};
+                    aUserTrustScores[c].users[u].inheritedRatings[p].parentCompositeScoreNumber = parentCSNumber;
+                    aUserTrustScores[c].users[u].inheritedRatings[p].parentCompositeScoreType = parentCSType;
 
-                    aGrapevineScores[c].users[u].inheritedRatings[p].attenuationFactor = attenuationFactor_inherited;
-                    aGrapevineScores[c].users[u].inheritedRatings[p].strat1Coeff = strat1Coeff_inherited;
-                    aGrapevineScores[c].users[u].inheritedRatings[p].strat2Coeff = strat2Coeff_inherited;
-                    aGrapevineScores[c].users[u].inheritedRatings[p].mod3Coeff = mod3Coeff_inherited;
-                    aGrapevineScores[c].users[u].inheritedRatings[p].rating = parseFloat(rating_inherited.toPrecision(4));
-                    aGrapevineScores[c].users[u].inheritedRatings[p].raterInfluence = parseFloat(raterCurrentInfluence_inherited.toPrecision(4));
-                    aGrapevineScores[c].users[u].inheritedRatings[p].ratingConfidence = parseFloat(ratingConfidence_inherited.toPrecision(4));
-                    aGrapevineScores[c].users[u].inheritedRatings[p].weight = parseFloat(weight_inherited.toPrecision(4));
-                    aGrapevineScores[c].users[u].inheritedRatings[p].weightAdjusted = parseFloat(weightAdjusted_inherited.toPrecision(4));
-                    aGrapevineScores[c].users[u].inheritedRatings[p].product = parseFloat(product_inherited.toPrecision(4));
+                    aUserTrustScores[c].users[u].inheritedRatings[p].attenuationFactor = attenuationFactor_inherited;
+                    aUserTrustScores[c].users[u].inheritedRatings[p].strat1Coeff = strat1Coeff_inherited;
+                    aUserTrustScores[c].users[u].inheritedRatings[p].strat2Coeff = strat2Coeff_inherited;
+                    aUserTrustScores[c].users[u].inheritedRatings[p].mod3Coeff = mod3Coeff_inherited;
+                    aUserTrustScores[c].users[u].inheritedRatings[p].rating = parseFloat(rating_inherited.toPrecision(4));
+                    aUserTrustScores[c].users[u].inheritedRatings[p].raterInfluence = parseFloat(raterCurrentInfluence_inherited.toPrecision(4));
+                    aUserTrustScores[c].users[u].inheritedRatings[p].ratingConfidence = parseFloat(ratingConfidence_inherited.toPrecision(4));
+                    aUserTrustScores[c].users[u].inheritedRatings[p].weight = parseFloat(weight_inherited.toPrecision(4));
+                    aUserTrustScores[c].users[u].inheritedRatings[p].weightAdjusted = parseFloat(weightAdjusted_inherited.toPrecision(4));
+                    aUserTrustScores[c].users[u].inheritedRatings[p].product = parseFloat(product_inherited.toPrecision(4));
                 }
             }
 
@@ -1021,29 +1312,29 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
             var product_default = (weightAdjusted_default * rating_default);
             sumOfProducts += product_default
 
-            aGrapevineScores[c].users[u].defaultRating = {}
-            aGrapevineScores[c].users[u].defaultRating.attenuationFactor = attenuationFactor_default;
-            aGrapevineScores[c].users[u].defaultRating.strat1Coeff = strat1Coeff_default;
-            aGrapevineScores[c].users[u].defaultRating.strat2Coeff = strat2Coeff_default;
-            aGrapevineScores[c].users[u].defaultRating.mod3Coeff = mod3Coeff_default;
-            aGrapevineScores[c].users[u].defaultRating.rating = parseFloat(rating_default.toPrecision(4));
-            aGrapevineScores[c].users[u].defaultRating.raterInfluence = parseFloat(raterCurrentInfluence_default.toPrecision(4));
-            aGrapevineScores[c].users[u].defaultRating.ratingConfidence = parseFloat(ratingConfidence_default.toPrecision(4));
-            aGrapevineScores[c].users[u].defaultRating.weight = parseFloat(weight_default.toPrecision(4));
-            aGrapevineScores[c].users[u].defaultRating.weightAdjusted = parseFloat(weightAdjusted_default.toPrecision(4));
-            aGrapevineScores[c].users[u].defaultRating.product = parseFloat(product_default.toPrecision(4));
+            aUserTrustScores[c].users[u].defaultRating = {}
+            aUserTrustScores[c].users[u].defaultRating.attenuationFactor = attenuationFactor_default;
+            aUserTrustScores[c].users[u].defaultRating.strat1Coeff = strat1Coeff_default;
+            aUserTrustScores[c].users[u].defaultRating.strat2Coeff = strat2Coeff_default;
+            aUserTrustScores[c].users[u].defaultRating.mod3Coeff = mod3Coeff_default;
+            aUserTrustScores[c].users[u].defaultRating.rating = parseFloat(rating_default.toPrecision(4));
+            aUserTrustScores[c].users[u].defaultRating.raterInfluence = parseFloat(raterCurrentInfluence_default.toPrecision(4));
+            aUserTrustScores[c].users[u].defaultRating.ratingConfidence = parseFloat(ratingConfidence_default.toPrecision(4));
+            aUserTrustScores[c].users[u].defaultRating.weight = parseFloat(weight_default.toPrecision(4));
+            aUserTrustScores[c].users[u].defaultRating.weightAdjusted = parseFloat(weightAdjusted_default.toPrecision(4));
+            aUserTrustScores[c].users[u].defaultRating.product = parseFloat(product_default.toPrecision(4));
 
-            for (var r=0;r<aGrapevineScores[c].users[u].inverseRatings.length;r++) {
+            for (var r=0;r<aUserTrustScores[c].users[u].inverseRatings.length;r++) {
                 // obtain needed values for calculations
 
-                var nextRatingSlug = aGrapevineScores[c].users[u].inverseRatings[r].ratingSlug
+                var nextRatingSlug = aUserTrustScores[c].users[u].inverseRatings[r].ratingSlug
                 var raterUserNumber = u;
-                var rateeUserNumber = aGrapevineScores[c].users[u].inverseRatings[r].rateeUserNumber;
-                var raterCurrentInfluence = aGrapevineScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
-                var rateeCurrentInfluence = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
-                var rateeCurrentAverage_inverse = aGrapevineScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.average;
-                var trustRating = aGrapevineScores[c].users[u].inverseRatings[r].trustRating;
-                var referenceTrustRating = aGrapevineScores[c].users[u].inverseRatings[r].referenceTrustRating;
+                var rateeUserNumber = aUserTrustScores[c].users[u].inverseRatings[r].rateeUserNumber;
+                var raterCurrentInfluence = aUserTrustScores[c].users[raterUserNumber].compositeScoreData.standardCalculations.influence;
+                var rateeCurrentInfluence = aUserTrustScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.influence;
+                var rateeCurrentAverage_inverse = aUserTrustScores[c].users[rateeUserNumber].compositeScoreData.standardCalculations.average;
+                var trustRating = aUserTrustScores[c].users[u].inverseRatings[r].trustRating;
+                var referenceTrustRating = aUserTrustScores[c].users[u].inverseRatings[r].referenceTrustRating;
                 if (trustRating > 0) {
                     // var rating_inverse = rateeCurrentAverage * (referenceTrustRating / trustRating);
                     var rating_inverse = (referenceTrustRating / trustRating);
@@ -1054,7 +1345,7 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                 var mod1Coeff_inverse = rateeCurrentAverage_inverse * strat1Coeff_inverse + 1 * (1 - strat1Coeff_inverse)
 
                 var mod3Coeff_inverse = convertRatingToMod3Coeff(rating_inverse,strat3Coeff,strat4Coeff,strat5Coeff)
-                var ratingConfidence = aGrapevineScores[c].users[u].inverseRatings[r].ratingConfidence;
+                var ratingConfidence = aUserTrustScores[c].users[u].inverseRatings[r].ratingConfidence;
                 // ratingConfidence should be recorded in oRatings as a percent and should be an integer (e.g. 75%) but converted here to decimal (e.g. 0.75)
                 // But it's possible it was converted to decimal (0.75) at a previous step.
                 // If we consider that percent could be a decimal with very low value (e.g. 0.1%) then I'll need to get rid of this check
@@ -1071,18 +1362,18 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                 sumOfProducts += product
 
                 // set new values
-                aGrapevineScores[c].users[u].inverseRatings[r].attenuationFactor = attenuationFactor;
-                aGrapevineScores[c].users[u].inverseRatings[r].strat1Coeff = strat1Coeff_inverse;
-                aGrapevineScores[c].users[u].inverseRatings[r].strat2Coeff = strat2Coeff_inverse;
-                aGrapevineScores[c].users[u].inverseRatings[r].strat3Coeff = strat3Coeff;
-                aGrapevineScores[c].users[u].inverseRatings[r].mod3Coeff = parseFloat(mod3Coeff_inverse.toPrecision(4));
-                aGrapevineScores[c].users[u].inverseRatings[r].mod1Coeff = parseFloat(mod1Coeff_inverse.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].attenuationFactor = attenuationFactor;
+                aUserTrustScores[c].users[u].inverseRatings[r].strat1Coeff = strat1Coeff_inverse;
+                aUserTrustScores[c].users[u].inverseRatings[r].strat2Coeff = strat2Coeff_inverse;
+                aUserTrustScores[c].users[u].inverseRatings[r].strat3Coeff = strat3Coeff;
+                aUserTrustScores[c].users[u].inverseRatings[r].mod3Coeff = parseFloat(mod3Coeff_inverse.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].mod1Coeff = parseFloat(mod1Coeff_inverse.toPrecision(4));
 
-                aGrapevineScores[c].users[u].inverseRatings[r].rating = parseFloat(rating_inverse.toPrecision(4));
-                aGrapevineScores[c].users[u].inverseRatings[r].rateeInfluence = parseFloat(rateeCurrentInfluence.toPrecision(4));
-                aGrapevineScores[c].users[u].inverseRatings[r].weight = parseFloat(weight.toPrecision(4));
-                aGrapevineScores[c].users[u].inverseRatings[r].weightAdjusted = parseFloat(weightAdjusted.toPrecision(4));
-                aGrapevineScores[c].users[u].inverseRatings[r].product = parseFloat(product.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].rating = parseFloat(rating_inverse.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].rateeInfluence = parseFloat(rateeCurrentInfluence.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].weight = parseFloat(weight.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].weightAdjusted = parseFloat(weightAdjusted.toPrecision(4));
+                aUserTrustScores[c].users[u].inverseRatings[r].product = parseFloat(product.toPrecision(4));
             }
 
             var average = sumOfProducts / sumOfWeights
@@ -1093,13 +1384,13 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
                 average = 1;
                 certainty = 1;
             }
-            aGrapevineScores[c].users[u].compositeScoreData.numberOfRatings = aGrapevineScores[c].users[u].ratings.length
-            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
-            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.input = parseFloat(sumOfWeights.toPrecision(4));
-            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
-            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.certainty = parseFloat(certainty.toPrecision(4));
-            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
-            aGrapevineScores[c].users[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
+            aUserTrustScores[c].users[u].compositeScoreData.numberOfRatings = aUserTrustScores[c].users[u].ratings.length
+            aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
+            aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.input = parseFloat(sumOfWeights.toPrecision(4));
+            aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
+            aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.certainty = parseFloat(certainty.toPrecision(4));
+            aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
+            aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
 
             if (c==compScoreNumber) {
                 if (nodeSizeRepresentation=="influence") {
@@ -1116,7 +1407,6 @@ const singleIterationCompositeScoreCalculations = async (compScoreDisplayPanelDa
             }
         }
     }
-    // console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
 }
 
 const convertRatingToMod3Coeff = (r,s3,s4,s5) => {
@@ -1150,13 +1440,45 @@ const convertInputToCertainty = (input,rigor) => {
 }
 
 const runGrapevineCompositeScoreCalculations = async () => {
-    // set up a loop to call singleIterationCompositeScoreCalculations repeatedly
+    // set up a loop to call singleIterationCompositeUserTrustScoreCalculations repeatedly
 }
+
+var defUpCon = window.grapevine.starterDefaultUpdateProposalVerdictConfidence / 100
+var defUpAvg = window.grapevine.starterDefaultUpdateProposalVerdictAverageScore / 100
+var defUpInf = parseFloat((defUpCon * defUpAvg).toPrecision(4));
 
 var defCon = window.grapevine.starterDefaultUserTrustConfidence / 100
 var defAvg = window.grapevine.starterDefaultUserTrustAverageScore / 100
 var defInf = parseFloat((defCon * defAvg).toPrecision(4));
-window.compositeScoreData = {
+window.compositeUpdateProposalVerdictScoreData = {
+    numberOfRatings: 0,
+    radiusMultiplier: 1,
+    standardCalculations: {
+        true: {
+            sumOfProducts: null,
+            certainty: defUpCon,
+            input: null,
+            influence: defUpInf
+        },
+        false: {
+            sumOfProducts: null,
+            certainty: defUpCon,
+            input: null,
+            influence: defUpInf
+        },
+        sum: {
+            sumOfProducts: null,
+            certainty: defUpCon,
+            input: null,
+            average: defUpAvg,
+            influence: defUpInf
+        }
+    },
+    notIncludingDefaults: {
+    },
+    lastUpdated: null,
+}
+window.compositeUserTrustScoreData = {
     seedUser: false,
     selectedUser: false,
     numberOfRatings: 0,
@@ -1194,7 +1516,18 @@ window.calculationDataRow = {
     lastUpdated: null
 }
 
-var aCompositeScoreTypes = [];
+// each influenceType / context pair gives rise to one compositeUserTrustScoreType
+var aCompositeUserTrustScoreTypes = [];
+
+// For now (4 Nov 2022), there will be only one aCompositeUpdateProposalVerdictScoreType, which will be called "standardAverage;" in the future, may come up with more types
+// The individual verdict ratings are boolean, with true = approve = endorse and false = disapprove = reject
+// standardAverage composite score will calculate:
+// the weight of true scores (sum of rater influence + confidence) and the weight of false scores
+// the total weight (weight true - weight false)
+// the confidence of the true score, false score, and total score
+// This will be a standard way to process boolean ratings variables
+// Presumably, other ways may also be proposed.
+var aCompositeUpdateProposalVerdictScoreTypes = [];
 
 const createSeedUserSelector = async (masterUserList,myPeerID) => {
     var selectorHTML = "";
@@ -1222,19 +1555,35 @@ const determineCompositeScoreTypeAndNumber = () => {
     var context_contextSlug = jQuery("#contextSelector option:selected").data("contextcontextslug")
 
     var cST = influenceType_slug+"_"+context_contextSlug;
-    var cSN = lookupCompositeScoreNumberByType[cST];
+    var cSN = lookupCompositeUserTrustScoreNumberByType[cST];
 
     jQuery("#compositeScoreTypeContainer").html(cST)
-    jQuery("#compositeScoreNumberContainer").html(cSN)
+    jQuery("#compositeUserTrustScoreNumberBeingViewedContainer").html(cSN)
 }
 
-export default class GrapevineVisualizationMainPage extends React.Component {
+// return array of slugs of all known updateProposals from the specified local concept graph
+// array comes from all specific instances in superset of conceptFor_updateProposal
+const returnArrayOfUpdateProposals_specifyConceptGraph = async (ipns) => {
+    var aUpdateProposalList = [];
+    var concept_up_slug = "conceptFor_updateProposal";
+    var oConcept_up = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(ipns,concept_up_slug);
+    var superset_up_slug = oConcept_up.conceptData.nodes.superset.slug;
+    var oSuperset_up = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(ipns,superset_up_slug);
+    aUpdateProposalList = oSuperset_up.globalDynamicData.specificInstances;
+
+    return aUpdateProposalList;
+}
+
+export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProposals extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
             compScoreDisplayPanelData: {
                 attenuationFactor: window.grapevine.starterDefaultAttenuationFactor / 100,
                 rigor: window.grapevine.starterRigor / 100,
+                defaultUpdateProposalVerdictAverageScore: window.grapevine.starterDefaultUpdateProposalVerdictAverageScore / 100,
+                defaultUpdateProposalVerdictConfidence: window.grapevine.starterDefaultUpdateProposalVerdictConfidence / 100,
                 defaultUserTrustAverageScore: window.grapevine.starterDefaultUserTrustAverageScore / 100,
                 defaultUserTrustConfidence: window.grapevine.starterDefaultUserTrustConfidence / 100,
                 strat1Coeff: window.grapevine.starterStrat1Coeff / 100,
@@ -1249,6 +1598,34 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                 }
             },
             contactLinks: [],
+            oSingleUpdateProposalVerdictScores: {
+                updateProposalNumber: 0,
+                updateProposalIPNS: "k2k4r8kw8hotgp7k85n1lf24rit3oonwxv0vxpn4bup63w9ar4curvqs",
+                updateProposalSlug: "conceptUpdateProposal_curvqs",
+                authorPeerID: "qrstu67890",
+                authorUsername: "johnDoe",
+                compositeScoreData: {
+                    numberOfRatings: 0,
+                    standardCalculations: {
+                        sumOfProducts: 0,
+                        certainty: 0,
+                        input: 0,
+                        inputWithoutDefault: 0,
+                        average: null,
+                        rigor: null
+                    }
+                },
+                ratings: [
+
+                ],
+                defaultRating: {
+                    rating: 0,
+                    raterInfluence: 1,
+                    weight: 0.02,
+                    weightAdjusted: 0.02,
+                    product: 0
+                }
+            },
             oSingleUserGrapevineScores: {
                 "userNumber": 0,
                 "peerID": "12D3KooWJpiTmrQGWG9oThj6MAMhMmm756htH2Co1TT6LsPsBWki",
@@ -1380,6 +1757,21 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
     }
 
+    handleUpdateProposalVerdictAverageScoreCallback = (newUpdateProposalVerdictAverageScore) =>{
+        console.log("main page: newUpdateProposalVerdictAverageScore: "+newUpdateProposalVerdictAverageScore)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.defaultUpdateProposalVerdictAverageScore = newUpdateProposalVerdictAverageScore
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+        console.log("main page B: newUpdateProposalVerdictAverageScore: "+newUpdateProposalVerdictAverageScore)
+    }
+
+    handleUpdateProposalVerdictConfidenceCallback = (newUpdateProposalVerdictConfidence) =>{
+        console.log("main page; newUpdateProposalVerdictConfidence: "+newUpdateProposalVerdictConfidence)
+        var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        compScoreDisplayPanelData_new.defaultUpdateProposalVerdictConfidence = newUpdateProposalVerdictConfidence
+        this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    }
+
     handleUserTrustAverageScoreCallback = (newUserTrustAverageScore) =>{
         console.log("main page: newUserTrustAverageScore: "+newUserTrustAverageScore)
         var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
@@ -1438,34 +1830,36 @@ export default class GrapevineVisualizationMainPage extends React.Component {
     }
 
     changeUserTrustScoreCalculationPage = () =>{
-        // console.log("changeUserTrustScoreCalculationPage")
-        //
         var newPeerID = jQuery("#peerIDContainer").html()
         var newUserNumber = lookupUserNumberByPeerID[newPeerID];
-        // console.log("changeUserTrustScoreCalculationPage; newPeerID: "+newPeerID+"; newUserNumber: "+newUserNumber)
 
         var oSingleUserGrapevineScores_new = this.state.oSingleUserGrapevineScores
-        var compScoreNumber = jQuery("#compositeScoreNumberContainer").html()
-        oSingleUserGrapevineScores_new = MiscFunctions.cloneObj(aGrapevineScores[compScoreNumber].users[newUserNumber])
-        // console.log("oSingleUserGrapevineScores_new: "+JSON.stringify(oSingleUserGrapevineScores_new,null,4))
-        // oSingleUserGrapevineScores_new.avatarCid = "QmeZB53kw8XD318LKRTDS2BJDpHWKuBz4Dv47yNwbc2uof"
-        // oSingleUserGrapevineScores_new.avatarCid = newAvatarCid
-        // oSingleUserGrapevineScores_new.username = "dude"
+        var compScoreNumber = jQuery("#compositeUserTrustScoreNumberBeingViewedContainer").html()
+        oSingleUserGrapevineScores_new = MiscFunctions.cloneObj(aUserTrustScores[compScoreNumber].users[newUserNumber])
 
         this.setState({oSingleUserGrapevineScores: oSingleUserGrapevineScores_new})
 
-        // var imageCid = this.state.oSingleUserGrapevineScores.avatarCid;
         var imageCid = oSingleUserGrapevineScores_new.avatarCid;
         var img = document.getElementById("showCalculationsAvatarThumb") // the img tag you want it in
         img.src = "http://localhost:8080/ipfs/"+imageCid;
-        //  img.src = "http://localhost:8080/ipfs/"+newAvatarCid;
+    }
+
+    changeUpdateProposalVerdictScoreCalculationPage = () => {
+        var newUpSlug = jQuery("#upSlugContainer").html()
+        var newUpdateProposalNumber = lookupUpdateProposalNumberBySlug[newUpSlug];
+
+        var oSingleUpdateProposalVerdictScores_new = this.state.oSingleUpdateProposalVerdictScores
+        var compScoreNumber = jQuery("#compositeUpdateProposalVerdictScoreNumberBeingViewedContainer").html() // for now, this is hardcoded to be 0 which means "standardAverage"
+        // console.log("changeUpdateProposalVerdictScoreCalculationPage; compScoreNumber: "+compScoreNumber+"; newUpSlug: "+newUpSlug+"; newUpdateProposalNumber: "+newUpdateProposalNumber+"; aUpdateProposalVerdictScores: "+JSON.stringify(aUpdateProposalVerdictScores,null,4))
+        oSingleUpdateProposalVerdictScores_new = MiscFunctions.cloneObj(aUpdateProposalVerdictScores[compScoreNumber].updateProposals[newUpdateProposalNumber])
+
+        this.setState({oSingleUpdateProposalVerdictScores: oSingleUpdateProposalVerdictScores_new})
     }
 
     async componentDidMount() {
-        // var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
-        // compScoreDisplayPanelData_new.attenuationFactor = 0.2
-        // this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
-        jQuery(".mainPanel").css("width","calc(100% - 100px)");
+        jQuery(".mainPanel").css("width","calc(100% - 300px)");
+
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
 
         await determineCompositeScoreInheritance();
 
@@ -1476,8 +1870,11 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                 jQuery("#scoresCalculationTimer").css("border","1px solid green")
                 jQuery("#scoresCalculationTimer").data("status","run")
         });
-        aCompositeScoreTypes = await generateAllCompositeScoreTypes()
-        console.log("aCompositeScoreTypes: "+JSON.stringify(aCompositeScoreTypes,null,4))
+        aCompositeUserTrustScoreTypes = await generateAllCompositeUserTrustScoreTypes()
+        console.log("aCompositeUserTrustScoreTypes: "+JSON.stringify(aCompositeUserTrustScoreTypes,null,4))
+
+        aCompositeUpdateProposalVerdictScoreTypes = await generateAllCompositeUpdateProposalVerdictScoreTypes()
+        console.log("aCompositeUpdateProposalVerdictScoreTypes: "+JSON.stringify(aCompositeUpdateProposalVerdictScoreTypes,null,4))
 
         console.log("qwerty componentDidMount")
         await makeInfluenceTypeSelector();
@@ -1489,6 +1886,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
         console.log("GrapevineVisualizationMainPage myPeerID: "+myPeerID)
 
         var masterUserList = [];
+        var updateProposalList = await returnArrayOfUpdateProposals_specifyConceptGraph(viewingConceptGraph_ipns)
         ////////////////////////////////////////////////////////////////
         /////////////////////// swarm peers ////////////////////////////
         var a1Users = await MiscIpfsFunctions.fetchUsersListViaSwarmPeers()
@@ -1578,41 +1976,55 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
         console.log("aCids: "+JSON.stringify(aCids,null,4))
 
-        await makeVisGraph_Grapevine(masterUserList,aCids);
+        await makeVisGraph_updateProposalScoring(updateProposalList,masterUserList,aCids);
 
         await createSeedUserSelector(masterUserList,myPeerID)
 
-        await setupGrapevineCompositeScoreVars(masterUserList);
+        await setupGrapevineCompositeScoreVars_user(masterUserList);
+        await setupGrapevineCompositeScoreVars_updateProposal(updateProposalList);
 
         var compScoreDisplayPanelData = this.state.compScoreDisplayPanelData
 
-        await runGrapevineCompositeScoreCalculations();
-        jQuery("#calculateScoresSingleIterationButton").click(async function(){
-            await singleIterationCompositeScoreCalculations(compScoreDisplayPanelData)
+        // await runGrapevineCompositeScoreCalculations();
+        jQuery("#calculateUserTrustScoresSingleIterationButton").click(async function(){
+            await singleIterationCompositeUserTrustScoreCalculations(compScoreDisplayPanelData)
         })
-        console.log("aGrapevineScores: "+JSON.stringify(aGrapevineScores,null,4))
+
+        jQuery("#calculateUpdateProposalVerdictScoresSingleIterationButton").click(async function(){
+            await singleIterationCompositeUpdateProposalVerdictScoreCalculations(compScoreDisplayPanelData)
+        })
+        // console.log("aUserTrustScores: "+JSON.stringify(aUserTrustScores,null,4))
     }
     render() {
         return (
             <>
                 <fieldset className="mainBody" >
                     <LeftNavbar1 />
+                    <LeftNavbar2 viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                     <div className="mainPanel" >
-                        <Masthead />
-                        <div class="h2">Grapevine Visualization Main Page</div>
-                        <div style={{display:"inline-block"}} >
-                            <div className="doSomethingButton" id="changeUserCalcsDisplayButton" onClick={this.changeUserTrustScoreCalculationPage} >change</div>
+                        <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
+                        <div class="h2">Visualize Calculations of Update Proposals by Grapevine</div>
 
-                            <div style={{display:"inline-block"}} >compositeScoreType:</div>
-                            <div id="compositeScoreTypeContainer" style={{display:"inline-block"}} ></div>
+                        <div style={{display:"inline-block",fontSize:"10px"}} >
 
-                            <div style={{display:"inline-block"}} >compositeScoreNumber:</div>
-                            <div id="compositeScoreNumberContainer" style={{display:"inline-block"}} ></div>
+
+                            <div>
+                                <div className="doSomethingButton" id="changeUserCalcsDisplayButton" onClick={this.changeUserTrustScoreCalculationPage} >change user</div>
+                                <div style={{display:"inline-block",marginLeft:"5px"}} >compositeScoreType:</div>
+                                <div id="compositeScoreTypeContainer" style={{display:"inline-block",marginLeft:"5px"}} ></div>
+                                <div style={{display:"inline-block",marginLeft:"5px"}} >compositeScoreNumber:</div>
+                                <div id="compositeUserTrustScoreNumberBeingViewedContainer" style={{display:"inline-block",marginLeft:"5px"}} ></div>
+                            </div>
+                            <div>
+                                <div className="doSomethingButton" id="changeUpdateProposalCalcsDisplayButton" onClick={this.changeUpdateProposalVerdictScoreCalculationPage} >change update proposal</div>
+                                <div style={{display:"inline-block",marginLeft:"5px"}} >compositeScoreNumber:</div>
+                                <div id="compositeUpdateProposalVerdictScoreNumberBeingViewedContainer" style={{display:"inline-block",marginLeft:"5px"}} >0</div>
+                            </div>
                         </div>
 
                         <center>
                             <div style={{}}>
-                                <div style={{display:"inline-block",width:"500px"}} >
+                                <div style={{display:"inline-block",width:"450px"}} >
                                     <div>
                                         <div style={{display:"inline-block"}} >
                                             seed user:
@@ -1624,7 +2036,7 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                                     />
                                 </div>
 
-                                <div style={{display:"inline-block",width:"300px"}} >
+                                <div style={{display:"inline-block",width:"250px"}} >
                                     <center>viewing</center>
                                     <select>
                                         <option>user</option>
@@ -1656,20 +2068,28 @@ export default class GrapevineVisualizationMainPage extends React.Component {
 
                         <center>
                             <div>
-                                <div id="grapevineContainerElem" style={{border:"1px dashed grey",display:"inline-block",width:"900px",height:"700px"}}>
+                                <div id="grapevineContainerElem" style={{border:"1px dashed grey",display:"inline-block",width:"750px",height:"700px"}}>
 
                                 </div>
 
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"700px",height:"700px"}}>
                                     <center>
                                         Control Panel
-                                        <div id="calculateScoresSingleIterationButton" className="doSomethingButton_small" style={{display:"none"} }>calculate scores single iteration</div>
+
+                                        <div id="calculateUpdateProposalVerdictScoresSingleIterationButton" className="doSomethingButton_small" >calculate update proposal verdict scores single iteration</div>
+                                        <div id="calculateUserTrustScoresSingleIterationButton" className="doSomethingButton_small" style={{display:"none"}} >calculate user trust scores single iteration</div>
                                     </center>
                                     <ControlPanel
                                         compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
+
+                                        defaultUpdateProposalVerdictAverageScore={this.state.compScoreDisplayPanelData.defaultUpdateProposalVerdictAverageScore}
+                                        updateProposalVerdictAverageScoreSliderCallback = {this.handleUpdateProposalVerdictAverageScoreCallback}
+                                        updateProposalVerdictConfidenceSliderCallback = {this.handleUpdateProposalVerdictConfidenceCallback}
+
                                         defaultUserTrustAverageScore={this.state.compScoreDisplayPanelData.defaultUserTrustAverageScore}
                                         userTrustAverageScoreSliderCallback = {this.handleUserTrustAverageScoreCallback}
                                         userTrustConfidenceSliderCallback = {this.handleUserTrustConfidenceCallback}
+
                                         rigorSliderCallback = {this.handleRigorCallback}
                                         mod1SliderCallback = {this.handleMod1Callback}
                                         mod2SliderCallback = {this.handleMod2Callback}
@@ -1679,11 +2099,20 @@ export default class GrapevineVisualizationMainPage extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <CompScoreCalcPanel
-                                compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
-                                oSingleUserGrapevineScores={this.state.oSingleUserGrapevineScores}
-                            />
+                            <div id = "compUserTrustScoreCalcPanelContainer" >
+                                <CompUserTrustScoreCalcPanel
+                                    compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
+                                    oSingleUserGrapevineScores={this.state.oSingleUserGrapevineScores}
+                                />
+                            </div>
+                            <div id = "compUpdateProposalVerdictScoreCalcPanelContainer" >
+                                <CompUpdateProposalVerdictScoreCalcPanel
+                                    compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
+                                    oSingleUpdateProposalVerdictScores={this.state.oSingleUpdateProposalVerdictScores}
+                                />
+                            </div>
                         </center>
+
                     </div>
                 </fieldset>
             </>

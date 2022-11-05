@@ -15,6 +15,8 @@
   ],
   "main": "public/electron.js",
   "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -24,6 +26,7 @@
     "ebuild": "npm run build && node_modules/.bin/build",
     "prepare": "husky install"
   },
+  "postinstall": "electron-builder install-app-deps",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -91,5 +94,29 @@
     "jquery": "^3.6.1",
     "sqlite3": "^5.0.11",
     "wait-on": "^6.0.0"
+  },
+  "build": {
+    "productName": "Plex",
+    "appId": "to.plex.electron",
+    "mac": {
+      "category": "public.app-category.social-networking"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "publish": {
+      "provider": "github"
+    }
   }
 }
