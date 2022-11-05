@@ -8,6 +8,22 @@ import * as MiscFunctions from '../../../../../../../functions/miscFunctions.js'
 
 const jQuery = require("jquery");
 
+const executeConceptUpdate_topLevelPropertyValueChange_specifyConceptGraph = async (ipns,up_slug,concept_slug,changeNumber) => {
+    var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(ipns,up_slug)
+    var oCon = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(ipns,concept_slug)
+
+    var oUpdates = oUP.conceptUpdateProposalData.updates
+    var aTopLevelPVC = oUpdates.substitutions.topLevelPropertyValueChanges;
+    var oTLPVC = aTopLevelPVC[changeNumber];
+
+    var key = oTLPVC.propertyKey;
+    var newVal = oTLPVC.propertyValue;
+
+    oCon.conceptData[key] = newVal
+    console.log("executeConceptUpdate_topLevelPropertyValueChange_specifyConceptGraph; oCon: "+JSON.stringify(oCon,null,4))
+    // await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(ipns,oCon)
+}
+
 export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends React.Component {
     constructor(props) {
         super(props);
@@ -44,21 +60,31 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
                 if (slug_primary == concept_current_slug) {
                     console.log("found a match! slug_primary: "+slug_primary)
                     var updateHTML = "";
-                    updateHTML += "<div style='' ";
-                    updateHTML += " class='singleUpdateProposalIdContainer' ";
-                    updateHTML += " data-slug='"+slug+"' ";
-                    updateHTML += " >";
-                    updateHTML += slug;
+                    updateHTML += "<div>";
+                        updateHTML += "<div style='display:inline-block;background-color:#CFCFCF;width:280px;padding:1px' ";
+                        updateHTML += " class='singleUpdateProposalIdContainer' ";
+                        updateHTML += " data-slug='"+slug+"' ";
+                        updateHTML += " >";
+                        updateHTML += slug;
+                        updateHTML += "</div>";
+
+                        updateHTML += "<div style='display:inline-block;padding:1px;margin-left:20px;' ";
+                        updateHTML += " >";
+                        updateHTML += "0.8";
+                        updateHTML += "</div>";
+
+                        updateHTML += "<div style='display:inline-block;padding:1px;margin-left:10px;' ";
+                        updateHTML += " >";
+                        updateHTML += "APPROVE";
+                        updateHTML += "</div>";
                     updateHTML += "</div>";
                     jQuery("#availableUpdatesContainer").append(updateHTML)
                 }
             }
         }
         jQuery(".singleUpdateProposalIdContainer").click(async function(){
-            var concept_slug = jQuery(this).data("slug")
-            var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug)
-            // console.log("singleUpdateProposalIdContainer; concept_slug: "+concept_slug)
-            // console.log("singleUpdateProposalIdContainer; oUP: "+JSON.stringify(oUP,null,4))
+            var updateProposal_slug = jQuery(this).data("slug")
+            var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,updateProposal_slug)
             var oUpdates = oUP.conceptUpdateProposalData.updates
             var aTopLevelPVC = oUpdates.substitutions.topLevelPropertyValueChanges;
 
@@ -98,13 +124,22 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
                         nextHTML += "</div>";
                     nextHTML += "</div>";
 
-                    nextHTML += "<div class='doSomethingButton' >";
+                    nextHTML += "<div class='implementProposedUpdateButton doSomethingButton' ";
+                    nextHTML += " data-upslug='"+updateProposal_slug+"' ";
+                    nextHTML += " data-changenumber='"+c+"' ";
+                    nextHTML += " >";
                     nextHTML += "implement proposed update";
                     nextHTML += "</div>";
                 nextHTML += "</div>";
 
                 jQuery("#tlpvsContainer").append(nextHTML)
             }
+            jQuery(".implementProposedUpdateButton").click(async function(){
+                var up_slug = jQuery(this).data("upslug")
+                var changeNumber = jQuery(this).data("changenumber")
+                console.log("implementProposedUpdateButton; up_slug: "+up_slug)
+                await executeConceptUpdate_topLevelPropertyValueChange_specifyConceptGraph(viewingConceptGraph_ipns,up_slug,concept_current_slug,changeNumber)
+            })
         })
     }
     render() {
@@ -124,7 +159,8 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
 
                         <div style={{display:"inline-block",padding:"10px",border:"1px dashed grey",width:"600px",height:"800px",overflow:"scroll"}} >
                             <center>Available Updates</center>
-                            <div id="availableUpdatesContainer" ></div>
+                            <div style={{fontSize:"12px",marginTop:"10px",display:"inline-block",marginLeft:"300px"}} >Grapevine Score / Verdict</div>
+                            <div id="availableUpdatesContainer" style={{fontSize:"12px",marginTop:"5px"}} ></div>
                         </div>
 
                         <div style={{display:"inline-block",padding:"10px",fontSize:"12px",border:"1px dashed grey",width:"600px",height:"800px",overflow:"scroll"}} >
