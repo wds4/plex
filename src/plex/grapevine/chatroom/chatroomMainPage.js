@@ -116,16 +116,20 @@ export default class GrapevineChatroomMainPage extends React.Component {
         const receiveMsg = async (msg) => {
             var whenReceived = Date.now();
             messageNumber++;
+
             var msg_from = msg.from;
             var msg_data = msg.data;
             var msg_seqno = msg.seqno;
             var msg_topics_arr = msg.topicIDs;
             var msg_topics_str = JSON.stringify(msg_topics_arr);
             var msg_str = JSON.stringify(msg);
+            console.log("messageNumber: "+messageNumber+"; msg_str: "+msg_str)
+
 
             var senderPeerID = msg_from;
 
             var msg_content = new TextDecoder("utf-8").decode(msg_data);
+            var msg_content = msg_content.replace("_CARRIAGE_RETURN_dGhTyR_","<br>")
 
             var msg_html = "";
             msg_html += "<div id='messageNumber_"+messageNumber+"' style='height:0px;font-size:12px;border:1px solid grey;margin-bottom:5px;padding:5px;' >";
@@ -169,9 +173,12 @@ export default class GrapevineChatroomMainPage extends React.Component {
 
         jQuery("#publishMessageButton").unbind("click");
         jQuery("#publishMessageButton").on("click", async function(){
-            var post = jQuery("#postContainer").val()
-            var msg = new TextEncoder().encode(post);
-            await MiscIpfsFunctions.ipfs.pubsub.publish(topic,msg);
+            var post1 = jQuery("#postContainer").val()
+            console.log("publishMessageButton: "+post)
+            var post = post1.replace("\n","_CARRIAGE_RETURN_dGhTyR_")
+            // var msg = new TextEncoder().encode(post);
+            // await MiscIpfsFunctions.ipfs.pubsub.publish(topic,msg);
+            await MiscIpfsFunctions.ipfs.pubsub.publish(topic,post);
         })
         await refreshWhosOnline(topic)
         jQuery("#refreshWhosOnlineButton").click(async function(){

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import * as MiscFunctions from '../../../../../../../../functions/miscFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../../../../../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.min.css";
 
@@ -16,7 +17,39 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
         }
     }
 
+    handleUpdateUserCompositeScoreData = () => {
+
+        /*
+        var oCSD = MiscFunctions.cloneObj(this.props.oSingleUpdateProposalVerdictScores);
+        delete oCSD.ratings;
+        delete oCSD.defaultRating;
+        console.log("handleMupdateCompositeScoreDataod5Callback; oCSD: "+JSON.stringify(oCSD,null,4))
+        // var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+        // compScoreDisplayPanelData_new.strat5Coeff = newMod5Factor
+        // this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+        var sUpvCS1 = jQuery("#upvCompositeScoreContainer1").val()
+        var oUpvCS1 = JSON.parse(sUpvCS1)
+
+        var wordSlug = "updateProposalVerdictCompositeScore_multiSpecificInstance_superset"
+        var wordName = "update proposal verdict composite score: multi specific instance, superset"
+        var wordTitle = "Update Proposal Verdict Composite Score: Multi Specific Instance, superset"
+        var wordDescription = "multiple specific instances stored in one file as one word, via the relationship: areSpecificInstancesOf the superset for the concept of updateProposalVerdictCompositeScore.";
+
+        oUpvCS1.wordData.slug = wordSlug;
+        oUpvCS1.wordData.name = wordName;
+        oUpvCS1.wordData.title = wordTitle;
+        oUpvCS1.wordData.description = wordDescription;
+
+        console.log("updateCSDataButton clicked")
+        oUpvCS1.aUpdateProposalVerdictCompositeScoreData = []
+        oUpvCS1.aUpdateProposalVerdictCompositeScoreData.push(oCSD)
+
+        jQuery("#upvCompositeScoreContainer2").val(JSON.stringify(oUpvCS1,null,4))
+        */
+    }
+
     async componentDidMount() {
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
         const updateUsersDefAvScore = () => {
             var usersDefAvScoreValue = usersDefAvScoreSlider.noUiSlider.get();
             var usersDefAvScoreValue = usersDefAvScoreValue / 100;
@@ -66,6 +99,17 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
             }
         });
         usersDefConfidenceSlider.noUiSlider.on("update",updateUsersDefConfidenceScore)
+
+        ////////////////////////////////////////////////////////////
+        // load existing userTrustCompositeScore_multiSpecificInstance_superset; if it does not already exist, then
+        // create a new one
+        var multiSpecificInstances_slug = "userTrustCompositeScore_multiSpecificInstance_superset";
+        var oUtCS = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,multiSpecificInstances_slug);
+        if (!oUtCS) {
+            var oUtCS = await MiscFunctions.createNewWordByTemplate("userTrustCompositeScore");
+        }
+        jQuery("#utCompositeScoreContainer1").val(JSON.stringify(oUtCS,null,4))
+        ////////////////////////////////////////////////////////////
     }
     render() {
         return (
@@ -92,6 +136,18 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
                             </div>
                         </div>
 
+                        <div>
+                            <div id="updateCSDataButton" className="doSomethingButton_small" onClick={this.handleUpdateUserCompositeScoreData} >update composite score data</div>
+                            <div className="doSomethingButton_small" id="saveUserCompositeScoreButton">save</div>
+                            <div style={{marginTop:"5px"}} >
+                                <textarea id="utCompositeScoreContainer1" style={{width:"95%",height:"200px"}} >
+                                </textarea>
+                            </div>
+                            <div style={{marginTop:"5px"}} >
+                                <textarea id="utCompositeScoreContainer2" style={{width:"95%",height:"300px"}} >
+                                </textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </>

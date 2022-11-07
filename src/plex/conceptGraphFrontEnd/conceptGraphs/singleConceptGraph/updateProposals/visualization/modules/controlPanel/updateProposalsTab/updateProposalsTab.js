@@ -7,7 +7,7 @@ import * as ConceptGraphInMfsFunctions from '../../../../../../../../lib/ipfs/co
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.min.css";
 
-const jQuery = require("jquery");
+const jQuery = require("jquery"); 
 
 export default class GrapevineVisualControlPanelUpdateProposalsTab extends React.Component {
     constructor(props) {
@@ -76,7 +76,7 @@ export default class GrapevineVisualControlPanelUpdateProposalsTab extends React
         }
         jQuery("#upvCompositeScoreContainer1").val(JSON.stringify(oUpvCS,null,4))
         ////////////////////////////////////////////////////////////
-        
+
         jQuery("#saveUpvCompositeScoreButton").click(async function(){
             var sUPVCS = jQuery("#upvCompositeScoreContainer2").val();
             var oUPVCS = JSON.parse(sUPVCS);
