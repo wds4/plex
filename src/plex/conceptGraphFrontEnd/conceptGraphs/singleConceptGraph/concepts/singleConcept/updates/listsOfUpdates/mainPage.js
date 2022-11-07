@@ -35,9 +35,32 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
         var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+
+        ////////////////////////////////////////////////////////////
+        var multiSpecificInstances_slug = "updateProposalVerdictCompositeScore_multiSpecificInstance_superset";
+        var oUpvCS = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,multiSpecificInstances_slug);
+        var aUPVCSD = oUpvCS.aUpdateProposalVerdictCompositeScoreData
+        var oUPVCSD = {};
+        for (var c=0;c<aUPVCSD.length;c++) {
+            var oNxtUPVCSD = aUPVCSD[c];
+            var up_slug = oNxtUPVCSD.updateProposalData.slug
+            oUPVCSD[up_slug] = oNxtUPVCSD
+        }
+        ////////////////////////////////////////////////////////////
+
+
         var concept_current_slug = window.frontEndConceptGraph.viewingConcept.slug;
         console.log("concept_current_slug: "+concept_current_slug)
         var oConceptCurrentlyViewing = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_current_slug)
+        if (oConceptCurrentlyViewing.conceptData.hasOwnProperty("updateProposalSettings")) {
+            var cutoff_accept = oConceptCurrentlyViewing.conceptData.updateProposalSettings.cutoffs.accept;
+            var cutoff_reject = oConceptCurrentlyViewing.conceptData.updateProposalSettings.cutoffs.reject;
+        } else {
+            var cutoff_accept = window.grapevine.starterDefaultVerdictAccept / 100;
+            var cutoff_reject = window.grapevine.starterDefaultVerdictReject / 100;
+        }
+        jQuery("#acceptCutoffContainer").html(cutoff_accept)
+        jQuery("#rejectCutoffContainer").html(cutoff_reject)
 
         var concept_updateProposal_slug = "conceptFor_updateProposal";
         var oConceptUP = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_updateProposal_slug)
@@ -47,6 +70,17 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
 
         for (var x=0;x<aSpecificInstances.length;x++) {
             var slug = aSpecificInstances[x];
+            var inf = "?"
+            var grapevineVerdict = null;
+            if (oUPVCSD.hasOwnProperty(slug)) {
+                inf = oUPVCSD[slug].compositeScoreData.standardCalculations.sum.influence;
+                if (inf > cutoff_accept) {
+                    grapevineVerdict = true;
+                }
+                if (inf < cutoff_reject) {
+                    grapevineVerdict = false;
+                }
+            }
 
             var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,slug)
             var name = oUP.wordData.name;
@@ -68,14 +102,29 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
                         updateHTML += slug;
                         updateHTML += "</div>";
 
-                        updateHTML += "<div style='display:inline-block;padding:1px;margin-left:20px;' ";
+                        updateHTML += "<div style='display:inline-block;padding:1px;margin-left:20px;color:orange;' ";
                         updateHTML += " >";
-                        updateHTML += "0.8";
+                        updateHTML += inf;
                         updateHTML += "</div>";
 
-                        updateHTML += "<div style='display:inline-block;padding:1px;margin-left:10px;' ";
-                        updateHTML += " >";
-                        updateHTML += "APPROVE";
+                        updateHTML += "<div style='display:inline-block;padding:1px;margin-left:10px;";
+                        if (grapevineVerdict==true) {
+                            updateHTML += "color:green;";
+                        }
+                        if (grapevineVerdict==false) {
+                            updateHTML += "color:red;";
+                        }
+                        updateHTML += "' >";
+                        if (grapevineVerdict==true) {
+                            updateHTML += "ACCEPT";
+                        }
+                        if (grapevineVerdict==false) {
+                            updateHTML += "REJECT";
+                        }
+                        if (grapevineVerdict==null) {
+                            updateHTML += "undecided";
+                        }
+
                         updateHTML += "</div>";
                     updateHTML += "</div>";
                     jQuery("#availableUpdatesContainer").append(updateHTML)
@@ -159,7 +208,20 @@ export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends Rea
 
                         <div style={{display:"inline-block",padding:"10px",border:"1px dashed grey",width:"600px",height:"800px",overflow:"scroll"}} >
                             <center>Available Updates</center>
+                            <div style={{fontSize:"12px",textAlign:"center"}} >
+                                cutoff scores (influence)
+                            </div>
+                            <div style={{fontSize:"12px"}} >
+                                <div style={{display:"inline-block",marginLeft:"50px",textAlign:"right",width:"100px"}} >accept:</div>
+                                <div style={{display:"inline-block",marginLeft:"20px"}} id="acceptCutoffContainer" >--</div>
+                            </div>
+                            <div style={{fontSize:"12px"}} >
+                                <div style={{display:"inline-block",marginLeft:"50px",textAlign:"right",width:"100px"}} >reject:</div>
+                                <div style={{display:"inline-block",marginLeft:"20px"}} id="rejectCutoffContainer" >--</div>
+                            </div>
                             <div style={{fontSize:"12px",marginTop:"10px",display:"inline-block",marginLeft:"300px"}} >Grapevine Score / Verdict</div>
+                            <br/>
+                            <div style={{fontSize:"12px",marginTop:"10px",display:"inline-block",marginLeft:"300px",color:"orange"}} >Influence</div>
                             <div id="availableUpdatesContainer" style={{fontSize:"12px",marginTop:"5px"}} ></div>
                         </div>
 

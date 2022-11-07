@@ -339,6 +339,8 @@ window.grapevine.starterStrat4Coeff = 200; // ?? 200 / 500
 window.grapevine.starterStrat5Coeff = 500; // ?? 500 / 2000
 // visualization
 window.grapevine.defaultNodeSize = 30;
+window.grapevine.starterDefaultVerdictAccept = 62;
+window.grapevine.starterDefaultVerdictReject = -53;
 
 window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
 window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false

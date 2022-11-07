@@ -4,6 +4,7 @@ import LeftNavbar1 from '../../../../../../navbars/leftNavbar1/conceptGraphFront
 import LeftNavbar2 from '../../../../../../navbars/leftNavbar2/cgFe_singleConceptUpdates_leftNav2';
 import * as ConceptGraphInMfsFunctions from '../../../../../../lib/ipfs/conceptGraphInMfsFunctions.js';
 import * as MiscFunctions from '../../../../../../functions/miscFunctions.js';
+import VerdictCutoffsSlider from './verdictCutoffsSlider.js'
 
 const jQuery = require("jquery");
 
@@ -36,11 +37,11 @@ export default class ConceptGraphsFrontEndSingleConceptUpdatesControlPanel exten
             var currentExecutionSetting = oConceptCurrentlyViewing.conceptData.updateProposalSettings.execution;
             jQuery("#updateOption_"+currentExecutionSetting).prop("checked",true);
         }
-        jQuery("#saveSettingsButton").click(async function(){
+        jQuery("#saveExecutionSettingsButton").click(async function(){
             jQuery(".updateOption").each(async function(i,obj) {
                 var isChecked = jQuery(this).prop("checked")
                 var val = jQuery(this).val()
-                console.log("saveSettingsButton; isChecked: "+isChecked+"; val: "+val)
+                console.log("saveExecutionSettingsButton; isChecked: "+isChecked+"; val: "+val)
                 if (isChecked) {
                     var oConceptCurrentlyViewing_updated = await updateConceptWithNewUpdateProposalSettingsExecution_specifyConceptGraph(viewingConceptGraph_ipns,val,oConceptCurrentlyViewing)
                     // console.log("oConceptCurrentlyViewing_updated: "+JSON.stringify(oConceptCurrentlyViewing_updated,null,4))
@@ -59,9 +60,10 @@ export default class ConceptGraphsFrontEndSingleConceptUpdatesControlPanel exten
                         <Masthead viewingConceptGraphTitle={this.state.viewingConceptGraphTitle} />
                         <div class="h2">Single Concept: Update Proposal Settings</div>
 
+                        <div>
                         <center>
                             <div style={{textAlign:"left",display:"inline-block",marginTop:"20px"}} >
-                            <center>Execution of individual update proposals</center>
+                                <center>Execution of individual update proposals</center>
                                 <div>
                                     <input type="radio" class="updateOption" name="updateOption" id="updateOption_off" value="off" /><span style={{marginLeft:"10px"}} >off</span>
                                 </div>
@@ -74,9 +76,16 @@ export default class ConceptGraphsFrontEndSingleConceptUpdatesControlPanel exten
                                 <div>
                                     <input type="radio" class="updateOption" name="updateOption" id="updateOption_automaticLinkToIpns" value="automaticLinkToIpns" /><span style={{marginLeft:"10px"}} >automatic: link to specific ipns</span>
                                 </div>
-                                <div className="doSomethingButton" id="saveSettingsButton" >save settings</div>
+                                <div className="doSomethingButton" id="saveExecutionSettingsButton" >save execution settings</div>
                             </div>
                         </center>
+                        </div>
+                        <div style={{marginTop:"20px"}} >
+                            <center>
+                                <VerdictCutoffsSlider />
+                            </center>
+                        </div>
+
                     </div>
                 </fieldset>
             </>

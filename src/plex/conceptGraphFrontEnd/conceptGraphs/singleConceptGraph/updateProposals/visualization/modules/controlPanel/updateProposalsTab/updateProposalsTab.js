@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import * as MiscFunctions from '../../../../../../../../functions/miscFunctions.js';
+import * as ConceptGraphInMfsFunctions from '../../../../../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.min.css";
 
@@ -17,6 +18,8 @@ export default class GrapevineVisualControlPanelUpdateProposalsTab extends React
     }
 
     async componentDidMount() {
+        var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
         const updateUpdateProposalsDefConfidenceScore = () => {
@@ -36,7 +39,6 @@ export default class GrapevineVisualControlPanelUpdateProposalsTab extends React
             }
         });
         updateProposalsDefConfidenceSlider.noUiSlider.on("update",updateUpdateProposalsDefConfidenceScore)
-
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -63,6 +65,47 @@ export default class GrapevineVisualControlPanelUpdateProposalsTab extends React
             }
         });
         updateProposalsDefAvScoreSlider.noUiSlider.on("update",updateUpdateProposalsDefAvScore)
+
+        ////////////////////////////////////////////////////////////
+        // load existing updateProposalVerdictCompositeScore_multiSpecificInstance_superset; if it does not already exist, then
+        // create a new one
+        var multiSpecificInstances_slug = "updateProposalVerdictCompositeScore_multiSpecificInstance_superset";
+        var oUpvCS = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,multiSpecificInstances_slug);
+        if (!oUpvCS) {
+            var oUpvCS = await MiscFunctions.createNewWordByTemplate("updateProposalVerdictCompositeScore");
+        }
+        jQuery("#upvCompositeScoreContainer1").val(JSON.stringify(oUpvCS,null,4))
+        ////////////////////////////////////////////////////////////
+        
+        jQuery("#saveUpvCompositeScoreButton").click(async function(){
+            var sUPVCS = jQuery("#upvCompositeScoreContainer2").val();
+            var oUPVCS = JSON.parse(sUPVCS);
+            var upvcs_slug = oUPVCS.wordData.slug;
+            console.log("saveUpvCompositeScoreButton clicked; oUPVCS: "+JSON.stringify(oUPVCS,null,4));
+
+            var concept_slug = "conceptFor_updateProposalVerdictCompositeScore";
+            var oConcept = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,concept_slug);
+            var superset_slug = oConcept.conceptData.nodes.superset.slug;
+            var oSuperset = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,superset_slug);
+            var mainSchema_slug = oConcept.conceptData.nodes.schema.slug;
+            var oMainSchema = await ConceptGraphInMfsFunctions.lookupWordBySlug_specifyConceptGraph(viewingConceptGraph_ipns,mainSchema_slug);
+
+            var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
+            oNewRel.nodeFrom.slug = upvcs_slug;
+            oNewRel.relationshipType.slug = "areSpecificInstancesOf";
+            oNewRel.nodeTo.slug = superset_slug;
+
+            console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oNewRel: "+JSON.stringify(oNewRel,null,4))
+
+            var oMiniWordLookup = {};
+            oMiniWordLookup[upvcs_slug] = oUPVCS;
+            oMiniWordLookup[superset_slug] = oSuperset;
+            oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+            console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
+
+            await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oUPVCS);
+            await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(viewingConceptGraph_ipns,oMainSchema);
+        })
     }
     render() {
         return (
@@ -88,8 +131,16 @@ export default class GrapevineVisualControlPanelUpdateProposalsTab extends React
                                 <div id="updateProposalsDefaultConfidenceSlider" style={{display:"inline-block",width:"200px",marginLeft:"20px",backgroundColor:"grey"}} ></div>
                             </div>
                         </div>
-
                     </div>
+                    <div style={{marginTop:"5px"}} >
+                        <textarea id="upvCompositeScoreContainer1" style={{width:"95%",height:"200px"}} >
+                        </textarea>
+                    </div>
+                    <div style={{marginTop:"5px"}} >
+                        <textarea id="upvCompositeScoreContainer2" style={{width:"95%",height:"300px"}} >
+                        </textarea>
+                    </div>
+                    <div className="doSomethingButton" id="saveUpvCompositeScoreButton">save</div>
                 </div>
             </>
         );

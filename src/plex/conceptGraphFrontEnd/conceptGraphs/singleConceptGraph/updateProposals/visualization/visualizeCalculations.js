@@ -767,6 +767,7 @@ var lookupUserNumberByPeerID = {};
 var lookupUpdateProposalNumberBySlug = {};
 
 export const setupGrapevineCompositeScoreVars_updateProposal = async (aUpdateProposalSlugs) => {
+    var seedUserPeerID = jQuery("#seedUserSelector option:selected").data("peerid")
     for (var u=0;u<aUpdateProposalSlugs.length;u++) {
         var nextSlug = aUpdateProposalSlugs[u];
         lookupUpdateProposalNumberBySlug[nextSlug] = u
@@ -781,11 +782,24 @@ export const setupGrapevineCompositeScoreVars_updateProposal = async (aUpdatePro
             var nextUpSlug = aUpdateProposalSlugs[u];
             var oUP = await ConceptGraphInMfsFunctions.lookupWordBySlug(nextUpSlug)
             var updateProposalIPNS = oUP.updateProposalData.ipns;
+            var authorPeerID = oUP.updateProposalData.author.peerID;
+            var authorUsername = oUP.updateProposalData.author.username;
             aUpdateProposalVerdictScores[c].updateProposals[u] = {}
+            aUpdateProposalVerdictScores[c].updateProposals[u].slug = "updateProposalVerdictCompositeScoreFor_"+nextUpSlug;
+            aUpdateProposalVerdictScores[c].updateProposals[u].name = "update proposal verdict composite score for: "+nextUpSlug;
+            aUpdateProposalVerdictScores[c].updateProposals[u].title = "Update Proposal Verdict Composite Score for: "+nextUpSlug;
             aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalNumber = u;
-            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalSlug = nextUpSlug;
-            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalIPNS = updateProposalIPNS;
+            // aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalSlug = nextUpSlug;
+            // aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalIPNS = updateProposalIPNS;
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData = {};
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.slug = nextUpSlug;
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.ipns = updateProposalIPNS;
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.author = {};
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.author.peerID = authorPeerID;
+            aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.author.username = authorUsername;
+
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData = MiscFunctions.cloneObj(window.compositeUpdateProposalVerdictScoreData);
+
             aUpdateProposalVerdictScores[c].updateProposals[u].ratings = [] // all ratings where this updateProposal is the ratee
             aUpdateProposalVerdictScores[c].updateProposals[u].defaultRating = {
                 rating: 0,
@@ -1043,14 +1057,21 @@ const singleIterationCompositeUpdateProposalVerdictScoreCalculations = async (co
     // need to replace compositeUserTrustScoreNumberBeingViewedContainer with
     // a new var for the score being used in this calc (e.g. the one corresponding to ontology, plexOntology)
     // (will need another set of selectors)
+    var seedUserPeerID = jQuery("#seedUserSelector option:selected").data("peerid")
     var compScoreNumber = jQuery("#compositeUpdateProposalVerdictScoreNumberBeingViewedContainer").html()
     for (var c=0;c<aUpdateProposalVerdictScores.length;c++) { // as of 4 Nov 2022, length will be 1; the only verdictScore type is "standardAverage"
         for (var u=0;u<aUpdateProposalVerdictScores[c].updateProposals.length;u++) {
             var sumOfProducts = 0;
+            var sumOfProducts_true = 0;
+            var sumOfProducts_false = 0;
             var sumOfWeights = 0;
+            var sumOfWeights_true = 0;
+            var sumOfWeights_false = 0;
             var rigor = compScoreDisplayPanelData.rigor
-            var up_ipns = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalIPNS; // may not need this
-            var up_slug = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalSlug; // may not need this
+            // var up_ipns = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalIPNS; // may not need this
+            // var up_slug = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalSlug; // may not need this
+            var up_ipns = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.ipns; // may not need this
+            var up_slug = aUpdateProposalVerdictScores[c].updateProposals[u].updateProposalData.slug; // may not need this
             for (var r=0;r<aUpdateProposalVerdictScores[c].updateProposals[u].ratings.length;r++) {
                 var nextRatingSlug = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].ratingSlug // may not need this
                 var raterUserNumber = aUpdateProposalVerdictScores[c].updateProposals[u].ratings[r].raterUserNumber;
@@ -1068,6 +1089,14 @@ const singleIterationCompositeUpdateProposalVerdictScoreCalculations = async (co
                 var weightAdjusted = weight; // ? no need for adjustment in these rows; default score however will require adjustment
                 var product = weightAdjusted * rating;
 
+                if (rating==1) {
+                    sumOfWeights_true += weightAdjusted;
+                    sumOfProducts_true += product
+                }
+                if (rating==-1) {
+                    sumOfWeights_false += weightAdjusted;
+                    sumOfProducts_false += product
+                }
                 sumOfWeights += weightAdjusted;
                 sumOfProducts += product
 
@@ -1082,8 +1111,8 @@ const singleIterationCompositeUpdateProposalVerdictScoreCalculations = async (co
 
             // add Default User Score
             // do calculations
-            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.true.average = 0;
-            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.false.average = 0;
+            // aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.true.average = 0;
+            // aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.false.average = 0;
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.average = 0;
 
             var defaultUpdateProposalVerdictAverageScore = compScoreDisplayPanelData.defaultUpdateProposalVerdictAverageScore
@@ -1113,15 +1142,39 @@ const singleIterationCompositeUpdateProposalVerdictScoreCalculations = async (co
 
             var average = sumOfProducts / sumOfWeights
             var certainty = convertInputToCertainty(sumOfWeights,rigor)
+            var certaintyWithoutDefault = convertInputToCertainty(sumOfWeightsWithoutDefault,rigor)
+            var certainty_true = convertInputToCertainty(sumOfWeights_true,rigor)
+            var certainty_false = convertInputToCertainty(sumOfWeights_false,rigor)
             var influence = average * certainty
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.numberOfRatings = aUpdateProposalVerdictScores[c].updateProposals[u].ratings.length
+            /*
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.input = parseFloat(sumOfWeights.toPrecision(4));
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.inputWithoutDefault = parseFloat(sumOfWeightsWithoutDefault.toPrecision(4));
-            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.certainty = parseFloat(certainty.toPrecision(4));
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
             aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
+            */
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.rigor = parseFloat(rigor.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.seedUser = {}
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.seedUser.peerID = seedUserPeerID;
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.seedUser.username = null;
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.sumOfProducts = parseFloat(sumOfProducts.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.input = parseFloat(sumOfWeights.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.certainty = parseFloat(certainty.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.average = parseFloat(average.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.influence = parseFloat(influence.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.inputWithoutDefault = parseFloat(sumOfWeightsWithoutDefault.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.sum.certaintyWithoutDefault = parseFloat(certaintyWithoutDefault.toPrecision(4));
+
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.true.sumOfProducts = parseFloat(sumOfProducts_true.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.true.input = parseFloat(sumOfWeights_true.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.true.certainty = parseFloat(certainty_true.toPrecision(4));
+
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.false.sumOfProducts = parseFloat(sumOfProducts_false.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.false.input = parseFloat(sumOfWeights_false.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.standardCalculations.false.certainty = parseFloat(certainty_false.toPrecision(4));
+            aUpdateProposalVerdictScores[c].updateProposals[u].compositeScoreData.lastUpdated = Date.now();
 
             /*
             //
@@ -1445,36 +1498,30 @@ const runGrapevineCompositeScoreCalculations = async () => {
 
 var defUpCon = window.grapevine.starterDefaultUpdateProposalVerdictConfidence / 100
 var defUpAvg = window.grapevine.starterDefaultUpdateProposalVerdictAverageScore / 100
-var defUpInf = parseFloat((defUpCon * defUpAvg).toPrecision(4));
+// var defUpInf = parseFloat((defUpCon * defUpAvg).toPrecision(4));
 
 var defCon = window.grapevine.starterDefaultUserTrustConfidence / 100
 var defAvg = window.grapevine.starterDefaultUserTrustAverageScore / 100
 var defInf = parseFloat((defCon * defAvg).toPrecision(4));
 window.compositeUpdateProposalVerdictScoreData = {
     numberOfRatings: 0,
-    radiusMultiplier: 1,
     standardCalculations: {
         true: {
             sumOfProducts: null,
-            certainty: defUpCon,
             input: null,
-            influence: defUpInf
+            certainty: defUpCon,
         },
         false: {
             sumOfProducts: null,
-            certainty: defUpCon,
             input: null,
-            influence: defUpInf
+            certainty: defUpCon,
         },
         sum: {
             sumOfProducts: null,
-            certainty: defUpCon,
             input: null,
+            certainty: defUpCon,
             average: defUpAvg,
-            influence: defUpInf
         }
-    },
-    notIncludingDefaults: {
     },
     lastUpdated: null,
 }
@@ -1599,20 +1646,45 @@ export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProp
             },
             contactLinks: [],
             oSingleUpdateProposalVerdictScores: {
+                slug: null,
+                name: null,
+                title: null,
                 updateProposalNumber: 0,
-                updateProposalIPNS: "k2k4r8kw8hotgp7k85n1lf24rit3oonwxv0vxpn4bup63w9ar4curvqs",
-                updateProposalSlug: "conceptUpdateProposal_curvqs",
-                authorPeerID: "qrstu67890",
-                authorUsername: "johnDoe",
+                updateProposalData: {
+                    updateProposalIPNS: "--k2k4r8kw8hotgp7k85n1lf24rit3oonwxv0vxpn4bup63w9ar4curvqs",
+                    updateProposalSlug: "--conceptUpdateProposal_curvqs",
+                    author: {
+                        peerID: "--qrstu67890",
+                        username: "--johnDoe",
+                    }
+                },
                 compositeScoreData: {
                     numberOfRatings: 0,
                     standardCalculations: {
-                        sumOfProducts: 0,
-                        certainty: 0,
-                        input: 0,
-                        inputWithoutDefault: 0,
-                        average: null,
-                        rigor: null
+                        rigor: null,
+                        seedUser: {
+                            peerID: null,
+                            username: null
+                        },
+                        true: {
+                            sumOfProducts: 0,
+                            input: 0,
+                            certainty: 0,
+                        },
+                        false: {
+                            sumOfProducts: 0,
+                            input: 0,
+                            certainty: 0,
+                        },
+                        sum: {
+                            sumOfProducts: 0,
+                            input: 0,
+                            certainty: 0,
+                            average: null,
+                            influence: null,
+                            inputWithoutDefault: 0,
+                            certaintyWithoutDefault: 0,
+                        }
                     }
                 },
                 ratings: [
