@@ -47,7 +47,7 @@ const addProfileData = async (peerID) => {
     var ipfsPath = "/ipns/"+peerID+"/grapevineData/userProfileData/myProfile.txt";
     var avatarElementID = "whosOnlineAvatarBox_"+peerID;
     var usernameElementID = "whosOnlineUsername_"+peerID;
-    console.log("avatarElementID: "+avatarElementID)
+    // console.log("avatarElementID: "+avatarElementID)
     try {
         var chunks=[];
         for await (const chunk of MiscIpfsFunctions.ipfs.cat(ipfsPath)) {
@@ -56,7 +56,7 @@ const addProfileData = async (peerID) => {
         }
         var sJoinedChunks = chunks.join("")
         var oUserData = JSON.parse(sJoinedChunks)
-        console.log("oUserData: "+JSON.stringify(oUserData,null,4))
+        // console.log("oUserData: "+JSON.stringify(oUserData,null,4))
         var username = oUserData.username;
         var peerID = oUserData.peerID;
         var loc = oUserData.loc;
@@ -123,8 +123,7 @@ export default class GrapevineChatroomMainPage extends React.Component {
             var msg_topics_arr = msg.topicIDs;
             var msg_topics_str = JSON.stringify(msg_topics_arr);
             var msg_str = JSON.stringify(msg);
-            console.log("messageNumber: "+messageNumber+"; msg_str: "+msg_str)
-
+            // console.log("messageNumber: "+messageNumber+"; msg_str: "+msg_str)
 
             var senderPeerID = msg_from;
 

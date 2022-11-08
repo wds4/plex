@@ -133,7 +133,6 @@ async function makeThisPageTable(wordDataSet) {
             })
         }
     });
-
 }
 
 const returnListOfWordsInThisConceptGraphInMFS = async (path) => {

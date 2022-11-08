@@ -10,6 +10,13 @@ export const ipfs = IpfsHttpClient({
     protocol: "http"
 });
 
+// returns publically-viewable userProfile (so not dependent on any single concept graph)
+export const returnUserProfileFromMfsByPeerID = async (peerID) => {
+    var mfsPath = "/grapevineData/users/"+peerID+"/userProfile.txt"
+    var oUserProfile = await fetchObjectByLocalMutableFileSystemPath(mfsPath);
+    return oUserProfile;
+}
+
 // This function republishes the entire local MFS to the IPFS which makes my file structure
 // accessible to other nodes.
 // Future: input path and only publish that particular directory (to avoid publishing local hidden concept graphs)

@@ -1445,6 +1445,8 @@ const singleIterationCompositeUserTrustScoreCalculations = async (compScoreDispl
             aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.average = parseFloat(average.toPrecision(4));
             aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.influence = parseFloat(influence.toPrecision(4));
 
+            aUserTrustScores[c].users[u].compositeScoreData.lastUpdated = Date.now()
+
             if (c==compScoreNumber) {
                 if (nodeSizeRepresentation=="influence") {
                     var nodeSize = window.grapevine.defaultNodeSize * influence
@@ -1457,6 +1459,24 @@ const singleIterationCompositeUserTrustScoreCalculations = async (compScoreDispl
                 }
                 // var nodeIDs_arr = nodes.getIds();
                 nodes.update({id:nextPeerID,size:nodeSize,color:{opacity:certainty}});
+
+                // update users table with composite score data if table is visible
+                jQuery("#influence_"+nextPeerID).data("result",parseFloat(influence.toPrecision(4)))
+                jQuery("#influence_"+nextPeerID).html(parseFloat(influence.toPrecision(4)))
+
+                jQuery("#average_"+nextPeerID).data("result",parseFloat(average.toPrecision(4)))
+                jQuery("#average_"+nextPeerID).html(parseFloat(average.toPrecision(4)))
+
+                jQuery("#certainty_"+nextPeerID).data("result",parseFloat(certainty.toPrecision(4)))
+                jQuery("#certainty_"+nextPeerID).html(parseFloat(certainty.toPrecision(4)))
+
+                jQuery("#input_"+nextPeerID).data("result",parseFloat(sumOfWeights.toPrecision(4)))
+                jQuery("#input_"+nextPeerID).html(parseFloat(sumOfWeights.toPrecision(4)))
+
+                // jQuery("#influence_"+nextPeerID).val(parseFloat(influence.toPrecision(4)))
+                // jQuery("#average_"+nextPeerID).val(parseFloat(average.toPrecision(4)))
+                // jQuery("#certainty_"+nextPeerID).val(parseFloat(certainty.toPrecision(4)))
+                // jQuery("#input_"+nextPeerID).val(parseFloat(sumOfWeights.toPrecision(4)))
             }
         }
     }
@@ -1626,6 +1646,8 @@ export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProp
         super(props);
         this.state = {
             viewingConceptGraphTitle: window.frontEndConceptGraph.viewingConceptGraph.title,
+            masterUsersList: [],
+            masterUpdateProposalsList: [],
             compScoreDisplayPanelData: {
                 attenuationFactor: window.grapevine.starterDefaultAttenuationFactor / 100,
                 rigor: window.grapevine.starterRigor / 100,
@@ -1901,31 +1923,35 @@ export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProp
         this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
     }
 
-    changeUserTrustScoreCalculationPage = () =>{
+    changeUserTrustScoreCalculationPage = () => {
         var newPeerID = jQuery("#peerIDContainer").html()
         var newUserNumber = lookupUserNumberByPeerID[newPeerID];
+        if (newUserNumber) {
 
-        var oSingleUserGrapevineScores_new = this.state.oSingleUserGrapevineScores
-        var compScoreNumber = jQuery("#compositeUserTrustScoreNumberBeingViewedContainer").html()
-        oSingleUserGrapevineScores_new = MiscFunctions.cloneObj(aUserTrustScores[compScoreNumber].users[newUserNumber])
+            var oSingleUserGrapevineScores_new = this.state.oSingleUserGrapevineScores
+            var compScoreNumber = jQuery("#compositeUserTrustScoreNumberBeingViewedContainer").html()
+            oSingleUserGrapevineScores_new = MiscFunctions.cloneObj(aUserTrustScores[compScoreNumber].users[newUserNumber])
 
-        this.setState({oSingleUserGrapevineScores: oSingleUserGrapevineScores_new})
+            this.setState({oSingleUserGrapevineScores: oSingleUserGrapevineScores_new})
 
-        var imageCid = oSingleUserGrapevineScores_new.avatarCid;
-        var img = document.getElementById("showCalculationsAvatarThumb") // the img tag you want it in
-        img.src = "http://localhost:8080/ipfs/"+imageCid;
+            var imageCid = oSingleUserGrapevineScores_new.avatarCid;
+            var img = document.getElementById("showCalculationsAvatarThumb") // the img tag you want it in
+            img.src = "http://localhost:8080/ipfs/"+imageCid;
+        }
     }
 
     changeUpdateProposalVerdictScoreCalculationPage = () => {
         var newUpSlug = jQuery("#upSlugContainer").html()
         var newUpdateProposalNumber = lookupUpdateProposalNumberBySlug[newUpSlug];
 
-        var oSingleUpdateProposalVerdictScores_new = this.state.oSingleUpdateProposalVerdictScores
-        var compScoreNumber = jQuery("#compositeUpdateProposalVerdictScoreNumberBeingViewedContainer").html() // for now, this is hardcoded to be 0 which means "standardAverage"
-        // console.log("changeUpdateProposalVerdictScoreCalculationPage; compScoreNumber: "+compScoreNumber+"; newUpSlug: "+newUpSlug+"; newUpdateProposalNumber: "+newUpdateProposalNumber+"; aUpdateProposalVerdictScores: "+JSON.stringify(aUpdateProposalVerdictScores,null,4))
-        oSingleUpdateProposalVerdictScores_new = MiscFunctions.cloneObj(aUpdateProposalVerdictScores[compScoreNumber].updateProposals[newUpdateProposalNumber])
+        if (newUpdateProposalNumber) {
+            var oSingleUpdateProposalVerdictScores_new = this.state.oSingleUpdateProposalVerdictScores
+            var compScoreNumber = jQuery("#compositeUpdateProposalVerdictScoreNumberBeingViewedContainer").html() // for now, this is hardcoded to be 0 which means "standardAverage"
+            console.log("changeUpdateProposalVerdictScoreCalculationPage; compScoreNumber: "+compScoreNumber+"; newUpSlug: "+newUpSlug+"; newUpdateProposalNumber: "+newUpdateProposalNumber+"; aUpdateProposalVerdictScores: "+JSON.stringify(aUpdateProposalVerdictScores,null,4))
+            oSingleUpdateProposalVerdictScores_new = MiscFunctions.cloneObj(aUpdateProposalVerdictScores[compScoreNumber].updateProposals[newUpdateProposalNumber])
 
-        this.setState({oSingleUpdateProposalVerdictScores: oSingleUpdateProposalVerdictScores_new})
+            this.setState({oSingleUpdateProposalVerdictScores: oSingleUpdateProposalVerdictScores_new})
+        }
     }
 
     async componentDidMount() {
@@ -2039,7 +2065,10 @@ export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProp
         }
         */
         var sMasterUserList = JSON.stringify(masterUserList,null,4)
+        this.setState({masterUsersList:masterUserList});
+        this.forceUpdate();
         console.log("sMasterUserList: "+sMasterUserList)
+        console.log("this.state.contactLinks: "+JSON.stringify(this.state.contactLinks,null,4))
 
         var subsetUniqueIdentifier = false; // will default to superset
         var aCids = [];
@@ -2147,12 +2176,13 @@ export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProp
                                 <div style={{border:"1px dashed grey",display:"inline-block",width:"700px",height:"700px"}}>
                                     <center>
                                         Control Panel
-
                                         <div id="calculateUpdateProposalVerdictScoresSingleIterationButton" className="doSomethingButton_small" >calculate update proposal verdict scores single iteration</div>
                                         <div id="calculateUserTrustScoresSingleIterationButton" className="doSomethingButton_small" style={{display:"none"}} >calculate user trust scores single iteration</div>
                                     </center>
                                     <ControlPanel
                                         compScoreDisplayPanelData={this.state.compScoreDisplayPanelData}
+                                        masterUsersList = {this.state.masterUsersList}
+                                        masterUpdateProposalsList = {this.state.masterUpdateProposalsList}
 
                                         defaultUpdateProposalVerdictAverageScore={this.state.compScoreDisplayPanelData.defaultUpdateProposalVerdictAverageScore}
                                         updateProposalVerdictAverageScoreSliderCallback = {this.handleUpdateProposalVerdictAverageScoreCallback}

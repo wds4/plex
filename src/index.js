@@ -171,6 +171,9 @@ import ConceptGraphsFrontEndSingleSpecificInstance from './plex/conceptGraphFron
 import ConceptGraphsFrontEndMakeNewSpecificInstance from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/specificInstances/makeNewSpecificInstance.js';
 import ConceptGraphsFrontEndSpecificInstancesMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/specificInstances/specificInstancesMainPage.js';
 
+import ConceptGraphsFrontEndSpecificInstanceDigestsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/specificInstanceDigests/specificInstanceDigestsMainPage.js';
+import ConceptGraphsFrontEndManageSpecificInstanceDigestFileTypes from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/specificInstanceDigests/manageSpecificInstanceDigestFileTypes.js';
+
 import ConceptGraphsFrontEndSingleConceptUpdatesMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/singleConceptUpdatesMainPage.js';
 import ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listOfSynonyms.js';
 import ConceptGraphsFrontEndSingleConceptUpdatesListOfUpdates from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/concepts/singleConcept/updates/listOfUpdates.js';
@@ -517,6 +520,8 @@ ReactDOM.render(
           <Route path="/ConceptGraphsFrontEndSingleSpecificInstance/:conceptslug" exact component={ConceptGraphsFrontEndSingleSpecificInstance} />
           <Route path="/ConceptGraphsFrontEndMakeNewSpecificInstance/:conceptslug" exact component={ConceptGraphsFrontEndMakeNewSpecificInstance} />
           <Route path="/ConceptGraphsFrontEndSpecificInstancesMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSpecificInstancesMainPage} />
+          <Route path="/ConceptGraphsFrontEndSpecificInstanceDigestsMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSpecificInstanceDigestsMainPage} />
+          <Route path="/ConceptGraphsFrontEndManageSpecificInstanceDigestFileTypes/:conceptslug" exact component={ConceptGraphsFrontEndManageSpecificInstanceDigestFileTypes} />
 
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesMainPage/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesMainPage} />
           <Route path="/ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms/:conceptslug" exact component={ConceptGraphsFrontEndSingleConceptUpdatesListOfSynonyms} />

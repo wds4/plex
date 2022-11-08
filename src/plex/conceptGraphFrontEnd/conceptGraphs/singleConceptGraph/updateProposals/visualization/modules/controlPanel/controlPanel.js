@@ -129,8 +129,11 @@ export default class GrapevineVisualControlPanel extends React.Component {
                         <UsersTab
                             compScoreDisplayPanelData={this.props.compScoreDisplayPanelData}
                             defaultUserTrustAverageScore={this.props.defaultUserTrustAverageScore}
+                            masterUsersList = {this.props.masterUsersList}
+
                             userTrustAverageScoreSliderCallback = {this.handleUserTrustAverageScoreCallback}
                             userTrustConfidenceSliderCallback = {this.handleUserTrustConfidenceCallback}
+
                         / >
                     </TabPanel>
 
@@ -138,6 +141,8 @@ export default class GrapevineVisualControlPanel extends React.Component {
                         <UpdateProposalsTab
                             compScoreDisplayPanelData={this.props.compScoreDisplayPanelData}
                             defaultUpdateProposalVerdictAverageScore={this.props.defaultUpdateProposalVerdictAverageScore}
+                            masterUpdateProposalsList = {this.props.masterUpdateProposalsList}
+
                             updateProposalVerdictAverageScoreSliderCallback = {this.handleUpdateProposalVerdictAverageScoreCallback}
                             updateProposalVerdictConfidenceSliderCallback = {this.handleUpdateProposalVerdictConfidenceCallback}
                         / >

@@ -1,4 +1,51 @@
 import React from 'react';
+import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
+
+const jQuery = require("jquery");
+
+const updateSingleUserTrustCompositeScore = async (oCSD) => {
+    delete oCSD.ratings;
+    delete oCSD.defaultRating;
+    delete oCSD.inheritedRatings;
+    delete oCSD.inverseRatings;
+    delete oCSD.fooR; // temporary
+    delete oCSD.fooIR; // temporary
+    console.log("handleMupdateCompositeScoreDataod5Callback; oCSD: "+JSON.stringify(oCSD,null,4))
+    // var compScoreDisplayPanelData_new = this.state.compScoreDisplayPanelData
+    // compScoreDisplayPanelData_new.strat5Coeff = newMod5Factor
+    // this.setState({compScoreDisplayPanelData: compScoreDisplayPanelData_new})
+    var sUtCS1 = jQuery("#utCompositeScoreContainer1").val()
+    var oUtCS1 = JSON.parse(sUtCS1)
+
+    var wordSlug = "userTrustCompositeScore_multiSpecificInstance_superset"
+    var wordName = "user trust composite score: multi specific instance, superset"
+    var wordTitle = "User Trust Composite Score: Multi Specific Instance, superset"
+    var wordDescription = "multiple specific instances stored in one file as one word, via the relationship: areSpecificInstancesOf the superset for the concept of userTrustCompositeScore.";
+
+    oUtCS1.wordData.slug = wordSlug;
+    oUtCS1.wordData.name = wordName;
+    oUtCS1.wordData.title = wordTitle;
+    oUtCS1.wordData.description = wordDescription;
+
+    var thisScore_peerID = oCSD.peerID;
+
+    // cycle through current scores; replace the score for the current user, based on peerID; keep scores for all other users unchanged
+    var aCurrentScores = MiscFunctions.cloneObj(oUtCS1.aUserTrustCompositeScoreData);
+    oUtCS1.aUserTrustCompositeScoreData = []
+    // first, re-add all user scores except the one for the current user (if a score has previously been stored)
+    for (var x=0;x<aCurrentScores.length;x++) {
+        var oNextScore = aCurrentScores[x];
+        var nextScore_peerID = oNextScore.peerID;
+        console.log("thisScore_peerID: "+thisScore_peerID+"; nextScore_peerID: "+nextScore_peerID)
+        if (thisScore_peerID != nextScore_peerID) {
+            oUtCS1.aUserTrustCompositeScoreData.push(oNextScore)
+        }
+    }
+    // Next, add the updated score for this user
+    oUtCS1.aUserTrustCompositeScoreData.push(oCSD)
+
+    jQuery("#utCompositeScoreContainer2").val(JSON.stringify(oUtCS1,null,4))
+}
 
 export default class CompScoreCalcPanel extends React.Component {
     constructor(props) {
@@ -6,6 +53,12 @@ export default class CompScoreCalcPanel extends React.Component {
         this.state = {
             data: null
         }
+    }
+
+    handleUserCompositeScoreData = async () => {
+        console.log("handleUserCompositeScoreData")
+        var oCSD = MiscFunctions.cloneObj(this.props.oSingleUserGrapevineScores);
+        await updateSingleUserTrustCompositeScore(oCSD)
     }
 
     async componentDidMount() {
@@ -23,7 +76,10 @@ export default class CompScoreCalcPanel extends React.Component {
         return (
             <>
                 <div style={{border:"1px solid purple",borderRadius:"5px",padding:"5px",display:"inline-block",width:"1450px",backgroundColor:"yellow",textAlign:"left"}}>
-                    <center>User Trust Score Calculations</center>
+                    <center>
+                        User Trust Score Calculations
+                        <div id="updateCSDataButton" className="doSomethingButton_small" onClick={this.handleUserCompositeScoreData} >update composite score data</div>
+                    </center>
 
                     <center>
                         <div style={{display:"inline-block",textAlign:"left"}} >

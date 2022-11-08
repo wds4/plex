@@ -11,7 +11,7 @@ export default class CompScoreCalcPanel extends React.Component {
         }
     }
 
-    handleUpdateCompositeScoreData = () => {
+    handleUpdateProposalVerdictCompositeScoreData = () => {
         var oCSD = MiscFunctions.cloneObj(this.props.oSingleUpdateProposalVerdictScores);
         delete oCSD.ratings;
         delete oCSD.defaultRating;
@@ -61,7 +61,7 @@ export default class CompScoreCalcPanel extends React.Component {
                 <div style={{border:"1px solid purple",borderRadius:"5px",padding:"5px",display:"inline-block",width:"1450px",backgroundColor:"yellow",textAlign:"left"}}>
                     <center>
                         Update Proposal Verdict Score Calculations
-                        <div id="updateCSDataButton" className="doSomethingButton_small" onClick={this.handleUpdateCompositeScoreData} >update composite score data</div>
+                        <div id="updateCSDataButton" className="doSomethingButton_small" onClick={this.handleUpdateProposalVerdictCompositeScoreData} >update composite score data</div>
                     </center>
 
                     <center>
