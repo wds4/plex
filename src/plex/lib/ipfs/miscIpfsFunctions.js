@@ -15,6 +15,8 @@ export const ipfs = IpfsHttpClient({
 //
 ////////////////////////////////////////////////////////////////////////////
 
+// TO_DO: REPLACING MiscIpfsFunctions.returnMyPeerID() with cg.ipfs.returnMyPeerID()
+// FINISHED: no
 export const returnMyPeerID = async () => {
     var oIpfsID = await ipfs.id();
     var myPeerID = oIpfsID.id;
@@ -22,6 +24,8 @@ export const returnMyPeerID = async () => {
     return myPeerID
 }
 
+// TO_DO: REPLACING MiscIpfsFunctions.returnMyUsername() with cg.ipfs.returnMyUsername()
+// FINISHED: no
 export const returnMyUsername = async () => {
     var ipfsPath = "/grapevineData/userProfileData/myProfile.txt";
     var chunks = []

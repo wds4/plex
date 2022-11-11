@@ -5,6 +5,8 @@ import * as VisjsFunctions from '../../functions/visjsFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
 import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import * as CompScoreCalcFunctions from '../../lib/grapevine/compScoreCalcFunctions.js'
+import * as ConceptGraphLib from '../../lib/ipfs/conceptGraphLib.js'
+import * as GrapevineLib from '../../lib/ipfs/grapevineLib.js'
 import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
@@ -12,6 +14,9 @@ import * as VisStyleConstants from '../../lib/visjs/visjs-style';
 import AttenuationSlider from './modules/attenuationSlider.js'
 import ControlPanel from './modules/controlPanel/controlPanel.js'
 import CompScoreCalcPanel from './compScoreCalcPanel.js'
+
+const cg = ConceptGraphLib.cg;
+const gv = GrapevineLib.gv;
 
 const electronFs = window.require('fs');
 

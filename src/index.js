@@ -138,6 +138,9 @@ import HelloWorldWriteFile from './plex/settings/helloWorld/helloWorldWriteFile.
 import HelloWorldReadFile from './plex/settings/helloWorld/helloWorldReadFile.js';
 import HelloWorldUploadImageToIPFS from './plex/settings/helloWorld/helloWorldUploadImageToIPFS.js';
 
+import ConceptGraphAPI from './plex/settings/documents/API.js';
+import PlexFAQ from './plex/settings/documents/plexFAQ.js';
+
 import ConceptGraphsFrontEnd_WordsMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/words/wordsMainPage.js';
 import ConceptGraphsFrontEnd_TableOfWords from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/words/tableOfWords/tableOfWords.js';
 import ConceptGraphsFrontEnd_SingleWordMainPage from './plex/conceptGraphFrontEnd/conceptGraphs/singleConceptGraph/words/singleWord/singleWordMainPage.js';
@@ -485,6 +488,9 @@ ReactDOM.render(
           <Route path="/HelloWorldWriteFile" exact component={HelloWorldWriteFile} />
           <Route path="/HelloWorldReadFile" exact component={HelloWorldReadFile} />
           <Route path="/HelloWorldUploadImageToIPFS" exact component={HelloWorldUploadImageToIPFS} />
+
+          <Route path="/ConceptGraphAPI" exact component={ConceptGraphAPI} />
+          <Route path="/PlexFAQ" exact component={PlexFAQ} />
 
           <Route path="/ConceptGraphsFrontEnd_WordsMainPage/:ipnsForMainSchemaForConceptGraph" exact component={ConceptGraphsFrontEnd_WordsMainPage} />
 

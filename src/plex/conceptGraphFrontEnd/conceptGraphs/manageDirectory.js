@@ -5,8 +5,11 @@ import LeftNavbar2 from '../../navbars/leftNavbar2/cgFe_conceptGraphsMainPage_le
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js';
-// import * as MiscFunctions from '../../functions/miscFunctions.js';
-// import * as InitDOMFunctions from '../../functions/transferSqlToDOM.js';
+import * as ConceptGraphLib from '../../lib/ipfs/conceptGraphLib.js'
+import * as GrapevineLib from '../../lib/ipfs/grapevineLib.js'
+
+const cg = ConceptGraphLib.cg;
+const gv = GrapevineLib.gv;
 
 const jQuery = require("jquery");
 
@@ -19,8 +22,11 @@ var oPCGD = {
 }
 
 const generateNewFile = async () => {
-    var myPeerID = await MiscIpfsFunctions.returnMyPeerID();
-    var myUsername = await MiscIpfsFunctions.returnMyUsername();
+    // var myPeerID = await MiscIpfsFunctions.returnMyPeerID();
+    // var myUsername = await MiscIpfsFunctions.returnMyUsername();
+
+    var myPeerID = await cg.ipfs.returnMyPeerID();
+    var myUsername = await cg.ipfs.returnMyUsername();
 
     var oConceptGraphsDirectory = await MiscFunctions.createNewWordByTemplate("conceptGraphsDirectory");
     oConceptGraphsDirectory.metaData.stewardPeerID = myPeerID;
@@ -51,7 +57,8 @@ const saveThisRawFile = async () => {
 const loadExistingFile = async () => {
     var pCGb = window.ipfs.pCGb;
     var path = pCGb + "conceptGraphsDirectory/node.txt";
-    var oConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    // var oConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    var oConceptGraphsDirectory = await cg.mfs.get(path)
     if (oConceptGraphsDirectory) {
         jQuery("#conceptGraphsDirectoryContainer").val(JSON.stringify(oConceptGraphsDirectory,null,4))
     } else {
@@ -67,7 +74,8 @@ const updateArrayOfLocalConceptGraphs = async () => {
     for (var a=0;a<aConceptGraphs.length;a++) {
         var nextConceptGraphIpns = aConceptGraphs[a];
         var path = pCGb + nextConceptGraphIpns + "/words/mainSchemaForConceptGraph/node.txt"
-        var oMainSchemaForConceptGraph = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+        // var oMainSchemaForConceptGraph = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+        var oMainSchemaForConceptGraph = await cg.mfs.get(path)
         console.log("oMainSchemaForConceptGraph: "+JSON.stringify(oMainSchemaForConceptGraph,null,4))
         var wordSlug = oMainSchemaForConceptGraph.wordData.slug;
         var conceptGraphSlug = oMainSchemaForConceptGraph.conceptGraphData.slug;
@@ -120,7 +128,8 @@ const saveThisPublicRawFile = async () => {
 const loadExistingPublicFile = async () => {
     var pCG = window.ipfs.pCG;
     var path = pCG + "public/publicConceptGraphsDirectory/node.txt";
-    var oPublicConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    // var oPublicConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    var oPublicConceptGraphsDirectory = await cg.mfs.get(path)
     if (oPublicConceptGraphsDirectory) {
         jQuery("#publicConceptGraphsDirectoryContainer").val(JSON.stringify(oPublicConceptGraphsDirectory,null,4))
     } else {
@@ -134,11 +143,13 @@ const loadExistingPublicFile = async () => {
 const populateSpecialRolesFields = async () => {
     var pCGb = window.ipfs.pCGb;
     var path = pCGb + "conceptGraphsDirectory/node.txt";
-    var oConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    // var oConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    var oConceptGraphsDirectory = await cg.mfs.get(path)
 
     var pCG = window.ipfs.pCG;
     var path = pCG + "public/publicConceptGraphsDirectory/node.txt";
-    var oPublicConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    // var oPublicConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+    var oPublicConceptGraphsDirectory = await cg.mfs.get(path)
 
     if (oConceptGraphsDirectory) {
         var aLocalConceptGraphs = oConceptGraphsDirectory.conceptGraphsDirectoryData.localConceptGraphs;
@@ -318,11 +329,13 @@ export default class ConceptGraphsFrontEndManageDirectory extends React.Componen
         jQuery("#implementSpecialRolesChangesButton").click(async function(){
             var pCGb = window.ipfs.pCGb;
             var path = pCGb + "conceptGraphsDirectory/node.txt";
-            var oConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+            // var oConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+            var oConceptGraphsDirectory = await cg.mfs.get(path)
 
             var pCG = window.ipfs.pCG;
             var path = pCG + "public/publicConceptGraphsDirectory/node.txt";
-            var oPublicConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+            // var oPublicConceptGraphsDirectory = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+            var oPublicConceptGraphsDirectory = await cg.mfs.get(path)
 
             oPublicConceptGraphsDirectory.conceptGraphsDirectoryData.public = []
 

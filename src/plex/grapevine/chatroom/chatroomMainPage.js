@@ -3,6 +3,11 @@ import Masthead from '../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/grapevine_leftNav1';
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js'
+import * as ConceptGraphLib from '../../lib/ipfs/conceptGraphLib.js'
+import * as GrapevineLib from '../../lib/ipfs/grapevineLib.js'
+
+const cg = ConceptGraphLib.cg;
+const gv = GrapevineLib.gv;
 
 const jQuery = require("jquery");
 

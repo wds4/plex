@@ -1234,3 +1234,86 @@
     width:400px;
     background-color:#DFDFDF;
 }
+.apiMajorSectionContainer {
+    padding-left:50px;
+}
+.apiMajorSectionDescription {
+    padding-left:17px;
+    display:none;
+}
+.apiMajorSectionDescriptionB {
+    padding-left:17px;
+}
+.apiMajorSectionTitle {
+    font-size:16px;
+}
+.apiMajorSectionContainerContainerContainer {
+    width:1000px;
+    display:inline-block;
+}
+.apiMajorSectionContainerContainerTop {
+    width:400px;
+    overflow:scroll;
+    display:inline-block;
+}
+.apiMajorSectionContainerContainerSubTop {
+    width:95%;
+    overflow:scroll;
+}
+.apiMajorSectionContainerContainer {
+    margin:10px;
+    padding:5px;
+    border:1px dashed grey;
+}
+.apiMajorSectionContainerContainer li {
+    color:purple;
+    font-size:14px;
+}
+.apiMajorSectionConceptGraphContainerContainer {
+    padding:3px;
+    background-color:#CCFFCC;
+    margin-bottom:10px;
+}
+.apiMajorSectionGrapevineContainerContainer {
+    padding:3px;
+    background-color:#CCCCFF;
+    margin-bottom:10px;
+}
+.apiMajorSectionPlexContainerContainer {
+    padding:3px;
+    background-color:#FFCCCC;
+    margin-bottom:10px;
+}
+.apiParamCol1 {
+    display:inline-block;
+    width:60px;
+}
+.apiParamCol2 {
+    display:inline-block;
+    width:750px;
+}
+.apiPageTable {
+    border:1px solid black;
+    padding:2px;
+}
+.apiPageTable tr th {
+    border:1px solid black;
+    padding:2px;
+}
+.apiPageTable tr td {
+    border:1px solid black;
+    padding:2px;
+}
+.apiMajorSectionExample {
+    background-color:#CFCFCF;
+    padding:5px;
+    margin:2px;
+}
+.uniqueIdentifierStyle {
+    color:red;
+}
+.commandNumberContainer {
+    display:inline-block;
+    float:right;
+    color:grey;
+}

@@ -6,7 +6,12 @@ import LeftNavbar2 from '../../navbars/leftNavbar2/cgFe_conceptGraphsMainPage_le
 import * as MiscFunctions from '../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../lib/ipfs/miscIpfsFunctions.js';
 import * as ConceptGraphInMfsFunctions from '../../lib/ipfs/conceptGraphInMfsFunctions.js';
+import * as ConceptGraphLib from '../../lib/ipfs/conceptGraphLib.js'
+import * as GrapevineLib from '../../lib/ipfs/grapevineLib.js'
 import sendAsync from '../../renderer.js';
+
+const cg = ConceptGraphLib.cg;
+const gv = GrapevineLib.gv;
 
 const jQuery = require("jquery");
 jQuery.DataTable = require("datatables.net");
@@ -58,7 +63,8 @@ export default class ConceptGraphsFrontEndTable extends React.Component {
             console.log("aConceptGraphs nextDirectory: "+nextDirectory)
             var path = pCGb + nextDirectory + "/words/mainSchemaForConceptGraph/node.txt"
             console.log("path: "+path)
-            var oMainSchemaForConceptGraph = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+            // var oMainSchemaForConceptGraph = await ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath(path)
+            var oMainSchemaForConceptGraph = await cg.mfs.get(path)
             // console.log("oMainSchemaForConceptGraph: "+JSON.stringify(oMainSchemaForConceptGraph,null,4))
             if (oMainSchemaForConceptGraph) {
                 var cgSlug = oMainSchemaForConceptGraph.conceptGraphData.slug;

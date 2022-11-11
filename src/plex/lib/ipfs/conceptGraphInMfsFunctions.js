@@ -521,6 +521,7 @@ export const addOrUpdateWordInLocalConceptGraph = async (pCG0,ipns) => {
 // where [activePathDir] is derived from the last 10 characters of the IPNS generated using keyname:
 // plex_pathToActiveConceptGraph_[last 10 digits of local peerID]
 // This function returns the IPNS; if IPNS not yet generated, it will generate it and then return it
+// ConceptGraphInMfsFunctions.returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir) to be replaced by cg.mfs.baseDirectory()
 export const returnIPNSForCompleteCGPathDir = async (keyname_forActiveCGPathDir) => {
     // keyname generated from myPeerID like this:
     // var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
@@ -574,6 +575,7 @@ export const loadActiveIpfsConceptGraph = async () => {
     var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
     var ipns_forActiveCGPathDir = await returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
     var ipns10_forActiveCGPathDir = ipns_forActiveCGPathDir.slice(-10);
+
     var pCGb = "/plex/conceptGraphs/" + ipns10_forActiveCGPathDir + "/";
     // var pCGs = "/plex/conceptGraphs/"+ipns10_forActiveCGPathDir+"/mainSchemaForConceptGraph/node.txt"
     var pCGs = pCGb + "mainSchemaForConceptGraph/node.txt"
@@ -823,6 +825,8 @@ export const lookupWordBySlug_specifyConceptGraph = async (ipns,slug) => {
     return oWord;
 }
 
+// 11 Nov 22: TO_DO: REPLACING this fxn with cg.mfs.get
+// FINISHED: no
 export const fetchObjectByLocalMutableFileSystemPath = async (path) => {
     console.log("fetchObjectByLocalMutableFileSystemPath; path: "+path)
     // var chunks = []

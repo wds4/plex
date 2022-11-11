@@ -21,7 +21,7 @@ const executeConceptUpdate_topLevelPropertyValueChange_specifyConceptGraph = asy
 
     oCon.conceptData[key] = newVal
     console.log("executeConceptUpdate_topLevelPropertyValueChange_specifyConceptGraph; oCon: "+JSON.stringify(oCon,null,4))
-    // await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(ipns,oCon)
+    await ConceptGraphInMfsFunctions.addWordToMfsConceptGraph_specifyConceptGraph(ipns,oCon)
 }
 
 export default class ConceptGraphsFrontEndSingleConceptListOfUpdates extends React.Component {

@@ -4,6 +4,10 @@ import LeftNavbar1 from '../../../../../navbars/leftNavbar1/conceptGraphFront_le
 import LeftNavbar2 from '../../../../../navbars/leftNavbar2/cgFe_concepts_singleConcept_leftNav2';
 import * as MiscIpfsFunctions from '../../../../../lib/ipfs/miscIpfsFunctions.js'
 import * as ConceptGraphInMfsFunctions from '../../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as ConceptGraphLib from '../../../../../lib/ipfs/conceptGraphLib.js'
+import * as GrapevineLib from '../../../../../lib/ipfs/grapevineLib.js'
+const cg = ConceptGraphLib.cg;
+const gv = GrapevineLib.gv;
 
 const jQuery = require("jquery");
 
@@ -47,7 +51,9 @@ const loadConceptData = async (cid) => {
 }
 
 export const generateNodeHTML = async (nextNode_slug,lookupChildTypes,isTopLevel) => {
-    var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    // var viewingConceptGraph_ipns = window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph;
+    var viewingConceptGraph_ipns = await cg.conceptGraph.resolve("currently-viewing")
+    // console.log("viewingConceptGraph_ipns: "+viewingConceptGraph_ipns)
     var propertyPath = jQuery("#propertyPathContainer").html()
 
     var aChildren = lookupChildTypes[nextNode_slug]
