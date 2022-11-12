@@ -25,6 +25,7 @@ import { cgExample_301 } from './libraryExamples/301.js'
 import { cgExample_310 } from './libraryExamples/310.js'
 import { cgExample_10001 } from './libraryExamples/10001.js'
 import { cgExample_10002 } from './libraryExamples/10002.js'
+import { cgExample_10101 } from './libraryExamples/10101.js'
 
 const jQuery = require("jquery");
 
@@ -64,6 +65,8 @@ export default class ConceptGraphAPI extends React.Component {
 
         jQuery("#cgExample_10001").html(cgExample_10001)
         jQuery("#cgExample_10002").html(cgExample_10002)
+
+        jQuery("#cgExample_10101").html(cgExample_10101)
 
         var cgid = "conceptFor_user";
         var cgid_ipns = await cg.resolve(cgid);
@@ -884,9 +887,9 @@ export default class ConceptGraphAPI extends React.Component {
                                     Add a user to the userlist.
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="0" >
+                                    <li className="commandLi" data-commandnumber="10101" >
                                         gv.user.trust.get(cgid,[options])
-                                        <div className="commandNumberContainer" >x</div>
+                                        <div className="commandNumberContainer" >10101</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Return the trust score of the indicated user. Multiple options to indicate which trust score to obtain.
@@ -906,6 +909,22 @@ export default class ConceptGraphAPI extends React.Component {
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Retrieve a list of ratings related to this individual. Multiple options (by user, of user, on certain topic, etc)
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="0" >
+                                        gv.ratings.ls([options])
+                                        <div className="commandNumberContainer" >* 11001</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Retrieve a list of ratings
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="0" >
+                                        gv.compositeScores.ls([options])
+                                        <div className="commandNumberContainer" >* 12001</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Retrieve a list of compositeScores
                                     </div>
                                 </div>
 
@@ -2023,6 +2042,70 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_10002" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_10101" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        gv.user.trust.get(cgid,[options])
+                                        <div className="commandNumberContainer" >10101</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Return the trust score of the indicated user. Multiple options to indicate which trust score to obtain.
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>cgid</td>
+                                                <td><span className="uniqueIdentifierStyle" >cgid(ipns)</span></td>
+                                                <td>The cgid of the indicated user.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>string, integer, object</td>
+                                                <td>The trust score of the indicated user. Format depends on requested information.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_10101" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 

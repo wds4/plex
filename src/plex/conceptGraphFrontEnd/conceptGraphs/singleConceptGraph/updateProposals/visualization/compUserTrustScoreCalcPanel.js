@@ -3,7 +3,7 @@ import * as MiscFunctions from '../../../../../functions/miscFunctions.js';
 
 const jQuery = require("jquery");
 
-const updateSingleUserTrustCompositeScore = async (oCSD) => {
+export const updateSingleUserTrustCompositeScore = async (oCSD) => {
     delete oCSD.ratings;
     delete oCSD.defaultRating;
     delete oCSD.inheritedRatings;
@@ -45,6 +45,8 @@ const updateSingleUserTrustCompositeScore = async (oCSD) => {
     oUtCS1.aUserTrustCompositeScoreData.push(oCSD)
 
     jQuery("#utCompositeScoreContainer2").val(JSON.stringify(oUtCS1,null,4))
+
+    return true;
 }
 
 export default class CompScoreCalcPanel extends React.Component {

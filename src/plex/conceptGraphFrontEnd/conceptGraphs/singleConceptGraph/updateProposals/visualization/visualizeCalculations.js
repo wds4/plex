@@ -760,7 +760,7 @@ const makeVisGraph_updateProposalScoring = async (updateProposalList,userList,aR
     )
 }
 
-var aUserTrustScores = [];
+export var aUserTrustScores = [];
 var aUpdateProposalVerdictScores = [];
 
 var lookupUserNumberByPeerID = {};
@@ -914,9 +914,14 @@ export const setupGrapevineCompositeScoreVars_user = async (aUserPeerIDs) => {
             aUserTrustScores[c].users[u].avatarCid = lookupAvatarCidFromPeerID[nextPeerID];
             aUserTrustScores[c].users[u].seedUser = false;
             aUserTrustScores[c].users[u].compositeScoreData = MiscFunctions.cloneObj(window.compositeUserTrustScoreData);
+            aUserTrustScores[c].users[u].compositeScoreData.compositeScoreNumber = c;
+            aUserTrustScores[c].users[u].compositeScoreData.compositeScoreType = nextCSType;
             if (nextPeerID == seedUserPeerID) {
                 aUserTrustScores[c].users[u].compositeScoreData.seedUser = true;
                 aUserTrustScores[c].users[u].compositeScoreData.selectedUser = true;
+                // aUserTrustScores[c].users[u].compositeScoreData.peerID = nextPeerID;
+                // aUserTrustScores[c].users[u].compositeScoreData.username = lookupUsernameFromPeerID[nextPeerID];
+                // aUserTrustScores[c].users[u].compositeScoreData.avatarCid = lookupAvatarCidFromPeerID[nextPeerID];
                 aUserTrustScores[c].users[u].compositeScoreData.radiusMultiplier = 1.5;
                 aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.certainty = 100;
                 aUserTrustScores[c].users[u].compositeScoreData.standardCalculations.average = 1;
@@ -1550,6 +1555,8 @@ window.compositeUserTrustScoreData = {
     selectedUser: false,
     numberOfRatings: 0,
     radiusMultiplier: 1,
+    compositeScoreNumber: null,
+    compositeScoreType: null,
     standardCalculations: {
         sumOfProducts: null,
         certainty: defCon,
@@ -1731,6 +1738,8 @@ export default class ConceptGraphsFrontEndVisualizeScoreCalculationsOfUpdateProp
                     "selectedUser": false,
                     "numberOfRatings": 1,
                     "radiusMultiplier": 1,
+                    "compositeScoreNumber": null,
+                    "compositeScoreType": null,
                     "standardCalculations": {
                         "sumOfProducts": 0.01283,
                         "certainty": 0.01806,

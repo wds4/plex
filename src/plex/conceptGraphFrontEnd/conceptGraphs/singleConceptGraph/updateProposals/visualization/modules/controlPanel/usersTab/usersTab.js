@@ -6,6 +6,7 @@ import * as MiscFunctions from '../../../../../../../../functions/miscFunctions.
 import * as ConceptGraphInMfsFunctions from '../../../../../../../../lib/ipfs/conceptGraphInMfsFunctions.js'
 import noUiSlider from "nouislider";
 import "nouislider/distribute/nouislider.min.css";
+import { aUserTrustScores } from '../../../visualizeCalculations.js';
 
 const jQuery = require("jquery");
 jQuery.DataTable = require("datatables.net");
@@ -103,6 +104,49 @@ async function makeThisPageTable(usersDataSet) {
         }
     });
     console.log("makeThisPageTable B")
+}
+
+export const updateAllUsersTrustCompositeScore = async (masterUsersList) => {
+    console.log("updateAllUsersTrustCompositeScore")
+    for (var u=0;u<masterUsersList.length;u++) {
+        var user_ipns = masterUsersList[u];
+        console.log("user_ipns: "+user_ipns)
+    }
+
+    var sUtCS1 = jQuery("#utCompositeScoreContainer1").val()
+    var oUtCS1 = JSON.parse(sUtCS1)
+
+    var wordSlug = "userTrustCompositeScore_multiSpecificInstance_superset"
+    var wordName = "user trust composite score: multi specific instance, superset"
+    var wordTitle = "User Trust Composite Score: Multi Specific Instance, superset"
+    var wordDescription = "multiple specific instances stored in one file as one word, via the relationship: areSpecificInstancesOf the superset for the concept of userTrustCompositeScore.";
+
+    oUtCS1.wordData.slug = wordSlug;
+    oUtCS1.wordData.name = wordName;
+    oUtCS1.wordData.title = wordTitle;
+    oUtCS1.wordData.description = wordDescription;
+
+    var aUTS = MiscFunctions.cloneObj(aUserTrustScores)
+
+    for (var c=0;c<aUTS.length;c++) {
+        var compositeScoreNumber = c;
+        if (compositeScoreNumber==2) {
+            var aUsers = aUTS[c].users;
+            var aAllScores = []
+            for (var u=0;u<aUsers.length;u++) {
+                var oCSD = aUsers[u]
+                delete oCSD.ratings;
+                delete oCSD.defaultRating;
+                delete oCSD.inheritedRatings;
+                delete oCSD.inverseRatings;
+                delete oCSD.fooR; // temporary
+                delete oCSD.fooIR; // temporary
+                aAllScores.push(oCSD)
+            }
+            oUtCS1.aUserTrustCompositeScoreData = aAllScores
+            jQuery("#utCompositeScoreContainer2").val(JSON.stringify(oUtCS1,null,4))
+        }
+    }
 }
 
 
@@ -259,6 +303,10 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
             jQuery("#usersTableContainer").css("display","none")
             jQuery("#utCompositeScoresRawFileContainer").css("display","block")
         })
+        jQuery("#updateUtRawfileCompositeScoreButton").click(async function(){
+            console.log("updateUtRawfileCompositeScoreButton clicked")
+            await updateAllUsersTrustCompositeScore(masterUsersList);
+        })
     }
     render() {
         return (
@@ -291,6 +339,7 @@ export default class GrapevineVisualControlPanelUsersTab extends React.Component
                         </div>
 
                         <div id="utCompositeScoresRawFileContainer" style={{display:"none"}} >
+                            <div className="doSomethingButton_small" id="updateUtRawfileCompositeScoreButton">update file (below)</div>
                             <div className="doSomethingButton_small" id="saveUtCompositeScoreButton">save</div>
                             <div style={{marginTop:"5px"}} >
                                 <textarea id="utCompositeScoreContainer1" style={{width:"95%",height:"200px"}} >
