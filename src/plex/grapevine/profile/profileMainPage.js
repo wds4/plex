@@ -340,7 +340,6 @@ export default class ProfileMainPage extends React.Component {
                                         <UploadProfileImage />
                                     </div>
                                     <img id="avatarBox" />
-
                                 </div>
 
                                 <div style={{display:"inline-block",border:"1px dashed grey",width:"800px",height:"400px",position:"relative"}}>

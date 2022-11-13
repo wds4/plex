@@ -1117,6 +1117,7 @@ export const createNewWordFromSchemas = async (aParentTemplates) => {
     // use ajv6 validator to generate skeleton template using parentJSONSchemas
 }
 
+// to be replaced by: cg.word.create(newWordType)
 export const createNewWordByTemplate = async (newWordType) => {
     // console.log("createNewWordByTemplate; newWordType: "+newWordType)
     // var oFoo = window.lookupWordTypeTemplate[newWordType];

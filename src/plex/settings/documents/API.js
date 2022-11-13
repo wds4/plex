@@ -10,6 +10,9 @@ import { cgidTypeExample } from './libraryExamples/cgidTypeExample.js'
 import { cgidExample } from './libraryExamples/cgidExample.js'
 import { setupContainer } from './libraryExamples/setupContainer.js'
 
+import { cgExample_11 } from './libraryExamples/11.js'
+import { cgExample_21 } from './libraryExamples/21.js'
+import { cgExample_22 } from './libraryExamples/22.js'
 import { cgExample_62 } from './libraryExamples/62.js'
 import { cgExample_63 } from './libraryExamples/63.js'
 import { cgExample_61 } from './libraryExamples/61.js'
@@ -20,10 +23,9 @@ import { cgExample_41 } from './libraryExamples/41.js'
 import { cgExample_42 } from './libraryExamples/42.js'
 import { cgExample_51 } from './libraryExamples/51.js'
 import { cgExample_52 } from './libraryExamples/52.js'
-import { cgExample_21 } from './libraryExamples/21.js'
-import { cgExample_22 } from './libraryExamples/22.js'
 import { cgExample_301 } from './libraryExamples/301.js'
 import { cgExample_310 } from './libraryExamples/310.js'
+import { cgExample_502 } from './libraryExamples/502.js'
 import { cgExample_10001 } from './libraryExamples/10001.js'
 import { cgExample_10002 } from './libraryExamples/10002.js'
 import { cgExample_10101 } from './libraryExamples/10101.js'
@@ -48,6 +50,10 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgidExample").html(cgidExample)
         jQuery("#cgidTypeExample").html(cgidTypeExample)
 
+        jQuery("#cgExample_11").html(cgExample_11)
+        jQuery("#cgExample_21").html(cgExample_21)
+        jQuery("#cgExample_22").html(cgExample_22)
+
         jQuery("#cgExample_62").html(cgExample_62)
         jQuery("#cgExample_63").html(cgExample_63)
         jQuery("#cgExample_61").html(cgExample_61)
@@ -62,11 +68,10 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgExample_51").html(cgExample_51)
         jQuery("#cgExample_52").html(cgExample_52)
 
-        jQuery("#cgExample_21").html(cgExample_21)
-        jQuery("#cgExample_22").html(cgExample_22)
-
         jQuery("#cgExample_301").html(cgExample_301)
         jQuery("#cgExample_310").html(cgExample_310)
+
+        jQuery("#cgExample_502").html(cgExample_502)
 
         jQuery("#cgExample_10001").html(cgExample_10001)
         jQuery("#cgExample_10002").html(cgExample_10002)
@@ -156,9 +161,9 @@ export default class ConceptGraphAPI extends React.Component {
                             <div className="apiMajorSectionContainerContainerTop apiMajorSectionContainerContainer" style={{height:"800px",overflow:"scroll"}} >
                                 Top-level API
                                 <div className="apiMajorSectionConceptGraphContainerContainer" >
-                                    <li className="commandLi" data-commandnumber="x" >
-                                        cg.ipfs.add(cgid,[options])
-                                        <div className="commandNumberContainer" >x</div>
+                                    <li className="commandLi" data-commandnumber="11" >
+                                        cg.ipfs.add(file,[options])
+                                        <div className="commandNumberContainer" >11</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Add the provided cgid to the ipfs. cgid type must correspond to a file (either object, which will be stringified, or already-stringified file).
@@ -227,7 +232,7 @@ export default class ConceptGraphAPI extends React.Component {
                                         <div className="commandNumberContainer" >52</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
-                                    Return the MFS path to the node indicated by the input cgid 
+                                    Return the MFS path to the node indicated by the input cgid
                                     </div>
                                 </div>
 
@@ -645,9 +650,9 @@ export default class ConceptGraphAPI extends React.Component {
                                     Outputs an array of words. Multiple options exist, e.g. limit to particular worType.
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="x" >
+                                    <li className="commandLi" data-commandnumber="502" >
                                         cg.word.create(name,wordType,[options])
-                                        <div className="commandNumberContainer" >x</div>
+                                        <div className="commandNumberContainer" >502</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Creates a new word of the indicated wordType(s). Heavy use will be made of options to specifiy additional details.
@@ -1445,6 +1450,73 @@ export default class ConceptGraphAPI extends React.Component {
                                     </div>
                                 </div>
 
+                                <div id="commandNumber_11" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.ipfs.add(file,[options])
+                                        <div className="commandNumberContainer" >11</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Add the provided file to the ipfs and returns its cid. The
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>file</td>
+                                                <td>string, object, (other?)</td>
+                                                <td>The file to be added to the ipfs.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>inputFormat</td>
+                                                <td>string</td>
+                                                <td>object</td>
+                                                <td>The type of the file to be added. If the input is an object, it will be stringified before adding it.
+                                                The function will try to determine the format of the input file so specification of this option is not strictly necessary.
+                                                Other options may be added to modify the default stringify parameters.
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>cid</td>
+                                                <td>the cid of the added file</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_11" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
                                 <div id="commandNumber_21" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
                                     <li>
                                         cg.ipfs.returnMyPeerID([options])
@@ -1722,6 +1794,73 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_310" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_502" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.word.create(wordType,[options])
+                                        <div className="commandNumberContainer" >502</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Creates a new word of the indicated wordType(s). Heavy use will be made of options to specifiy additional details.
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>wordType</td>
+                                                <td>string</td>
+                                                <td>the desired wordType
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>method</td>
+                                                <td>string</td>
+                                                <td>sql</td>
+                                                <td>The method of creating the new word. Options include; sql (old method, will be phased out); others to be created.
+                                                (NeuroCore will need to maintain a database of templates for every concept. Make a concept called conceptTemplates or something like that.)
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>object</td>
+                                                <td>A new word, including new ipns and keyname, as an object. It will not yet have been stored in the IPFS of MFS.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_502" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 

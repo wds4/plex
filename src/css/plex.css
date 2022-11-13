@@ -1376,6 +1376,8 @@
     border-radius:5px;
     margin-left:20px;
     margin-right:20px;
+    cursor:pointer;
+    transition: all 0.1s ease;
 }
 #submitPostButton:hover {
     background-color:yellow;

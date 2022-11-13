@@ -50,6 +50,22 @@ export var cg = {};
 
 cg.ipfs = {};
 
+// incomplete
+// cg.ipfs.add replaces addDataToIPFS (from profileMainPage) and probably some other functions too
+// TO DO: detect filetype of input file
+// also look at options for filetype )
+// if object, stringify
+// ? allow options to alter stringify parameters (although probably would not use much)
+cg.ipfs.add = async (file,oOptions) => {
+    var fileType = "string" // default
+
+    if (fileType=="string") {
+        const ipfsHash = await ipfs.add(file);
+        return ipfsHash.cid.toString();
+    }
+    return false;
+}
+
 // cg.ipfs.returnMyPeerID REPLACES: MiscIpfsFunctions.returnMyPeerID
 cg.ipfs.returnMyPeerID = async (oOptions) => {
     var oIpfsID = await ipfs.id();
@@ -379,5 +395,40 @@ cg.conceptGraph.resolve = async (role, oOptions) => {
     return result;
 }
 cg.resolve = async (role, oOptions) => {
-    return "blah from conceptGraph.resolve";
+    return "blah from cg.resolve";
+}
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+cg.word = {};
+// cg.word.create replaces MiscFunctions.createNewWordByTemplate()
+cg.word.create = async (wordType, oOptions) => {
+    // return "blah from conceptGraph.resolve";
+    // console.log("createNewWordByTemplate; newWordType: "+newWordType)
+    // var oFoo = window.lookupWordTypeTemplate[newWordType];
+    // console.log("createNewWordByTemplate; oFoo: "+JSON.stringify(oFoo,null,4))
+    var newWord_obj = MiscFunctions.cloneObj(window.lookupWordTypeTemplate[wordType]);
+
+    // var myConceptGraph = window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].tableName;
+    var myConceptGraph = cg.conceptGraph.resolve("active",{outputCgidType:"slug"})
+    newWord_obj.globalDynamicData.myConceptGraphs.push(myConceptGraph);
+
+    var randomNonce = Math.floor(Math.random() * 1000);
+    var currentTime = Date.now();
+    var newKeyname = "plexWord_"+wordType+"_"+currentTime+"_"+randomNonce;
+    var generatedKey_obj = await ipfs.key.gen(newKeyname, {
+        type: 'rsa',
+        size: 2048
+    })
+    var newWord_ipns = generatedKey_obj["id"];
+    var generatedKey_name = generatedKey_obj["name"];
+    // console.log("generatedKey_obj id: "+newWord_ipns+"; name: "+generatedKey_name);
+    newWord_obj.metaData.ipns = newWord_ipns;
+    newWord_obj.metaData.keyname = newKeyname;
+
+    var newWord_slug = wordType+"_"+newWord_ipns.slice(newWord_ipns.length-6);
+    newWord_obj.wordData.slug = newWord_slug;
+
+    return newWord_obj;
 }
