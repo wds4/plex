@@ -54,7 +54,7 @@ export default class PlexAppsNavPage extends React.Component {
                                     <center>decentralized Search</center>
                                 </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedTwitterHome'>
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/PitterHome'>
                                     <center>decentralized Twitter</center>
                                 </NavLink>
 

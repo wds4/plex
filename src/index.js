@@ -92,8 +92,10 @@ import CrowdscreenedGroupsHome from './plex/crowdscreenedGroups/crowdscreenedGro
 import DecentralizedRedditHome from './plex/dReddit/dRedditHome.js';
 import DecentralizedOntologiesHome from './plex/dOntologies/dOntologiesHome.js';
 import DecentralizedQuestionsAndAnswersHome from './plex/askPlex/dQuestionsAndAnswersHome.js';
-import DecentralizedTwitterHome from './plex/dTwitter/dTwitterHome.js';
 import DecentralizedSearchHome from './plex/dSearch/dSearchHome.js';
+
+import PitterHome from './plex/pitter/pitterHome.js';
+import PitterTrailMainPage from './plex/pitter/trail/trailMainPage.js';
 
 import GrapevineHome from './plex/grapevine/grapevineHome.js';
 import GrapevineSettingsMainPage from './plex/grapevine/settings/generalSettings.js';
@@ -452,10 +454,11 @@ ReactDOM.render(
 
           <Route path="/DecentralizedOntologiesHome" exact component={DecentralizedOntologiesHome} />
           <Route path="/DecentralizedRedditHome" exact component={DecentralizedRedditHome} />
-          <Route path="/DecentralizedTwitterHome" exact component={DecentralizedTwitterHome} />
           <Route path="/DecentralizedSearchHome" exact component={DecentralizedSearchHome} />
           <Route path="/DecentralizedQuestionsAndAnswersHome" exact component={DecentralizedQuestionsAndAnswersHome} />
 
+          <Route path="/PitterHome" exact component={PitterHome} />
+          <Route path="/PitterTrailMainPage" exact component={PitterTrailMainPage} />
 
           <Route path="/EBooksHome" exact component={EBooksHome} />
           <Route path="/EBook1Home" exact component={EBook1Home} />

@@ -27,6 +27,10 @@ export default class LeftNavbar1_Plex extends React.PureComponent {
                 <div style={{fontSize:"42px"}} >&#9860;</div>
                 <div style={{fontSize:"12px",lineHeight:"100%"}} >cGroups</div>
                 </NavLink>
+            <NavLink className="leftNav1PlexButton" activeClassName="active" to='/PitterHome'>
+                <div style={{fontSize:"42px"}} >&#x1F463;</div>
+                <div style={{fontSize:"12px",lineHeight:"100%"}} >Pitter</div>
+                </NavLink>
         </div>
 
       </>
