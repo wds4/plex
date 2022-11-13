@@ -3,17 +3,23 @@ import { NavLink, Link } from "react-router-dom";
 import * as MiscFunctions from '../../../functions/miscFunctions.js';
 import * as MiscIpfsFunctions from '../../../lib/ipfs/miscIpfsFunctions.js'
 import * as ConceptGraphInMfsFunctions from '../../../lib/ipfs/conceptGraphInMfsFunctions.js'
+import * as ConceptGraphLib from '../../../lib/ipfs/conceptGraphLib.js'
+import * as GrapevineLib from '../../../lib/ipfs/grapevineLib.js'
 import { Button } from "reactstrap";
 import { useDropzone } from "react-dropzone";
 import Masthead from '../../../mastheads/grapevineMasthead.js';
 import LeftNavbar1 from '../../../navbars/leftNavbar1/grapevine_leftNav1';
 import { create, urlSource } from 'ipfs'
+import Scores from './tabs/scores.js';
+
+const cg = ConceptGraphLib.cg;
+const gv = GrapevineLib.gv;
 
 const jQuery = require("jquery");
 
 const populateFields = async (cid) => {
     console.log("populateFields")
-    jQuery("#myIpfsPeerID").html(cid)
+    jQuery("#thisUserPeerID").html(cid)
     var ipfsPath = "/ipns/"+cid+"/grapevineData/userProfileData/myProfile.txt";
 
     try {
@@ -88,12 +94,27 @@ const populateFields = async (cid) => {
 export default class SingleUserProfile extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            user: {
+                peerID: null,
+                username: null
+            }
+        }
     }
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 100px)");
 
         var cid = this.props.match.params.cid
+        var user_new={}
+        user_new.peerID = cid;
+        user_new.username="not yet set";
+        this.setState({user:user_new});
+        this.forceUpdate();
+        var oCSD = await gv.compositeScore.get(cid)
+        console.log("oCSD: "+JSON.stringify(oCSD,null,4))
+        var inf = oCSD.standardCalculations.influence;
+        jQuery("#influenceContainer").html(inf)
+
         var defaultAvatarNumber = parseInt(cid,10);
         console.log("cid: "+cid+"; defaultAvatarNumber: "+defaultAvatarNumber)
         populateFields(cid);
@@ -188,7 +209,7 @@ export default class SingleUserProfile extends React.Component {
                                         <div style={{marginLeft:"10px"}} >
                                             <div>
                                                 <div style={{display:"inline-block",fontSize:"9px"}}>peerID (cid): </div>
-                                                <div id="myIpfsPeerID" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
+                                                <div id="thisUserPeerID" style={{display:"inline-block",fontSize:"9px",marginLeft:"5px",color:"grey"}}></div>
                                             </div>
                                             <div style={{display:"none"}}>
                                                 <div style={{display:"inline-block",fontSize:"9px"}}>image cid: </div>
@@ -239,7 +260,7 @@ export default class SingleUserProfile extends React.Component {
                                             Ratings
                                         </div>
                                         <div data-contentdescription="scores" id="bottomPanelContainer_scores" className="bottomPanelContainer" >
-                                            Scores
+                                            <Scores user={this.state.user} />
                                         </div>
                                         <div data-contentdescription="ratingPresets" id="bottomPanelContainer_ratingPresets" className="bottomPanelContainer" >
                                             <div >

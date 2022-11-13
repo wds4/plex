@@ -84,7 +84,7 @@ cg.mfs = {};
 // cg.mfs.ls REPLACES:
 cg.mfs.ls = async (oOptions) => {
     var aResult = []
-    console.log("conceptGraph.mfs.ls; incomplete")
+    console.log("cg.mfs.ls; incomplete")
     return aResult;
 }
 // cg.mfs.get REPLACES: ConceptGraphInMfsFunctions.fetchObjectByLocalMutableFileSystemPath
@@ -119,6 +119,35 @@ cg.mfs.get = async (path,oOptions) => {
         return false;
     }
 }
+cg.mfs.path = {};
+// TO_DO: incomplete; address different inputCgidTypes
+cg.mfs.path.get = async (cgid,oOptions) => {
+    console.log("cg.mfs.path.get; cgid: "+cgid)
+    // set defaults
+    var cg_role = "active" // default concept graph role
+    var inputCgidType = "slug"
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("inputCgidType")) {
+            inputCgidType = oOptions.inputCgidType;
+        }
+    }
+
+    var baseDir10 = await cg.mfs.baseDirectory({slice10:true})
+    console.log("cg.mfs.path.get; baseDir10: "+baseDir10)
+    var cg_ipns = await cg.conceptGraph.resolve(cg_role)
+    console.log("cg.mfs.path.get; cg_ipns: "+cg_ipns)
+
+    if (inputCgidType=="slug") {
+        var slug = cgid;
+    }
+    if (inputCgidType=="ipns") {
+        // find slug from its ipns
+    }
+
+    var path = "/plex/conceptGraphs/"+baseDir10+"/"+cg_ipns+"/words/"+slug+"/node.txt";
+    console.log("cg.mfs.path.get; path: "+path)
+    return path;
+}
 // cg.mfs.baseDirectory() replaces ConceptGraphInMfsFunctions.returnIPNSForCompleteCGPathDir(keyname_forActiveCGPathDir)
 // EXCEPT I am now doing the slice(-10) step in this function rather than after it
 cg.mfs.baseDirectory = async (oOptions) => {
@@ -130,10 +159,11 @@ cg.mfs.baseDirectory = async (oOptions) => {
     }
     // keyname generated from myPeerID like this:
     var myPeerID = await cg.ipfs.returnMyPeerID();
+    console.log("cg.mfs.baseDirectory-- myPeerID: "+myPeerID)
     var keyname_forActiveCGPathDir = "plex_pathToActiveConceptGraph_"+myPeerID.slice(-10);
 
     var ipns_forActiveCGPathDir = null;
-    var aKeys = await ipfs.key.list()
+    var aKeys = await MiscIpfsFunctions.ipfs.key.list()
     console.log("cg.mfs.baseDirectory-- numKeys: "+aKeys.length)
     var foundMatch = false;
     for (var k=0;k<aKeys.length;k++) {
@@ -161,6 +191,60 @@ cg.mfs.baseDirectory = async (oOptions) => {
     if (slice10 == true) {
         return ipns_forActiveCGPathDir.slice(-10);
     }
+}
+
+//////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+cg.cgid = {};
+cg.cgids = {};
+cg.cgids.ls = async (oOptions) => {
+    var aResult = []
+    console.log("cg.cgids.ls; incomplete")
+    return aResult;
+}
+cg.cgid.resolve = async (cgid,oOptions) => {
+    console.log("cg.cgid.resolve; cgid: "+cgid)
+    var result = null
+    // set defaults
+    var cg_role = "active" // default concept graph role
+    var cg_ipns = await cg.conceptGraph.resolve(cg_role)
+
+    var inputCgidType = "slug";
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("inputCgidType")) {
+            inputCgidType = oOptions.inputCgidType
+        }
+    }
+    var outputCgidType = "word";
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("outputCgidType")) {
+            outputCgidType = oOptions.outputCgidType
+        }
+    }
+    if (inputCgidType=="slug") {
+        console.log("cg.cgid.resolve; inputCgidType == slug")
+        var slug = cgid;
+        var path = await cg.mfs.path.get(slug);
+        var oWord = await cg.mfs.get(path)
+        if (outputCgidType == "word") {
+            result = oWord;
+            return result;
+        }
+
+    }
+    if (inputCgidType=="ipns") {
+
+    }
+
+    console.log("cg.cgid.resolve; incomplete")
+    return result;
+}
+cg.cgid.type = {};
+cg.cgid.type.resolve = async (cgid,oOptions) => {
+    var result = null
+    console.log("cg.cgid.type.resolve; incomplete")
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -238,6 +322,7 @@ cg.conceptGraphs.roles.reload = async (oOptions) => {
 // maybe change to cg.conceptGraph.role.resolve for clarity
 // although not sure what else cg.conceptGraph.resolve could mean
 cg.conceptGraph.resolve = async (role, oOptions) => {
+    console.log("cg.conceptGraph.resolve; role: "+role)
     // default options:
     var outputCgidType = "ipns" // by default
     var reload = false // by default

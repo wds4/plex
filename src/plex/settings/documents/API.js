@@ -19,6 +19,7 @@ import { cgExample_103 } from './libraryExamples/103.js'
 import { cgExample_41 } from './libraryExamples/41.js'
 import { cgExample_42 } from './libraryExamples/42.js'
 import { cgExample_51 } from './libraryExamples/51.js'
+import { cgExample_52 } from './libraryExamples/52.js'
 import { cgExample_21 } from './libraryExamples/21.js'
 import { cgExample_22 } from './libraryExamples/22.js'
 import { cgExample_301 } from './libraryExamples/301.js'
@@ -26,6 +27,9 @@ import { cgExample_310 } from './libraryExamples/310.js'
 import { cgExample_10001 } from './libraryExamples/10001.js'
 import { cgExample_10002 } from './libraryExamples/10002.js'
 import { cgExample_10101 } from './libraryExamples/10101.js'
+import { cgExample_11001 } from './libraryExamples/11001.js'
+import { cgExample_12001 } from './libraryExamples/12001.js'
+import { cgExample_12010 } from './libraryExamples/12010.js'
 
 const jQuery = require("jquery");
 
@@ -56,6 +60,7 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgExample_42").html(cgExample_42)
 
         jQuery("#cgExample_51").html(cgExample_51)
+        jQuery("#cgExample_52").html(cgExample_52)
 
         jQuery("#cgExample_21").html(cgExample_21)
         jQuery("#cgExample_22").html(cgExample_22)
@@ -67,6 +72,10 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgExample_10002").html(cgExample_10002)
 
         jQuery("#cgExample_10101").html(cgExample_10101)
+
+        jQuery("#cgExample_11001").html(cgExample_11001)
+        jQuery("#cgExample_12001").html(cgExample_12001)
+        jQuery("#cgExample_12010").html(cgExample_12010)
 
         var cgid = "conceptFor_user";
         var cgid_ipns = await cg.resolve(cgid);
@@ -211,6 +220,14 @@ export default class ConceptGraphAPI extends React.Component {
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Return the base directory (10-character slice if prompted by options) for locally stored concept graphs.
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="52" >
+                                        cg.mfs.path.get(cgid,[options])
+                                        <div className="commandNumberContainer" >52</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Return the MFS path to the node indicated by the input cgid 
                                     </div>
                                 </div>
 
@@ -911,20 +928,28 @@ export default class ConceptGraphAPI extends React.Component {
                                     Retrieve a list of ratings related to this individual. Multiple options (by user, of user, on certain topic, etc)
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="0" >
+                                    <li className="commandLi" data-commandnumber="11001" >
                                         gv.ratings.ls([options])
-                                        <div className="commandNumberContainer" >* 11001</div>
+                                        <div className="commandNumberContainer" >11001</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Retrieve a list of ratings
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="0" >
+                                    <li className="commandLi" data-commandnumber="12001" >
                                         gv.compositeScores.ls([options])
-                                        <div className="commandNumberContainer" >* 12001</div>
+                                        <div className="commandNumberContainer" >12001</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Retrieve a list of compositeScores
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="12010" >
+                                        gv.compositeScore.get(cgid,[options])
+                                        <div className="commandNumberContainer" >12010</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Retrieve compositeScore data regarding the specified entity.
                                     </div>
                                 </div>
 
@@ -1353,6 +1378,70 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_51" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_52" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.mfs.path.get(cgid,[options])
+                                        <div className="commandNumberContainer" >52</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Find the MFS path to the specified cgid
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>cgid</td>
+                                                <td><span className="uniqueIdentifierStyle" >cgid</span></td>
+                                                <td>the input cgid</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>string</td>
+                                                <td>an MFS path</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_52" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 
@@ -2106,6 +2195,198 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_10101" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_11001" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        gv.ratings.ls([options])
+                                        <div className="commandNumberContainer" >11001</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Retrieve a list of ratings
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>array:<span className="uniqueIdentifierStyle" >cgid(ipns)</span></td>
+                                                <td>list of requested ratings as an array.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_11001" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_12001" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        gv.compositeScores.ls([options])
+                                        <div className="commandNumberContainer" >12001</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Retrieve a list of compositeScores
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>array: <span className="uniqueIdentifierStyle" >cgid(ipns)</span></td>
+                                                <td>composite scores as an array</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_12001" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_12010" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        gv.compositeScore.get(cgid,[options])
+                                        <div className="commandNumberContainer" >12010</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Retrieve compositeScore data regarding the specified entity.
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>cgid</td>
+                                                <td><span className="uniqueIdentifierStyle" >cgid(ipns)</span></td>
+                                                <td>The cgid of the indicated entity.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_12010" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 
