@@ -62,7 +62,7 @@ export default class EBooksMasthead extends React.Component {
                   <div style={{clear:"both"}}></div>
               </div>
               <div className="landingPage_plex_SubBanner" >
-                  <div >Plex motto</div>
+                  <div >eBooks motto</div>
               </div>
           </>
         );
