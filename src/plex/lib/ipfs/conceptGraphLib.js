@@ -308,7 +308,16 @@ cg.cgid.type.resolve = async (cgid,oOptions) => {
     // use cg.cgids.ls to get full list of all cgids
     // if cgid is in slug list, then result = slug
     // if cgid is in ipns list, then result = ipns
-    var aWords_by_slug = cg.cgids.ls({outputCgidType:"slug"})
+    var aWords_by_slug = await cg.words.ls({outputCgidType:"slug"})
+    var aWords_by_ipns = await cg.words.ls({outputCgidType:"ipns"})
+    if (aWords_by_slug.includes(cgid)) {
+        result = "slug";
+        return result;
+    }
+    if (aWords_by_ipns.includes(cgid)) {
+        result = "ipns";
+        return result;
+    }
 
 
     console.log("cg.cgid.type.resolve; incomplete")
@@ -494,11 +503,17 @@ cg.specificInstance.add = async (child,parent,oOptions) => {
         var oParentConcept = MiscFunctions.cloneObj(parent);
     }
     console.log("cg.specificInstance.add; cgidType_parent: "+cgidType_parent)
-
+    if (cgidType_parent=="slug") {
+        oParentConcept = await cg.cgid.resolve(parent,{inputCgidType:"slug"})
+    }
+    if (cgidType_parent=="ipns") {
+        // INCOMPLETE
+    }
     var superset_slug = oParentConcept.conceptData.nodes.superset.slug;
     var mainSchema_slug = oParentConcept.conceptData.nodes.schema.slug;
     var oMainSchema = await cg.cgid.resolve(mainSchema_slug);
 
+    // WORKING UP TO HERE as of 13 Nov 11:30 PM 
     console.log("cg.specificInstance.add; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
     /*
     for (var s=0;s<aSets.length;s++) {
@@ -547,22 +562,35 @@ cg.words.ls = async (oOptions) => {
             outputCgidType = oOptions.outputCgidType;
         }
     }
-    var aWords = []
+    // var aWords = []
     // INCOMPLETE; need to use cg_ipns to look through MFS to find all words and populate aResult
-    var path = "/plex/conceptGraphs/"+cg_ipns+"/words/";
-    var aWords = [];
+    var base10 = await cg.mfs.baseDirectory({slice10:true})
+    var path = "/plex/conceptGraphs/"+base10+"/"+cg_ipns+"/words/";
+    console.log("cg.words.ls; path: "+path)
+    var aWords_by_slug = [];
+    var aWords_by_ipns = [];
+    var aWords_by_node = [];
     try {
         for await (const file of ipfs.files.ls(path)) {
             var fileName = file.name;
             var fileType = file.type;
             var fileCid = file.cid;
             if ( (fileType=="directory") ) {
-                aWords.push(fileName);
+                aWords_by_slug.push(fileName);
+                // need to fetch full object, then push to aWords_by_node and aWords_by_ipns
             }
         }
     } catch (e) {}
-    console.log("cg.words.ls; aWords: "+JSON.stringify(aWords,null,4))
-    return aWords;
+    console.log("cg.words.ls; aWords_by_slug: "+JSON.stringify(aWords_by_slug,null,4))
+    if (outputCgidType=="ipns") {
+        return aWords_by_ipns;
+    }
+    if (outputCgidType=="slug") {
+        return aWords_by_slug;
+    }
+    if ((outputCgidType=="word") || (outputCgidType=="node")) {
+        return aWords_by_node;
+    }
 }
 // cg.word.create replaces MiscFunctions.createNewWordByTemplate()
 cg.word.create = async (wordType, oOptions) => {
