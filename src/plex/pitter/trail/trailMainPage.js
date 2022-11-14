@@ -23,7 +23,7 @@ export default class PitterTrailMainPage extends React.Component {
                         <Masthead />
                         <center>
                             <div className="pitterTrailMainContainer" >
-                                <div className="pitterTrailLeaveMessageContainer" >
+                                <div id="pitterTrailLeaveMessageContainer" className="pitterTrailLeaveMessageContainer" >
                                     <NewPostContainer />
                                 </div>
                                 <div className="pitterTrailMessagesContainer" >

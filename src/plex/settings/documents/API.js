@@ -26,6 +26,8 @@ import { cgExample_52 } from './libraryExamples/52.js'
 import { cgExample_301 } from './libraryExamples/301.js'
 import { cgExample_310 } from './libraryExamples/310.js'
 import { cgExample_502 } from './libraryExamples/502.js'
+import { cgExample_511 } from './libraryExamples/511.js'
+import { cgExample_512 } from './libraryExamples/512.js'
 import { cgExample_10001 } from './libraryExamples/10001.js'
 import { cgExample_10002 } from './libraryExamples/10002.js'
 import { cgExample_10101 } from './libraryExamples/10101.js'
@@ -72,6 +74,8 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgExample_310").html(cgExample_310)
 
         jQuery("#cgExample_502").html(cgExample_502)
+        jQuery("#cgExample_511").html(cgExample_511)
+        jQuery("#cgExample_512").html(cgExample_512)
 
         jQuery("#cgExample_10001").html(cgExample_10001)
         jQuery("#cgExample_10002").html(cgExample_10002)
@@ -660,9 +664,18 @@ export default class ConceptGraphAPI extends React.Component {
 
                                     <li className="commandLi" data-commandnumber="x" >
                                         cg.word.returnWordTypes(cgid,[options])
+                                        <div className="commandNumberContainer" >* 511</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Returns an array of wordTypes of the input word or node.
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="x" >
+                                        cg.word.returnIpns(cgid,[options])
+                                        <div className="commandNumberContainer" >* 512</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Returns the ipns of the input word or node.
                                     </div>
 
                                     <li className="commandLi" data-commandnumber="x" >
@@ -1456,7 +1469,7 @@ export default class ConceptGraphAPI extends React.Component {
                                         <div className="commandNumberContainer" >11</div>
                                     </li>
                                     <div className="apiMajorSectionDescriptionB" >
-                                    Add the provided file to the ipfs and returns its cid. The
+                                    Add the provided file to the ipfs and returns its cid.
                                     </div>
                                     <div className="apiMajorSectionContainer" >
                                         <div className="apiMajorSectionTitle" >
@@ -1494,6 +1507,13 @@ export default class ConceptGraphAPI extends React.Component {
                                                 Other options may be added to modify the default stringify parameters.
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>verboseCid</td>
+                                                <td>boolean</td>
+                                                <td>false</td>
+                                                <td>If false (default), cid is output as a string (ipfs hash). If true, the cid is formatted as per IPFS protocol (= object .. ?)
+                                                </td>
+                                            </tr>
                                         </table>
 
                                         <div className="apiMajorSectionTitle" >
@@ -1506,7 +1526,7 @@ export default class ConceptGraphAPI extends React.Component {
                                             </tr>
                                             <tr>
                                                 <td>cid</td>
-                                                <td>the cid of the added file</td>
+                                                <td>the cid of the added file as a string. Can include option to return cid as an object.</td>
                                             </tr>
                                         </table>
 
@@ -1551,6 +1571,12 @@ export default class ConceptGraphAPI extends React.Component {
                                                 <th>Type</th>
                                                 <th>Default</th>
                                                 <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>slice10</td>
+                                                <td>boolean</td>
+                                                <td>false</td>
+                                                <td>If false(default), returns the entire IPNS hash. If true, returns only the final 10 characters of the hash.</td>
                                             </tr>
                                         </table>
 
@@ -1861,6 +1887,71 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_502" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_512" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.word.returnIpns(cgid,[options])
+                                        <div className="commandNumberContainer" >512</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Returns the ipns of the word specified by the input cgid.
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>cgid</td>
+                                                <td><span className="uniqueIdentifierStyle" >cgid</span></td>
+                                                <td>the cgid of the specified word
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>slice10</td>
+                                                <td>boolean</td>
+                                                <td>false</td>
+                                                <td>If false(default), returns the entire IPNS hash. If true, returns only the final 10 characters of the hash.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>string</td>
+                                                <td>The ipns of the input word.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_512" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 

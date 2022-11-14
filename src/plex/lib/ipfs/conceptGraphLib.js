@@ -68,10 +68,21 @@ cg.ipfs.add = async (file,oOptions) => {
 
 // cg.ipfs.returnMyPeerID REPLACES: MiscIpfsFunctions.returnMyPeerID
 cg.ipfs.returnMyPeerID = async (oOptions) => {
+    var slice10 = false // default
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("slice10")) {
+            slice10 = oOptions.slice10;
+        }
+    }
     var oIpfsID = await ipfs.id();
     var myPeerID = oIpfsID.id;
     // console.log("returnMyPeerID; myPeerID: "+myPeerID)
-    return myPeerID
+    if (!slice10) {
+        return myPeerID
+    }
+    if (slice10) {
+        return myPeerID.slice(-10);
+    }
 }
 
 // cg.ipfs.returnMyUsername REPLACES: MiscIpfsFunctions.returnMyUsername
@@ -431,4 +442,20 @@ cg.word.create = async (wordType, oOptions) => {
     newWord_obj.wordData.slug = newWord_slug;
 
     return newWord_obj;
+}
+
+cg.word.returnIpns = async (oWord, oOptions) => {
+    var slice10 = false // default
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("slice10")) {
+            slice10 = oOptions.slice10;
+        }
+    }
+    var ipns = oWord.metaData.ipns;
+    if (!slice10) {
+        return ipns
+    }
+    if (slice10) {
+        return ipns.slice(-10);
+    }
 }
