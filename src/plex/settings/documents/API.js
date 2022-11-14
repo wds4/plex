@@ -670,9 +670,9 @@ export default class ConceptGraphAPI extends React.Component {
                                     Returns an array of wordTypes of the input word or node.
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="x" >
+                                    <li className="commandLi" data-commandnumber="512" >
                                         cg.word.returnIpns(cgid,[options])
-                                        <div className="commandNumberContainer" >* 512</div>
+                                        <div className="commandNumberContainer" >512</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Returns the ipns of the input word or node.
@@ -1896,7 +1896,8 @@ export default class ConceptGraphAPI extends React.Component {
                                         <div className="commandNumberContainer" >512</div>
                                     </li>
                                     <div className="apiMajorSectionDescriptionB" >
-                                    Returns the ipns of the word specified by the input cgid.
+                                    Returns the ipns of the word specified by the input cgid (i.e. the value of metaData.ipns).
+                                    Usually the cgid will be presented as an object, but other formats (such as slug) are acceptable.
                                     </div>
                                     <div className="apiMajorSectionContainer" >
                                         <div className="apiMajorSectionTitle" >
