@@ -25,6 +25,7 @@ import { cgExample_51 } from './libraryExamples/51.js'
 import { cgExample_52 } from './libraryExamples/52.js'
 import { cgExample_301 } from './libraryExamples/301.js'
 import { cgExample_310 } from './libraryExamples/310.js'
+import { cgExample_501 } from './libraryExamples/501.js'
 import { cgExample_502 } from './libraryExamples/502.js'
 import { cgExample_511 } from './libraryExamples/511.js'
 import { cgExample_512 } from './libraryExamples/512.js'
@@ -73,6 +74,7 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgExample_301").html(cgExample_301)
         jQuery("#cgExample_310").html(cgExample_310)
 
+        jQuery("#cgExample_501").html(cgExample_501)
         jQuery("#cgExample_502").html(cgExample_502)
         jQuery("#cgExample_511").html(cgExample_511)
         jQuery("#cgExample_512").html(cgExample_512)
@@ -589,19 +591,20 @@ export default class ConceptGraphAPI extends React.Component {
                                     Outputs an array of (direct) specific instances of the parent cgid.
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="0" >
+                                    <li className="commandLi" data-commandnumber="310" >
                                         cg.specificInstance.add(child,parent,[options])
+                                        <div className="commandNumberContainer" >310</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
                                     Add a child node as a (direct) specific instance to one or more parent sets. ? Change to: .connect ? makeSubset? link?
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="310" >
+                                    <li className="commandLi" data-commandnumber="*" >
                                         cg.specificInstance.put(child,parent,[options])
-                                        <div className="commandNumberContainer" >310</div>
+                                        <div className="commandNumberContainer" ></div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
-                                    cg.specificInstance.put
+                                    probably will be deprecating this in favor of cg.specificInstance.add
                                     </div>
 
                                     <li className="commandLi" data-commandnumber="0" >cg.specificInstance.mv(child,parent,[options])</li>
@@ -648,10 +651,10 @@ export default class ConceptGraphAPI extends React.Component {
                                 <div className="apiMajorSectionConceptGraphContainerContainer" >
                                     <li className="commandLi" data-commandnumber="501" >
                                         cg.words.ls([options])
-                                        <div className="commandNumberContainer" >* 501</div>
+                                        <div className="commandNumberContainer" >501</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
-                                    Outputs an array of words. Multiple options exist, e.g. limit to particular worType.
+                                    Outputs an array of words as a list of cgids. Multiple options exist, e.g. limit output to particular wordTypes.
                                     </div>
 
                                     <li className="commandLi" data-commandnumber="502" >
@@ -1748,11 +1751,11 @@ export default class ConceptGraphAPI extends React.Component {
 
                                 <div id="commandNumber_310" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
                                     <li>
-                                        cg.specificInstance.put(child,parent,[options])
+                                        cg.specificInstance.add(child,parent,[options])
                                         <div className="commandNumberContainer" >310</div>
                                     </li>
                                     <div className="apiMajorSectionDescriptionB" >
-                                    cg.specificInstance.put -- same as cg.specificInstance.add ?
+                                    Add a child node as a (direct) specific instance to one or more parent sets.
                                     </div>
                                     <div className="apiMajorSectionContainer" >
                                         <div className="apiMajorSectionTitle" >
@@ -1765,15 +1768,15 @@ export default class ConceptGraphAPI extends React.Component {
                                                 <th>Description</th>
                                             </tr>
                                             <tr>
-                                                <td>si</td>
+                                                <td>child</td>
                                                 <td><span className="uniqueIdentifierStyle" >cgid</span></td>
                                                 <td>the cgid of the node being added
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>set</td>
+                                                <td>parent</td>
                                                 <td><span className="uniqueIdentifierStyle" >cgid</span></td>
-                                                <td>cgids of the set(s) to which the node will be added
+                                                <td>cgids of the parent concept, to the superset of which the node will be added
                                                 </td>
                                             </tr>
                                         </table>
@@ -1789,13 +1792,31 @@ export default class ConceptGraphAPI extends React.Component {
                                                 <th>Description</th>
                                             </tr>
                                             <tr>
-                                                <td>siUniqueID</td>
-                                                <td>string</td>
-                                                <td>slug</td>
-                                                <td>mfsPath, slug (= word-slug), ipns, ipfs, concept-specific-identifier (e.g. user-slug, widget-title), or word (=node) (the full node as an object) corresponding to the specific instance that is being added</td>
+                                                <td>addToSuperset</td>
+                                                <td>boolean</td>
+                                                <td>true</td>
+                                                <td>whether to connect the child node (via isASpecificInstanceOf) to the superset of the parent concept</td>
                                             </tr>
                                             <tr>
-                                                <td>outputUniqueID</td>
+                                                <td>additionalParentSets</td>
+                                                <td>array of cgid</td>
+                                                <td>null</td>
+                                                <td>cgids of additional sets to which the child node shall be added</td>
+                                            </tr>
+                                            <tr>
+                                                <td>childCgidType</td>
+                                                <td>string</td>
+                                                <td>slug</td>
+                                                <td>the type of the child cgid: mfsPath, slug (= word-slug), ipns, ipfs, concept-specific-identifier (e.g. user-slug, widget-title), or word (=node) (the full node as an object) corresponding to the specific instance that is being added</td>
+                                            </tr>
+                                            <tr>
+                                                <td>parentCgidType</td>
+                                                <td>string</td>
+                                                <td>slug</td>
+                                                <td>the type of the parent cgid</td>
+                                            </tr>
+                                            <tr>
+                                                <td>outputCgidType</td>
                                                 <td>string</td>
                                                 <td>slug</td>
                                                 <td>same as inputUniqueID</td>
@@ -1811,8 +1832,8 @@ export default class ConceptGraphAPI extends React.Component {
                                                 <th>Description</th>
                                             </tr>
                                             <tr>
-                                                <td>array</td>
-                                                <td>An array of specific instances, each of which is formatted as a cgid.</td>
+                                                <td>boolean</td>
+                                                <td>true if successful; false if not (ought to expand on this in future)</td>
                                             </tr>
                                         </table>
 
@@ -1820,6 +1841,65 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_310" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_501" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.words.ls([options])
+                                        <div className="commandNumberContainer" >501</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Outputs an array of words as a list of cgids. Multiple options exist, e.g. limit output to particular wordTypes.
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>outputCidType</td>
+                                                <td>string</td>
+                                                <td>ipns</td>
+                                                <td>The desired format of the output cgids. Options include: ipns (default), slug (=word-slug), word (=node).</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>array:<span className="uniqueIdentifierStyle" >cgid</span></td>
+                                                <td>a list of words as an array of cgids </td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_501" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 

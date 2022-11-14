@@ -47,6 +47,7 @@ export const fetchUserlistFromGrapevineMFS = async () => {
 // aSets: optional; array of sets by slug; add relationship to make new word isASpecificInstanceOf each slug in aSets
 // if aSets is empty or null, add relationship to make new word isASpecificInstanceOf the superset of that concept
 // This is a redo of addSpecificInstanceToConceptGraphMfs2 which assumes old file structure of MFS (??)
+// 13 Nov 2022: replacing addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph with cg.specificInstance.add
 export const addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph = async (ipns,oWord,concept_slug,aSets) => {
     var word_slug = oWord.wordData.slug;
     var oConcept = await lookupWordBySlug_specifyConceptGraph(ipns,concept_slug);

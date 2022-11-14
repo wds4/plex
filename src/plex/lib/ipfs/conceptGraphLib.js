@@ -151,7 +151,12 @@ cg.mfs.path = {};
 cg.mfs.path.get = async (cgid,oOptions) => {
     console.log("cg.mfs.path.get; cgid: "+cgid)
     // set defaults
-    var cg_role = "active" // default concept graph role
+    var conceptGraphRole = "active" // default concept graph role
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("conceptGraphRole")) {
+            conceptGraphRole = oOptions.conceptGraphRole;
+        }
+    }
     var inputCgidType = "slug"
     if (oOptions) {
         if (oOptions.hasOwnProperty("inputCgidType")) {
@@ -161,7 +166,7 @@ cg.mfs.path.get = async (cgid,oOptions) => {
 
     var baseDir10 = await cg.mfs.baseDirectory({slice10:true})
     console.log("cg.mfs.path.get; baseDir10: "+baseDir10)
-    var cg_ipns = await cg.conceptGraph.resolve(cg_role)
+    var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
     console.log("cg.mfs.path.get; cg_ipns: "+cg_ipns)
 
     if (inputCgidType=="slug") {
@@ -227,15 +232,25 @@ cg.cgid = {};
 cg.cgids = {};
 cg.cgids.ls = async (oOptions) => {
     var aResult = []
+
+    // cg.words.ls({outputCgidType:"slug"})
+
     console.log("cg.cgids.ls; incomplete")
     return aResult;
 }
 cg.cgid.resolve = async (cgid,oOptions) => {
-    console.log("cg.cgid.resolve; cgid: "+cgid)
+    console.log("cg.cgid.resolve; cgid: "+cgid);
+
     var result = null
+
     // set defaults
-    var cg_role = "active" // default concept graph role
-    var cg_ipns = await cg.conceptGraph.resolve(cg_role)
+    var conceptGraphRole = "active" // default concept graph role
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("conceptGraphRole")) {
+            conceptGraphRole = oOptions.conceptGraphRole;
+        }
+    }
+    var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
 
     var inputCgidType = "slug";
     if (oOptions) {
@@ -258,7 +273,6 @@ cg.cgid.resolve = async (cgid,oOptions) => {
             result = oWord;
             return result;
         }
-
     }
     if (inputCgidType=="ipns") {
 
@@ -268,8 +282,35 @@ cg.cgid.resolve = async (cgid,oOptions) => {
     return result;
 }
 cg.cgid.type = {};
+
+
+// output the type of the input cgid
+/* possible & common results include:
+word (=node)
+file (could be a word but stringified)
+slug, name, or title
+ipns (or ipfs - less likely)
+[concept]-slug, e.g. post-slug
+More types may be forthcoming.
+Most common results: word, slug, ipns
+*/
 cg.cgid.type.resolve = async (cgid,oOptions) => {
     var result = null
+    // TO DO: this function is very much incomplete - need to check for slug, ipns at a minimum
+    // More complex: check for [concept]-slug. There will be instances where result is an array;
+    // e.g., if input is "user" then cg.cgid.type.resolve output would be: [wordType-slug, concept-slug] -- in case of such duplicate possibilities, I need a way to decide which concepts take priority.
+    // if cgid=user then for cg.cgid.get, I would include option concept:conceptFor_concept, which would be how to select from these two options.
+    // if cgid is object, then result is probably word (= node), although more checks should be performed
+    if (typeof cgid == "object") {
+        result = "word";
+        return result;
+    }
+    // use cg.cgids.ls to get full list of all cgids
+    // if cgid is in slug list, then result = slug
+    // if cgid is in ipns list, then result = ipns
+    var aWords_by_slug = cg.cgids.ls({outputCgidType:"slug"})
+
+
     console.log("cg.cgid.type.resolve; incomplete")
     return result;
 }
@@ -348,6 +389,7 @@ cg.conceptGraphs.roles.reload = async (oOptions) => {
 
 // maybe change to cg.conceptGraph.role.resolve for clarity
 // although not sure what else cg.conceptGraph.resolve could mean
+// see cg.words.ls for idea on how to reconfigure options
 cg.conceptGraph.resolve = async (role, oOptions) => {
     console.log("cg.conceptGraph.resolve; role: "+role)
     // default options:
@@ -409,10 +451,119 @@ cg.resolve = async (role, oOptions) => {
     return "blah from cg.resolve";
 }
 
-//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 
+cg.concepts = {}
+cg.concept = {}
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+cg.specificInstances = {};
+cg.specificInstance = {};
+
+// replaces ConceptGraphInMfsFunctions.addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph
+// 13 Nov 2022: parent now must refer to a concept (not a set), and the corresponding superset is assumed;
+// if other sets are to be used, put it into options.
+// Need to update this in
+cg.specificInstance.add = async (child,parent,oOptions) => {
+    var conceptGraphRole = "active" // default concept graph role
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("conceptGraphRole")) {
+            conceptGraphRole = oOptions.conceptGraphRole;
+        }
+    }
+    var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
+    console.log("cg.specificInstance.add; cg_ipns: "+cg_ipns)
+
+    //////////////// determine oChild from child (which is cgid)
+    var cgidType_child = await cg.cgid.type.resolve(child)
+    /////// determine cgid type of child
+    if ( (cgidType_child == "word") || (cgidType_child == "node")) {
+        var oChild = MiscFunctions.cloneObj(child);
+    }
+    var child_wordSlug = oChild.wordData.slug;
+    console.log("cg.specificInstance.add; cgidType_child: "+cgidType_child)
+
+    //////////////// determine oParent (i.e. oSet) from parent (which is a cgid)
+
+    var cgidType_parent = await cg.cgid.type.resolve(parent)
+    /////// determine cgid type of child
+    if ( (cgidType_parent == "word") || (cgidType_parent == "node")) {
+        var oParentConcept = MiscFunctions.cloneObj(parent);
+    }
+    console.log("cg.specificInstance.add; cgidType_parent: "+cgidType_parent)
+
+    var superset_slug = oParentConcept.conceptData.nodes.superset.slug;
+    var mainSchema_slug = oParentConcept.conceptData.nodes.schema.slug;
+    var oMainSchema = await cg.cgid.resolve(mainSchema_slug);
+
+    console.log("cg.specificInstance.add; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
+    /*
+    for (var s=0;s<aSets.length;s++) {
+        var set_slug = aSets[s];
+        var oSet = await lookupWordBySlug_specifyConceptGraph(ipns,set_slug);
+        var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
+        oNewRel.nodeFrom.slug = child_wordSlug;
+        oNewRel.relationshipType.slug = "isASpecificInstanceOf";
+        oNewRel.nodeTo.slug = set_slug;
+
+        console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oNewRel: "+JSON.stringify(oNewRel,null,4))
+
+        var oMiniWordLookup = {};
+        oMiniWordLookup[child_wordSlug] = oChild;
+        oMiniWordLookup[set_slug] = oSet;
+        oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+        console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
+    }
+
+    await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oChild);
+    await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oMainSchema);
+    */
+}
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+cg.words = {};
 cg.word = {};
+cg.words.ls = async (oOptions) => {
+    var conceptGraphRole = "active" // default concept graph role
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("conceptGraphRole")) {
+            conceptGraphRole = oOptions.conceptGraphRole;
+        }
+    }
+    var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
+    console.log("cg.words.ls; cg_ipns: "+cg_ipns)
+    // should replace this with:
+    // var cg_ipns = await cg.conceptGraph.resolve("active",oOptions)
+    // or
+    // var cg_ipns = await cg.conceptGraph.resolve("active",{options:oOptions})
+
+    var outputCgidType = "ipns"; // default
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("outputCgidType")) {
+            outputCgidType = oOptions.outputCgidType;
+        }
+    }
+    var aWords = []
+    // INCOMPLETE; need to use cg_ipns to look through MFS to find all words and populate aResult
+    var path = "/plex/conceptGraphs/"+cg_ipns+"/words/";
+    var aWords = [];
+    try {
+        for await (const file of ipfs.files.ls(path)) {
+            var fileName = file.name;
+            var fileType = file.type;
+            var fileCid = file.cid;
+            if ( (fileType=="directory") ) {
+                aWords.push(fileName);
+            }
+        }
+    } catch (e) {}
+    console.log("cg.words.ls; aWords: "+JSON.stringify(aWords,null,4))
+    return aWords;
+}
 // cg.word.create replaces MiscFunctions.createNewWordByTemplate()
 cg.word.create = async (wordType, oOptions) => {
     // return "blah from conceptGraph.resolve";

@@ -177,7 +177,6 @@ export default class ConceptGraphsFrontEndSingleConceptMakeNewConceptUpdate exte
             var oUpdate = JSON.parse(sUpdate)
             var fooResult = await ConceptGraphInMfsFunctions.addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph(viewingConceptGraph_ipns,oUpdate,conceptForConceptUpdates_slug)
         })
-
     }
     render() {
         return (

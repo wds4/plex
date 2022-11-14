@@ -143,6 +143,8 @@ export default class NewPostContainer extends React.Component {
             oNewPost.postData.images = aImageCidsToUpload
             oNewPost.postData.whenSubmitted = Date.now()
             console.log("oNewPost: "+JSON.stringify(oNewPost,null,4))
+
+            var foo = await cg.specificInstance.add(oNewPost,"conceptFor_post",{conceptGraphRole:"grapevine"})
         })
         jQuery("#addPicsToggleButton").click(function(){
             var currStatus = jQuery(this).data("status");
