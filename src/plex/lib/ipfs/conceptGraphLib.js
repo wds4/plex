@@ -57,13 +57,46 @@ cg.ipfs = {};
 // if object, stringify
 // ? allow options to alter stringify parameters (although probably would not use much)
 cg.ipfs.add = async (file,oOptions) => {
-    var fileType = "string" // default
+    var fileType = typeof file;
+    // var fileType = "string" // default
 
     if (fileType=="string") {
-        const ipfsHash = await ipfs.add(file);
-        return ipfsHash.cid.toString();
+        var fileToAdd = file;
     }
+    if (fileType=="object") {
+        var fileToAdd = JSON.stringify(file,null,4);
+    }
+    var oFile = {
+        content: fileToAdd
+    }
+    const addResult = await ipfs.add(oFile);
+    return addResult.cid.toString();
+
     return false;
+}
+
+// cg.ipfs.publish to replace ConceptGraphInMfsFunctions.publishWordToIpfs
+cg.ipfs.publish = async (file,oOptions) => {
+    var fileType = typeof file;
+    if (fileType=="string") {
+        var fileToAdd = file;
+        var oWord = JSON.parse(file)
+    }
+    if (fileType=="object") {
+        var oWord = file;
+        var fileToAdd = JSON.stringify(file,null,4);
+    }
+    var oFile = {
+        content: fileToAdd
+    }
+    const addResult = await ipfs.add(oFile)
+
+    var newCid = addResult.cid;
+    console.info("added file cid: "+newCid)
+    var recordedKeyname = oWord.metaData.keyname
+    var options_publish = { key: recordedKeyname }
+    var res = await ipfs.name.publish(newCid, options_publish)
+    return true; // ? return more info
 }
 
 // cg.ipfs.returnMyPeerID REPLACES: MiscIpfsFunctions.returnMyPeerID
@@ -146,6 +179,33 @@ cg.mfs.get = async (path,oOptions) => {
         return false;
     }
 }
+
+// cg.mfs.add replaces ConceptGraphInMfsFunctions.createOrUpdateWordInMFS
+cg.mfs.add = async (oWord,oOptions) => {
+    // Step 1: concept graph role
+    var conceptGraphRole = "active" // default concept graph role
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("conceptGraphRole")) {
+            conceptGraphRole = oOptions.conceptGraphRole;
+        }
+    }
+    var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
+    console.log("cg.mfs.add; cg_ipns: "+cg_ipns)
+    // End Step 1
+
+    var fileToWrite = JSON.stringify(oWord,null,4)
+    var path = await cg.mfs.path.get(oWord,{trunc:true})
+    try { await ipfs.files.mkdir(path) } catch (e) {}
+    var pathToFile = path + "node.txt";
+    try { await ipfs.files.rm(pathToFile, {recursive: true}) } catch (e) {}
+    try { await ipfs.files.write(pathToFile, new TextEncoder().encode(fileToWrite), {create: true, flush: true}) } catch (e) {}
+    var oWord = await cg.ipfs.publish(oWord)
+    return true;
+}
+cg.mfs.update = {}
+cg.mfs.publish = async (path,oOptions) => {
+
+}
 cg.mfs.path = {};
 // TO_DO: incomplete; address different inputCgidTypes
 cg.mfs.path.get = async (cgid,oOptions) => {
@@ -163,6 +223,12 @@ cg.mfs.path.get = async (cgid,oOptions) => {
             inputCgidType = oOptions.inputCgidType;
         }
     }
+    var trunc = false;
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("trunc")) {
+            trunc = oOptions.trunc;
+        }
+    }
 
     var baseDir10 = await cg.mfs.baseDirectory({slice10:true})
     console.log("cg.mfs.path.get; baseDir10: "+baseDir10)
@@ -176,7 +242,13 @@ cg.mfs.path.get = async (cgid,oOptions) => {
         // find slug from its ipns
     }
 
-    var path = "/plex/conceptGraphs/"+baseDir10+"/"+cg_ipns+"/words/"+slug+"/node.txt";
+    if (trunc) {
+        var path = "/plex/conceptGraphs/"+baseDir10+"/"+cg_ipns+"/words/"+slug+"/";
+    }
+    if (!trunc) {
+        var path = "/plex/conceptGraphs/"+baseDir10+"/"+cg_ipns+"/words/"+slug+"/node.txt";
+    }
+
     console.log("cg.mfs.path.get; path: "+path)
     return path;
 }
@@ -251,7 +323,9 @@ cg.cgid.resolve = async (cgid,oOptions) => {
         }
     }
     var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
-
+    // TO DO: need to run var inputCgidType = await cg.cgid.type.resolve(cgid)
+    // If there is conflict between what oOptions.inputCgidType says and what cg.cgid.type.resolve returns, need to decide which one takes precedence
+    // (probably cg.cgid.type.resolve takes precedence; use oOptionsinputCgidType only if cg.cgid.type.resolve returns an error )
     var inputCgidType = "slug";
     if (oOptions) {
         if (oOptions.hasOwnProperty("inputCgidType")) {
@@ -264,6 +338,7 @@ cg.cgid.resolve = async (cgid,oOptions) => {
             outputCgidType = oOptions.outputCgidType
         }
     }
+
     if (inputCgidType=="slug") {
         console.log("cg.cgid.resolve; inputCgidType == slug")
         var slug = cgid;
@@ -282,7 +357,6 @@ cg.cgid.resolve = async (cgid,oOptions) => {
     return result;
 }
 cg.cgid.type = {};
-
 
 // output the type of the input cgid
 /* possible & common results include:
@@ -308,17 +382,18 @@ cg.cgid.type.resolve = async (cgid,oOptions) => {
     // use cg.cgids.ls to get full list of all cgids
     // if cgid is in slug list, then result = slug
     // if cgid is in ipns list, then result = ipns
-    var aWords_by_slug = await cg.words.ls({outputCgidType:"slug"})
-    var aWords_by_ipns = await cg.words.ls({outputCgidType:"ipns"})
-    if (aWords_by_slug.includes(cgid)) {
-        result = "slug";
-        return result;
+    if (typeof cgid == "string") {
+        var aWords_by_slug = await cg.words.ls({outputCgidType:"slug"})
+        var aWords_by_ipns = await cg.words.ls({outputCgidType:"ipns"})
+        if (aWords_by_slug.includes(cgid)) {
+            result = "slug";
+            return result;
+        }
+        if (aWords_by_ipns.includes(cgid)) {
+            result = "ipns";
+            return result;
+        }
     }
-    if (aWords_by_ipns.includes(cgid)) {
-        result = "ipns";
-        return result;
-    }
-
 
     console.log("cg.cgid.type.resolve; incomplete")
     return result;
@@ -477,6 +552,7 @@ cg.specificInstance = {};
 // if other sets are to be used, put it into options.
 // Need to update this in
 cg.specificInstance.add = async (child,parent,oOptions) => {
+    // Step 1: concept graph role
     var conceptGraphRole = "active" // default concept graph role
     if (oOptions) {
         if (oOptions.hasOwnProperty("conceptGraphRole")) {
@@ -485,6 +561,7 @@ cg.specificInstance.add = async (child,parent,oOptions) => {
     }
     var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
     console.log("cg.specificInstance.add; cg_ipns: "+cg_ipns)
+    // End Step 1
 
     //////////////// determine oChild from child (which is cgid)
     var cgidType_child = await cg.cgid.type.resolve(child)
@@ -513,12 +590,16 @@ cg.specificInstance.add = async (child,parent,oOptions) => {
     var mainSchema_slug = oParentConcept.conceptData.nodes.schema.slug;
     var oMainSchema = await cg.cgid.resolve(mainSchema_slug);
 
-    // WORKING UP TO HERE as of 13 Nov 11:30 PM 
+    var aSets = [];
+    aSets.push(superset_slug);
+    // TO DO: look in options for other sets to be added and whether to omit superset
+    // WORKING UP TO HERE as of 13 Nov 11:30 PM
     console.log("cg.specificInstance.add; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
-    /*
+
     for (var s=0;s<aSets.length;s++) {
         var set_slug = aSets[s];
-        var oSet = await lookupWordBySlug_specifyConceptGraph(ipns,set_slug);
+        // var oSet = await lookupWordBySlug_specifyConceptGraph(ipns,set_slug);
+        var oSet = await cg.cgid.resolve(set_slug,{inputCgidType:"slug"})
         var oNewRel = MiscFunctions.cloneObj(window.lookupWordTypeTemplate.relationshipType)
         oNewRel.nodeFrom.slug = child_wordSlug;
         oNewRel.relationshipType.slug = "isASpecificInstanceOf";
@@ -529,13 +610,100 @@ cg.specificInstance.add = async (child,parent,oOptions) => {
         var oMiniWordLookup = {};
         oMiniWordLookup[child_wordSlug] = oChild;
         oMiniWordLookup[set_slug] = oSet;
-        oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+        // TO DO: replace this fxn with a library fxn; cg.schema.addRel()
+        // oMainSchema = MiscFunctions.updateSchemaWithNewRel(oMainSchema,oNewRel,oMiniWordLookup)
+        oMainSchema = await cg.schema.addRel(oMainSchema,oNewRel,{foo:oMiniWordLookup})
         console.log("addNewWordAsSpecificInstanceToConceptInMFS_specifyConceptGraph; oMainSchema: "+JSON.stringify(oMainSchema,null,4))
     }
 
-    await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oChild);
-    await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oMainSchema);
-    */
+    // await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oChild);
+    // await addWordToMfsConceptGraph_specifyConceptGraph(ipns,oMainSchema);
+    var foo1 = await cg.mfs.update(oChild)
+    var foo2 = await cg.mfs.update(oMainSchema)
+
+}
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+cg.schema = {};
+cg.schemas = {};
+cg.schemas.ls = async (oOptions) => {}
+
+// cg.schema.addRel will replace: MiscFunctions.updateSchemaWithNewRel
+cg.schema.addRel = async (schema,oRel,oOptions) => {
+    // Step 1 is replicated across many functions. Need to have a fxn for this step.
+    // Step 1: concept graph role
+    var conceptGraphRole = "active" // default concept graph role
+    if (oOptions) {
+        if (oOptions.hasOwnProperty("conceptGraphRole")) {
+            conceptGraphRole = oOptions.conceptGraphRole;
+        }
+    }
+    var cg_ipns = await cg.conceptGraph.resolve(conceptGraphRole)
+    console.log("cg.schema.addRel: cg_ipns: "+cg_ipns)
+    // End Step 1
+
+    //////////////// determine oSchema from schema (which is a cgid)
+    var oSchema = await cg.cgid.resolve(schema)
+
+    // console.log("updateSchemaWithNewRel; schema_in_obj: "+JSON.stringify(schema_in_obj,null,4))
+    var schema_out_obj = JSON.parse(JSON.stringify(oSchema));
+    var schema_out_slug = schema_out_obj.wordData.slug;
+
+    var nF_slug = oRel.nodeFrom.slug;
+    var nT_slug = oRel.nodeTo.slug;
+    var rT_slug = oRel.relationshipType.slug;
+
+    var addRelError = false;
+
+    var nF_obj = {};
+    var nF_rF_obj = await cg.cgid.resolve(nF_slug);
+    var nF_rF_str = JSON.stringify(nF_rF_obj,null,4);
+
+    if (nF_rF_obj) {
+        var nF_ipns = nF_rF_obj.metaData.ipns;
+        nF_obj.slug = nF_slug;
+        nF_obj.ipns = nF_ipns;
+    } else {
+        addRelError = true;
+        console.log("addRelError! nF_rF_str: "+nF_rF_str)
+    }
+
+    var nT_obj = {};
+    var nT_rF_obj = cg.cgid.resolve(nT_slug);
+    var nT_rF_str = JSON.stringify(nT_rF_obj,null,4);
+
+    if (nT_rF_obj) {
+        var nT_ipns = nT_rF_obj.metaData.ipns;
+        nT_obj.slug = nT_slug;
+        nT_obj.ipns = nT_ipns;
+    } else {
+        addRelError = true;
+        console.log("addRelError! nT_rF_str: "+nT_rF_str)
+    }
+
+    if (!addRelError) {
+        if (!MiscFunctions.isRelObjInArrayOfObj(oRel,schema_out_obj.schemaData.relationships)) {
+            // console.log("updateSchemaWithNewRel; rel is not in schema")
+            schema_out_obj.schemaData.relationships.push(oRel);
+        }
+        if (!MiscFunctions.isWordObjInArrayOfObj(nF_obj,schema_out_obj.schemaData.nodes)) {
+            // console.log("updateSchemaWithNewRel; nF_slug: "+nF_slug+" is not yet in schema; nF_ipns: "+nF_ipns)
+            schema_out_obj.schemaData.nodes.push(nF_obj);
+        }
+
+        if (!MiscFunctions.isWordObjInArrayOfObj(nT_obj,schema_out_obj.schemaData.nodes)) {
+            // console.log("updateSchemaWithNewRel; nT_slug: "+nT_slug+" is not yet in schema; nT_ipns: "+nT_ipns)
+            schema_out_obj.schemaData.nodes.push(nT_obj);
+        }
+    }
+    if (addRelError) {
+        console.log("updateSchemaWithNewRel; ERROR!! oRel: "+JSON.stringify(oRel,null,4))
+    }
+    // lookupRawFileBySlug_x_obj.edited[schema_out_slug] = schema_out_obj;
+    // console.log("updateSchemaWithNewRel_; addRelError: "+addRelError+"; nF_slug: "+nF_slug+"; nT_slug: "+nT_slug+"; rT_slug: "+rT_slug)
+    // console.log("updateSchemaWithNewRel; schema_out_obj: "+JSON.stringify(schema_out_obj,null,4))
+    return schema_out_obj;
+
 }
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////

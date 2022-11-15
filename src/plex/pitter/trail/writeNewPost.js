@@ -144,6 +144,9 @@ export default class NewPostContainer extends React.Component {
             oNewPost.postData.whenSubmitted = Date.now()
             console.log("oNewPost: "+JSON.stringify(oNewPost,null,4))
 
+            // first, add new word to the concept graph (unattached)
+            // var foo = await cg.mfs.add(oNewPost)
+            // next, attach it to the concept for post
             var foo = await cg.specificInstance.add(oNewPost,"conceptFor_post",{conceptGraphRole:"grapevine"})
         })
         jQuery("#addPicsToggleButton").click(function(){

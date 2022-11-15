@@ -445,6 +445,7 @@ export const fetchListOfCurrentConceptGraphSlugs = async (pCG0) => {
 // Except: this word is either generated locally or updating a word that already exists locally
 // Therefore: no need to run convertExternalNodeToLocalWord(oNode)
 // THIS FUNCTION ASSUMES "ACTIVE" CONCEPT GRAPH
+// 14 Nov 2022: cg.mfs.add replaces ConceptGraphInMfsFunctions.createOrUpdateWordInMFS
 export const createOrUpdateWordInMFS = async (oWord) => {
     // console.log("createOrUpdateWordInMFS! adding oWord: " + JSON.stringify(oWord,null,4))
     var pCGw = window.ipfs.pCGw;
@@ -1211,6 +1212,7 @@ export const publishWordToMFS = async (oWord) => {
 // input word must contain metaData.keyname
 // it is published to IPFS, which generates a cid
 // Then keyname's ipfs and new cid are linked
+// cg.ipfs.publish to replace ConceptGraphInMfsFunctions.publishWordToIpfs
 export const publishWordToIpfs = async (oWord) => {
     var fileToWrite = JSON.stringify(oWord,null,4)
     var fileToWrite_encoded = new TextEncoder().encode(fileToWrite)

@@ -11,6 +11,7 @@ import { cgidExample } from './libraryExamples/cgidExample.js'
 import { setupContainer } from './libraryExamples/setupContainer.js'
 
 import { cgExample_11 } from './libraryExamples/11.js'
+import { cgExample_12 } from './libraryExamples/12.js'
 import { cgExample_21 } from './libraryExamples/21.js'
 import { cgExample_22 } from './libraryExamples/22.js'
 import { cgExample_62 } from './libraryExamples/62.js'
@@ -21,6 +22,9 @@ import { cgExample_101 } from './libraryExamples/101.js'
 import { cgExample_103 } from './libraryExamples/103.js'
 import { cgExample_41 } from './libraryExamples/41.js'
 import { cgExample_42 } from './libraryExamples/42.js'
+import { cgExample_43 } from './libraryExamples/43.js'
+import { cgExample_44 } from './libraryExamples/44.js'
+import { cgExample_45 } from './libraryExamples/45.js'
 import { cgExample_51 } from './libraryExamples/51.js'
 import { cgExample_52 } from './libraryExamples/52.js'
 import { cgExample_301 } from './libraryExamples/301.js'
@@ -54,6 +58,7 @@ export default class ConceptGraphAPI extends React.Component {
         jQuery("#cgidTypeExample").html(cgidTypeExample)
 
         jQuery("#cgExample_11").html(cgExample_11)
+        jQuery("#cgExample_12").html(cgExample_12)
         jQuery("#cgExample_21").html(cgExample_21)
         jQuery("#cgExample_22").html(cgExample_22)
 
@@ -67,6 +72,9 @@ export default class ConceptGraphAPI extends React.Component {
 
         jQuery("#cgExample_41").html(cgExample_41)
         jQuery("#cgExample_42").html(cgExample_42)
+        jQuery("#cgExample_43").html(cgExample_43)
+        jQuery("#cgExample_44").html(cgExample_44)
+        jQuery("#cgExample_45").html(cgExample_45)
 
         jQuery("#cgExample_51").html(cgExample_51)
         jQuery("#cgExample_52").html(cgExample_52)
@@ -172,7 +180,16 @@ export default class ConceptGraphAPI extends React.Component {
                                         <div className="commandNumberContainer" >11</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
-                                    Add the provided cgid to the ipfs. cgid type must correspond to a file (either object, which will be stringified, or already-stringified file).
+                                    Add the provided cgid to the ipfs. cgid type must correspond to a file (either object, which will be stringified, or already-stringified file). (Maybe shouldn't call this a cgid, since it cannot be ipns or slug.)
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="12" >
+                                        cg.ipfs.publish(word,[options])
+                                        <div className="commandNumberContainer" >12</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Publish the word indicated by the input cgid. The function re-adds the file to the ipfs, takes note of the cid (ipfs hash), extracts the keyname from the node metadata, which is then published using ipfs.name.publish.
+                                    Thus the ipfs and ipns hashes are linked.
                                     </div>
 
                                     <li className="commandLi" data-commandnumber="21" >
@@ -209,20 +226,32 @@ export default class ConceptGraphAPI extends React.Component {
                                     Returns the object at the specified local mutable file system path.
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="x" >
-                                        cg.mfs.update(path,cgid,[options])
-                                        <div className="commandNumberContainer" >x</div>
+                                    <li className="commandLi" data-commandnumber="43" >
+                                        cg.mfs.add(cgid,[options])
+                                        <div className="commandNumberContainer" >* 43</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
-                                    Update the presented path in the mfs with the presented file.
+                                    Add the presented word to the mfs. Path through mfs is calculated by the function. (option to specify my own path in cases where
+                                    the presented word is not a normal word?) This presumes the mfs path does not yet
+                                    exist, but will overwrite if one already exists. (Perhaps throw an error if a path and word already exist there?)
                                     </div>
 
-                                    <li className="commandLi" data-commandnumber="x" >
-                                        cg.mfs.publish(path,[options])
-                                        <div className="commandNumberContainer" >x</div>
+                                    <li className="commandLi" data-commandnumber="44" >
+                                        cg.mfs.update(path,cgid,[options])
+                                        <div className="commandNumberContainer" >* 44</div>
                                     </li>
                                     <div className="apiMajorSectionDescription" >
-                                    Publish the presented mfs path.
+                                    Update the presented path in the mfs with the presented file. (Very similar to cg.mfs.add, but presumption is
+                                    that an older word already exists at that path. May merge into one function, or may keep distinct functions
+                                    with distinct error messages in edge cases.)
+                                    </div>
+
+                                    <li className="commandLi" data-commandnumber="45" >
+                                        cg.mfs.publish(path,[options])
+                                        <div className="commandNumberContainer" >* 45</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescription" >
+                                    Publish the presented mfs path to the ipfs.
                                     </div>
 
                                     <li className="commandLi" data-commandnumber="51" >
@@ -1341,6 +1370,64 @@ export default class ConceptGraphAPI extends React.Component {
                                     </div>
                                 </div>
 
+                                <div id="commandNumber_43" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.mfs.add(oWord,[options])
+                                        <div className="commandNumberContainer" >43</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>oWord</td>
+                                                <td>object</td>
+                                                <td>the word (node) to be added</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>object</td>
+                                                <td>success or failure message</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_43" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
                                 <div id="commandNumber_51" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
                                     <li>
                                         cg.mfs.baseDirectory([options])
@@ -1438,10 +1525,10 @@ export default class ConceptGraphAPI extends React.Component {
                                                 <th>Description</th>
                                             </tr>
                                             <tr>
-                                                <td>.</td>
-                                                <td>.</td>
-                                                <td>.</td>
-                                                <td>.</td>
+                                                <td>trunc</td>
+                                                <td>boolean</td>
+                                                <td>false</td>
+                                                <td>If trunc(acted) is true, then omit node.txt from the end of the path. If trunc is false (default), include the full path.</td>
                                             </tr>
                                         </table>
 
@@ -1537,6 +1624,65 @@ export default class ConceptGraphAPI extends React.Component {
                                         Example:
                                         </div>
                                         <pre id="cgExample_11" className="apiMajorSectionExample" ></pre>
+                                    </div>
+                                </div>
+
+                                <div id="commandNumber_12" className="apiMajorSectionContainerContainerSubTop apiMajorSectionContainerContainer" >
+                                    <li>
+                                        cg.ipfs.publish(file,[options])
+                                        <div className="commandNumberContainer" >12</div>
+                                    </li>
+                                    <div className="apiMajorSectionDescriptionB" >
+                                    Publish the word indicated by the input cgid. The function re-adds the file to the ipfs, takes note of the cid (ipfs hash), extracts the keyname from the node metadata, which is then published using ipfs.name.publish.
+                                    Thus the ipfs and ipns hashes are linked.
+                                    </div>
+                                    <div className="apiMajorSectionContainer" >
+                                        <div className="apiMajorSectionTitle" >
+                                        Parameters:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>file</td>
+                                                <td>string, object, (other?)</td>
+                                                <td>The file to be added to the ipfs.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Options:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Default</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Returns:
+                                        </div>
+                                        <table className="apiPageTable" >
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            <tr>
+                                                <td>.</td>
+                                                <td>.</td>
+                                            </tr>
+                                        </table>
+
+                                        <div className="apiMajorSectionTitle" >
+                                        Example:
+                                        </div>
+                                        <pre id="cgExample_12" className="apiMajorSectionExample" ></pre>
                                     </div>
                                 </div>
 

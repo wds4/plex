@@ -1184,6 +1184,7 @@ export const isWordObjInArrayOfObj = (word_obj,words_arr) => {
     return thisIsAMatch;
 }
 
+// to be replaced by: cg.schema.addRel
 export const updateSchemaWithNewRel = (schema_in_obj,rel_obj,lookupRawFileBySlug_x_obj) => {
     // console.log("updateSchemaWithNewRel; schema_in_obj: "+JSON.stringify(schema_in_obj,null,4))
     var schema_out_obj = JSON.parse(JSON.stringify(schema_in_obj));
