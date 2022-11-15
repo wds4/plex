@@ -70,6 +70,10 @@ export default class PlexAppsNavPage extends React.Component {
                                     <center>decentralized Proof of Personhood</center>
                                 </NavLink>
 
+                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedListCurationHome'>
+                                    <center>decentralized List Curation</center>
+                                </NavLink>
+
                             </div>
                         </center>
                     </div>

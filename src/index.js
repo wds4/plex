@@ -90,6 +90,7 @@ import ConceptGraphHome from './plex/conceptGraph/conceptGraphHome.js';
 import DecentralizedProofOfPersonhoodHome from './plex/dProofOfPersonhood/dProofOfPersonhoodHome.js';
 import CrowdscreenedGroupsHome from './plex/crowdscreenedGroups/crowdscreenedGroupsHome.js';
 import DecentralizedRedditHome from './plex/dReddit/dRedditHome.js';
+import DecentralizedListCurationHome from './plex/dListCuration/dListCurationHome.js';
 import DecentralizedOntologiesHome from './plex/dOntologies/dOntologiesHome.js';
 import DecentralizedQuestionsAndAnswersHome from './plex/askPlex/dQuestionsAndAnswersHome.js';
 import DecentralizedSearchHome from './plex/dSearch/dSearchHome.js';
@@ -454,6 +455,7 @@ ReactDOM.render(
 
           <Route path="/DecentralizedOntologiesHome" exact component={DecentralizedOntologiesHome} />
           <Route path="/DecentralizedRedditHome" exact component={DecentralizedRedditHome} />
+          <Route path="/DecentralizedListCurationHome" exact component={DecentralizedListCurationHome} />
           <Route path="/DecentralizedSearchHome" exact component={DecentralizedSearchHome} />
           <Route path="/DecentralizedQuestionsAndAnswersHome" exact component={DecentralizedQuestionsAndAnswersHome} />
 
