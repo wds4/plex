@@ -43,17 +43,29 @@ export default class GrapevineMasthead extends React.Component {
         var blob = await MiscIpfsFunctions.fetchImgFromIPFS_b(myAvatarCid)
         var img = document.getElementById("mastheadAvatarThumb") // the img tag you want it in
         img.src = window.URL.createObjectURL(blob)
+
+        var grapevineCid = "QmNMaEd9Rfuo4AMmmADDxQ5Z4ZPKwaQzgekKhrSw6Y7nRU"
+        var blob2 = await MiscIpfsFunctions.fetchImgFromIPFS_b(grapevineCid)
+        var img2 = document.getElementById("grapevineThumb") // the img tag you want it in
+        img2.src = window.URL.createObjectURL(blob2)
     }
     render() {
         return (
           <>
               <div >
-                  <div style={{height:"100%"}}>
-                      <div style={{fontSize:"20px",display:"inline-block",marginTop:"10px",color:"#5e0080"}}>
-                      the
+                  <div style={{height:"100%"}} >
+                      <div style={{display:"none"}} >
+                          <div style={{fontSize:"20px",display:"inline-block",marginTop:"10px",color:"#5e0080"}}>
+                          the
+                          </div>
+                          <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"purple",marginRight:"30px"}}>
+                          Grapevine
+                          </div>
                       </div>
-                      <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"purple",marginRight:"30px"}}>
-                      Grapevine
+                      <div style={{height:"98px",marginTop:"-18px",display:"inline-block",overflow:"scroll"}} >
+                          <div style={{width:"150px",display:"inline-block"}} >
+                                <img id='grapevineThumb' />
+                          </div>
                       </div>
 
                       <div style={{float:"right",display:"inline-block",marginRight:"50px",height:"100%"}}>
