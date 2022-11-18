@@ -20,59 +20,73 @@ export default class PlexAppsNavPage extends React.Component {
                     <LeftNavbar1 />
                     <div className="mainPanel" >
                         <Masthead />
-                        <div class="h2">Plex Apps Nav Page</div>
+                        <div class="h2">the Plex Family of Decentralized Apps</div>
 
                         <center>
-                            <div style={{display:"inline-block",width:"60%",textAlign:"left",marginTop:"50px"}}>
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/PlexHome' >
-                                    <center>Plex</center>
-                                </NavLink>
+                            <div style={{display:"inline-block",width:"1050px",textAlign:"left",marginTop:"50px"}} >
+                                <center>infrastructure / under the hood</center>
+                                <center>
+                                <div style={{display:"inline-block"}} >
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/PlexHome' >
+                                        <center>Plex</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/ConceptGraphHome' >
-                                    <center>Concept Graph</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/ConceptGraphHome' >
+                                        <center>Concept Graph</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedOntologiesHome'>
-                                    <center>Ontologies</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedOntologiesHome'>
+                                        <center>Ontologies</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/GrapevineHome' >
-                                    <center>The Grapevine</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/GrapevineHome' >
+                                        <center>The Grapevine</center>
+                                    </NavLink>
+                                </div>
+                                </center>
 
                                 <br/>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/CrowdscreenedGroupsHome'>
-                                    <center>Crowdscreened Groups</center>
-                                </NavLink>
+                                <center>higher order apps</center>
+                                <center>
+                                <div style={{display:"inline-block",textAlign:"left"}} >
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/CrowdscreenedGroupsHome'>
+                                        <center>Crowdscreened Groups</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedQuestionsAndAnswersHome'>
-                                    <center>Ask Plex: decentralized Questions & Answers</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedQuestionsAndAnswersHome'>
+                                        <center>Ask Plex: decentralized Questions & Answers</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedSearchHome'>
-                                    <center>decentralized Search</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedSearchHome'>
+                                        <center>Search</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/PitterHome'>
-                                    <center>decentralized Twitter</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/PitterHome'>
+                                        <center>Pitter</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedRedditHome'>
-                                    <center>decentralized Reddit</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedRedditHome'>
+                                        <center>Readit</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/EBooksHome'>
-                                    <center>eBooks</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/EBooksHome'>
+                                        <center>eBooks</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedProofOfPersonhoodHome'>
-                                    <center>decentralized Proof of Personhood</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedProofOfPersonhoodHome'>
+                                        <center>Proof of Humanity</center>
+                                    </NavLink>
 
-                                <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedListCurationHome'>
-                                    <center>decentralized List Curation</center>
-                                </NavLink>
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedListCurationHome'>
+                                        <center>List Curation</center>
+                                    </NavLink>
+
+                                    <NavLink className="plexAppSquareButton" exact activeClassName="active" to='/DecentralizedRssFeedsHome'>
+                                        <center>RSS Feeds</center>
+                                    </NavLink>
+                                </div>
+                                </center>
 
                             </div>
                         </center>

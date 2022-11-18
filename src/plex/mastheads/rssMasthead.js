@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
 const jQuery = require("jquery");
 
-export default class PitterMasthead extends React.Component {
+export default class RssFeedsMasthead extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -55,7 +55,7 @@ export default class PitterMasthead extends React.Component {
               <div >
                   <div style={{height:"100%"}}>
                       <div style={{fontSize:"48px",display:"inline-block",marginTop:"10px",color:"purple",marginRight:"5px"}}>
-                      Pitter
+                      RSS Feeds
                       </div>
                       <div style={{width:"35px",marginTop:"20px",display:"inline-block"}} >
                             <img id='pitterThumb' />
@@ -85,7 +85,7 @@ export default class PitterMasthead extends React.Component {
                   </div>
 
                   <div className="landingPageSubBanner" >
-                      <div >Pitter Patter let's get at 'er</div>
+                      <div >RSS feeds motto</div>
                   </div>
               </div>
           </>
