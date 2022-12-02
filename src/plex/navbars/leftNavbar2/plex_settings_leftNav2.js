@@ -15,7 +15,8 @@ export default class LeftNavbar2_GeneralSettings extends React.Component {
             <center>Networks and Databases</center>
             <br/>
             <NavLink className="leftNav2Button" activeClassName="active" to='/SQLGeneralSettingsPage'>SQL</NavLink>
-            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSGeneralInfoPage'>IPFS</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSGeneralInfoPage'>IPFS (.ipfs)</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSCoreGeneralInfoPage'>ipfs-core</NavLink>
             <NavLink className="leftNav2ButtonGreyed" activeClassName="active" to='/'>GUN</NavLink>
 
             <br/><br/>

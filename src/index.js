@@ -389,6 +389,7 @@ import SQLViewSingleTablePage from './plex/settings/sql/sqlViewSingleTable.js';
 
 import IPFSConfigInfoPage from './plex/settings/IPFS/IPFSConfigInfo.js';
 import IPFSGeneralInfoPage from './plex/settings/IPFS/IPFSGeneralInfo.js';
+import IPFSCoreGeneralInfoPage from './plex/settings/IPFSCore/generalInfo.js';
 import IPFSPeersInfoPage from './plex/settings/IPFS/IPFSPeersInfo.js';
 import IPFSPubsubInfoPage from './plex/settings/IPFS/IPFSPubsubInfo.js';
 import IPFSPinsInfoPage from './plex/settings/IPFS/IPFSPinsInfo.js';
@@ -731,6 +732,7 @@ ReactDOM.render(
 
           <Route path="/IPFSConfigInfoPage" exact component={IPFSConfigInfoPage} />
           <Route path="/IPFSGeneralInfoPage" exact component={IPFSGeneralInfoPage} />
+          <Route path="/IPFSCoreGeneralInfoPage" exact component={IPFSCoreGeneralInfoPage} />
           <Route path="/IPFSPeersInfoPage" exact component={IPFSPeersInfoPage} />
           <Route path="/IPFSPubsubInfoPage" exact component={IPFSPubsubInfoPage} />
           <Route path="/IPFSPinsInfoPage" exact component={IPFSPinsInfoPage} />

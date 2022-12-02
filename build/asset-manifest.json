@@ -1,22 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.26b5f7b4.chunk.css",
-    "main.js": "/static/js/main.b14cb32a.chunk.js",
-    "main.js.map": "/static/js/main.b14cb32a.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.993c5441.js",
-    "runtime-main.js.map": "/static/js/runtime-main.993c5441.js.map",
-    "static/js/2.27412f35.chunk.js": "/static/js/2.27412f35.chunk.js",
-    "static/js/2.27412f35.chunk.js.map": "/static/js/2.27412f35.chunk.js.map",
+    "main.css": "/static/css/main.7ff93b34.css",
+    "main.js": "/static/js/main.132ef279.js",
+    "static/media/rpc.cjs": "/static/media/rpc.93e8f6196bd2c425bf03.cjs",
+    "static/media/plus.png": "/static/media/plus.89d3b46caa2e1e93d4e9.png",
+    "static/media/minus.png": "/static/media/minus.790e2f9ec4bbfb066ae7.png",
     "index.html": "/index.html",
-    "static/css/main.26b5f7b4.chunk.css.map": "/static/css/main.26b5f7b4.chunk.css.map",
-    "static/js/2.27412f35.chunk.js.LICENSE.txt": "/static/js/2.27412f35.chunk.js.LICENSE.txt",
-    "static/media/customDataTables.css": "/static/media/plus.89d3b46c.png",
-    "static/media/neuroCoreConfigReadme.af2a8fc0.txt": "/static/media/neuroCoreConfigReadme.af2a8fc0.txt"
+    "static/media/neuroCoreConfigReadme.txt": "/static/media/neuroCoreConfigReadme.af2a8fc05427d02262f3.txt",
+    "main.7ff93b34.css.map": "/static/css/main.7ff93b34.css.map",
+    "main.132ef279.js.map": "/static/js/main.132ef279.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.993c5441.js",
-    "static/js/2.27412f35.chunk.js",
-    "static/css/main.26b5f7b4.chunk.css",
-    "static/js/main.b14cb32a.chunk.js"
+    "static/css/main.7ff93b34.css",
+    "static/js/main.132ef279.js"
   ]
 }

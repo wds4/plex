@@ -165,7 +165,7 @@ export default class IPFSGeneralInfo extends React.Component {
                     <LeftNavbar2 />
                     <div className="mainPanel" >
                         <Masthead />
-                        <div className="h2">IPFS General Info</div>
+                        <div className="h2">IPFS General Info (same node that IPFS Desktop uses)</div>
 
 
                         <a target='_blank' href='https://github.com/ipfs/js-ipfs/tree/master/docs/core-api' >https://github.com/ipfs/js-ipfs/tree/master/docs/core-api</a>

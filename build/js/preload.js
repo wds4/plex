@@ -1,7 +1,10 @@
 
 // import { ipcRenderer, contextBridge } from 'electron';
 
+
 var preloadVar = 5;
+
+window.hasIpfsMfsBeenInitialized = false;
 
 window.oTestVariable = {};
 window.oTestVariable.foo = "bar";
@@ -50,12 +53,29 @@ window.aLookupConceptInfoBySqlID[2].title="Concept for relationshipType";
 window.defaultConceptSqlID = 2;
 window.currentConceptSqlID = 2;
 */
+/*
 window.aLookupConceptInfoBySqlID[3] = {}
 window.aLookupConceptInfoBySqlID[3].slug="conceptFor_wordType";
 window.aLookupConceptInfoBySqlID[3].name="concept for wordType";
 window.aLookupConceptInfoBySqlID[3].title="Concept for wordType";
 window.defaultConceptSqlID = 3;
 window.currentConceptSqlID = 3;
+*/
+
+window.aLookupConceptInfoBySqlID[659] = {}
+window.aLookupConceptInfoBySqlID[659].slug="conceptFor_rating";
+window.aLookupConceptInfoBySqlID[659].name="concept for rating";
+window.aLookupConceptInfoBySqlID[659].title="Concept for rating";
+window.defaultConceptSqlID = 659;
+window.currentConceptSqlID = 659;
+/*
+window.aLookupConceptInfoBySqlID[660] = {}
+window.aLookupConceptInfoBySqlID[660].slug="conceptFor_ratingTemplate";
+window.aLookupConceptInfoBySqlID[660].name="concept for ratingTemplate";
+window.aLookupConceptInfoBySqlID[660].title="Concept for ratingTemplate";
+window.defaultConceptSqlID = 660;
+window.currentConceptSqlID = 660;
+*/
 
 /*
 //////////////////////////// OPTION 2
@@ -158,8 +178,9 @@ window.enumerationRolesManagement = {
   "role6_slugs": [],
   "role7_slugs": []
 }
-////////////////////////////////////////////////////////////////////////////
-//////////////////////////  window.neurocore  //////////////////////////////
+
+///////////////////////////////////////////////////////////////////
+//////////////////////// NeuroCore 2 //////////////////////////////
 window.neuroCore = {};
 window.neuroCore.aS1nPatternsByName = [];
 window.neuroCore.aS1rPatternsByName = [];
@@ -187,7 +208,6 @@ window.neuroCore.engine.oMapActionSlugToWordSlug = {};
 window.neuroCore.engine.oPatternsWithAuxiliaryDataQueue = {};
 window.neuroCore.engine.changesMadeYetThisCycle = false;
 window.neuroCore.engine.changesMadeYetThisSupercycle = false;
-window.neuroCore.engine.oPatternsTriggeredByAction = {};
 
 window.neuroCore.subject.allConceptGraphRelationships = [];
 window.neuroCore.subject.oRFL = {};
@@ -199,10 +219,10 @@ window.neuroCore.subject.oMainSchemaForConceptGraph = {};
 window.neuroCore.engine.currentConceptGraphSqlID = 10; // myConceptGraph_plex
 window.neuroCore.subject.currentConceptGraphSqlID = window.currentConceptGraphSqlID;
 
-
-/////////////////////////////////////////////////////////////////////////////////
-//////////////////////////  window.ipfs.neurocore  //////////////////////////////
-window.ipfs = {}
+///////////////////////////////////////////////////////////////////
+//////////////////////// NeuroCore 3 //////////////////////////////
+// 11 Oct 2022 Copied NeuroCore 2 init and added .ipfs to indicate NeuroCore 3
+window.ipfs = {};
 window.ipfs.neuroCore = {};
 window.ipfs.neuroCore.aS1nPatternsByName = [];
 window.ipfs.neuroCore.aS1rPatternsByName = [];
@@ -238,33 +258,94 @@ window.ipfs.neuroCore.subject.oRFL.updated = {};
 window.ipfs.neuroCore.subject.oRFL.new = {};
 window.ipfs.neuroCore.subject.oMainSchemaForConceptGraph = {};
 
-// currently the below paths are set at startup by:
-// CurrentGraphInMfsFunctions.loadActiveIpfsConceptGraph
-// deprecating these two variables
 window.ipfs.neuroCore.engine.currentConceptGraphSqlID = 10; // myConceptGraph_plex
 window.ipfs.neuroCore.subject.currentConceptGraphSqlID = window.currentConceptGraphSqlID;
-// to be replaced with these:
+
+window.ipfs.updatesSinceLastRefresh = true;
+window.ipfs.mfsDirectoriesEstablished = false;
+
 window.ipfs.neuroCore.engine.pCG = null; // eg: pCG0 = /plex/conceptGraphs/1cnx1ekjkv/k2k4r8m51oham1hg0lqrdryt2bjs4vzvmbe9r2geijux4nmqbqeq1r67/
 window.ipfs.neuroCore.subject.pCG = null
+window.ipfs.pCG = "/plex/conceptGraphs/";
+window.ipfs.pCGpub = "/plex/conceptGraphs/public/publicConceptGraphsDirectory/node.txt";
 window.ipfs.pCGb = null; // b=base; default path to all operational concept graphs in this node; includes 10-character directory which should be unknown to other nodes
 window.ipfs.pCGs = null; // s=schema; path to the active mainSchemaForConceptGraph file
 window.ipfs.pCG0 = null; // 0=most important; path to "active" concept graph. can also have: window.ipfs.pCG1, 2, 3, etc and switch between them
 window.ipfs.pCGw = null; // w=word; path to all words in active concept graph pCG0 + word/
+window.ipfs.pCGd = null; // d=directory; path to the directory of all concept graphs as well as roles played
+// pCG = /plex/conceptGraphs/
+// pCGpub = /plex/conceptGraphs/publicConceptGraphDirectory/node.txt
 // pCGb = /plex/conceptGraphs/abcde12345/
-// pCGs = pCGb + "mainSchemaForConceptGraph/node.txt"
+// pCGs = pCGb + "mainSchemaForConceptGraph/node.txt" // might deprecate this location for this file; instead use conceptGraphsDirectory to find the active concept graph ipns
 // pCGs = pCGb + [ipns hash] + "/"
 // pCGw = pCGs + "/words"
+// pCGd = pCGb + "conceptGraphsDirectory/node.txt";
 window.ipfs.pCGnce = null; // nce = neuroCore engine; default: pCGnce = pCG0
 window.ipfs.pCGncs = null; // ncs = neuroCore subject; default: pCGncs = pCG0
 // convention: same info in two places; ought to pick just one
 // window.ipfs.neuroCore.engine.pCG = window.ipfs.pCGnce
 // window.ipfs.neuroCore.subject.pCG = window.ipfs.pCGncs
 
+window.frontEndConceptGraph = {};
+window.frontEndConceptGraph.activeConceptGraph = {};
+window.frontEndConceptGraph.activeConceptGraph.slug = null;
+window.frontEndConceptGraph.activeConceptGraph.title = null;
+window.frontEndConceptGraph.activeConceptGraph.ipnsForMainSchemaForConceptGraph = null;
 
-window.testVarB = "defined in build/js/preload.js"
+window.frontEndConceptGraph.viewingConceptGraph = {};
+window.frontEndConceptGraph.viewingConceptGraph.slug = null;
+window.frontEndConceptGraph.viewingConceptGraph.title = null;
+window.frontEndConceptGraph.viewingConceptGraph.ipnsForMainSchemaForConceptGraph = null;
+window.frontEndConceptGraph.viewingConcept = {};
+window.frontEndConceptGraph.viewingConcept.slug = null;
+window.frontEndConceptGraph.viewingConcept.title = null;
+window.frontEndConceptGraph.viewingConcept.ipns = null;
 
+window.frontEndConceptGraph.neuroCore = {};
+window.frontEndConceptGraph.neuroCore.subject = {};
+window.frontEndConceptGraph.neuroCore.subject.ipnsForMainSchemaForConceptGraph = null;
+window.frontEndConceptGraph.neuroCore.engine = {};
+window.frontEndConceptGraph.neuroCore.engine.ipnsForMainSchemaForConceptGraph = null;
 
+// The following file system is established by ConceptGraphInMfsFunctions.establishMfsDirectories which is called by the landing page ( src/plex/plexHome.js ) unless it has already been done successfully
+window.grapevine = {};
+window.grapevine.ratings = {};
+window.grapevine.ratings.local = {};
+window.grapevine.ratings.external = {};
+window.grapevine.ratings.local.mfsPath = "/grapevineData/ratings/locallyAuthored/";
+window.grapevine.ratings.external.mfsPath = "/grapevineData/ratings/externallyAuthored/";
+window.grapevine.ratings.local.mfsFile = "/grapevineData/ratings/locallyAuthored/ratings.txt";
+window.grapevine.ratings.external.mfsFile = "/grapevineData/ratings/externallyAuthored/ratings.txt";
+window.grapevine.ratings.local.set = "setFor_ratings_authoredLocally";
+window.grapevine.ratings.external.set = "setFor_ratings_authoredExternally";
+window.grapevine.ratings.concept = {};
+window.grapevine.ratings.concept.slug = "conceptFor_rating";
+window.grapevine.ratings.schema = {};
+window.grapevine.ratings.schema.slug = "schemaFor_rating";
+window.grapevine.myUserData = "/grapevineData/userProfileData/myProfile.txt"
+window.grapevine.users = "/grapevineData/users/"
 
+window.grapevine.starterDefaultAttenuationFactor = 90;
+window.grapevine.starterDefaultUpdateProposalVerdictAverageScore = 0;
+window.grapevine.starterDefaultUpdateProposalVerdictConfidence = 40;
+window.grapevine.starterDefaultUserTrustAverageScore = 50;
+window.grapevine.starterDefaultUserTrustConfidence = 40;
+window.grapevine.starterRigor = 25; // ?? 25 / 100
+window.grapevine.starterDecoupleRigorConfidence = false // ??
+window.grapevine.starterStrat1Coeff = 15; // ?? 10 / 100
+window.grapevine.starterStrat2Coeff = 10; // ?? 100 / 100
+window.grapevine.starterStrat3Coeff = 100; // ?? 100 / 100
+window.grapevine.starterStrat4Coeff = 200; // ?? 200 / 500
+window.grapevine.starterStrat5Coeff = 500; // ?? 500 / 2000
+// visualization
+window.grapevine.defaultNodeSize = 30;
+window.grapevine.starterDefaultVerdictAccept = 62;
+window.grapevine.starterDefaultVerdictReject = -53;
+
+window.ipfs.mainSchemaForConceptGraph_defaultExternalIPNS = "k2k4r8jya910bj45nxvwiw7pjqr611qv431331sx3py6ee2tiwxtmf6y";
+window.ipfs.isEstablishedYet_oMainSchemaForConceptGraphLocal = false
+
+window.testVarA = "defined in public/js/preload.js"
 
 window.oAutomatedImportData = {};
 window.oAutomatedImportData.running=false;
@@ -309,6 +390,12 @@ window.oConceptData = {
       },
       "description": null,
       "propertyPath": null
+    },
+    "templating": {
+        "method": "none",
+        "templateConcept": null,
+        "independentProperty": null,
+        "dependentProperties": []
     },
     "governingConceptNameSingular": null,
     "propertiesData": {},
@@ -496,6 +583,8 @@ window.constants.cgOverviewPage.c2cRels.enumerations = [];
 window.constants.cgOverviewPage.c2cRels.isASubsetOf = [];
 window.constants.cgOverviewPage.c2cRels.isARealizationOf = [];
 window.constants.cgOverviewPage.loadingStoredConceptGraph = false;
+
+window.templating = {};
 /*
 // quick fetch main schema for concept graph:
 var oMainSchemaForConceptGraph = window.lookupWordBySlug[window.aLookupConceptGraphInfoBySqlID[window.currentConceptGraphSqlID].mainSchema_slug];
@@ -504,10 +593,3 @@ var oMainSchemaForConceptGraph = window.lookupWordBySlug[window.aLookupConceptGr
 // NOTES:
 jQuery("#whateverButton").get(0).click();
 */
-
-// 9 Oct 2022: rebuilding NeuroCore so that it operates with Concept Graph stored in the Mutable File System of IPFS as opposed to SQL
-// oWord = window.lookupWordBySlug(slug) has been used extensively so far and is loaded at started with the ACTIVE Concept Graph
-// but oWord = await ConceptGraphInMfsFunctions.lookupWordBySlug(slug) will take its place.
-// For this to work,
-// window.ipfs will require intialization by ConceptGraphInMfsFunctions.loadActiveIpfsConceptGraph()
-// (currently called by Plex Home Page)

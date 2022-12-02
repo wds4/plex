@@ -11,6 +11,9 @@
 # production
 # /build
 
+# distribution
+/dist
+
 # database
 # /public/db.sqlite3
 
@@ -27,3 +30,5 @@ yarn-debug.log*
 yarn-error.log*
 
 /public/grapevine/assets/users
+
+instructions.txt
