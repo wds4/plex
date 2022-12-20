@@ -167,8 +167,13 @@ export default class IPFSGeneralInfo extends React.Component {
                         <Masthead />
                         <div className="h2">IPFS General Info (same node that IPFS Desktop uses)</div>
 
-
                         <a target='_blank' href='https://github.com/ipfs/js-ipfs/tree/master/docs/core-api' >https://github.com/ipfs/js-ipfs/tree/master/docs/core-api</a>
+
+                        <br/><br/>
+
+                        <a target='_blank' href='https://webui.ipfs.io' >https://webui.ipfs.io</a>
+
+                        <br/><br/>
 
                         <div style={{fontSize:"12px",backgroundColor:"#DFDFDF"}}>
                         If ipfs is not running, go to terminal and run:<br/>
