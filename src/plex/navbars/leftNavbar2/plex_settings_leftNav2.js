@@ -17,7 +17,8 @@ export default class LeftNavbar2_GeneralSettings extends React.Component {
             <NavLink className="leftNav2Button" activeClassName="active" to='/SQLGeneralSettingsPage'>SQL</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSGeneralInfoPage'>IPFS (.ipfs)</NavLink>
             <NavLink className="leftNav2Button" activeClassName="active" to='/IPFSCoreGeneralInfoPage'>ipfs-core</NavLink>
-            <NavLink className="leftNav2ButtonGreyed" activeClassName="active" to='/'>GUN</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/GunGeneralInfo'>GUN</NavLink>
+            <NavLink className="leftNav2Button" activeClassName="active" to='/NostrGeneralInfo'>Nostr</NavLink>
 
             <br/><br/>
             <center>Documents</center>

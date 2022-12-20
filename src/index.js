@@ -395,6 +395,10 @@ import IPFSPubsubInfoPage from './plex/settings/IPFS/IPFSPubsubInfo.js';
 import IPFSPinsInfoPage from './plex/settings/IPFS/IPFSPinsInfo.js';
 import IPFSKeysInfoPage from './plex/settings/IPFS/IPFSKeysInfo.js';
 
+import NostrGeneralInfo from './plex/settings/nostr/generalInfo.js';
+
+import GunGeneralInfo from './plex/settings/gun/generalInfo.js';
+
 import IPFSMutableFilesInfoPage1 from './plex/settings/IPFS/IPFSMutableFilesInfo1.js';
 import IPFSMutableFilesInfoPage2 from './plex/settings/IPFS/IPFSMutableFilesInfo2.js';
 import IPFSMutableFilesInfoPage3 from './plex/settings/IPFS/IPFSMutableFilesInfo3.js';
@@ -737,6 +741,10 @@ ReactDOM.render(
           <Route path="/IPFSPubsubInfoPage" exact component={IPFSPubsubInfoPage} />
           <Route path="/IPFSPinsInfoPage" exact component={IPFSPinsInfoPage} />
           <Route path="/IPFSKeysInfoPage" exact component={IPFSKeysInfoPage} />
+
+          <Route path="/GunGeneralInfo" exact component={GunGeneralInfo} />
+
+          <Route path="/NostrGeneralInfo" exact component={NostrGeneralInfo} />
 
           <Route path="/IPFSMutableFilesInfoPage1" exact component={IPFSMutableFilesInfoPage1} />
           <Route path="/IPFSMutableFilesInfoPage2" exact component={IPFSMutableFilesInfoPage2} />
