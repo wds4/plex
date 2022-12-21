@@ -1,0 +1,4 @@
+
+20 Dec 2022:
+Issue: an error message about polyfills is a problem with getting nostr-tools to work.
+Following this guide: https://www.alchemy.com/blog/how-to-polyfill-node-core-modules-in-webpack-5
