@@ -48,8 +48,8 @@ fs.writeFile("src/plex/neuroCore/neuroCoreFunctions/books.txt", data, (err) => {
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 1800,
-    height: 1100,
+    width: 1200,
+    height: 800,
     webPreferences: {
       nodeIntegration: true, //
       contextIsolation: false, // must do these (nodeIntegration and contextIsolation flags) otherwise require is not recognized in the main process
