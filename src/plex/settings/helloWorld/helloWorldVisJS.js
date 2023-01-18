@@ -5,7 +5,7 @@ import LeftNavbar2 from '../../navbars/leftNavbar2/helloWorld_leftNav2.js';
 import sendAsync from '../../renderer.js'
 
 import { DataSet, Network} from 'vis-network/standalone/esm/vis-network';
-// import * as VisStyleConstants from '../../../lib/visjs/visjs-style';
+// import * as VisStyleConstants from '../../../lib/visjs/visjs-style'; 
 
 const jQuery = require("jquery");
 

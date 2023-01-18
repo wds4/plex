@@ -15,7 +15,7 @@ import AttenuationSlider from './modules/attenuationSlider.js'
 import ControlPanel from './modules/controlPanel/controlPanel.js'
 import CompScoreCalcPanel from './compScoreCalcPanel.js'
 
-const cg = ConceptGraphLib.cg;
+const cg = ConceptGraphLib.cg; 
 const gv = GrapevineLib.gv;
 
 const electronFs = window.require('fs');

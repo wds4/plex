@@ -3,8 +3,7 @@ import * as MiscFunctions from '../../functions/miscFunctions.js';
 import Masthead from '../../mastheads/plexMasthead.js';
 import LeftNavbar1 from '../../navbars/leftNavbar1/plex_leftNav1';
 import LeftNavbar2 from '../../navbars/leftNavbar2/gun_leftNav2';
-
-// const GUN = require('gun');
+const GUN = require('gun');
 
 const jQuery = require("jquery");
 
@@ -16,12 +15,11 @@ export default class GunGeneralInfo extends React.Component {
     async componentDidMount() {
         jQuery(".mainPanel").css("width","calc(100% - 300px)");
 
-        /*
-        const gun = GUN(['http://localhost:8765/gun', 'https://gun-manhattan.herokuapp.com/gun']);
-        const copy = gun.get('toast').get('paste');
+        var gun = GUN(['http://localhost:8765/gun', 'https://gun-manhattan.herokuapp.com/gun']);
+        var copy = gun.get('test').get('paste');
         paste.oninput = () => { copy.put(paste.value) };
         copy.on((data) => { paste.value = data });
-        */
+
     }
     render() {
         return (

@@ -6,12 +6,10 @@ const path = require('path');
 // const { app, BrowserWindow, desktopCapturer, contextBridge, ipcRenderer, ipcMain, nativeImage, NativeImage } = require('electron');
 
 // const https = require('https')
-
+const GUN = require('gun');
 // const {desktopCapturer} = require('electron');
 const { app, BrowserWindow, desktopCapturer } = require('electron');
 const isDev = require('electron-is-dev');
-
-
 
 // require('../src/main.js');
 const { ipcRenderer, ipcMain } = require('electron');
